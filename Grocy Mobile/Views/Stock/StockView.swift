@@ -257,14 +257,14 @@ struct StockView: View {
             await updateData()
         }
         .toolbar(content: {
-            ToolbarItemGroup(placement: .navigation) {
-                Button(action: { showingFilterSheet = true }) {
-                    Image(systemName: MySymbols.filter)
-                }
-                sortMenu
-            }
-            ToolbarSpacer(.fixed)
             #if os(iOS)
+                ToolbarItemGroup(placement: .navigation) {
+                    Button(action: { showingFilterSheet = true }) {
+                        Image(systemName: MySymbols.filter)
+                    }
+                    sortMenu
+                }
+                ToolbarSpacer(.fixed)
                 if horizontalSizeClass == .compact && iPhoneTabNavigation {
                     ToolbarItem(placement: .automatic) {
                         NavigationLink(value: StockInteraction.stockJournal) {
@@ -290,7 +290,45 @@ struct StockView: View {
                     }
                 }
             #elseif os(macOS)
-                //            RefreshButton(updateData: { Task { await updateData() } })
+                ToolbarItemGroup(
+                    placement: .automatic,
+                    content: {
+                        Button(action: { showingFilterSheet = true }) {
+                            Image(systemName: MySymbols.filter)
+                        }
+                        .popover(
+                            isPresented: $showingFilterSheet,
+                            content: {
+                                VStack {
+                                    StockFilterView(filteredLocationID: $filteredLocationID, filteredProductGroupID: $filteredProductGroupID, filteredStatus: $filteredStatus)
+                                    HStack {
+                                        Button(
+                                            role: .destructive,
+                                            action: {
+                                                filteredLocationID = nil
+                                                filteredProductGroupID = nil
+                                                filteredStatus = .all
+                                                showingFilterSheet = false
+                                            }
+                                        )
+                                        Spacer()
+                                        Button(
+                                            role: .confirm,
+                                            action: {
+                                                showingFilterSheet = false
+                                            }
+                                        )
+
+                                    }
+                                    .padding()
+                                }
+                                .frame(width: 400, height: 200)
+                            }
+                        )
+                        sortMenu
+                        RefreshButton(updateData: { Task { await updateData() } })
+                    }
+                )
             #endif
         })
         .navigationDestination(
@@ -330,13 +368,12 @@ struct StockView: View {
                 StockEntriesView(stockElement: stockElement)
             }
         )
-        .sheet(isPresented: $showingFilterSheet) {
-            NavigationStack {
-                StockFilterView(filteredLocationID: $filteredLocationID, filteredProductGroupID: $filteredProductGroupID, filteredStatus: $filteredStatus)
+        #if os(iOS)
+            .sheet(isPresented: $showingFilterSheet) {
+                NavigationStack {
+                    StockFilterView(filteredLocationID: $filteredLocationID, filteredProductGroupID: $filteredProductGroupID, filteredStatus: $filteredStatus)
                     .navigationTitle("Filter")
-                    #if os(iOS)
-                        .navigationBarTitleDisplayMode(.inline)
-                    #endif
+                    .navigationBarTitleDisplayMode(.inline)
                     .toolbar {
                         ToolbarItem(
                             placement: .confirmationAction,
@@ -364,9 +401,11 @@ struct StockView: View {
                             }
                         )
                     }
+                }
+                .presentationDetents([.medium])
+
             }
-            .presentationDetents([.medium])
-        }
+        #endif
     }
 
     var sortMenu: some View {
