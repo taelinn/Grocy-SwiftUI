@@ -96,19 +96,19 @@ struct Sidebar: View {
                 isExpanded: $isMasterDataSectionExpanded,
                 content: {
                     NavigationLink(value: NavigationItem.mdProducts) {
-                        Label("Products", systemImage: MySymbols.product)
+                        MDCategoryRowView(categoryName: "Products", iconName: MySymbols.product, mdType: MDProduct.self)
                     }
                     NavigationLink(value: NavigationItem.mdLocations) {
-                        Label("Locations", systemImage: MySymbols.location)
+                        MDCategoryRowView(categoryName: "Locations", iconName: MySymbols.location, mdType: MDLocation.self)
                     }
                     NavigationLink(value: NavigationItem.mdStores) {
-                        Label("Stores", systemImage: MySymbols.store)
+                        MDCategoryRowView(categoryName: "Stores", iconName: MySymbols.store, mdType: MDStore.self)
                     }
                     NavigationLink(value: NavigationItem.mdQuantityUnits) {
-                        Label("Quantity units", systemImage: MySymbols.quantityUnit)
+                        MDCategoryRowView(categoryName: "Quantity units", iconName: MySymbols.quantityUnit, mdType: MDQuantityUnit.self)
                     }
                     NavigationLink(value: NavigationItem.mdProductGroups) {
-                        Label("Product groups", systemImage: MySymbols.productGroup)
+                        MDCategoryRowView(categoryName: "Product groups", iconName: MySymbols.productGroup, mdType: MDProductGroup.self)
                     }
                 },
                 header: {

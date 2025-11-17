@@ -21,28 +21,29 @@ private enum MasterDataItem: Hashable {
 }
 
 struct MasterDataView: View {
+    @Environment(\.modelContext) private var modelContext
     @AppStorage("devMode") private var devMode: Bool = false
 
     var body: some View {
         List {
             NavigationLink(value: MasterDataItem.products) {
-                Label("Products", systemImage: MySymbols.product)
+                MDCategoryRowView(categoryName: "Products", iconName: MySymbols.product, mdType: MDProduct.self)
             }
 
             NavigationLink(value: MasterDataItem.locations) {
-                Label("Locations", systemImage: MySymbols.location)
+                MDCategoryRowView(categoryName: "Locations", iconName: MySymbols.location, mdType: MDLocation.self)
             }
 
             NavigationLink(value: MasterDataItem.stores) {
-                Label("Stores", systemImage: MySymbols.store)
+                MDCategoryRowView(categoryName: "Stores", iconName: MySymbols.store, mdType: MDStore.self)
             }
 
             NavigationLink(value: MasterDataItem.quantityUnits) {
-                Label("Quantity units", systemImage: MySymbols.quantityUnit)
+                MDCategoryRowView(categoryName: "Quantity units", iconName: MySymbols.quantityUnit, mdType: MDQuantityUnit.self)
             }
 
             NavigationLink(value: MasterDataItem.productGroups) {
-                Label("Product groups", systemImage: MySymbols.productGroup)
+                MDCategoryRowView(categoryName: "Product groups", iconName: MySymbols.productGroup, mdType: MDProductGroup.self)
             }
 
             if devMode {
