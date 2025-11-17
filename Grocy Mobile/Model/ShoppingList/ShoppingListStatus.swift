@@ -31,11 +31,11 @@ enum ShoppingListStatus: String {
         case .all:
             return "list.bullet"
         case .belowMinStock:
-            return "exclamationmark.triangle"
+            return "exclamationmark.triangle.fill"
         case .done:
-            return "checkmark.circle"
+            return MySymbols.done
         case .undone:
-            return "circle"
+            return MySymbols.undone
         }
     }
 }

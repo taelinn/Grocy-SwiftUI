@@ -74,6 +74,7 @@ struct MySymbols {
     static let search = "magnifyingglass"
     static let menuPick = "chevron.down.circle"
     static let done = "checkmark.circle"
+    static let undone = "circle"
     static let clear = "clear"
     static let undo = "arrow.counterclockwise"
     static let timedRefresh = "clock.arrow.2.circlepath"
