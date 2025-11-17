@@ -96,14 +96,18 @@ struct MDLocationsView: View {
                 )
             }
         }
-        .sheet(
-            isPresented: $showAddLocation,
-            content: {
-                NavigationStack {
-                    MDLocationFormView()
+        #if os(iOS)
+            .sheet(
+                isPresented: $showAddLocation,
+                content: {
+                    NavigationStack {
+                        MDLocationFormView()
+                    }
                 }
-            }
-        )
+            )
+        #else
+            .navigationDestination(isPresented: $showAddLocation, destination: { NavigationStack { MDLocationFormView() } })
+        #endif
         .navigationDestination(
             for: MDLocation.self,
             destination: { location in

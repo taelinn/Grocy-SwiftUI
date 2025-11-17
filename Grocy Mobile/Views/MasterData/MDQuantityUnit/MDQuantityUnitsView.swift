@@ -90,14 +90,18 @@ struct MDQuantityUnitsView: View {
                 )
             }
         }
-        .sheet(
-            isPresented: $showAddQuantityUnit,
-            content: {
-                NavigationStack {
-                    MDQuantityUnitFormView()
+        #if os(iOS)
+            .sheet(
+                isPresented: $showAddQuantityUnit,
+                content: {
+                    NavigationStack {
+                        MDQuantityUnitFormView()
+                    }
                 }
-            }
-        )
+            )
+        #else
+            .navigationDestination(isPresented: $showAddQuantityUnit, destination: { NavigationStack { MDQuantityUnitFormView() } })
+        #endif
         .navigationDestination(
             for: MDQuantityUnit.self,
             destination: { quantityUnit in

@@ -91,14 +91,18 @@ struct MDStoresView: View {
                 )
             }
         }
-        .sheet(
-            isPresented: $showAddStore,
-            content: {
-                NavigationStack {
-                    MDStoreFormView()
+        #if os(iOS)
+            .sheet(
+                isPresented: $showAddStore,
+                content: {
+                    NavigationStack {
+                        MDStoreFormView()
+                    }
                 }
-            }
-        )
+            )
+        #else
+            .navigationDestination(isPresented: $showAddStore, destination: { NavigationStack { MDStoreFormView() } })
+        #endif
         .navigationDestination(
             for: MDStore.self,
             destination: { store in

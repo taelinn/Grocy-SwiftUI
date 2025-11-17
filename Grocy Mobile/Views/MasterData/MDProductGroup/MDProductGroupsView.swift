@@ -95,14 +95,18 @@ struct MDProductGroupsView: View {
                 )
             }
         }
-        .sheet(
-            isPresented: $showAddProductGroup,
-            content: {
-                NavigationStack {
-                    MDProductGroupFormView()
+        #if os(iOS)
+            .sheet(
+                isPresented: $showAddProductGroup,
+                content: {
+                    NavigationStack {
+                        MDProductGroupFormView()
+                    }
                 }
-            }
-        )
+            )
+        #else
+            .navigationDestination(isPresented: $showAddProductGroup, destination: { NavigationStack { MDProductGroupFormView() } })
+        #endif
         .navigationDestination(
             for: MDProductGroup.self,
             destination: { productGroup in
