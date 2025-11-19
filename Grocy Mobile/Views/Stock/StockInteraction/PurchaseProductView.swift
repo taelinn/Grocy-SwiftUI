@@ -212,7 +212,7 @@ struct PurchaseProductView: View {
                             MyDoubleStepperOptional(amount: $price, description: "Price", minAmount: 0, amountStep: 1.0, amountName: "", systemImage: MySymbols.price, currencySymbol: getCurrencySymbol())
 
                             if isTotalPrice && productID != nil {
-                                Text("means \(grocyVM.getFormattedCurrency(amount: unitPrice ?? 0)) per \(currentQuantityUnit?.name ?? "")")
+                                Text("means \(grocyVM.getFormattedCurrency(amount: unitPrice ?? 0)) per \(stockQuantityUnit?.name ?? "")")
                                     .font(.caption)
                                     .foregroundStyle(Color(.GrocyColors.grocyGray))
                             }
