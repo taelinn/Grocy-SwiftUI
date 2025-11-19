@@ -82,7 +82,7 @@ struct MyDoubleStepper: View {
                             }
                         }
                         if let minAmount = minAmount, amount < minAmount {
-                            Text("This cannot be lower than \(smallestValidAmount, specifier: "%.2f") and needs to be a valid number with max.  \(userSettings?.stockDecimalPlacesAmounts ?? 4) decimal places")
+                            Text("This cannot be lower than \(smallestValidAmount.formatted(.number.precision(.fractionLength(0...(userSettings?.stockDecimalPlacesAmounts ?? 4))))) and needs to be a valid number with max.  \(userSettings?.stockDecimalPlacesAmounts ?? 4) decimal places")
                                 .font(.caption)
                                 .foregroundStyle(.red)
                                 .fixedSize(horizontal: false, vertical: true)
@@ -139,9 +139,9 @@ struct MyDoubleStepperOptional: View {
     }
 
     var smallestValidAmount: Double {
-        let decPlaces = Int(userSettings?.stockDecimalPlacesAmounts ?? 4)
-        let increment = 1 / pow(10, decPlaces)
-        return (minAmount ?? 0.0) + Double(truncating: increment as NSNumber)
+        let decimalPlaces: Int = Int(userSettings?.stockDecimalPlacesAmounts ?? 4)
+        let increment: Double = pow(10.0, -Double(decimalPlaces))
+        return (minAmount ?? 0.0) + increment
     }
 
     var body: some View {
@@ -195,7 +195,7 @@ struct MyDoubleStepperOptional: View {
                             }
                         }
                         if let minAmount = minAmount, let amount = amount, amount < minAmount {
-                            Text("This cannot be lower than \(smallestValidAmount, specifier: "%.2f") and needs to be a valid number with max.  \(userSettings?.stockDecimalPlacesAmounts ?? 4) decimal places")
+                            Text("This cannot be lower than \(smallestValidAmount.formatted(.number.precision(.fractionLength(0...(userSettings?.stockDecimalPlacesAmounts ?? 4))))) and needs to be a valid number with max.  \(userSettings?.stockDecimalPlacesAmounts ?? 4) decimal places")
                                 .font(.caption)
                                 .foregroundStyle(.red)
                                 .fixedSize(horizontal: false, vertical: true)

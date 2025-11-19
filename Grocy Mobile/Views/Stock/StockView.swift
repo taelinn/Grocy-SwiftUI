@@ -206,7 +206,7 @@ struct StockView: View {
     }
 
     var summedValueStr: String {
-        return "\(String(format: "%.2f", summedValue)) \(getCurrencySymbol())"
+        return "\(summedValue.formatted(.number.precision(.fractionLength(0...2)))) \(getCurrencySymbol())"
     }
 
     var body: some View {
@@ -219,7 +219,7 @@ struct StockView: View {
             if grocyVM.failedToLoadObjects.filter({ dataToUpdate.contains($0) }).count > 0 {
                 ServerProblemView()
             } else if stock.isEmpty {
-                ContentUnavailableView("Stock is empty.", systemImage: MySymbols.quantityUnit)
+                ContentUnavailableView("Stock is empty.", systemImage: MySymbols.stockOverview)
             } else if filteredAndSearchedStock.isEmpty {
                 ContentUnavailableView.search
             }

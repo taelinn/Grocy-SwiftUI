@@ -170,7 +170,7 @@ struct MDQuantityUnitConversionFormView: View {
                     .font(.caption)
             }
 
-            MyDoubleStepper(amount: $quantityUnitConversion.factor, description: "Factor", minAmount: 0.0001, amountStep: 1, amountName: "", systemImage: MySymbols.amount)
+            MyDoubleStepper(amount: $quantityUnitConversion.factor, description: "Factor", minAmount: 0.0001, amountStep: 1.0, amountName: "", systemImage: MySymbols.amount)
 
             if existingQuantityUnitConversion == nil {
                 VStack(alignment: .leading) {

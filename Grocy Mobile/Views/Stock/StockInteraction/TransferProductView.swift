@@ -217,7 +217,7 @@ struct TransferProductView: View {
                                 Text("").tag(nil as String?)
                                 ForEach(stockProductEntries, id: \.stockID) { stockProduct in
                                     VStack(alignment: .leading) {
-                                        Text("\(Text("Amount")): \(stockProduct.amount, specifier: "%.2f")")
+                                        Text("\(Text("Amount")): \(stockProduct.amount.formatted(.number.precision(.fractionLength(0...4))))")
                                         Text("Due on \(formatDateAsString(stockProduct.bestBeforeDate, localizationKey: localizationKey) ?? "?")")
                                         Text(stockProduct.stockEntryOpen == true ? "Opened" : "Not opened")
                                         if stockProduct.note != nil {

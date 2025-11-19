@@ -123,7 +123,7 @@ struct ShoppingListRowActionsView: View {
                     message: { Text(mdProducts.first(where: { $0.id == shoppingListItem.productID })?.name ?? "Name not found") }
                 )
 
-            RowInteractionButton(image: "shippingbox", backgroundColor: Color.blue, helpString: "Add \(shoppingListItem.amount, specifier: "%.2f") \(quantityUnit?.getName(amount: shoppingListItem.amount) ?? "") \(productName) to stock")
+            RowInteractionButton(image: "shippingbox", backgroundColor: Color.blue, helpString: "Add \(shoppingListItem.amount.formatted(.number.precision(.fractionLength(0...4)))) \(quantityUnit?.getName(amount: shoppingListItem.amount) ?? "") \(productName) to stock")
                 .onTapGesture {
                     showPurchase.toggle()
                 }
