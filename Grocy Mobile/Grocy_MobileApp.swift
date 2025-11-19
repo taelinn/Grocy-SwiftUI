@@ -15,6 +15,13 @@ struct Grocy_MobileApp: App {
     @AppStorage("localizationKey") var localizationKey: String = "en"
     @AppStorage("onboardingNeeded") var onboardingNeeded: Bool = true
     @AppStorage("isLoggedIn") var isLoggedIn: Bool = false
+    @AppStorage("isDemoModus") var isDemoModus: Bool = false
+
+    // For legacy migration reasons
+    @AppStorage("grocyServerURL") var grocyServerURL: String = ""
+    @AppStorage("grocyAPIKey") var grocyAPIKey: String = ""
+    @AppStorage("useHassIngress") var useHassIngress: Bool = false
+    @AppStorage("hassToken") var hassToken: String = ""
 
     let modelContainer: ModelContainer
 
@@ -61,6 +68,22 @@ struct Grocy_MobileApp: App {
                 _grocyVM = State(initialValue: GrocyViewModel(modelContext: modelContext))
             } catch {
                 fatalError("Failed to create ModelContainer after reset: \(error)")
+            }
+        }
+
+        // Do migration for old AppStorage based to profile
+        let modelContext = ModelContext(modelContainer)
+        var descriptor = FetchDescriptor<ServerProfile>()
+        descriptor.fetchLimit = 0
+        
+        let numProfiles: Int = (try? modelContext.fetchCount(descriptor)) ?? 0
+        if isLoggedIn && !isDemoModus && numProfiles == 0 && !grocyServerURL.isEmpty && !grocyAPIKey.isEmpty {
+            let profile = ServerProfile(name: "", grocyServerURL: grocyServerURL, grocyAPIKey: grocyAPIKey, useHassIngress: useHassIngress, hassToken: hassToken)
+            profile.isActive = true
+            modelContext.insert(profile)
+            let vm = grocyVM
+            Task {
+                await vm.setLoginModus()
             }
         }
     }
