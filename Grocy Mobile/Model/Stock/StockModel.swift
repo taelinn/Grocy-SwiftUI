@@ -20,7 +20,7 @@ class StockElement: Codable, Equatable {
     var isAggregatedAmount: Bool
     var dueType: Int
     var productID: Int
-    @Relationship() var product: MDProduct?
+    @Relationship(deleteRule: .nullify) var product: MDProduct?
     
     enum CodingKeys: String, CodingKey {
         case amount
