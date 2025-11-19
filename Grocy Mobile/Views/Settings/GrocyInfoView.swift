@@ -8,22 +8,23 @@
 import SwiftUI
 
 struct GrocyInfoView: View {
+    @Environment(GrocyViewModel.self) private var grocyVM
+
     var systemInfo: SystemInfo? = nil
 
     @AppStorage("localizationKey") var localizationKey: String = "en"
     @AppStorage("isDemoModus") var isDemoModus: Bool = false
-    @AppStorage("grocyServerURL") var grocyServerURL: String = ""
     @AppStorage("demoServerURL") var demoServerURL: String = GrocyAPP.DemoServers.noLanguage.rawValue
 
     var isSupportedServer: Bool {
-        if let systemInfo = systemInfo {
+        if let systemInfo {
             return GrocyAPP.supportedVersions.contains(systemInfo.grocyVersion.version)
         } else {
             return false
         }
     }
     var releaseDate: String {
-        if let systemInfo = systemInfo {
+        if let systemInfo {
             return formatDateOutput(systemInfo.grocyVersion.releaseDate) ?? formatTimestampOutput(systemInfo.grocyVersion.releaseDate, localizationKey: localizationKey) ?? ""
         } else {
             return ""
@@ -33,41 +34,94 @@ struct GrocyInfoView: View {
     var body: some View {
         Form {
             if isDemoModus {
-                Link(
-                    destination: URL(string: demoServerURL)!,
+                LabeledContent(
+                    content: {
+                        Link(
+                            destination: URL(string: demoServerURL)!,
+                            label: {
+                                Text(demoServerURL)
+                            }
+                        )
+                    },
                     label: {
-                        Label("Grocy Server Demo URL: \(demoServerURL)", systemImage: "safari")
+                        Label("Grocy Server Demo URL", systemImage: "safari")
+                            .foregroundStyle(.primary)
                     }
                 )
-            } else {
-                Link(
-                    destination: URL(string: grocyServerURL)!,
+            } else if let grocyServerURL = grocyVM.selectedServerProfile?.grocyServerURL {
+                LabeledContent(
+                    content: {
+                        Link(
+                            destination: URL(string: grocyServerURL)!,
+                            label: {
+                                Text(grocyServerURL)
+                            }
+                        )
+                    },
                     label: {
-                        Label("Grocy Server URL: \(grocyServerURL)", systemImage: "safari")
+                        Label("Grocy Server URL", systemImage: "safari")
+                            .foregroundStyle(.primary)
                     }
                 )
             }
-            if let systemInfo = systemInfo {
-                if isSupportedServer {
-                    Label("Supported server version: \(systemInfo.grocyVersion.version)", systemImage: MySymbols.success)
-                        .foregroundStyle(.green)
-                } else {
-                    Label("Unsupported server version: \(systemInfo.grocyVersion.version)", systemImage: MySymbols.failure)
-                        .foregroundStyle(.red)
-                }
-                Label("Release date: \(releaseDate)", systemImage: MySymbols.date)
-                    .foregroundStyle(.primary)
-                Label("PHP version: \(systemInfo.phpVersion)", systemImage: "chevron.left.forwardslash.chevron.right")
-                    .foregroundStyle(.primary)
-                Label("SQLite version: \(systemInfo.sqliteVersion)", systemImage: "cylinder.split.1x2")
-                    .foregroundStyle(.primary)
+            if let systemInfo {
+                LabeledContent(
+                    content: {
+                        Text(systemInfo.grocyVersion.version)
+                    },
+                    label: {
+                        Label(isSupportedServer ? "Supported server version" : "Unsupported server version", systemImage: isSupportedServer ? MySymbols.success : MySymbols.failure)
+                    }
+                )
+                .foregroundStyle(isSupportedServer ? .green : .red)
+                LabeledContent(
+                    content: {
+                        Text(releaseDate)
+                    },
+                    label: {
+                        Label("Release date", systemImage: MySymbols.date)
+                            .foregroundStyle(.primary)
+                    }
+                )
+                LabeledContent(
+                    content: {
+                        Text(systemInfo.phpVersion)
+                    },
+                    label: {
+                        Label("PHP version", systemImage: "chevron.left.forwardslash.chevron.right")
+                            .foregroundStyle(.primary)
+                    }
+                )
+                LabeledContent(
+                    content: {
+                        Text(systemInfo.sqliteVersion)
+                    },
+                    label: {
+                        Label("SQLite version", systemImage: "cylinder.split.1x2")
+                            .foregroundStyle(.primary)
+                    }
+                )
                 if let os = systemInfo.os {
-                    Label("OS: \(os)", systemImage: "server.rack")
-                        .foregroundStyle(.primary)
+                    LabeledContent(
+                        content: {
+                            Text(os)
+                        },
+                        label: {
+                            Label("OS", systemImage: "server.rack")
+                                .foregroundStyle(.primary)
+                        }
+                    )
                 }
                 if let client = systemInfo.client {
-                    Label("Client information: \(client)", systemImage: "ipad.and.iphone")
-                        .foregroundStyle(.primary)
+                    LabeledContent(
+                        content: {
+                            Text(client)
+                        },
+                        label: {
+                            Label("Client information", systemImage: "ipad.and.iphone")
+                                .foregroundStyle(.primary)
+                        }
+                    )
                 }
             }
         }
