@@ -18,6 +18,12 @@ struct MyIntStepper: View {
     var errorMessage: LocalizedStringKey?
 
     var systemImage: String?
+    
+    var formatter: NumberFormatter {
+        let f = NumberFormatter()
+        f.allowsFloats = false
+        return f
+    }
 
     var body: some View {
         Stepper(
@@ -37,7 +43,7 @@ struct MyIntStepper: View {
                             }
                         }
                         HStack {
-                            TextField("", value: $amount, formatter: NumberFormatter())
+                            TextField("", value: $amount, formatter: formatter)
                                 #if os(macOS)
                                     .frame(width: 90)
                                 #elseif os(iOS)
@@ -72,6 +78,12 @@ struct MyIntStepperOptional: View {
     var errorMessage: LocalizedStringKey?
 
     var systemImage: String?
+    
+    var formatter: NumberFormatter {
+        let f = NumberFormatter()
+        f.allowsFloats = false
+        return f
+    }
 
     var body: some View {
         Stepper(
@@ -110,7 +122,7 @@ struct MyIntStepperOptional: View {
                             }
                         }
                         HStack {
-                            TextField("", value: $amount, formatter: NumberFormatter())
+                            TextField("", value: $amount, formatter: formatter)
                                 #if os(macOS)
                                     .frame(width: 90)
                                 #elseif os(iOS)

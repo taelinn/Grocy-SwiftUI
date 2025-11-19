@@ -70,7 +70,7 @@ struct MyDoubleStepper: View {
                             }
                         }
                         HStack {
-                            TextField("", value: $amount, formatter: NumberFormatter())
+                            TextField("", value: $amount, formatter: formatter)
                                 #if os(macOS)
                                     .frame(width: 90)
                                 #elseif os(iOS)
@@ -183,7 +183,7 @@ struct MyDoubleStepperOptional: View {
                             }
                         }
                         HStack {
-                            TextField("", value: $amount, formatter: NumberFormatter())
+                            TextField("", value: $amount, formatter: formatter)
                                 #if os(macOS)
                                     .frame(width: 90)
                                 #elseif os(iOS)
