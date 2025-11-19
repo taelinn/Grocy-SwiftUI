@@ -12,15 +12,13 @@ import SwiftData
 import SwiftUI
 import WebKit
 
-@Observable
 @MainActor
+@Observable
 class GrocyViewModel {
     var grocyApi: GrocyAPI
 
     let modelContext: ModelContext
 
-    @ObservationIgnored @AppStorage("grocyServerURL") var grocyServerURL: String = ""
-    @ObservationIgnored @AppStorage("grocyAPIKey") var grocyAPIKey: String = ""
     @ObservationIgnored @AppStorage("isLoggedIn") var isLoggedIn: Bool = false
     @ObservationIgnored @AppStorage("isDemoModus") var isDemoModus: Bool = false
     @ObservationIgnored @AppStorage("demoServerURL") var demoServerURL: String = GrocyAPP.DemoServers.noLanguage.rawValue
@@ -30,8 +28,8 @@ class GrocyViewModel {
     @ObservationIgnored @AppStorage("autoReloadInterval") private var autoReloadInterval: Int = 0
     @ObservationIgnored @AppStorage("syncShoppingListToReminders") private var syncShoppingListToReminders: Bool = false
     @ObservationIgnored @AppStorage("shoppingListToSyncID") private var shoppingListToSyncID: Int = 0
-    @ObservationIgnored @AppStorage("useHassIngress") var useHassIngress: Bool = false
-    @ObservationIgnored @AppStorage("hassToken") var hassToken: String = ""
+
+    @ObservationIgnored @State private var refreshTimer: Timer?
 
     var systemInfo: SystemInfo?
     var systemDBChangedTime: SystemDBChangedTime?
@@ -86,9 +84,12 @@ class GrocyViewModel {
 
     var cancellables = Set<AnyCancellable>()
 
-    @ObservationIgnored @State private var refreshTimer: Timer?
-
     let jsonEncoder = JSONEncoder()
+
+    var selectedServerProfile: ServerProfile? {
+        let descriptor = FetchDescriptor<ServerProfile>(predicate: #Predicate<ServerProfile> { $0.isActive == true })
+        return (try? modelContext.fetch(descriptor))?.first
+    }
 
     init(modelContext: ModelContext) {
         self.grocyApi = GrocyApi()
@@ -102,17 +103,19 @@ class GrocyViewModel {
             try container.encode(dateString)
         })
         jsonEncoder.outputFormatting = .prettyPrinted
-        if isLoggedIn {
-            grocyApi.setLoginData(baseURL: grocyServerURL, apiKey: grocyAPIKey)
+        if isLoggedIn, let selectedServerProfile {
             Task {
                 do {
                     try await checkServer(
-                        baseURL: !isDemoModus ? grocyServerURL : demoServerURL,
-                        apiKey: !isDemoModus ? grocyAPIKey : "",
-                        isDemoMode: isDemoModus
+                        baseURL: !isDemoModus ? selectedServerProfile.grocyServerURL : demoServerURL,
+                        apiKey: !isDemoModus ? selectedServerProfile.grocyAPIKey : "",
+                        useHassIngress: !isDemoModus ? selectedServerProfile.useHassIngress : false,
+                        hassToken: !isDemoModus ? selectedServerProfile.hassToken : "",
+                        isDemoMode: isDemoModus,
+                        customHeaders: selectedServerProfile.customHeaders
                     )
                 } catch {
-
+                    GrocyLogger.error("\(error)")
                 }
             }
         } else {
@@ -122,7 +125,7 @@ class GrocyViewModel {
 
     func setDemoModus() {
         isDemoModus = true
-        grocyApi.setLoginData(baseURL: demoServerURL, apiKey: "")
+        grocyApi.setLoginData(baseURL: demoServerURL, apiKey: "", customHeaders: [:])
         grocyApi.setTimeoutInterval(timeoutInterval: timeoutInterval)
         isLoggedIn = true
         self.setUpdateTimer()
@@ -130,10 +133,18 @@ class GrocyViewModel {
     }
 
     func setLoginModus() async {
-        if useHassIngress, let hassAPIPath = getHomeAssistantPathFromIngress(ingressPath: grocyServerURL) {
-            await grocyApi.setHassData(hassURL: hassAPIPath, hassToken: hassToken)
+        guard let selectedServerProfile else {
+            GrocyLogger.info("Not logged in")
+            return
         }
-        grocyApi.setLoginData(baseURL: grocyServerURL, apiKey: grocyAPIKey)
+        if selectedServerProfile.useHassIngress, let hassAPIPath = getHomeAssistantPathFromIngress(ingressPath: selectedServerProfile.grocyServerURL) {
+            await grocyApi.setHassData(hassURL: hassAPIPath, hassToken: selectedServerProfile.hassToken)
+        }
+        grocyApi.setLoginData(
+            baseURL: selectedServerProfile.grocyServerURL,
+            apiKey: selectedServerProfile.grocyAPIKey,
+            customHeaders: Dictionary(uniqueKeysWithValues: selectedServerProfile.customHeaders.map({ ($0.headerName, $0.headerValue) }))
+        )
         grocyApi.setTimeoutInterval(timeoutInterval: timeoutInterval)
         isDemoModus = false
         isLoggedIn = true
@@ -179,12 +190,12 @@ class GrocyViewModel {
         }
     }
 
-    func checkServer(baseURL: String, apiKey: String?, isDemoMode: Bool) async throws {
+    func checkServer(baseURL: String, apiKey: String?, useHassIngress: Bool = false, hassToken: String = "", isDemoMode: Bool, customHeaders: [LoginCustomHeader] = []) async throws {
         self.grocyApi = GrocyApi()
-        if useHassIngress && !isDemoMode, let hassAPIPath = getHomeAssistantPathFromIngress(ingressPath: grocyServerURL) {
+        if useHassIngress && !isDemoMode, let hassAPIPath = getHomeAssistantPathFromIngress(ingressPath: baseURL) {
             await grocyApi.setHassData(hassURL: hassAPIPath, hassToken: hassToken)
         }
-        grocyApi.setLoginData(baseURL: baseURL, apiKey: apiKey ?? "")
+        grocyApi.setLoginData(baseURL: baseURL, apiKey: apiKey ?? "", customHeaders: Dictionary(uniqueKeysWithValues: customHeaders.map({ ($0.headerName, $0.headerValue) })))
         grocyApi.setTimeoutInterval(timeoutInterval: timeoutInterval)
         let systemInfo = try await grocyApi.getSystemInfo()
         if !systemInfo.grocyVersion.version.isEmpty {
@@ -420,51 +431,51 @@ class GrocyViewModel {
     }
 
     func deleteAllCachedData() {
-        systemInfo = nil
-        systemDBChangedTime = nil
-        systemConfig = nil
-        userSettings = nil
+        self.systemInfo = nil
+        self.systemDBChangedTime = nil
+        self.systemConfig = nil
+        self.userSettings = nil
 
-        users = []
-        currentUser = nil
-        stock = []
-        volatileStock = nil
-        stockJournal = []
-        shoppingListDescriptions = []
-        shoppingList = []
-        recipes = []
-        recipeFulfillments = []
-        recipePosResolved = []
+        self.users = []
+        self.currentUser = nil
+        self.stock = []
+        self.volatileStock = nil
+        self.stockJournal = []
+        self.shoppingListDescriptions = []
+        self.shoppingList = []
+        self.recipes = []
+        self.recipeFulfillments = []
+        self.recipePosResolved = []
 
-        mdProducts = []
-        mdProductBarcodes = []
-        mdLocations = []
-        mdStores = []
-        mdQuantityUnits = []
-        mdQuantityUnitConversions = []
-        mdProductGroups = []
-        mdBatteries = []
-        mdTaskCategories = []
-        mdUserFields = []
-        mdUserEntities = []
+        self.mdProducts = []
+        self.mdProductBarcodes = []
+        self.mdLocations = []
+        self.mdStores = []
+        self.mdQuantityUnits = []
+        self.mdQuantityUnitConversions = []
+        self.mdProductGroups = []
+        self.mdBatteries = []
+        self.mdTaskCategories = []
+        self.mdUserFields = []
+        self.mdUserEntities = []
 
-        stockProductDetails = [:]
-        stockProductLocations = [:]
-        stockProductEntries = [:]
-        stockProductPriceHistories = [:]
+        self.stockProductDetails = [:]
+        self.stockProductLocations = [:]
+        self.stockProductEntries = [:]
+        self.stockProductPriceHistories = [:]
 
-        lastStockActions = []
+        self.lastStockActions = []
 
-        timeStampsObjects.removeAll()
-        timeStampsAdditionalObjects.removeAll()
+        self.timeStampsObjects.removeAll()
+        self.timeStampsAdditionalObjects.removeAll()
 
-        failedToLoadObjects.removeAll()
-        failedToLoadAdditionalObjects.removeAll()
-        failedToLoadErrors.removeAll()
+        self.failedToLoadObjects.removeAll()
+        self.failedToLoadAdditionalObjects.removeAll()
+        self.failedToLoadErrors.removeAll()
 
-        productPictures.removeAll()
-        userPictures.removeAll()
-        recipePictures.removeAll()
+        self.productPictures.removeAll()
+        self.userPictures.removeAll()
+        self.recipePictures.removeAll()
 
         do {
             try self.modelContext.delete(model: MDProduct.self)
@@ -486,6 +497,8 @@ class GrocyViewModel {
             try self.modelContext.delete(model: StockProduct.self)
             try self.modelContext.delete(model: Recipe.self)
             try self.modelContext.delete(model: RecipePosResolvedElement.self)
+            try self.modelContext.delete(model: StockLocation.self)
+            try self.modelContext.delete(model: SystemConfig.self)
         } catch {
             GrocyLogger.error("\(error)")
         }
@@ -646,28 +659,28 @@ class GrocyViewModel {
             case .entries:
                 let stockEntries: StockEntries = try await grocyApi.getStockProductInfo(stockModeGet: .entries, productID: productID, queries: queries)
                 self.stockProductEntries[productID] = stockEntries
-                
+
                 // Process any pending changes before proceeding
                 modelContext.processPendingChanges()
-                
+
                 let fetchDescriptor = FetchDescriptor<StockEntry>(
                     predicate: #Predicate { entry in
                         entry.productID == productID
                     }
                 )
                 let existingObjects = try modelContext.fetch(fetchDescriptor)
-                
+
                 // Build lookup dictionaries
                 let existingById = Dictionary(uniqueKeysWithValues: existingObjects.map { ($0.id, $0) })
                 let incomingById = Dictionary(uniqueKeysWithValues: stockEntries.map { ($0.id, $0) })
-                
+
                 // Delete removed objects
                 for (id, existingObject) in existingById {
                     if incomingById[id] == nil {
                         modelContext.delete(existingObject)
                     }
                 }
-                
+
                 // Insert new or updated objects
                 for (id, newObject) in incomingById {
                     if let existing = existingById[id] {
@@ -680,7 +693,7 @@ class GrocyViewModel {
                         modelContext.insert(newObject)
                     }
                 }
-                
+
                 try modelContext.save()
             case .priceHistory:
                 print("not implemented")

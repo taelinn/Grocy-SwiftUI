@@ -7,6 +7,9 @@
     " " : {
       "shouldTranslate" : false
     },
+    ":" : {
+      "shouldTranslate" : false
+    },
     "(%@)" : {
       "localizations" : {
         "de" : {
@@ -27,6 +30,17 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "%1$@ (%2$@)"
+          }
+        }
+      },
+      "shouldTranslate" : false
+    },
+    "%@ (%lld)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ (%2$lld)"
           }
         }
       },
@@ -4619,6 +4633,16 @@
         }
       }
     },
+    "Add" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hinzufügen"
+          }
+        }
+      }
+    },
     "Add %.2f %@ %@ to stock" : {
       "localizations" : {
         "de" : {
@@ -7487,70 +7511,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "平均庫存期"
-          }
-        }
-      }
-    },
-    "Back" : {
-      "localizations" : {
-        "cs" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zpět"
-          }
-        },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zurück"
-          }
-        },
-        "fr-FR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Retour"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Indietro"
-          }
-        },
-        "nb" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tilbake"
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Terug"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Powrót"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Voltar"
-          }
-        },
-        "pt-PT" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Voltar"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "返回"
           }
         }
       }
@@ -10808,18 +10768,18 @@
         }
       }
     },
-    "Client information: %@" : {
+    "Client information" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Client-Informationen: %@"
+            "value" : "Client-Informationen"
           }
         },
         "fr-FR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Informations sur le client : %@"
+            "value" : "Informations sur le client"
           }
         }
       }
@@ -14028,6 +13988,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "新增自定義欄位"
+          }
+        }
+      }
+    },
+    "Custom Headers" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Benutzerdefinierte Header"
           }
         }
       }
@@ -20150,6 +20120,16 @@
         }
       }
     },
+    "Edit" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bearbeiten"
+          }
+        }
+      }
+    },
     "Edit barcode" : {
       "localizations" : {
         "cs" : {
@@ -24704,23 +24684,22 @@
         }
       }
     },
-    "Grocy Server Demo URL: %@" : {
+    "Grocy Server Demo URL" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Grocy Demo-Server Addresse: %@"
+            "value" : "Grocy Demo-Server Addresse"
           }
         }
-      },
-      "shouldTranslate" : false
+      }
     },
-    "Grocy Server URL: %@" : {
+    "Grocy Server URL" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Grocy Server Addresse: %@"
+            "value" : "Grocy Server Addresse"
           }
         }
       },
@@ -25476,6 +25455,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "單數形式"
+          }
+        }
+      }
+    },
+    "Incompatible server" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inkompatibler Server"
           }
         }
       }
@@ -27362,6 +27351,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "以%@身份登录"
+          }
+        }
+      }
+    },
+    "Login" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Einloggen"
           }
         }
       }
@@ -32754,12 +32753,12 @@
         }
       }
     },
-    "OS: %@" : {
+    "OS" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "OS: %@"
+            "value" : "OS"
           }
         }
       },
@@ -33837,12 +33836,12 @@
         }
       }
     },
-    "PHP version: %@" : {
+    "PHP version" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "PHP-Version: %@"
+            "value" : "PHP-Version"
           }
         }
       },
@@ -38411,18 +38410,18 @@
         }
       }
     },
-    "Release date: %@" : {
+    "Release date" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Veröffentlichungsdatum: %@"
+            "value" : "Veröffentlichungsdatum"
           }
         },
         "fr-FR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Date de sortie : %@"
+            "value" : "Date de sortie"
           }
         }
       }
@@ -39596,28 +39595,6 @@
         }
       }
     },
-    "Server: %@ %@" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Server: %1$@ %2$@"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Server: %1$@ %2$@"
-          }
-        },
-        "fr-FR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Serveur : %1$@ %2$@"
-          }
-        }
-      }
-    },
     "Settings" : {
       "localizations" : {
         "ca" : {
@@ -40000,6 +39977,16 @@
     },
     "SHOPPING LIST" : {
       "shouldTranslate" : false
+    },
+    "Shopping list is empty." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Einkaufsliste ist leer."
+          }
+        }
+      }
     },
     "Shopping list settings" : {
       "localizations" : {
@@ -42091,12 +42078,12 @@
         }
       }
     },
-    "SQLite version: %@" : {
+    "SQLite version" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "SQLite-Version: %@"
+            "value" : "SQLite-Version"
           }
         }
       },
@@ -44034,18 +44021,18 @@
         }
       }
     },
-    "Supported server version: %@" : {
+    "Supported server version" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Unterstützte Server-Version: %@"
+            "value" : "Unterstützte Server-Version"
           }
         },
         "fr-FR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Version du serveur prise en charge : %@"
+            "value" : "Version du serveur prise en charge"
           }
         }
       }
@@ -49568,18 +49555,18 @@
         }
       }
     },
-    "Unsupported server version: %@" : {
+    "Unsupported server version" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nicht unterstützte Server-Version: %@"
+            "value" : "Nicht unterstützte Server-Version"
           }
         },
         "fr-FR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Version du serveur non prise en charge : %@"
+            "value" : "Version du serveur non prise en charge"
           }
         }
       }

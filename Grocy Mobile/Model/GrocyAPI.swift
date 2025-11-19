@@ -62,7 +62,7 @@ struct EmptyResponse: Codable {
 
 @MainActor
 protocol GrocyAPI {
-    func setLoginData(baseURL: String, apiKey: String)
+    func setLoginData(baseURL: String, apiKey: String, customHeaders: [String: String])
     func setHassData(hassURL: String, hassToken: String) async
     func clearHassData()
     func setTimeoutInterval(timeoutInterval: Double)
@@ -115,10 +115,12 @@ public class GrocyApi: GrocyAPI {
 
     private var baseURL: String = ""
     private var apiKey: String = ""
+    private var customHeaders: [String: String] = [:]
 
-    func setLoginData(baseURL: String, apiKey: String) {
+    func setLoginData(baseURL: String, apiKey: String, customHeaders: [String: String] = [:]) {
         self.baseURL = baseURL
         self.apiKey = apiKey
+        self.customHeaders = customHeaders
     }
 
     func setHassData(hassURL: String, hassToken: String) {
@@ -401,11 +403,13 @@ public class GrocyApi: GrocyAPI {
         else { preconditionFailure("Bad URL") }
         var request = URLRequest(url: url)
         request.httpMethod = method.rawValue
-        request.allHTTPHeaderFields = [
+        var headers = [
             "Content-Type": isOctet ? "application/octet-stream" : "application/json",
             "Accept": "application/json",
             "GROCY-API-KEY": self.apiKey,
         ]
+        headers.merge(self.customHeaders) { current, _ in current }
+        request.allHTTPHeaderFields = headers
 
         if let hassIngressToken = hassIngressToken {
             request.addValue("ingress_session=\(hassIngressToken)", forHTTPHeaderField: "Cookie")

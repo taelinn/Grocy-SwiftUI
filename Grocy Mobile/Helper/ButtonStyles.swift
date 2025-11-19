@@ -7,6 +7,24 @@
 
 import SwiftUI
 
+struct MyGlassButtonStyle: ButtonStyle {
+    let backgroundColor: Color
+    
+    func makeBody(configuration: Configuration) -> some View {
+        HStack {
+            Spacer()
+            configuration
+                .label
+            Spacer()
+        }
+        .font(.title2)
+        .frame(maxWidth: .infinity)
+        .padding()
+        .foregroundStyle(.white)
+        .glassEffect(.regular.tint(backgroundColor).interactive())
+    }
+}
+
 struct FilledButtonStyle: ButtonStyle {
     let cornerRadiusValue: CGFloat = 5.0
     let paddingAmount: CGFloat = 12.0

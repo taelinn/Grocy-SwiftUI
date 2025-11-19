@@ -25,10 +25,7 @@ struct SettingsView: View {
     @State private var selection: SettingsNavigationItem? = nil
     @State private var path = NavigationPath()
 
-    @AppStorage("isDemoModus") var isDemoModus: Bool = true
     @AppStorage("isLoggedIn") var isLoggedIn: Bool = false
-    @AppStorage("grocyServerURL") var grocyServerURL: String = ""
-    @AppStorage("grocyAPIKey") var grocyAPIKey: String = ""
 
     var body: some View {
         NavigationStack(path: $path) {

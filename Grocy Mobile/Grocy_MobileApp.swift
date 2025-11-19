@@ -41,6 +41,8 @@ struct Grocy_MobileApp: App {
             StockLocation.self,
             SystemConfig.self,
             RecipePosResolvedElement.self,
+            LoginCustomHeader.self,
+            ServerProfile.self,
         ])
 
         let config = ModelConfiguration()
@@ -67,22 +69,19 @@ struct Grocy_MobileApp: App {
         WindowGroup {
             if onboardingNeeded {
                 OnboardingView()
-                    .environment(\.locale, Locale(identifier: localizationKey))
             } else {
                 if !isLoggedIn {
                     NavigationStack {
                         LoginView()
-                            .environment(\.locale, Locale(identifier: localizationKey))
-                            .environment(grocyVM)
                     }
                 } else {
                     ContentView()
-                        .environment(\.locale, Locale(identifier: localizationKey))
-                        .environment(grocyVM)
-                        .modelContainer(modelContainer)
                 }
             }
         }
+        .modelContainer(modelContainer)
+        .environment(grocyVM)
+        .environment(\.locale, Locale(identifier: localizationKey))
         .commands {
             SidebarCommands()
             //            #if os(macOS)

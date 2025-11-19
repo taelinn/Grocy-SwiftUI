@@ -66,6 +66,7 @@ struct MySymbols {
     static let cancel = "xmark.circle.fill"
     static let upload = "square.and.arrow.up.fill"
     static let save = "checkmark"
+    static let login = "key.fill"
     static let logout = "rectangle.portrait.and.arrow.right"
     static let reset = "arrow.counterclockwise"
 
