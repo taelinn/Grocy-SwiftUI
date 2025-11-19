@@ -12,11 +12,11 @@ struct ServerProfileRowView: View {
     
     var body: some View {
         HStack {
-            Text(profile.grocyServerURL)
+            Text(profile.name.isEmpty ? profile.grocyServerURL : profile.name)
                 .font(.headline)
             if profile.useHassIngress {
-                Spacer()
                 Image(systemName: "house")
+                    .foregroundStyle(.blue)
             }
             Spacer()
             Image(systemName: profile.isActive ? "checkmark.circle.fill" : "circle")

@@ -87,6 +87,12 @@ struct ServerProfileFormView: View {
         Form {
             Section("Server") {
                 MyTextField(
+                    textToEdit: $serverProfile.name,
+                    description: "Name",
+                    isCorrect: Binding.constant(true),
+                    leadingIcon: MySymbols.name
+                )
+                MyTextField(
                     textToEdit: $serverProfile.grocyServerURL,
                     description: "Server URL",
                     isCorrect: Binding.constant(true),
@@ -229,10 +235,14 @@ struct ServerProfileFormView: View {
                 Button(
                     role: .confirm,
                     action: {
-                        if selectedServerProfile == nil {
-                            serverProfile.isActive = true
+                        if isEditing {
+                            try? modelContext.save()
+                        } else {
+                            if selectedServerProfile == nil {
+                                serverProfile.isActive = true
+                            }
+                            modelContext.insert(serverProfile)
                         }
-                        modelContext.insert(serverProfile)
                         dismiss()
                     }
                 )

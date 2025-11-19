@@ -24,6 +24,7 @@ final class LoginCustomHeader {
 @Model
 final class ServerProfile {
     @Attribute(.unique) var id: UUID
+    var name: String
     var grocyServerURL: String
     var grocyAPIKey: String
     var useHassIngress: Bool
@@ -31,8 +32,9 @@ final class ServerProfile {
     @Relationship(deleteRule: .cascade) var customHeaders: [LoginCustomHeader]
     var isActive: Bool
 
-    init(grocyServerURL: String = "", grocyAPIKey: String = "", useHassIngress: Bool = false, hassToken: String = "", customHeaders: [LoginCustomHeader] = [], isActive: Bool = false) {
+    init(name: String = "", grocyServerURL: String = "", grocyAPIKey: String = "", useHassIngress: Bool = false, hassToken: String = "", customHeaders: [LoginCustomHeader] = [], isActive: Bool = false) {
         self.id = UUID()
+        self.name = name
         self.grocyServerURL = grocyServerURL
         self.grocyAPIKey = grocyAPIKey
         self.useHassIngress = useHassIngress
