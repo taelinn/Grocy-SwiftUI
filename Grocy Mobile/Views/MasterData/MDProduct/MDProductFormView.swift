@@ -70,12 +70,12 @@ struct MDProductFormView: View {
                 mdProductDescription: "",
                 productGroupID: userSettings?.productPresetsProductGroupID,
                 active: true,
-                locationID: userSettings?.productPresetsLocationID ?? 0,
-                storeID: nil,
-                quIDPurchase: userSettings?.productPresetsQuID ?? 0,
-                quIDStock: userSettings?.productPresetsQuID ?? 0,
-                quIDConsume: userSettings?.productPresetsQuID ?? 0,
-                quIDPrice: userSettings?.productPresetsQuID ?? 0,
+                locationID: userSettings?.productPresetsLocationID ?? -1,
+                storeID: -1,
+                quIDPurchase: userSettings?.productPresetsQuID ?? -1,
+                quIDStock: userSettings?.productPresetsQuID ?? -1,
+                quIDConsume: userSettings?.productPresetsQuID ?? -1,
+                quIDPrice: userSettings?.productPresetsQuID ?? -1,
                 minStockAmount: 1.0,
                 defaultDueDays: userSettings?.productPresetsDefaultDueDays ?? 0,
                 defaultDueDaysAfterOpen: 0,
@@ -96,7 +96,7 @@ struct MDProductFormView: View {
                 shouldNotBeFrozen: false,
                 treatOpenedAsOutOfStock: userSettings?.productPresetsTreatOpenedAsOutOfStock ?? false,
                 noOwnStock: false,
-                defaultConsumeLocationID: nil,
+                defaultConsumeLocationID: -1,
                 moveOnOpen: false,
                 autoReprintStockLabel: false,
                 rowCreatedTimestamp: Date().iso8601withFractionalSeconds
@@ -123,7 +123,7 @@ struct MDProductFormView: View {
     }
 
     private var isFormValid: Bool {
-        !(product.name.isEmpty) && isNameCorrect && (product.locationID != 0) && (product.quIDStock != 0) && (product.quIDPurchase != 0) && (product.quIDConsume != 0) && (product.quIDPrice != 0) && isBarcodeCorrect
+        !(product.name.isEmpty) && isNameCorrect && (product.locationID != -1) && (product.quIDStock != -1) && (product.quIDPurchase != -1) && (product.quIDConsume != -1) && (product.quIDPrice != -1) && isBarcodeCorrect
     }
 
     private func saveProduct() async {
@@ -183,13 +183,17 @@ struct MDProductFormView: View {
                 NavigationLink(
                     value: MDProductFormPart.optional,
                     label: {
-                        MyLabelWithSubtitle(title: "Optional properties", subTitle: "\(Text("Status")), \(Text("Parent product")), \(Text("Description")), \(Text("Product group")), \(Text("Energy")), \(Text("Picture"))", systemImage: MySymbols.description)
+                        MyLabelWithSubtitle(
+                            title: "Optional properties",
+                            subTitle: "\(Text("Status")), \(Text("Parent product")), \(Text("Description")), \(Text("Product group")), \(Text("Energy")), \(Text("Picture"))",
+                            systemImage: MySymbols.description
+                        )
                     }
                 )
                 NavigationLink(
                     value: MDProductFormPart.location,
                     label: {
-                        MyLabelWithSubtitle(title: "Default location", subTitle: "\(Text("Location")), \(Text("Store"))", systemImage: MySymbols.location, isProblem: product.locationID == 0)
+                        MyLabelWithSubtitle(title: "Default location", subTitle: "\(Text("Location")), \(Text("Store"))", systemImage: MySymbols.location, isProblem: product.locationID == -1)
                     }
                 )
                 NavigationLink(
@@ -205,7 +209,7 @@ struct MDProductFormView: View {
                             title: "Quantity units",
                             subTitle: "\(Text("Stock")), \(Text("Purchase"))",
                             systemImage: MySymbols.quantityUnit,
-                            isProblem: (product.quIDStock == 0 || product.quIDPurchase == 0 || product.quIDConsume == 0 || product.quIDPrice == 0)
+                            isProblem: (product.quIDStock == -1 || product.quIDPurchase == -1 || product.quIDConsume == -1 || product.quIDPrice == -1)
                         )
                     }
                 )
@@ -253,7 +257,7 @@ struct MDProductFormView: View {
                         }
                     }
                 )
-                .disabled(!isNameCorrect || isProcessing || !isBarcodeCorrect)
+                .disabled(!isFormValid)
                 .keyboardShortcut(.defaultAction)
             }
         })
@@ -358,8 +362,9 @@ struct MDProductFormView: View {
             // Default Location - REQUIRED
             Picker(
                 selection: $product.locationID,
-                label: MyLabelWithSubtitle(title: "Default location", subTitle: "A location is required", systemImage: MySymbols.location, isSubtitleProblem: true, hideSubtitle: product.locationID != 0),
+                label: MyLabelWithSubtitle(title: "Default location", subTitle: "A location is required", systemImage: MySymbols.location, isSubtitleProblem: true, hideSubtitle: product.locationID != -1),
                 content: {
+                    Text("").tag(-1 as Int?)
                     ForEach(mdLocations.filter({ $0.active }), id: \.id) { grocyLocation in
                         Text(grocyLocation.name).tag(grocyLocation.id as Int?)
                     }
@@ -371,7 +376,7 @@ struct MDProductFormView: View {
                     selection: $product.defaultConsumeLocationID,
                     label: MyLabelWithSubtitle(title: "Default consume location", systemImage: MySymbols.location, hideSubtitle: true),
                     content: {
-                        Text("").tag(nil as Int?)
+                        Text("").tag(-1 as Int?)
                         ForEach(mdLocations.filter({ $0.active }), id: \.id) { grocyLocation in
                             Text(grocyLocation.name).tag(grocyLocation.id as Int?)
                         }
@@ -381,7 +386,7 @@ struct MDProductFormView: View {
             }
 
             // Move on open
-            if product.defaultConsumeLocationID != nil {
+            if product.defaultConsumeLocationID != -1 {
                 MyToggle(
                     isOn: $product.moveOnOpen,
                     description: "Move on open",
@@ -395,7 +400,7 @@ struct MDProductFormView: View {
                 selection: $product.storeID,
                 label: MyLabelWithSubtitle(title: "Default store", systemImage: MySymbols.store, hideSubtitle: true),
                 content: {
-                    Text("").tag(nil as Int?)
+                    Text("").tag(-1 as Int?)
                     ForEach(mdStores.filter({ $0.active }), id: \.id) { grocyStore in
                         Text(grocyStore.name).tag(grocyStore.id as Int?)
                     }
@@ -475,22 +480,22 @@ struct MDProductFormView: View {
             HStack {
                 Picker(
                     selection: $product.quIDStock,
-                    label: MyLabelWithSubtitle(title: "Quantity unit stock", subTitle: "A quantity unit is required", systemImage: MySymbols.quantityUnit, isSubtitleProblem: true, hideSubtitle: product.quIDStock != 0),
+                    label: MyLabelWithSubtitle(title: "Quantity unit stock", subTitle: "A quantity unit is required", systemImage: MySymbols.quantityUnit, isSubtitleProblem: true, hideSubtitle: product.quIDStock != -1),
                     content: {
-                        Text("").tag(nil as Int?)
+                        Text("").tag(-1 as Int?)
                         ForEach(mdQuantityUnits.filter({ $0.active }), id: \.id) { grocyQuantityUnit in
                             Text(grocyQuantityUnit.name).tag(grocyQuantityUnit.id as Int?)
                         }
                     }
                 )
                 .onChange(of: product.quIDStock) {
-                    if product.quIDPurchase == 0 {
+                    if product.quIDPurchase == -1 {
                         product.quIDPurchase = product.quIDStock
                     }
-                    if product.quIDConsume == 0 {
+                    if product.quIDConsume == -1 {
                         product.quIDConsume = product.quIDStock
                     }
-                    if product.quIDPrice == 0 {
+                    if product.quIDPrice == -1 {
                         product.quIDPrice = product.quIDStock
                     }
                 }
@@ -502,7 +507,7 @@ struct MDProductFormView: View {
             HStack {
                 Picker(
                     selection: $product.quIDPurchase,
-                    label: MyLabelWithSubtitle(title: "Default quantity unit purchase", subTitle: "A quantity unit is required", systemImage: MySymbols.quantityUnit, isSubtitleProblem: true, hideSubtitle: product.quIDPurchase != 0),
+                    label: MyLabelWithSubtitle(title: "Default quantity unit purchase", subTitle: "A quantity unit is required", systemImage: MySymbols.quantityUnit, isSubtitleProblem: true, hideSubtitle: product.quIDPurchase != -1),
                     content: {
                         Text("")
                             .tag(nil as Int?)
@@ -519,7 +524,7 @@ struct MDProductFormView: View {
             HStack {
                 Picker(
                     selection: $product.quIDConsume,
-                    label: MyLabelWithSubtitle(title: "Default quantity unit consume", subTitle: "A quantity unit is required", systemImage: MySymbols.quantityUnit, isSubtitleProblem: true, hideSubtitle: product.quIDConsume != 0),
+                    label: MyLabelWithSubtitle(title: "Default quantity unit consume", subTitle: "A quantity unit is required", systemImage: MySymbols.quantityUnit, isSubtitleProblem: true, hideSubtitle: product.quIDConsume != -1),
                     content: {
                         Text("")
                             .tag(nil as Int?)
@@ -536,7 +541,7 @@ struct MDProductFormView: View {
             HStack {
                 Picker(
                     selection: $product.quIDPrice,
-                    label: MyLabelWithSubtitle(title: "Quantity unit for prices", subTitle: "A quantity unit is required", systemImage: MySymbols.quantityUnit, isSubtitleProblem: true, hideSubtitle: product.quIDPrice != 0),
+                    label: MyLabelWithSubtitle(title: "Quantity unit for prices", subTitle: "A quantity unit is required", systemImage: MySymbols.quantityUnit, isSubtitleProblem: true, hideSubtitle: product.quIDPrice != -1),
                     content: {
                         Text("")
                             .tag(nil as Int?)
@@ -632,5 +637,4 @@ struct MDProductFormView: View {
 
 #Preview {
     MDProductFormView()
-
 }
