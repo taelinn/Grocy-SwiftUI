@@ -27,16 +27,19 @@ struct LoginStatusView: View {
     @State var unsupportedVersion: String? = nil
 
     private func tryLogin() async {
-        if let selectedServerProfile = grocyVM.selectedServerProfile {
+        if !isDemoMode && grocyVM.selectedServerProfile == nil {
+            loginState = .fail
+            errorMessage = "Please select a server in the settings."
+        } else {
             isLoading = true
             do {
                 try await grocyVM.checkServer(
-                    baseURL: isDemoMode ? demoServerURL : selectedServerProfile.grocyServerURL,
-                    apiKey: isDemoMode ? nil : selectedServerProfile.grocyAPIKey,
-                    useHassIngress: selectedServerProfile.useHassIngress,
-                    hassToken: selectedServerProfile.hassToken,
+                    baseURL: isDemoMode ? demoServerURL : grocyVM.selectedServerProfile!.grocyServerURL,
+                    apiKey: isDemoMode ? nil : grocyVM.selectedServerProfile!.grocyAPIKey,
+                    useHassIngress: isDemoMode ? false : grocyVM.selectedServerProfile!.useHassIngress,
+                    hassToken: isDemoMode ? "" : grocyVM.selectedServerProfile!.hassToken,
                     isDemoMode: isDemoMode,
-                    customHeaders: selectedServerProfile.customHeaders
+                    customHeaders: isDemoMode ? [] : grocyVM.selectedServerProfile!.customHeaders
                 )
                 if GrocyAPP.supportedVersions.contains(grocyVM.systemInfo?.grocyVersion.version ?? "") {
                     loginState = .success

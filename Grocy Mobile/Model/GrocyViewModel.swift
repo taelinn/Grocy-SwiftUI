@@ -112,7 +112,7 @@ class GrocyViewModel {
                         useHassIngress: !isDemoModus ? selectedServerProfile.useHassIngress : false,
                         hassToken: !isDemoModus ? selectedServerProfile.hassToken : "",
                         isDemoMode: isDemoModus,
-                        customHeaders: selectedServerProfile.customHeaders
+                        customHeaders: !isDemoModus ? selectedServerProfile.customHeaders : []
                     )
                 } catch {
                     GrocyLogger.error("\(error)")
