@@ -5,84 +5,108 @@
 //  Created by Georg Meissner on 14.10.21.
 //
 
-import SwiftUI
 import SwiftData
+import SwiftUI
 
 struct AmountSelectionView: View {
-    @Environment(GrocyViewModel.self) private var grocyVM
-    
     @Query(sort: \MDProduct.name, order: .forward) var mdProducts: MDProducts
     @Query(sort: \MDQuantityUnit.id, order: .forward) var mdQuantityUnits: MDQuantityUnits
     @Query(sort: \MDQuantityUnitConversion.id, order: .forward) var mdQuantityUnitConversions: MDQuantityUnitConversions
-    
+
     @Binding var productID: Int?
     @Binding var amount: Double
     @Binding var quantityUnitID: Int?
-    
+
     private var product: MDProduct? {
-        mdProducts.first(where: {$0.id == productID})
+        mdProducts.first(where: { $0.id == productID })
     }
-    
+
     private var quantityUnitConversions: [MDQuantityUnitConversion] {
         if let quIDStock = product?.quIDStock {
-            return mdQuantityUnitConversions
+            return
+                mdQuantityUnitConversions
                 .filter({ $0.toQuID == quIDStock })
                 .filter({ $0.productID == nil ? true : $0.productID == productID })
-        } else { return [] }
+        } else {
+            return []
+        }
     }
-    
+
     private var currentQuantityUnit: MDQuantityUnit? {
         if let quantityUnitID = quantityUnitID {
-            return mdQuantityUnits.first(where: {$0.id == quantityUnitID})
-        } else { return nil }
+            return mdQuantityUnits.first(where: { $0.id == quantityUnitID })
+        } else {
+            return nil
+        }
     }
     private var factoredAmount: Double {
-        return amount * (quantityUnitConversions.first(where: { $0.fromQuID == quantityUnitID})?.factor ?? 1)
+        return amount * (quantityUnitConversions.first(where: { $0.fromQuID == quantityUnitID })?.factor ?? 1)
     }
     private var stockQuantityUnit: MDQuantityUnit? {
         mdQuantityUnits.first(where: { $0.id == product?.quIDStock })
     }
-    
+
     var body: some View {
         Section(header: Text("Amount").font(.headline)) {
+            MyDoubleStepper(
+                amount: $amount,
+                description: "Amount",
+                amountStep: 1.0,
+                amountName: currentQuantityUnit?.getName(amount: amount),
+                systemImage: MySymbols.amount
+            )
+
             VStack(alignment: .leading) {
-                MyDoubleStepper(
-                    amount: $amount,
-                    description: "Amount",
-                    amountStep: 1.0,
-                    amountName: currentQuantityUnit?.getName(amount: amount),
-                    systemImage: MySymbols.amount
-                )
-            }
-            
-            VStack(alignment: .leading) {
-                Picker(selection: $quantityUnitID,
-                       label: Label("Quantity unit", systemImage: MySymbols.quantityUnit).foregroundStyle(.primary),
-                       content: {
-                    Text("")
-                        .tag(nil as Int?)
-                    if let stockQU = mdQuantityUnits.first(where: { $0.id == product?.quIDStock }) {
-                        Text(stockQU.name)
-                            .tag(stockQU.id as Int?)
+                Picker(
+                    selection: $quantityUnitID,
+                    label: Label("Quantity unit", systemImage: MySymbols.quantityUnit).foregroundStyle(.primary),
+                    content: {
+                        Text("")
+                            .tag(nil as Int?)
+                        if let stockQU = mdQuantityUnits.first(where: { $0.id == product?.quIDStock }) {
+                            Text(stockQU.name)
+                                .tag(stockQU.id as Int?)
+                        }
+                        ForEach(
+                            quantityUnitConversions,
+                            id: \.id,
+                            content: { quConversion in
+                                Text(mdQuantityUnits.first(where: { $0.id == quConversion.fromQuID })?.name ?? String(quConversion.fromQuID))
+                                    .tag(quConversion.fromQuID as Int?)
+                            }
+                        )
                     }
-                    ForEach(quantityUnitConversions, id:\.id, content: { quConversion in
-                        Text(mdQuantityUnits.first(where: { $0.id == quConversion.fromQuID})?.name ?? String(quConversion.fromQuID))
-                            .tag(quConversion.fromQuID as Int?)
-                    })
-                })
+                )
                 .disabled(quantityUnitConversions.isEmpty)
                 if quantityUnitID == nil {
                     Text("A quantity unit is required")
                         .font(.caption)
                         .foregroundStyle(.red)
+                } else if quantityUnitID != stockQuantityUnit?.id {
+                    Text("This equals \(factoredAmount.formatted(.number.precision(.fractionLength(0...8)))) \(factoredAmount == 1 ? stockQuantityUnit?.name ?? "?" : stockQuantityUnit?.namePlural ?? "?")")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                 }
             }
         }
     }
 }
 
-//struct AmountSelectionView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        AmountSelectionView()
-//    }
-//}
+#Preview {
+    @Previewable @State var quantityUnitID: Int? = nil
+    @Previewable @State var amount: Double = 250.0
+
+    let grocyVM = GrocyViewModel(modelContext: previewContainer.mainContext)
+
+    NavigationStack {
+        Form {
+            AmountSelectionView(
+                productID: .constant(1),
+                amount: $amount,
+                quantityUnitID: $quantityUnitID
+            )
+        }
+    }
+    .modelContainer(previewContainer)
+    .environment(grocyVM)
+}
