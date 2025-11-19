@@ -39,6 +39,13 @@ struct MyTextField: View {
                         .foregroundStyle(.red)
                         .padding(.top, 4)
                 }
+                if textToEdit.isEmpty, let emptyMessage = emptyMessage {
+                    Text(emptyMessage)
+                        .lineLimit(nil)
+                        .font(.caption)
+                        .foregroundStyle(.red)
+                        .padding(.top, 4)
+                }
             }
         } label: {
             HStack(spacing: 4) {
