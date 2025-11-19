@@ -226,12 +226,6 @@
             "value" : "%@ öppnade"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ öppnade"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -399,12 +393,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ per %@"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@ per %@"
@@ -3152,12 +3140,6 @@
             "value" : "1 %@ är detsamma som..."
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "1 %@ är detsamma som..."
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3409,12 +3391,6 @@
             "value" : "En rubrik krävs"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "En rubrik krävs"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3594,12 +3570,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "En plats krävs"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "En plats krävs"
@@ -3789,12 +3759,6 @@
             "value" : "Ett namn krävs"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ett namn krävs"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3974,12 +3938,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "En mängdenhet krävs"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "En mängdenhet krävs"
@@ -4181,12 +4139,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ett användarnamn krävs"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ett användarnamn krävs"
@@ -4601,12 +4553,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aktiv"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Aktiv"
@@ -5064,12 +5010,6 @@
             "value" : "Lägg till decimalseparator automatiskt för priser"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lägg till decimalseparator automatiskt för priser"
-          }
-        },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5242,12 +5182,6 @@
             "value" : "Lägg till vara"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lägg till vara"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5409,12 +5343,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lägg till produkter med utgångna bäst-före-datum/sista förbrukningsdatum"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Lägg till produkter med utgångna bäst-före-datum/sista förbrukningsdatum"
@@ -5662,12 +5590,6 @@
             "value" : "Lägg till produkter som är under det angivna minsta lagerantalet"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lägg till produkter som är under det angivna minsta lagerantalet"
-          }
-        },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5844,12 +5766,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lägg till i inköpslista"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Lägg till i inköpslista"
@@ -6039,12 +5955,6 @@
             "value" : "Alla"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Alla"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6224,12 +6134,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mängd"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mängd"
@@ -6998,12 +6902,6 @@
             "value" : "Hämta om automatiskt vid externa ändringar"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hämta om automatiskt vid externa ändringar"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -7159,12 +7057,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lägg automatiskt till produkter som ligger under deras definierade minsta lagermängd i inköpslistan"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Lägg automatiskt till produkter som ligger under deras definierade minsta lagermängd i inköpslistan"
@@ -7472,12 +7364,6 @@
             "value" : "Genomsnitt pris"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Genomsnitt pris"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -7662,12 +7548,6 @@
             "value" : "Genomsnittlig hållbarhet"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Genomsnittlig hållbarhet"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -7847,12 +7727,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Streckkod"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Streckkod"
@@ -8080,12 +7954,6 @@
             "value" : "Streckkoder"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Streckkoder"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -8268,12 +8136,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Batterier"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Batterier"
@@ -8847,12 +8709,6 @@
             "value" : "Under min. lagersaldo"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Under min. lagersaldo"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -9032,12 +8888,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bäst före-datum"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bäst före-datum"
@@ -9411,12 +9261,6 @@
             "value" : "Kalorier"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kalorier"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -9665,12 +9509,6 @@
             "value" : "Avbryt"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Avbryt"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -9850,12 +9688,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rubrik"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Rubrik"
@@ -10224,12 +10056,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sysslor"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sysslor"
@@ -10613,12 +10439,6 @@
             "value" : "Töm"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Töm"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -10915,12 +10735,6 @@
             "value" : "Töm lista"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Töm lista"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -11103,12 +10917,6 @@
             "value" : "Allmän"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Allmän"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -11264,12 +11072,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Konfigurera användarrättigheter"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Konfigurera användarrättigheter"
@@ -11529,12 +11331,6 @@
             "value" : "Bekräfta lösenord"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bekräfta lösenord"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -11783,12 +11579,6 @@
             "value" : "Förbruka"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Förbruka"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -11990,12 +11780,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Förbruka alla %@ som för närvarande finns i lager"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Förbruka alla %@ som för närvarande finns i lager"
@@ -12238,12 +12022,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Förbruka den här lagerposten"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Förbruka den här lagerposten"
@@ -12625,12 +12403,6 @@
             "value" : "Skapa plats"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Skapa plats"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -12810,12 +12582,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Skapa produkt"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Skapa produkt"
@@ -13005,12 +12771,6 @@
             "value" : "Skapa produktgrupp"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Skapa produktgrupp"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -13195,12 +12955,6 @@
             "value" : "Skapa konvertering för mängdenhet"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Skapa konvertering för mängdenhet"
-          }
-        },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -13374,12 +13128,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Skapa inköpslista"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Skapa inköpslista"
@@ -13569,12 +13317,6 @@
             "value" : "Skapa artikel på inköpslista"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Skapa artikel på inköpslista"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -13754,12 +13496,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Skapa uppgiftskategori"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Skapa uppgiftskategori"
@@ -13949,12 +13685,6 @@
             "value" : "Skapa användare"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Skapa användare"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -14134,12 +13864,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Skapa användarfält"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Skapa användarfält"
@@ -14344,12 +14068,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dag"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dag"
@@ -14586,12 +14304,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Decimaler tillåtet för antal"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Decimaler tillåtet för antal"
@@ -15065,12 +14777,6 @@
             "value" : "Standardmängd för konsumtion"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Standardmängd för konsumtion"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -15250,12 +14956,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Standardmängd för inköp"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Standardmängd för inköp"
@@ -15593,12 +15293,6 @@
             "value" : "Standardkonverteringar"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Standardkonverteringar"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -15759,12 +15453,6 @@
             "value" : "Standard datumstämpel"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Standard datumstämpel"
-          }
-        },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -15914,12 +15602,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Standard datumstämpel efter infrysning"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Standard datumstämpel efter infrysning"
@@ -16079,12 +15761,6 @@
             "value" : "Standard datumstämpel efter öppnandet"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Standard datumstämpel efter öppnandet"
-          }
-        },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -16234,12 +15910,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Standard datumstämpel efter upptining"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Standard datumstämpel efter upptining"
@@ -16418,12 +16088,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Standardplats"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Standardplats"
@@ -16731,12 +16395,6 @@
             "value" : "Standard inköpsmängd"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Standard inköpsmängd"
-          }
-        },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -16910,12 +16568,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Standardaffär"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Standardaffär"
@@ -17100,12 +16752,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Radera"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Radera"
@@ -17365,12 +17011,6 @@
             "value" : "Ta bort inköpslista"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ta bort inköpslista"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -17550,12 +17190,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Radera den här posten"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Radera den här posten"
@@ -17868,12 +17502,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Beskrivning"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Beskrivning"
@@ -18278,12 +17906,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Inaktivera kontroll av lageruppfyllelse för denna ingrediens"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Inaktivera kontroll av lageruppfyllelse för denna ingrediens"
@@ -19445,12 +19067,6 @@
             "value" : "Gjord av"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gjord av"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -19617,12 +19233,6 @@
             "value" : "Förfallodatum"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Förfallodatum"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -19778,12 +19388,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Typ av datummärkning"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Typ av datummärkning"
@@ -20114,12 +19718,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Förfaller snart"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Förfaller snart"
@@ -20619,12 +20217,6 @@
             "value" : "Redigera plats"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Redigera plats"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -20804,12 +20396,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Redigera produkt"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Redigera produkt"
@@ -20999,12 +20585,6 @@
             "value" : "Redigera produktgrupp"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Redigera produktgrupp"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -21189,12 +20769,6 @@
             "value" : "Redigera konvertering för mängdenhet"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Redigera konvertering för mängdenhet"
-          }
-        },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -21368,12 +20942,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Redigera mängdenhet"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Redigera mängdenhet"
@@ -21563,12 +21131,6 @@
             "value" : "Redigera inköpslista"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Redigera inköpslista"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -21748,12 +21310,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Redigera artikel på inköpslista"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Redigera artikel på inköpslista"
@@ -21943,12 +21499,6 @@
             "value" : "Redigera affär"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Redigera affär"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -22133,12 +21683,6 @@
             "value" : "Redigera uppgiftskategori"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Redigera uppgiftskategori"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -22312,12 +21856,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Redigera den här posten"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Redigera den här posten"
@@ -22507,12 +22045,6 @@
             "value" : "Redigera användare"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Redigera användare"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -22691,12 +22223,6 @@
             "value" : "Redigera användarpost"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Redigera användarpost"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -22870,12 +22396,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Redigera användarfält"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Redigera användarfält"
@@ -23060,12 +22580,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aktivera hantering av förpackningsvikt"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Aktivera hantering av förpackningsvikt"
@@ -23392,12 +22906,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Entitet"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Entitet"
@@ -23769,12 +23277,6 @@
             "value" : "Sista förbrukningsdag"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sista förbrukningsdag"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -23942,12 +23444,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Utgått"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Utgått"
@@ -24132,12 +23628,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Faktor"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Faktor"
@@ -24372,12 +23862,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Förnamn"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Förnamn"
@@ -24632,12 +24116,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Från plats"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Från plats"
@@ -25096,12 +24574,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gruppera efter"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Gruppera efter"
@@ -26031,12 +25503,6 @@
             "value" : "Lager"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lager"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -26231,12 +25697,6 @@
             "value" : "Är en frys"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Är en frys"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -26416,12 +25876,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Efternamn"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Efternamn"
@@ -26611,12 +26065,6 @@
             "value" : "Sista priset"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sista priset"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -26801,12 +26249,6 @@
             "value" : "Senast köpt"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Senast köpt"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -26986,12 +26428,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Senast använd"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Senast använd"
@@ -27267,12 +26703,6 @@
             "value" : "Plats"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plats"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -27452,12 +26882,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Platser"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Platser"
@@ -28171,12 +27595,6 @@
             "value" : "Markera som öppnat"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Markera som öppnat"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -28349,12 +27767,6 @@
             "value" : "Markera den här posten som klar"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Markera den här posten som klar"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -28522,12 +27934,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Markera den här lagerposten som öppnad"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Markera den här lagerposten som öppnad"
@@ -28965,12 +28371,6 @@
             "value" : "betyder %@per %@"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "betyder %@per %@"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -29150,12 +28550,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Minsta lagerantal"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Minsta lagerantal"
@@ -29807,12 +29201,6 @@
             "value" : "Namn"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Namn"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -30108,12 +29496,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Går aldrig ut"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Går aldrig ut"
@@ -30617,12 +29999,6 @@
             "value" : "Ny inköplista"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ny inköplista"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -30982,12 +30358,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nästa förfallodatum"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nästa förfallodatum"
@@ -31867,12 +31237,6 @@
             "value" : "Ingen"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ingen"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -32089,12 +31453,6 @@
             "value" : "Ej öppnad"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ej öppnad"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -32274,12 +31632,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Anteckning"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Anteckning"
@@ -32717,12 +32069,6 @@
             "value" : "Endast klara föremål"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Endast klara föremål"
-          }
-        },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -32878,12 +32224,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Endast borttagna objekt"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Endast borttagna objekt"
@@ -33294,12 +32634,6 @@
             "value" : "Förfallen"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Förfallen"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -33554,12 +32888,6 @@
             "value" : "Överordnad produkt"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Överordnad produkt"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -33739,12 +33067,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lösenord"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Lösenord"
@@ -33934,12 +33256,6 @@
             "value" : "Lösenorden matchar inte"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lösenorden matchar inte"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -34113,12 +33429,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Per mängdenhet i lager"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Per mängdenhet i lager"
@@ -34809,12 +34119,6 @@
             "value" : "Förinställningar för nya produkter"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Förinställningar för nya produkter"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -34999,12 +34303,6 @@
             "value" : "Pris"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pris"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -35184,12 +34482,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Produkt"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Produkt"
@@ -35443,12 +34735,6 @@
             "value" : "Produktgrupp"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Produktgrupp"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -35628,12 +34914,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Produktgrupper"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Produktgrupper"
@@ -35839,12 +35119,6 @@
             "value" : "Produktöversikt"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Produktöversikt"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -36024,12 +35298,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Produktbild"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Produktbild"
@@ -36283,12 +35551,6 @@
             "value" : "Produkter"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Produkter"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -36468,12 +35730,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Inköp"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Inköp"
@@ -36727,12 +35983,6 @@
             "value" : "Inköpsdatum"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Inköpsdatum"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -36981,12 +36231,6 @@
             "value" : "Mängdenhet"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mängdenhet"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -37124,12 +36368,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mängdenhet för priser"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mängdenhet för priser"
@@ -37296,12 +36534,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Från mängdenhet"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Från mängdenhet"
@@ -37486,12 +36718,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kvantitetsenhet lager"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kvantitetsenhet lager"
@@ -37745,12 +36971,6 @@
             "value" : "Till mängdenhet"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Till mängdenhet"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -37935,12 +37155,6 @@
             "value" : "Mängdenheter"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mängdenheter"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -38096,12 +37310,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Snabbkonsumera antal"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Snabbkonsumera antal"
@@ -38560,12 +37768,6 @@
             "value" : "Recept"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Recept"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -38745,12 +37947,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Recept"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Recept"
@@ -39161,12 +38357,6 @@
             "value" : "Spara"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Spara"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -39346,12 +38536,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sök"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sök"
@@ -40125,12 +39309,6 @@
             "value" : "Inställningar"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Inställningar"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -40310,12 +39488,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Inköpslista"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Inköpslista"
@@ -40524,12 +39696,6 @@
             "value" : "Inköpslista, inställningar"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Inköpslista, inställningar"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -40708,12 +39874,6 @@
             "value" : "Arbetsflöde för inköpslista till lager"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Arbetsflöde för inköpslista till lager"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -40880,12 +40040,6 @@
             "value" : "Bör ej frysas"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bör ej frysas"
-          }
-        },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -41035,12 +40189,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Visa en varning när datumstämpeln på den inköpta produkten är tidigare än datumstämpeln på samma produkt i lager"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Visa en varning när datumstämpeln på den inköpta produkten är tidigare än datumstämpeln på samma produkt i lager"
@@ -41218,12 +40366,6 @@
             "value" : "Visa en ikon om produkten redan finns i inköpslistan"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Visa en ikon om produkten redan finns i inköpslistan"
-          }
-        },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -41391,12 +40533,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Visa som kolumn i tabeller"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Visa som kolumn i tabeller"
@@ -41581,12 +40717,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Visa i sidofältet"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Visa i sidofältet"
@@ -41992,12 +41122,6 @@
             "value" : "Sortera nummer"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sortera nummer"
-          }
-        },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -42234,12 +41358,6 @@
             "value" : "Skämd takt"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Skämd takt"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -42419,12 +41537,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Utgången"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Utgången"
@@ -42625,12 +41737,6 @@
             "value" : "Status"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Status"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -42826,12 +41932,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lagerantal"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Lagerantal"
@@ -43133,12 +42233,6 @@
             "value" : "Lagerpost"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lagerpost"
-          }
-        },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -43349,12 +42443,6 @@
             "value" : "Lagerlogg"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lagerlogg"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -43534,12 +42622,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lageröversikt"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Lageröversikt"
@@ -43729,12 +42811,6 @@
             "value" : "Lagerinställningar"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lagerinställningar"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -43908,12 +42984,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lagervärde"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Lagervärde"
@@ -44103,12 +43173,6 @@
             "value" : "Affär"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Affär"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -44288,12 +43352,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Affärer"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Affärer"
@@ -44576,12 +43634,6 @@
             "value" : "Förpackningsvikt"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Förpackningsvikt"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -44761,12 +43813,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Uppgiftskategorier"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Uppgiftskategorier"
@@ -46080,12 +45126,6 @@
             "value" : "Kan ej vara samma som \"Från\" platsen"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kan ej vara samma som \"Från\" platsen"
-          }
-        },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -46474,6 +45514,12 @@
             "state" : "translated",
             "value" : "Il s'agit d'une application d'accompagnement qui nécessite l'accès à une instance de Grocy en cours d'exécution (par exemple sur votre serveur). Si vous souhaitez simplement essayer l'application, utilisez l'un des serveurs de démonstration fournis par le développeur de Grocy. N'utilisez pas les serveurs de démonstration pour vos données personnelles - ils ne sont pas persistants."
           }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dit is een zogeheten ‘client-app’, wat betekent dat je toegang dient te hebben tot een Grocy-instantie, bijv. op je server.Als je deze app gewoon even wilt uitproberen, dan kun je een van de uitprobeerservers van Grocy-ontwikkelaar Bernd Bestel gebruiken. Maar let op: alles wat je invoert op de uitprobeerservers wordt niet bewaard."
+          }
         }
       }
     },
@@ -46624,12 +45670,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Detta är endast för statistiska ändamål"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Detta är endast för statistiska ändamål"
@@ -46819,12 +45859,6 @@
             "value" : "Detta är obligatoriskt och kan bara innehålla bokstäver och siffror"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Detta är obligatoriskt och kan bara innehålla bokstäver och siffror"
-          }
-        },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -46923,12 +45957,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Esta é a unidade de quantidade padrão usada ao adicionar este produto à lista de compras"
-          }
-        },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Standard kvantitetsenhet som använd när denna produkt läggs till i inköpslistan"
           }
         },
         "zh-Hans" : {
@@ -47044,12 +46072,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Standard kvantitetsenhet som använd när denna produkt konsumeras"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Standard kvantitetsenhet som använd när denna produkt konsumeras"
@@ -47180,12 +46202,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Detta är det interna fältnamnet, t.ex. för API:et"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Detta är det interna fältnamnet, t.ex. för API:et"
@@ -47476,12 +46492,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Detta är användbart t.ex. för mjöl i burkar - vid köp/konsumtion/inventering väger du alltid hela burken, den mängd som ska läggas till beräknas sedan automatiskt baserat på vad som finns i lager och förpackningsvikten som anges nedan"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Detta är användbart t.ex. för mjöl i burkar - vid köp/konsumtion/inventering väger du alltid hela burken, den mängd som ska läggas till beräknas sedan automatiskt baserat på vad som finns i lager och förpackningsvikten som anges nedan"
@@ -47831,12 +46841,6 @@
             "value" : "Denna produkt bör ej frysas"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Denna produkt bör ej frysas"
-          }
-        },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -48073,12 +47077,6 @@
             "value" : "Detta kommer att användas som standardinställning när du lägger till denna produkt som receptkomponent"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Detta kommer att användas som standardinställning när du lägger till denna produkt som receptkomponent"
-          }
-        },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -48252,12 +47250,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Till plats"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Till plats"
@@ -48447,12 +47439,6 @@
             "value" : "Totalpris"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Totalpris"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -48625,12 +47611,6 @@
             "value" : "Transaktionstid"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Transaktionstid"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -48798,12 +47778,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Transaktionstyp"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Transaktionstyp"
@@ -48988,12 +47962,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Överför"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Överför"
@@ -49287,12 +48255,6 @@
             "value" : "Behandla öppnad som slut i lager"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Behandla öppnad som slut i lager"
-          }
-        },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -49541,12 +48503,6 @@
             "value" : "Typ"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Typ"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -49720,12 +48676,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ångra transaktion"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ångra transaktion"
@@ -49979,12 +48929,6 @@
             "value" : "Ogrupperade"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ogrupperade"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -50164,12 +49108,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Okänd"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Okänd"
@@ -50504,12 +49442,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Använd ett specifikt lagerobjekt"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Använd ett specifikt lagerobjekt"
@@ -50997,12 +49929,6 @@
             "value" : "Användare"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Användare"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -51267,12 +50193,6 @@
             "value" : "Användarposter"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Användarposter"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -51446,12 +50366,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Användarfält"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Användarfält"
@@ -51636,12 +50550,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Användarnamn"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Användarnamn"
@@ -51965,12 +50873,6 @@
             "value" : "Värde"
           }
         },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Värde"
-          }
-        },
         "ta" : {
           "stringUnit" : {
             "state" : "translated",
@@ -52018,6 +50920,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bienvenue à Grocy Mobile"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Welkom bij Grocy Mobile"
           }
         }
       }
@@ -52133,12 +51041,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "När priser visas för denna produkt kommer de att relateras till denna kvantitetsenhet"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "När priser visas för denna produkt kommer de att relateras till denna kvantitetsenhet"
@@ -52665,12 +51567,6 @@
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "När aktiverad kan denna produkt inte ha eget lager, vilket innebär att den inte kommer att kunna väljas vid inköp (användbart för huvudprodukter som endast används som en summering/totalvy av underprodukterna)"
-          }
-        },
-        "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "När aktiverad kan denna produkt inte ha eget lager, vilket innebär att den inte kommer att kunna väljas vid inköp (användbart för huvudprodukter som endast används som en summering/totalvy av underprodukterna)"
