@@ -134,7 +134,7 @@ struct PurchaseProductView: View {
         let noteText = note.isEmpty ? nil : note
         let purchasePrice = selfProduction ? nil : unitPrice
         let purchaseStoreID = selfProduction ? nil : storeID
-        let purchaseInfo = ProductBuy(amount: amount, bestBeforeDate: strDueDate, transactionType: selfProduction ? .selfProduction : .purchase, price: purchasePrice, locationID: locationID, storeID: purchaseStoreID, note: noteText)
+        let purchaseInfo = ProductBuy(amount: factoredAmount, bestBeforeDate: strDueDate, transactionType: selfProduction ? .selfProduction : .purchase, price: purchasePrice, locationID: locationID, storeID: purchaseStoreID, note: noteText)
         if let productID = productID {
             isProcessingAction = true
             do {
