@@ -181,7 +181,6 @@ struct PurchaseProductView: View {
                 }
 
             if productID != nil {
-
                 AmountSelectionView(productID: $productID, amount: $amount, quantityUnitID: $quantityUnitID)
 
                 Section("Due date") {
@@ -253,10 +252,15 @@ struct PurchaseProductView: View {
                         selection: $locationID,
                         label: Label("Location", systemImage: MySymbols.location).foregroundStyle(.primary),
                         content: {
-                            Text("").tag(nil as Int?)
+                            Text("").tag(-1 as Int?)
                             ForEach(mdLocations, id: \.id) { location in
-                                Text(location.id == product?.locationID ? "\(location.name) (\(Text("Default location")))" : location.name)
-                                    .tag(location.id as Int?)
+                                if location.id == product?.locationID {
+                                    Text("\(location.name) (\(Text("Default location")))")
+                                        .tag(location.id as Int?)
+                                } else {
+                                    Text(location.name)
+                                        .tag(location.id as Int?)
+                                }                                   
                             }
                         }
                     )

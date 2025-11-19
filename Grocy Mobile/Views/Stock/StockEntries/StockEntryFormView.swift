@@ -139,8 +139,13 @@ struct StockEntryFormView: View {
                 content: {
                     Text("").tag(nil as Int?)
                     ForEach(mdLocations, id: \.id) { location in
-                        Text(location.id == product?.locationID ? "\(location.name) (\(Text("Default location")))" : location.name)
-                            .tag(location.id as Int?)
+                        if location.id == product?.locationID {
+                            Text("\(location.name) (\(Text("Default location")))")
+                                .tag(location.id as Int?)
+                        } else {
+                            Text(location.name)
+                                .tag(location.id as Int?)
+                        } 
                     }
                 }
             )
