@@ -46,3 +46,11 @@ struct LoginDemoServerView: View {
         )
     }
 }
+
+#Preview {
+    @Previewable @AppStorage("demoServerURL") var demoServerURL: String = GrocyAPP.DemoServers.noLanguage.rawValue
+    
+    NavigationStack {
+        LoginDemoServerView(demoServerURL: demoServerURL)
+    }
+}

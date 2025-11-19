@@ -206,3 +206,9 @@ struct LoginDestination: Hashable {
         lhs.id == rhs.id
     }
 }
+
+#Preview {
+    NavigationStack {
+        LoginView()
+    }
+}

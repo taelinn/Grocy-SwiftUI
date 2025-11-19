@@ -255,3 +255,9 @@ struct ServerProfileFormView: View {
         serverProfile.customHeaders.remove(atOffsets: offsets)
     }
 }
+
+#Preview {
+    NavigationStack {
+        ServerProfileFormView()
+    }
+}

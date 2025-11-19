@@ -124,10 +124,4 @@ struct OnboardingView: View {
 
 #Preview {
     OnboardingView()
-        .colorScheme(.light)
-}
-
-#Preview("Dark Mode") {
-    OnboardingView()
-        .colorScheme(.dark)
 }

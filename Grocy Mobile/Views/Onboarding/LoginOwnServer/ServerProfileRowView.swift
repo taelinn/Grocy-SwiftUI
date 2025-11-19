@@ -25,3 +25,10 @@ struct ServerProfileRowView: View {
         }
     }
 }
+
+#Preview {
+    Form {
+        ServerProfileRowView(profile: ServerProfile(name: "Demo profile"))
+        ServerProfileRowView(profile: ServerProfile(name: "", grocyServerURL: "http://homeassistant.local:8123", useHassIngress: true))
+    }
+}
