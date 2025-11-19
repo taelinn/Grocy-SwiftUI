@@ -11,7 +11,8 @@ import SwiftUI
 struct LoginStatusView: View {
     @Environment(GrocyViewModel.self) private var grocyVM
     @Environment(\.dismiss) var dismiss
-
+    @Environment(\.colorScheme) var colorScheme
+    
     var isDemoMode: Bool = false
 
     enum LoginState {
@@ -32,6 +33,8 @@ struct LoginStatusView: View {
                 try await grocyVM.checkServer(
                     baseURL: isDemoMode ? demoServerURL : selectedServerProfile.grocyServerURL,
                     apiKey: isDemoMode ? nil : selectedServerProfile.grocyAPIKey,
+                    useHassIngress: selectedServerProfile.useHassIngress,
+                    hassToken: selectedServerProfile.hassToken,
                     isDemoMode: isDemoMode,
                     customHeaders: selectedServerProfile.customHeaders
                 )
@@ -107,7 +110,7 @@ struct LoginStatusView: View {
                     .buttonStyle(MyGlassButtonStyle(backgroundColor: .yellow))
                 }
             )
-            .background(.red)
+            .background(.red.opacity(colorScheme == .dark ? 0.3 : 1.0))
         case .unsupportedVersion:
             ContentUnavailableView(
                 label: {
@@ -138,7 +141,7 @@ struct LoginStatusView: View {
                 }
             )
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(.yellow)
+            .background(.yellow.opacity(colorScheme == .dark ? 0.3 : 1.0))
         }
     }
 }
