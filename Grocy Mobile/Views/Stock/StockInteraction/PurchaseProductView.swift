@@ -117,7 +117,7 @@ struct PurchaseProductView: View {
         self.price = nil
         self.isTotalPrice = false
         self.storeID = barcode?.storeID
-        self.locationID = nil
+        self.locationID = -1
         self.note = ""
         if autoPurchase, firstAppear, product?.defaultDueDays != nil, productID != nil, isFormValid {
             self.price = productDetails?.lastPrice
