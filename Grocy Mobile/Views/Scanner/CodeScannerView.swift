@@ -19,16 +19,22 @@ struct CodeResult: Hashable {
     struct CodeScannerView: UIViewControllerRepresentable {
         @Binding var isPaused: Bool
         var onCodeFound: ((CodeResult) -> Void)?
+        var symbologies: [VNBarcodeSymbology]
 
-        init(isPaused: Binding<Bool>, onCodeFound: ((CodeResult) -> Void)? = nil) {
+        init(isPaused: Binding<Bool> = .constant(false), onCodeFound: ((CodeResult) -> Void)? = nil, symbologies: [VNBarcodeSymbology]? = nil) {
             self._isPaused = isPaused
             self.onCodeFound = onCodeFound
+            if let symbologies {
+                self.symbologies = symbologies
+            } else {
+                self.symbologies = getSavedCodeTypes()
+            }
         }
 
         func makeUIViewController(context: Context) -> DataScannerViewController {
             let scannerViewController = DataScannerViewController(
                 recognizedDataTypes: [
-                    .barcode(symbologies: getSavedCodeTypes())
+                    .barcode(symbologies: self.symbologies)
                 ],
                 qualityLevel: .balanced,
                 recognizesMultipleItems: false,

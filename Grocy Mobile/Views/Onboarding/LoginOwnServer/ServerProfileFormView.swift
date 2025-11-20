@@ -8,6 +8,7 @@
 import AVFoundation
 import SwiftData
 import SwiftUI
+import Vision
 
 struct ListElementRow: View {
     @Bindable var header: LoginCustomHeader
@@ -31,6 +32,9 @@ struct ServerProfileFormView: View {
     @Environment(\.dismiss) private var dismiss
 
     @State private var serverProfile: ServerProfile
+    #if os(iOS)
+        @AppStorage("useLegacyScanner") private var useLegacyScanner: Bool = false
+    #endif
     var isEditing: Bool = false
 
     init(serverProfile: ServerProfile? = nil) {
@@ -50,7 +54,20 @@ struct ServerProfileFormView: View {
         @Environment(\.horizontalSizeClass) var horizontalSizeClass: UserInterfaceSizeClass?
 
         @State private var isShowingGrocyScanner: Bool = false
-        func handleGrocyScan(result: Result<CodeScannerViewLegacy.ScanResult, CodeScannerViewLegacy.ScanError>) {
+        func handleGrocyScan(result: CodeResult) {
+            self.isShowingGrocyScanner = false
+            let grocyServerData = result.value.components(separatedBy: "|")
+            guard grocyServerData.count == 2 else { return }
+
+            let serverURL = grocyServerData[0]
+            let apiKey = grocyServerData[1]
+
+            if apiKey.count == 50 {
+                serverProfile.grocyServerURL = serverURL
+                serverProfile.grocyAPIKey = apiKey
+            }
+        }
+        func handleGrocyScanLegacy(result: Result<CodeScannerViewLegacy.ScanResult, CodeScannerViewLegacy.ScanError>) {
             self.isShowingGrocyScanner = false
             switch result {
             case .success(let code):
@@ -71,7 +88,11 @@ struct ServerProfileFormView: View {
         }
 
         @State private var isShowingTokenScanner: Bool = false
-        func handleTokenScan(result: Result<CodeScannerViewLegacy.ScanResult, CodeScannerViewLegacy.ScanError>) {
+        func handleHassTokenScan(result: CodeResult) {
+            self.isShowingTokenScanner = false
+            serverProfile.hassToken = result.value
+        }
+        func handleTokenScanLegacy(result: Result<CodeScannerViewLegacy.ScanResult, CodeScannerViewLegacy.ScanError>) {
             self.isShowingTokenScanner = false
             switch result {
             case .success(let scannedHassToken):
@@ -137,12 +158,16 @@ struct ServerProfileFormView: View {
                     .sheet(
                         isPresented: $isShowingGrocyScanner,
                         content: {
-                            CodeScannerViewLegacy(
-                                codeTypes: [.qr],
-                                scanMode: .once,
-                                simulatedData: "http://192.168.178.40:8123/api/hassio_ingress/ckgy-GNrulcboPPwZyCnOn181YpRqOr6vIC8G2lijqU/api|tkYf677yotIwTibP0ko1lZxn8tj4cgoecWBMropiNc1MCjup8p",
-                                completion: self.handleGrocyScan
-                            )
+                            if !useLegacyScanner {
+                                CodeScannerView(onCodeFound: self.handleGrocyScan, symbologies: [.qr])
+                            } else {
+                                CodeScannerViewLegacy(
+                                    codeTypes: [.qr],
+                                    scanMode: .once,
+                                    simulatedData: "http://192.168.178.40:8123/api/hassio_ingress/ckgy-GNrulcboPPwZyCnOn181YpRqOr6vIC8G2lijqU/api|tkYf677yotIwTibP0ko1lZxn8tj4cgoecWBMropiNc1MCjup8p",
+                                    completion: self.handleGrocyScanLegacy
+                                )
+                            }
                         }
                     )
                 #endif
@@ -175,12 +200,16 @@ struct ServerProfileFormView: View {
                             .sheet(
                                 isPresented: $isShowingTokenScanner,
                                 content: {
-                                    CodeScannerViewLegacy(
-                                        codeTypes: [.qr],
-                                        scanMode: .once,
-                                        simulatedData: "670f7d46391db7b42d382ebc9ea667f3aac94eb90219b9e32c7cd71cd37d13833109113270b327fac08d77d9b038a9cb3ab6cfd8dc8d0e3890d16e6434d10b3d",
-                                        completion: self.handleTokenScan
-                                    )
+                                    if !useLegacyScanner {
+                                        CodeScannerView(onCodeFound: self.handleHassTokenScan, symbologies: [.qr])
+                                    } else {
+                                        CodeScannerViewLegacy(
+                                            codeTypes: [.qr],
+                                            scanMode: .once,
+                                            simulatedData: "670f7d46391db7b42d382ebc9ea667f3aac94eb90219b9e32c7cd71cd37d13833109113270b327fac08d77d9b038a9cb3ab6cfd8dc8d0e3890d16e6434d10b3d",
+                                            completion: self.handleTokenScanLegacy
+                                        )
+                                    }
                                 }
                             )
                         #endif
