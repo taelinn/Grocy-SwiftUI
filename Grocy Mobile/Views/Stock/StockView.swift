@@ -31,6 +31,7 @@ struct StockView: View {
     @Environment(GrocyViewModel.self) private var grocyVM
 
     @Query(filter: #Predicate<StockElement> { $0.amount > 0 }) var stock: [StockElement]
+    @Query(filter: #Predicate<StockLocation> { $0.amount > 0 }) var stockLocations: StockLocations
     @Query(sort: \MDProduct.name, order: .forward) var mdProducts: MDProducts
     @Query(sort: \MDProductGroup.id, order: .forward) var mdProductGroups: MDProductGroups
     @Query(sort: \MDLocation.name, order: .forward) var mdLocations: MDLocations
@@ -62,7 +63,7 @@ struct StockView: View {
 
     @State var selectedStockElement: StockElement? = nil
 
-    private let dataToUpdate: [ObjectEntities] = [.products, .shopping_locations, .locations, .product_groups, .quantity_units, .shopping_lists, .shopping_list]
+    private let dataToUpdate: [ObjectEntities] = [.products, .shopping_locations, .locations, .product_groups, .quantity_units, .shopping_lists, .shopping_list, .stock_current_locations]
     private let additionalDataToUpdate: [AdditionalEntities] = [.stock, .volatileStock, .system_config, .user_settings]
     private func updateData() async {
         await grocyVM.requestData(objects: dataToUpdate, additionalObjects: additionalDataToUpdate)
@@ -121,10 +122,7 @@ struct StockView: View {
             .filter { (try? simplePredicate.evaluate($0)) ?? false }
             .filter { stockElement in
                 // Location filter
-                filteredLocationID == nil || stockElement.product?.locationID == filteredLocationID
-                    || ((grocyVM.stockProductLocations[stockElement.productID]?.contains(where: {
-                        $0.locationID == filteredLocationID
-                    })) != nil)
+                filteredLocationID == nil || stockLocations.contains(where: { $0.productID == stockElement.productID && $0.locationID == filteredLocationID })
             }
             .filter { stockElement in
                 // Status filters

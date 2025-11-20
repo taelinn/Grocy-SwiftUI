@@ -39,6 +39,7 @@ class GrocyViewModel {
     var users: GrocyUsers = []
     var currentUser: GrocyUser? = nil
     var stock: Stock = []
+    var stockCurrentLocations: StockLocations = []
     var volatileStock: VolatileStock? = nil
     var stockJournal: StockJournal = []
     var shoppingListDescriptions: ShoppingListDescriptions = []
@@ -326,6 +327,8 @@ class GrocyViewModel {
                             self.mdStores = try await self.getObjectAndSaveSwiftData(object: object)
                         case .stock_log:
                             self.stockJournal = try await self.getObjectAndSaveSwiftData(object: object)
+                        case .stock_current_locations:
+                            self.stockCurrentLocations = try await self.getObjectAndSaveSwiftData(object: object)
                         default:
                             GrocyLogger.error("Object not implemented")
                         }
@@ -493,8 +496,9 @@ class GrocyViewModel {
             try self.modelContext.delete(model: GrocyUser.self)
             try self.modelContext.delete(model: GrocyUserSettings.self)
             try self.modelContext.delete(model: StockEntry.self)
-            try self.modelContext.delete(model: StockProductDetails.self)
             try self.modelContext.delete(model: StockProduct.self)
+            try self.modelContext.delete(model: StockProductDetails.self)
+            try self.modelContext.delete(model: StockLocation.self)
             try self.modelContext.delete(model: Recipe.self)
             try self.modelContext.delete(model: RecipePosResolvedElement.self)
             try self.modelContext.delete(model: StockLocation.self)
@@ -655,7 +659,44 @@ class GrocyViewModel {
                 self.modelContext.insert(stockDetails)
                 try self.modelContext.save()
             case .locations:
-                print("not implemented")
+                let stockLocations: StockLocations = try await grocyApi.getStockProductInfo(stockModeGet: .locations, productID: productID, queries: queries)
+                self.stockProductLocations[productID] = stockLocations
+
+                // Process any pending changes before proceeding
+                modelContext.processPendingChanges()
+
+                let fetchDescriptor = FetchDescriptor<StockLocation>(
+                    predicate: #Predicate { entry in
+                        entry.productID == productID
+                    }
+                )
+                let existingObjects = try modelContext.fetch(fetchDescriptor)
+
+                // Build lookup dictionaries
+                let existingById = Dictionary(uniqueKeysWithValues: existingObjects.map { ($0.id, $0) })
+                let incomingById = Dictionary(uniqueKeysWithValues: stockLocations.map { ($0.id, $0) })
+
+                // Delete removed objects
+                for (id, existingObject) in existingById {
+                    if incomingById[id] == nil {
+                        modelContext.delete(existingObject)
+                    }
+                }
+
+                // Insert new or updated objects
+                for (id, newObject) in incomingById {
+                    if let existing = existingById[id] {
+                        if existing != newObject {
+                            modelContext.delete(existing)
+                            modelContext.insert(newObject)
+                        }
+                        // else: identical, skip
+                    } else {
+                        modelContext.insert(newObject)
+                    }
+                }
+
+                try modelContext.save()
             case .entries:
                 let stockEntries: StockEntries = try await grocyApi.getStockProductInfo(stockModeGet: .entries, productID: productID, queries: queries)
                 self.stockProductEntries[productID] = stockEntries
