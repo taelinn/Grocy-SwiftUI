@@ -41,7 +41,7 @@ struct QuickScanModeView: View {
     @State private var qsActiveSheet: QSActiveSheet?
     @State var actionFinished: Bool = false
 
-    @State private var firstInSession: Bool = true
+    //    @State private var firstInSession: Bool = true
 
     @State private var showDemoGrocyCode: Bool = false
 
@@ -50,10 +50,10 @@ struct QuickScanModeView: View {
     @State var recognizedGrocyCode: GrocyCode? = nil
     @State var notRecognizedBarcode: String? = nil
 
-    @State private var lastConsumeLocationID: Int?
-    @State private var lastPurchaseDueDate: Date = .init()
-    @State private var lastPurchaseStoreID: Int?
-    @State private var lastPurchaseLocationID: Int?
+    //    @State private var lastConsumeLocationID: Int?
+    //    @State private var lastPurchaseDueDate: Date = .init()
+    //    @State private var lastPurchaseStoreID: Int?
+    //    @State private var lastPurchaseLocationID: Int?
 
     @State private var isScanPaused: Bool = false
     func checkScanPause() {
@@ -105,12 +105,16 @@ struct QuickScanModeView: View {
                 if let grocyCode = searchForGrocyCode(barcodeString: barcode.string) {
                     recognizedBarcode = nil
                     recognizedGrocyCode = grocyCode
+                    notRecognizedBarcode = nil
                     qsActiveSheet = .grocyCode
                 } else if let foundBarcode = searchForBarcodeLegacy(barcode: barcode) {
                     recognizedBarcode = foundBarcode
                     recognizedGrocyCode = nil
+                    notRecognizedBarcode = nil
                     qsActiveSheet = .barcode
                 } else {
+                    recognizedBarcode = nil
+                    recognizedGrocyCode = nil
                     notRecognizedBarcode = barcode.string
                     qsActiveSheet = .selectProduct
                 }
@@ -128,6 +132,7 @@ struct QuickScanModeView: View {
         }
 
         func handleScan(result: CodeResult) {
+            UIImpactFeedbackGenerator(style: .soft).impactOccurred()
             if let grocyCode = searchForGrocyCode(barcodeString: result.value) {
                 recognizedBarcode = nil
                 recognizedGrocyCode = grocyCode
@@ -327,3 +332,4 @@ struct QuickScanModeView: View {
 #Preview {
     QuickScanModeView()
 }
+
