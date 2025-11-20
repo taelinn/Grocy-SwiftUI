@@ -10,9 +10,10 @@ import SwiftData
 
 @Model
 final class LoginCustomHeader {
-    @Attribute(.unique) var id: UUID
-    var headerName: String
-    var headerValue: String
+    var id: UUID = UUID()
+    var headerName: String = ""
+    var headerValue: String = ""
+    var serverProfile: ServerProfile?
 
     init(headerName: String, headerValue: String) {
         self.id = UUID()
@@ -23,14 +24,14 @@ final class LoginCustomHeader {
 
 @Model
 final class ServerProfile {
-    @Attribute(.unique) var id: UUID
-    var name: String
-    var grocyServerURL: String
-    var grocyAPIKey: String
-    var useHassIngress: Bool
-    var hassToken: String
-    @Relationship(deleteRule: .cascade) var customHeaders: [LoginCustomHeader]
-    var isActive: Bool
+    var id: UUID = UUID()
+    var name: String = ""
+    var grocyServerURL: String = ""
+    var grocyAPIKey: String = ""
+    var useHassIngress: Bool = false
+    var hassToken: String = ""
+    @Relationship(deleteRule: .cascade, inverse: \LoginCustomHeader.serverProfile) var customHeaders: [LoginCustomHeader]? = nil
+    var isActive: Bool = false
 
     init(name: String = "", grocyServerURL: String = "", grocyAPIKey: String = "", useHassIngress: Bool = false, hassToken: String = "", customHeaders: [LoginCustomHeader] = [], isActive: Bool = false) {
         self.id = UUID()

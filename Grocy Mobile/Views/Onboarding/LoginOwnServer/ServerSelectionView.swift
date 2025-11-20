@@ -9,14 +9,18 @@ import SwiftData
 import SwiftUI
 
 struct ServerSelectionView: View {
-    @Environment(\.modelContext) private var modelContext
-    @Query(sort: \ServerProfile.id, order: .forward) private var serverProfiles: [ServerProfile]
-
+    @Environment(\.profileModelContext) private var profileModelContext
     @State private var showAddServer: Bool = false
+    @State private var serverProfiles: [ServerProfile] = []
+
+    private func fetchServerProfiles() {
+        guard let modelContext = profileModelContext else { return }
+        let descriptor = FetchDescriptor<ServerProfile>(sortBy: [SortDescriptor(\.id, order: .forward)])
+        serverProfiles = (try? modelContext.fetch(descriptor)) ?? []
+    }
 
     var selectedServerProfile: ServerProfile? {
-        let descriptor = FetchDescriptor<ServerProfile>(predicate: #Predicate<ServerProfile> { $0.isActive == true })
-        return (try? modelContext.fetch(descriptor))?.first
+        return serverProfiles.first(where: { $0.isActive == true })
     }
 
     var body: some View {
@@ -32,18 +36,14 @@ struct ServerSelectionView: View {
                 )
                 .foregroundStyle(.primary)
                 .contextMenu(menuItems: {
-                    NavigationLink(
-                        value: serverProfile,
-                        label: {
-                            Label("Edit", systemImage: MySymbols.edit)
-                        }
-                    )
+                    contextMenuContent(for: serverProfile)
                 })
             }
             .onDelete(perform: deleteProfiles)
         }
         .navigationTitle("Own server")
         .onAppear {
+            fetchServerProfiles()
             if serverProfiles.isEmpty {
                 showAddServer.toggle()
             }
@@ -88,6 +88,7 @@ struct ServerSelectionView: View {
                     NavigationStack {
                         ServerProfileFormView()
                     }
+                    .environment(\.profileModelContext, profileModelContext)
                 }
             )
         #else
@@ -95,21 +96,49 @@ struct ServerSelectionView: View {
                 isPresented: $showAddServer,
                 content: {
                     ServerProfileFormView()
+                        .environment(\.profileModelContext, profileModelContext)
                 }
             )
         #endif
     }
 
     private func setActiveProfile(_ profile: ServerProfile) {
-        for p in serverProfiles {
-            p.isActive = false
-        }
+        serverProfiles.forEach { $0.isActive = false }
         profile.isActive = true
     }
 
     private func deleteProfiles(at offsets: IndexSet) {
         for index in offsets {
-            modelContext.delete(serverProfiles[index])
+            profileModelContext?.delete(serverProfiles[index])
         }
+    }
+
+    @ViewBuilder
+    private func contextMenuContent(for profile: ServerProfile) -> some View {
+        NavigationLink(
+            value: profile,
+            label: {
+                Label("Edit", systemImage: MySymbols.edit)
+            }
+        )
+        Button(action: {
+            duplicateProfile(profile)
+        }, label: {
+            Label("Duplicate", systemImage: MySymbols.duplicate)
+        })
+    }
+
+    private func duplicateProfile(_ profile: ServerProfile) {
+        let newServerProfile = ServerProfile(
+            name: profile.name + " (Duplicate)",
+            grocyServerURL: profile.grocyServerURL,
+            grocyAPIKey: profile.grocyAPIKey,
+            useHassIngress: profile.useHassIngress,
+            hassToken: profile.hassToken,
+            customHeaders: profile.customHeaders ?? [],
+            isActive: false
+        )
+        profileModelContext?.insert(newServerProfile)
+        _ = try? profileModelContext?.save()
     }
 }

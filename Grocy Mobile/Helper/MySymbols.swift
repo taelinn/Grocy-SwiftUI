@@ -89,6 +89,7 @@ struct MySymbols {
     static let warning = "exclamationmark.triangle.fill"
     static let error = "xmark.circle.fill"
     static let notSaved = "square.and.arrow.down.badge.clock"
+    static let duplicate = "document.on.document"
 
     static let qrScan = "qrcode.viewfinder"
     static let barcodeScan = "barcode.viewfinder"

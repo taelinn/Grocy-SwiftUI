@@ -19909,6 +19909,9 @@
         }
       }
     },
+    "Duplicate" : {
+      "shouldTranslate" : false
+    },
     "Edit" : {
       "localizations" : {
         "de" : {

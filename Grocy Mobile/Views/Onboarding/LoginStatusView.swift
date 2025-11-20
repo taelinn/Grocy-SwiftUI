@@ -39,7 +39,7 @@ struct LoginStatusView: View {
                     useHassIngress: isDemoMode ? false : grocyVM.selectedServerProfile!.useHassIngress,
                     hassToken: isDemoMode ? "" : grocyVM.selectedServerProfile!.hassToken,
                     isDemoMode: isDemoMode,
-                    customHeaders: isDemoMode ? [] : grocyVM.selectedServerProfile!.customHeaders
+                    customHeaders: isDemoMode ? [] : grocyVM.selectedServerProfile!.customHeaders ?? []
                 )
                 if GrocyAPP.supportedVersions.contains(grocyVM.systemInfo?.grocyVersion.version ?? "") {
                     loginState = .success
@@ -152,7 +152,7 @@ struct LoginStatusView: View {
 #Preview("Loading") {
     let config = ModelConfiguration(isStoredInMemoryOnly: true)
     let container = try! ModelContainer(for: ServerProfile.self, configurations: config)
-    let viewModel = GrocyViewModel(modelContext: container.mainContext)
+    let viewModel = GrocyViewModel(modelContext: container.mainContext, profileModelContext: container.mainContext)
 
     return LoginStatusView(loginState: .loading)
         .environment(viewModel)
@@ -162,7 +162,7 @@ struct LoginStatusView: View {
 #Preview("Success") {
     let config = ModelConfiguration(isStoredInMemoryOnly: true)
     let container = try! ModelContainer(for: ServerProfile.self, configurations: config)
-    let viewModel = GrocyViewModel(modelContext: container.mainContext)
+    let viewModel = GrocyViewModel(modelContext: container.mainContext, profileModelContext: container.mainContext)
 
     return LoginStatusView(loginState: .success)
         .environment(viewModel)
@@ -172,7 +172,7 @@ struct LoginStatusView: View {
 #Preview("Fail") {
     let config = ModelConfiguration(isStoredInMemoryOnly: true)
     let container = try! ModelContainer(for: ServerProfile.self, configurations: config)
-    let viewModel = GrocyViewModel(modelContext: container.mainContext)
+    let viewModel = GrocyViewModel(modelContext: container.mainContext, profileModelContext: container.mainContext)
 
     return LoginStatusView(loginState: .fail, errorMessage: "Error message")
         .environment(viewModel)
@@ -182,7 +182,7 @@ struct LoginStatusView: View {
 #Preview("UnsupportedVersion") {
     let config = ModelConfiguration(isStoredInMemoryOnly: true)
     let container = try! ModelContainer(for: ServerProfile.self, configurations: config)
-    let viewModel = GrocyViewModel(modelContext: container.mainContext)
+    let viewModel = GrocyViewModel(modelContext: container.mainContext, profileModelContext: container.mainContext)
 
     return LoginStatusView(loginState: .unsupportedVersion)
         .environment(viewModel)

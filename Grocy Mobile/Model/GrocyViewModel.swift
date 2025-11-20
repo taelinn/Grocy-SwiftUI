@@ -18,6 +18,7 @@ class GrocyViewModel {
     var grocyApi: GrocyAPI
 
     let modelContext: ModelContext
+    let profileModelContext: ModelContext?
 
     @ObservationIgnored @AppStorage("isLoggedIn") var isLoggedIn: Bool = false
     @ObservationIgnored @AppStorage("isDemoModus") var isDemoModus: Bool = false
@@ -88,14 +89,16 @@ class GrocyViewModel {
     let jsonEncoder = JSONEncoder()
 
     var selectedServerProfile: ServerProfile? {
+        guard let modelContext = profileModelContext else { return nil }
         let descriptor = FetchDescriptor<ServerProfile>(predicate: #Predicate<ServerProfile> { $0.isActive == true })
         return (try? modelContext.fetch(descriptor))?.first
     }
 
-    init(modelContext: ModelContext) {
+    init(modelContext: ModelContext, profileModelContext: ModelContext) {
         self.grocyApi = GrocyApi()
         self.modelContext = modelContext
         self.modelContext.autosaveEnabled = false
+        self.profileModelContext = profileModelContext
         jsonEncoder.dateEncodingStrategy = .custom({ (date, encoder) in
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "yyyy-MM-dd"
@@ -113,7 +116,7 @@ class GrocyViewModel {
                         useHassIngress: !isDemoModus ? selectedServerProfile.useHassIngress : false,
                         hassToken: !isDemoModus ? selectedServerProfile.hassToken : "",
                         isDemoMode: isDemoModus,
-                        customHeaders: !isDemoModus ? selectedServerProfile.customHeaders : []
+                        customHeaders: !isDemoModus ? selectedServerProfile.customHeaders ?? [] : []
                     )
                 } catch {
                     GrocyLogger.error("\(error)")
@@ -144,7 +147,7 @@ class GrocyViewModel {
         grocyApi.setLoginData(
             baseURL: selectedServerProfile.grocyServerURL,
             apiKey: selectedServerProfile.grocyAPIKey,
-            customHeaders: Dictionary(uniqueKeysWithValues: selectedServerProfile.customHeaders.map({ ($0.headerName, $0.headerValue) }))
+            customHeaders: Dictionary(uniqueKeysWithValues: (selectedServerProfile.customHeaders ?? []).map { (header: LoginCustomHeader) in ((header.headerName) as String, (header.headerValue) as String) })
         )
         grocyApi.setTimeoutInterval(timeoutInterval: timeoutInterval)
         isDemoModus = false

@@ -28,7 +28,7 @@ struct ListElementRow: View {
 }
 
 struct ServerProfileFormView: View {
-    @Environment(\.modelContext) private var modelContext
+    @Environment(\.profileModelContext) private var profileModelContext
     @Environment(\.dismiss) private var dismiss
 
     @State private var serverProfile: ServerProfile
@@ -46,7 +46,7 @@ struct ServerProfileFormView: View {
 
     var selectedServerProfile: ServerProfile? {
         let descriptor = FetchDescriptor<ServerProfile>(predicate: #Predicate<ServerProfile> { $0.isActive == true })
-        return (try? modelContext.fetch(descriptor))?.first
+        return (try? profileModelContext?.fetch(descriptor))?.first
     }
 
     #if os(iOS)
@@ -224,7 +224,7 @@ struct ServerProfileFormView: View {
             }
             Section(
                 content: {
-                    ForEach(serverProfile.customHeaders) { customHeader in
+                    ForEach(serverProfile.customHeaders ?? []) { customHeader in
                         ListElementRow(header: customHeader)
                     }
                     .onDelete(perform: deleteHeader)
@@ -235,7 +235,7 @@ struct ServerProfileFormView: View {
                         Spacer()
                         Button(
                             action: {
-                                serverProfile.customHeaders.append(LoginCustomHeader(headerName: "", headerValue: ""))
+                                serverProfile.customHeaders?.append(LoginCustomHeader(headerName: "", headerValue: ""))
                             },
                             label: {
                                 Label("Add", systemImage: MySymbols.new)
@@ -265,12 +265,13 @@ struct ServerProfileFormView: View {
                     role: .confirm,
                     action: {
                         if isEditing {
-                            try? modelContext.save()
+                            try? serverProfile.modelContext?.save()
                         } else {
                             if selectedServerProfile == nil {
                                 serverProfile.isActive = true
                             }
-                            modelContext.insert(serverProfile)
+                            profileModelContext?.insert(serverProfile)
+                            try? profileModelContext?.save()
                         }
                         dismiss()
                     }
@@ -281,7 +282,7 @@ struct ServerProfileFormView: View {
     }
 
     private func deleteHeader(at offsets: IndexSet) {
-        serverProfile.customHeaders.remove(atOffsets: offsets)
+        serverProfile.customHeaders?.remove(atOffsets: offsets)
     }
 }
 
