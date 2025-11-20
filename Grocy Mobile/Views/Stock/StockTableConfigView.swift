@@ -15,9 +15,9 @@ struct StockTableConfigView: View {
     @Binding var showNextBestBeforeDate: Bool
     @Binding var showCaloriesPerStockQU: Bool
     @Binding var showCalories: Bool
-    
+
     var body: some View {
-        Form() {
+        Form {
             Toggle("Product", isOn: $showProduct)
             Toggle("Product group", isOn: $showProductGroup)
             Toggle("Amount", isOn: $showAmount)
@@ -31,6 +31,14 @@ struct StockTableConfigView: View {
 
 struct StockTableConfigView_Previews: PreviewProvider {
     static var previews: some View {
-        StockTableConfigView(showProduct: Binding.constant(true), showProductGroup: Binding.constant(true), showAmount: Binding.constant(true), showValue: Binding.constant(true), showNextBestBeforeDate: Binding.constant(true), showCaloriesPerStockQU: Binding.constant(true), showCalories: Binding.constant(true))
+        StockTableConfigView(
+            showProduct: Binding.constant(true),
+            showProductGroup: Binding.constant(true),
+            showAmount: Binding.constant(true),
+            showValue: Binding.constant(true),
+            showNextBestBeforeDate: Binding.constant(true),
+            showCaloriesPerStockQU: Binding.constant(true),
+            showCalories: Binding.constant(true)
+        )
     }
 }

@@ -5,12 +5,12 @@
 //  Created by Georg Meissner on 28.12.20.
 //
 
-import SwiftUI
 import SwiftData
+import SwiftUI
 
 struct StockTableRow: View {
     @Environment(GrocyViewModel.self) private var grocyVM
-    
+
     @Query(sort: \MDQuantityUnit.id, order: .forward) var mdQuantityUnits: MDQuantityUnits
     @Query(sort: \ShoppingListItem.id, order: .forward) var shoppingList: [ShoppingListItem]
     @Query(sort: \MDProductGroup.id, order: .forward) var mdProductGroups: MDProductGroups
@@ -22,111 +22,124 @@ struct StockTableRow: View {
     var userSettings: GrocyUserSettings? {
         userSettingsList.first
     }
-    
+
     @AppStorage("localizationKey") var localizationKey: String = "en"
-    
+
     @Environment(\.colorScheme) var colorScheme
-#if os(iOS)
-    @Environment(\.verticalSizeClass) var verticalSizeClass: UserInterfaceSizeClass?
-    @Environment(\.horizontalSizeClass) var horizontalSizeClass: UserInterfaceSizeClass?
-#endif
-    
+    #if os(iOS)
+        @Environment(\.verticalSizeClass) var verticalSizeClass: UserInterfaceSizeClass?
+        @Environment(\.horizontalSizeClass) var horizontalSizeClass: UserInterfaceSizeClass?
+    #endif
+
     var stockElement: StockElement
     @Binding var selectedStockElement: StockElement?
-    
+
     @State private var showDetailView: Bool = false
-    
+
     var quantityUnit: MDQuantityUnit? {
-        mdQuantityUnits.first(where: {$0.id == stockElement.product?.quIDStock})
+        mdQuantityUnits.first(where: { $0.id == stockElement.product?.quIDStock })
     }
-    
+
     var backgroundColor: Color {
-        if volatileStock?.dueProducts.map({$0.productID}).contains(stockElement.productID) ?? false {
+        if volatileStock?.dueProducts.map({ $0.productID }).contains(stockElement.productID) ?? false {
             return Color(.GrocyColors.grocyYellowBackground)
         }
-        if volatileStock?.expiredProducts.map({$0.productID}).contains(stockElement.productID) ?? false {
+        if volatileStock?.expiredProducts.map({ $0.productID }).contains(stockElement.productID) ?? false {
             return Color(.GrocyColors.grocyRedBackground)
         }
-        if volatileStock?.overdueProducts.map({$0.productID}).contains(stockElement.productID) ?? false {
+        if volatileStock?.overdueProducts.map({ $0.productID }).contains(stockElement.productID) ?? false {
             return Color(.GrocyColors.grocyGrayBackground)
         }
-        if volatileStock?.missingProducts.map({$0.productID}).contains(stockElement.productID) ?? false {
+        if volatileStock?.missingProducts.map({ $0.productID }).contains(stockElement.productID) ?? false {
             return Color(.GrocyColors.grocyBlueBackground)
         }
-#if os(iOS)
-        return colorScheme == .light ? Color.white : Color.black
-#elseif os(macOS)
-        return colorScheme == .light ? Color.white : Color.gray.opacity(0.05)
-#endif
+        #if os(iOS)
+            return colorScheme == .light ? Color.white : Color.black
+        #elseif os(macOS)
+            return colorScheme == .light ? Color.white : Color.gray.opacity(0.05)
+        #endif
     }
-    
+
     var body: some View {
-        NavigationLink(value: stockElement, label: {
-            content
+        NavigationLink(
+            value: stockElement,
+            label: {
+                content
+            }
+        )
+        .listRowBackground(backgroundColor)
+        .contextMenu(menuItems: {
+            StockTableMenuEntriesView(stockElement: stockElement, selectedStockElement: $selectedStockElement)
         })
-            .listRowBackground(backgroundColor)
-            .contextMenu(menuItems: {
-                StockTableMenuEntriesView(stockElement: stockElement, selectedStockElement: $selectedStockElement)
-            })
-            .swipeActions(edge: .leading, allowsFullSwipe: true, content: {
+        .swipeActions(
+            edge: .leading,
+            allowsFullSwipe: true,
+            content: {
                 if stockElement.amount > 0 {
                     StockTableRowActionsView(stockElement: stockElement, selectedStockElement: $selectedStockElement, shownActions: [.consumeQA, .openQA])
                 }
-            })
-            .swipeActions(edge: .trailing, allowsFullSwipe: true, content: {
+            }
+        )
+        .swipeActions(
+            edge: .trailing,
+            allowsFullSwipe: true,
+            content: {
                 if stockElement.amount > 0 {
                     StockTableRowActionsView(stockElement: stockElement, selectedStockElement: $selectedStockElement, shownActions: [.consumeAll])
                 }
-            })
-#if os(macOS)
+            }
+        )
+        #if os(macOS)
             .listRowBackground(backgroundColor.clipped().cornerRadius(5))
             .foregroundStyle(colorScheme == .light ? Color.black : Color.white)
-#else
+        #else
             .listRowBackground(backgroundColor)
-#endif
+        #endif
     }
-    
+
     var content: some View {
-#if os(iOS)
-        Group {
-            if horizontalSizeClass == .compact && verticalSizeClass == .regular {
-                HStack{
-                    VStack(alignment: .leading){
+        #if os(iOS)
+            Group {
+                if horizontalSizeClass == .compact && verticalSizeClass == .regular {
+                    HStack {
+                        VStack(alignment: .leading) {
+                            stockElementNameAndActions
+                            stockElementDetails
+                        }
+                        Spacer()
+                    }
+                } else {
+                    HStack {
                         stockElementNameAndActions
                         stockElementDetails
+                        Spacer()
                     }
-                    Spacer()
-                }
-            } else {
-                HStack{
-                    stockElementNameAndActions
-                    stockElementDetails
-                    Spacer()
                 }
             }
-        }
-#elseif os(macOS)
-        HStack{
-            stockElementNameAndActions
-            stockElementDetails
-            Spacer()
-        }
-#endif
+        #elseif os(macOS)
+            HStack {
+                stockElementNameAndActions
+                stockElementDetails
+                Spacer()
+            }
+        #endif
     }
-    
+
     var stockElementNameAndActions: some View {
         Text(stockElement.product?.name ?? "")
             .font(.headline)
     }
-    
+
     var stockElementDetails: some View {
-        VStack(alignment: .leading){
-            if let productGroup = mdProductGroups.first(where:{ $0.id == stockElement.product?.productGroupID}) {
+        VStack(alignment: .leading) {
+            if let productGroup = mdProductGroups.first(where: { $0.id == stockElement.product?.productGroupID }) {
                 Text(productGroup.name)
                     .font(.caption)
-            } else {Text("")}
-            
-            HStack{
+            } else {
+                Text("")
+            }
+
+            HStack {
                 Text("\(stockElement.amount.formattedAmount) \(quantityUnit?.getName(amount: stockElement.amount) ?? "")")
                 if stockElement.amountOpened > 0 {
                     Text("\(stockElement.amountOpened.formattedAmount) opened")
@@ -144,7 +157,8 @@ struct StockTableRow: View {
                     }
                 }
                 if userSettings?.showIconOnStockOverviewPageWhenProductIsOnShoppingList ?? true,
-                   shoppingList.first(where: {$0.productID == stockElement.productID}) != nil {
+                    shoppingList.first(where: { $0.productID == stockElement.productID }) != nil
+                {
                     Image(systemName: MySymbols.shoppingList)
                         .foregroundStyle(Color(.GrocyColors.grocyGray))
                         .help("This product is currently on a shopping list.")
