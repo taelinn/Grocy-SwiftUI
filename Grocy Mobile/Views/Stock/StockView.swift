@@ -29,15 +29,22 @@ enum StockInteraction: Hashable {
 
 struct StockView: View {
     @Environment(GrocyViewModel.self) private var grocyVM
+    @Environment(\.modelContext) private var modelContext
 
     @Query(filter: #Predicate<StockElement> { $0.amount > 0 }) var stock: [StockElement]
     @Query(filter: #Predicate<StockLocation> { $0.amount > 0 }) var stockLocations: StockLocations
     @Query(sort: \MDProduct.name, order: .forward) var mdProducts: MDProducts
     @Query(sort: \MDProductGroup.id, order: .forward) var mdProductGroups: MDProductGroups
     @Query(sort: \MDLocation.name, order: .forward) var mdLocations: MDLocations
+    @Query(sort: \MDQuantityUnit.id, order: .forward) var mdQuantityUnits: MDQuantityUnits
+    @Query(sort: \ShoppingListItem.id, order: .forward) var shoppingList: [ShoppingListItem]
     @Query var volatileStockList: [VolatileStock]
     var volatileStock: VolatileStock? {
         return volatileStockList.first
+    }
+    @Query var userSettingsList: GrocyUserSettingsList
+    var userSettings: GrocyUserSettings? {
+        return userSettingsList.first
     }
     @State private var searchString: String = ""
     @State private var showingFilterSheet = false
@@ -62,6 +69,11 @@ struct StockView: View {
     @State private var filteredStatus: ProductStatus = .all
 
     @State var selectedStockElement: StockElement? = nil
+
+    // Cached filtered/grouped results to prevent blocking during filter changes
+    @State private var cachedFilteredStock: [StockElement] = []
+    @State private var cachedGroupedStock: [AnyHashable: [StockElement]] = [:]
+    @State private var filterComputationTask: Task<Void, Never>?
 
     private let dataToUpdate: [ObjectEntities] = [.products, .shopping_locations, .locations, .product_groups, .quantity_units, .shopping_lists, .shopping_list, .stock_current_locations]
     private let additionalDataToUpdate: [AdditionalEntities] = [.stock, .volatileStock, .system_config, .user_settings]
@@ -110,91 +122,188 @@ struct StockView: View {
     }
 
     var filteredAndSearchedStock: [StockElement] {
-        // First use predicate for simple conditions
-        let simplePredicate = #Predicate<StockElement> { stockElement in
-            !(stockElement.product?.hideOnStockOverview ?? false)
-                && (searchString.isEmpty || stockElement.product?.name.localizedStandardContains(searchString) ?? false)
-                && (filteredProductGroupID == nil || stockElement.product?.productGroupID == filteredProductGroupID)
-        }
-
-        // Then apply complex filters using Swift
-        return (stock + missingStock)
-            .filter { (try? simplePredicate.evaluate($0)) ?? false }
-            .filter { stockElement in
-                // Location filter
-                filteredLocationID == nil || stockLocations.contains(where: { $0.productID == stockElement.productID && $0.locationID == filteredLocationID })
-            }
-            .filter { stockElement in
-                // Status filters
-                filteredStatus == .all || (filteredStatus == .belowMinStock && volatileStock?.missingProducts.contains(where: { $0.productID == stockElement.productID }) ?? false)
-                    || (filteredStatus == .expiringSoon && volatileStock?.dueProducts.contains(where: { $0.productID == stockElement.productID }) ?? false)
-                    || (filteredStatus == .overdue && (volatileStock?.overdueProducts.contains(where: { $0.productID == stockElement.productID }) ?? false)
-                        && !(volatileStock?.expiredProducts.contains(where: { $0.productID == stockElement.productID }) ?? false))
-                    || (filteredStatus == .expired && volatileStock?.expiredProducts.contains(where: { $0.productID == stockElement.productID }) ?? false)
-            }
-            .sorted(using: sortSetting)
+        cachedFilteredStock
     }
 
-    var groupedStock: [String: [StockElement]] {
-        switch stockGrouping {
-        case .none:
-            return Dictionary(
-                grouping: filteredAndSearchedStock,
-                by: { element in
-                    ""
+    var groupedStock: [AnyHashable: [StockElement]] {
+        cachedGroupedStock
+    }
+
+    private func computeFilteredAndGroupedStock() {
+        filterComputationTask?.cancel()
+
+        // Capture required values before detaching to avoid MainActor access issues
+        let searchString = self.searchString
+        let filteredLocationID = self.filteredLocationID
+        let filteredProductGroupID = self.filteredProductGroupID
+        let filteredStatus = self.filteredStatus
+        let stockGrouping = self.stockGrouping
+        let sortSetting = self.sortSetting
+        let stock = self.stock
+        let missingStock = self.missingStock
+        let stockLocations = self.stockLocations
+        let mdProducts = self.mdProducts
+        let mdProductGroups = self.mdProductGroups
+        let mdLocations = self.mdLocations
+        let volatileStock = self.volatileStock
+        let stockProductDetails = self.grocyVM.stockProductDetails
+        
+        // Pre-convert stock element dates to avoid MainActor access in background task
+        let stockWithDates: [(element: StockElement, dueDate: Date?)] = stock.map { element in
+            (element, element.bestBeforeDate)
+        }
+        let missingStockWithDates: [(element: StockElement, dueDate: Date?)] = missingStock.map { element in
+            (element, element.bestBeforeDate)
+        }
+        
+        // Pre-convert min stock amounts to strings to avoid MainActor access in background task
+        let minStockAmountMap = (stock + missingStock).reduce(into: [Int: String]()) { dict, element in
+            dict[element.productID] = element.product?.minStockAmount.formattedAmount ?? ""
+        }
+        
+        // Pre-convert last purchased dates to avoid MainActor access in background task
+        let lastPurchasedMap = stockProductDetails.reduce(into: [Int: Date?]()) { dict, item in
+            dict[item.key] = item.value.lastPurchased
+        }
+        
+        // Pre-compute product group names to avoid MainActor access in background task
+        let productGroupNameMap = mdProductGroups.reduce(into: [Int: String]()) { dict, group in
+            dict[group.id] = group.name
+        }
+        
+        // Pre-compute product names to avoid MainActor access in background task
+        _ = mdProducts.reduce(into: [Int: String]()) { dict, product in
+            dict[product.id] = product.name
+        }
+        
+        // Pre-compute parent product names to avoid MainActor access in background task
+        let parentProductNameMap = mdProducts.reduce(into: [Int: String]()) { dict, product in
+            if let parentID = product.parentProductID {
+                dict[product.id] = mdProducts.first(where: { $0.id == parentID })?.name ?? ""
+            } else {
+                dict[product.id] = ""
+            }
+        }
+        
+        // Pre-compute location names to avoid MainActor access in background task
+        let locationNameMap = mdLocations.reduce(into: [Int: String]()) { dict, location in
+            dict[location.id] = location.name
+        }
+
+        filterComputationTask = Task.detached(priority: .userInitiated) {
+            // Cache frequently accessed data
+            let dueProductIDs = Set(volatileStock?.dueProducts.map { $0.productID } ?? [])
+            let expiredProductIDs = Set(volatileStock?.expiredProducts.map { $0.productID } ?? [])
+            let overdueProductIDs = Set(volatileStock?.overdueProducts.map { $0.productID } ?? [])
+            let missingProductIDs = Set(volatileStock?.missingProducts.map { $0.productID } ?? [])
+
+            // First use predicate for simple conditions
+            let simplePredicate = #Predicate<StockElement> { stockElement in
+                !(stockElement.product?.hideOnStockOverview ?? false)
+                    && (searchString.isEmpty || stockElement.product?.name.localizedStandardContains(searchString) ?? false)
+                    && (filteredProductGroupID == nil || stockElement.product?.productGroupID == filteredProductGroupID)
+            }
+
+            // Then apply complex filters using Swift
+            let stockForFiltering = stockWithDates.map { $0.element } + missingStockWithDates.map { $0.element }
+            let filtered = stockForFiltering
+                .filter { (try? simplePredicate.evaluate($0)) ?? false }
+                .filter { stockElement in
+                    // Location filter
+                    filteredLocationID == nil || stockLocations.contains(where: { $0.productID == stockElement.productID && $0.locationID == filteredLocationID })
                 }
-            )
-        case .productGroup:
-            return Dictionary(
-                grouping: filteredAndSearchedStock,
-                by: { element in
-                    mdProductGroups.first(where: { productGroup in
-                        productGroup.id == element.product?.productGroupID
-                    })?
-                    .name ?? ""
+                .filter { stockElement in
+                    // Status filters - using cached Sets for O(1) lookup
+                    let productID = stockElement.productID
+                    return filteredStatus == .all
+                        || (filteredStatus == .belowMinStock && missingProductIDs.contains(productID))
+                        || (filteredStatus == .expiringSoon && dueProductIDs.contains(productID))
+                        || (filteredStatus == .overdue && overdueProductIDs.contains(productID) && !expiredProductIDs.contains(productID))
+                        || (filteredStatus == .expired && expiredProductIDs.contains(productID))
                 }
-            )
-        case .nextDueDate:
-            return Dictionary(
-                grouping: filteredAndSearchedStock,
-                by: { element in
-                    element.bestBeforeDate?.iso8601withFractionalSeconds ?? ""
+                .sorted(using: sortSetting)
+
+            // Create maps for grouping - use Date objects as keys for proper chronological sorting
+            let nextDueDateMap = (stockWithDates + missingStockWithDates).reduce(into: [UUID: Date?]()) { dict, item in
+                dict[item.element.id] = item.dueDate
+            }
+            
+            let lastPurchasedDateMap = lastPurchasedMap
+
+            // Compute grouped stock using pre-captured lookup data to avoid MainActor access
+            let grouped: [AnyHashable: [StockElement]] = {
+                switch stockGrouping {
+                case .none:
+                    return Dictionary(
+                        grouping: filtered,
+                        by: { _ in
+                            "" as AnyHashable
+                        }
+                    )
+                case .productGroup:
+                    return Dictionary(
+                        grouping: filtered,
+                        by: { element in
+                            if let groupID = element.product?.productGroupID {
+                                return productGroupNameMap[groupID] as AnyHashable? ?? "" as AnyHashable
+                            }
+                            return "" as AnyHashable
+                        }
+                    )
+                case .nextDueDate:
+                    return Dictionary(
+                        grouping: filtered,
+                        by: { element in
+                            if let date = nextDueDateMap[element.id] {
+                                return date as AnyHashable? ?? NSNull() as AnyHashable
+                            } else {
+                                return NSNull() as AnyHashable
+                            }
+                        }
+                    )
+                case .lastPurchased:
+                    return Dictionary(
+                        grouping: filtered,
+                        by: { element in
+                            if let date = lastPurchasedDateMap[element.productID] {
+                                return date as AnyHashable? ?? NSNull() as AnyHashable
+                            } else {
+                                return NSNull() as AnyHashable
+                            }
+                        }
+                    )
+                case .minStockAmount:
+                    return Dictionary(
+                        grouping: filtered,
+                        by: { element in
+                            Double(minStockAmountMap[element.productID] ?? "") as AnyHashable? ?? 0 as AnyHashable
+                        }
+                    )
+                case .parentProduct:
+                    return Dictionary(
+                        grouping: filtered,
+                        by: { element in
+                            parentProductNameMap[element.productID] as AnyHashable? ?? "" as AnyHashable
+                        }
+                    )
+                case .defaultLocation:
+                    return Dictionary(
+                        grouping: filtered,
+                        by: { element in
+                            if let locationID = element.product?.locationID {
+                                return locationNameMap[locationID] as AnyHashable? ?? "" as AnyHashable
+                            }
+                            return "" as AnyHashable
+                        }
+                    )
                 }
-            )
-        case .lastPurchased:
-            return Dictionary(
-                grouping: filteredAndSearchedStock,
-                by: { element in
-                    grocyVM.stockProductDetails[element.productID]?.lastPurchased?.iso8601withFractionalSeconds ?? ""
-                }
-            )
-        case .minStockAmount:
-            return Dictionary(
-                grouping: filteredAndSearchedStock,
-                by: { element in
-                    element.product?.minStockAmount.formattedAmount ?? ""
-                }
-            )
-        case .parentProduct:
-            return Dictionary(
-                grouping: filteredAndSearchedStock,
-                by: { element in
-                    mdProducts.first(where: { product in
-                        product.id == element.productID
-                    })?
-                    .name ?? ""
-                }
-            )
-        case .defaultLocation:
-            return Dictionary(
-                grouping: filteredAndSearchedStock,
-                by: { element in
-                    mdLocations.first(where: { location in
-                        location.id == element.product?.locationID
-                    })?
-                    .name ?? ""
-                }
-            )
+            }()
+
+            // Update UI on main thread
+            await MainActor.run {
+                self.cachedFilteredStock = filtered
+                self.cachedGroupedStock = grouped
+            }
         }
     }
 
@@ -205,6 +314,63 @@ struct StockView: View {
 
     var summedValueStr: String {
         return "\(summedValue.formatted(.number.precision(.fractionLength(0...2)))) \(getCurrencySymbol())"
+    }
+
+    var stockListContent: some View {
+        let sortedGroups = Array(groupedStock).sorted { a, b in
+            if let dateA = a.key as? Date, let dateB = b.key as? Date { return dateA < dateB }
+            if let numA = a.key as? Double, let numB = b.key as? Double { return numA < numB }
+            return String(describing: a.key) < String(describing: b.key)
+        }
+        
+        return ForEach(sortedGroups, id: \.key) { groupKey, groupElements in
+            Section(
+                content: {
+                    ForEach(
+                        groupElements.sorted(using: sortSetting),
+                        id: \.productID
+                    ) { stockElement in
+                        StockTableRow(
+                            mdQuantityUnits: mdQuantityUnits,
+                            shoppingList: shoppingList,
+                            mdProductGroups: mdProductGroups,
+                            volatileStock: volatileStock,
+                            userSettings: userSettings,
+                            stockElement: stockElement,
+                            selectedStockElement: $selectedStockElement
+                        )
+                    }
+                },
+                header: {
+                    let dateFormatter: DateFormatter = {
+                        let formatter = DateFormatter()
+                        formatter.dateStyle = .medium
+                        formatter.timeStyle = .none
+                        return formatter
+                    }()
+                    
+                    if stockGrouping == .productGroup, (groupKey as? String)?.isEmpty ?? false {
+                        Text("Ungrouped")
+                            .italic()
+                    } else if stockGrouping == .none {
+                        EmptyView()
+                    } else if stockGrouping == .minStockAmount, let numValue = groupKey as? Double {
+                        Text(String(format: "%.0f", numValue)).bold()
+                    } else if stockGrouping == .nextDueDate || stockGrouping == .lastPurchased {
+                        if let date = groupKey as? Date {
+                            Text(dateFormatter.string(from: date)).bold()
+                        } else if groupKey is NSNull {
+                            Text("Unknown").italic()
+                        } else {
+                            Text(String(describing: groupKey)).bold()
+                        }
+                    } else {
+                        let groupName = groupKey as? String ?? String(describing: groupKey)
+                        Text(groupName).bold()
+                    }
+                }
+            )
+        }
     }
 
     var body: some View {
@@ -221,38 +387,41 @@ struct StockView: View {
             } else if filteredAndSearchedStock.isEmpty {
                 ContentUnavailableView.search
             }
-            ForEach(groupedStock.sorted(by: { $0.key < $1.key }), id: \.key) { groupName, groupElements in
-                Section(
-                    content: {
-                        ForEach(
-                            groupElements.sorted(using: sortSetting),
-                            id: \.productID,
-                            content: { stockElement in
-                                StockTableRow(stockElement: stockElement, selectedStockElement: $selectedStockElement)
-                            }
-                        )
-                    },
-                    header: {
-                        if stockGrouping == .productGroup, groupName.isEmpty {
-                            Text("Ungrouped")
-                                .italic()
-                        } else if stockGrouping == .none {
-                            EmptyView()
-                        } else {
-                            Text(groupName).bold()
-                        }
-                    }
-                )
-            }
+            stockListContent
         }
         .navigationTitle("Stock overview")
         .searchable(text: $searchString, prompt: "Search")
         .refreshable {
             await updateData()
         }
-        .animation(.default, value: groupedStock.count)
         .task {
             await updateData()
+            // Compute initial filtered/grouped stock after data loads
+            computeFilteredAndGroupedStock()
+        }
+        .onChange(of: filteredLocationID) { _, _ in
+            computeFilteredAndGroupedStock()
+        }
+        .onChange(of: filteredProductGroupID) { _, _ in
+            computeFilteredAndGroupedStock()
+        }
+        .onChange(of: filteredStatus) { _, _ in
+            computeFilteredAndGroupedStock()
+        }
+        .onChange(of: searchString) { _, _ in
+            computeFilteredAndGroupedStock()
+        }
+        .onChange(of: stockGrouping) { _, _ in
+            computeFilteredAndGroupedStock()
+        }
+        .onChange(of: sortSetting) { _, _ in
+            computeFilteredAndGroupedStock()
+        }
+        .onChange(of: stock) { _, _ in
+            computeFilteredAndGroupedStock()
+        }
+        .onChange(of: volatileStock) { _, _ in
+            computeFilteredAndGroupedStock()
         }
         .toolbar(content: {
             #if os(iOS)

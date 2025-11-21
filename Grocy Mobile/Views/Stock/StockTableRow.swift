@@ -9,27 +9,20 @@ import SwiftData
 import SwiftUI
 
 struct StockTableRow: View {
-    @Environment(GrocyViewModel.self) private var grocyVM
-
-    @Query(sort: \MDQuantityUnit.id, order: .forward) var mdQuantityUnits: MDQuantityUnits
-    @Query(sort: \ShoppingListItem.id, order: .forward) var shoppingList: [ShoppingListItem]
-    @Query(sort: \MDProductGroup.id, order: .forward) var mdProductGroups: MDProductGroups
-    @Query var volatileStockList: [VolatileStock]
-    var volatileStock: VolatileStock? {
-        volatileStockList.first
-    }
-    @Query var userSettingsList: GrocyUserSettingsList
-    var userSettings: GrocyUserSettings? {
-        userSettingsList.first
-    }
-
+    @Environment(\.colorScheme) var colorScheme
     @AppStorage("localizationKey") var localizationKey: String = "en"
 
-    @Environment(\.colorScheme) var colorScheme
     #if os(iOS)
         @Environment(\.verticalSizeClass) var verticalSizeClass: UserInterfaceSizeClass?
         @Environment(\.horizontalSizeClass) var horizontalSizeClass: UserInterfaceSizeClass?
     #endif
+
+    // Pass data from parent to avoid duplicate queries
+    let mdQuantityUnits: MDQuantityUnits
+    let shoppingList: [ShoppingListItem]
+    let mdProductGroups: MDProductGroups
+    let volatileStock: VolatileStock?
+    let userSettings: GrocyUserSettings?
 
     var stockElement: StockElement
     @Binding var selectedStockElement: StockElement?
@@ -41,18 +34,21 @@ struct StockTableRow: View {
     }
 
     var backgroundColor: Color {
-        if volatileStock?.dueProducts.map({ $0.productID }).contains(stockElement.productID) ?? false {
+        let productID = stockElement.productID
+
+        if (volatileStock?.dueProducts ?? []).contains(where: { $0.productID == productID }) {
             return Color(.GrocyColors.grocyYellowBackground)
         }
-        if volatileStock?.expiredProducts.map({ $0.productID }).contains(stockElement.productID) ?? false {
+        if (volatileStock?.expiredProducts ?? []).contains(where: { $0.productID == productID }) {
             return Color(.GrocyColors.grocyRedBackground)
         }
-        if volatileStock?.overdueProducts.map({ $0.productID }).contains(stockElement.productID) ?? false {
+        if (volatileStock?.overdueProducts ?? []).contains(where: { $0.productID == productID }) {
             return Color(.GrocyColors.grocyGrayBackground)
         }
-        if volatileStock?.missingProducts.map({ $0.productID }).contains(stockElement.productID) ?? false {
+        if (volatileStock?.missingProducts ?? []).contains(where: { $0.productID == productID }) {
             return Color(.GrocyColors.grocyBlueBackground)
         }
+
         #if os(iOS)
             return colorScheme == .light ? Color.white : Color.black
         #elseif os(macOS)
@@ -67,7 +63,6 @@ struct StockTableRow: View {
                 content
             }
         )
-        .listRowBackground(backgroundColor)
         .contextMenu(menuItems: {
             StockTableMenuEntriesView(stockElement: stockElement, selectedStockElement: $selectedStockElement)
         })
