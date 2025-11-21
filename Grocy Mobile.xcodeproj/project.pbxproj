@@ -29,22 +29,9 @@
 		78B01C372DFF826F0080C814 /* Grocy MobileUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Grocy MobileUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		78DD0EE92ECFCC3700A2A7E9 /* Exceptions for "Grocy Mobile" folder in "Grocy Mobile" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				"Grocy-Mobile-Info.plist",
-			);
-			target = 78B01C1E2DFF826D0080C814 /* Grocy Mobile */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		789BE5692E00C31A002FF935 /* Grocy Mobile */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				78DD0EE92ECFCC3700A2A7E9 /* Exceptions for "Grocy Mobile" folder in "Grocy Mobile" target */,
-			);
 			path = "Grocy Mobile";
 			sourceTree = "<group>";
 		};
