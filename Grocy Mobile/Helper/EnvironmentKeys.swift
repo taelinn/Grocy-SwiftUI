@@ -27,3 +27,11 @@ extension EnvironmentValues {
         set { self[ProfileModelContainerKey.self] = newValue }
     }
 }
+
+func isRunningOnSimulator() -> Bool {
+    #if targetEnvironment(simulator)
+        return true
+    #else
+        return false
+    #endif
+}

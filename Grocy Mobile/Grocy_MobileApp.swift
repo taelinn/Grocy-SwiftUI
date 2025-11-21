@@ -66,7 +66,7 @@ struct Grocy_MobileApp: App {
             schema: profileSchema,
             url: URL.applicationSupportDirectory.appending(component: "profiles.store"),
             allowsSave: true,
-            cloudKitDatabase: .private("iCloud.georgappdev.Grocy"),
+            cloudKitDatabase: isRunningOnSimulator() ? .none : .private("iCloud.georgappdev.Grocy")
         )
         
         // Initialize profile container
