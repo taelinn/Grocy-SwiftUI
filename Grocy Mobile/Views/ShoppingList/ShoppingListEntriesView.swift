@@ -114,7 +114,7 @@ struct ShoppingListEntriesView: View {
                                     }
                                 }
                             },
-                            label: { Image(systemName: MySymbols.done) }
+                            label: { Label("Done", systemImage: MySymbols.done) }
                         )
                         .tint(.green)
                         if shoppingListItem.productID != nil {
@@ -122,7 +122,7 @@ struct ShoppingListEntriesView: View {
                                 action: {
                                     showPurchase.toggle()
                                 },
-                                label: { Image(systemName: "shippingbox") }
+                                label: { Label("Purchase", systemImage: "shippingbox") }
                             )
                             .tint(.blue)
                         }
