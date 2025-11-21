@@ -9,6 +9,7 @@ import SwiftData
 import SwiftUI
 
 struct StockTableMenuEntriesView: View {
+    @Environment(\.modelContext) private var modelContext
     @Environment(GrocyViewModel.self) private var grocyVM
 
     @State private var navPath = NavigationPath()

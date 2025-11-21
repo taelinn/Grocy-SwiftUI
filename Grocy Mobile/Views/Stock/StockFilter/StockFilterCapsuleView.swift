@@ -9,6 +9,7 @@ import SwiftData
 import SwiftUI
 
 struct StockFilterCapsuleView: View {
+    @Environment(\.modelContext) private var modelContext
     @Query var userSettingsList: GrocyUserSettingsList
     var userSettings: GrocyUserSettings? {
         return userSettingsList.first
