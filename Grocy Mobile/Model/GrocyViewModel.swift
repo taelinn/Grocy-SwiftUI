@@ -107,17 +107,28 @@ class GrocyViewModel {
             try container.encode(dateString)
         })
         jsonEncoder.outputFormatting = .prettyPrinted
-        if isLoggedIn, let selectedServerProfile {
+        if isLoggedIn {
             Task {
                 do {
-                    try await checkServer(
-                        baseURL: !isDemoModus ? selectedServerProfile.grocyServerURL : demoServerURL,
-                        apiKey: !isDemoModus ? selectedServerProfile.grocyAPIKey : "",
-                        useHassIngress: !isDemoModus ? selectedServerProfile.useHassIngress : false,
-                        hassToken: !isDemoModus ? selectedServerProfile.hassToken : "",
-                        isDemoMode: isDemoModus,
-                        customHeaders: !isDemoModus ? selectedServerProfile.customHeaders ?? [] : []
-                    )
+                    if isDemoModus {
+                        try await checkServer(
+                            baseURL: demoServerURL,
+                            apiKey: "",
+                            useHassIngress: false,
+                            hassToken: "",
+                            isDemoMode: isDemoModus,
+                            customHeaders: []
+                        )
+                    } else if let profile = selectedServerProfile {
+                        try await checkServer(
+                            baseURL: profile.grocyServerURL,
+                            apiKey: profile.grocyAPIKey,
+                            useHassIngress: profile.useHassIngress,
+                            hassToken: profile.hassToken,
+                            isDemoMode: isDemoModus,
+                            customHeaders: profile.customHeaders ?? []
+                        )
+                    }
                 } catch {
                     GrocyLogger.error("\(error)")
                 }

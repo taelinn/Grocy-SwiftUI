@@ -12,7 +12,7 @@ struct LoginStatusView: View {
     @Environment(GrocyViewModel.self) private var grocyVM
     @Environment(\.dismiss) var dismiss
     @Environment(\.colorScheme) var colorScheme
-    
+
     var isDemoMode: Bool = false
 
     enum LoginState {
@@ -27,32 +27,38 @@ struct LoginStatusView: View {
     @State var unsupportedVersion: String? = nil
 
     private func tryLogin() async {
-        if !isDemoMode && grocyVM.selectedServerProfile == nil {
-            loginState = .fail
-            errorMessage = "Please select a server in the settings."
-        } else {
-            isLoading = true
-            do {
+        isLoading = true
+        do {
+            if isDemoMode {
                 try await grocyVM.checkServer(
-                    baseURL: isDemoMode ? demoServerURL : grocyVM.selectedServerProfile!.grocyServerURL,
-                    apiKey: isDemoMode ? nil : grocyVM.selectedServerProfile!.grocyAPIKey,
-                    useHassIngress: isDemoMode ? false : grocyVM.selectedServerProfile!.useHassIngress,
-                    hassToken: isDemoMode ? "" : grocyVM.selectedServerProfile!.hassToken,
-                    isDemoMode: isDemoMode,
-                    customHeaders: isDemoMode ? [] : grocyVM.selectedServerProfile!.customHeaders ?? []
+                    baseURL: demoServerURL,
+                    apiKey: "",
+                    useHassIngress: false,
+                    hassToken: "",
+                    isDemoMode: true,
+                    customHeaders: []
                 )
-                if GrocyAPP.supportedVersions.contains(grocyVM.systemInfo?.grocyVersion.version ?? "") {
-                    loginState = .success
-                    isDemoMode ? grocyVM.setDemoModus() : await grocyVM.setLoginModus()
-                } else {
-                    loginState = .unsupportedVersion
-                }
-            } catch {
-                loginState = .fail
-                errorMessage = error.localizedDescription
+            } else if let profile = grocyVM.selectedServerProfile {
+                try await grocyVM.checkServer(
+                    baseURL: profile.grocyServerURL,
+                    apiKey: profile.grocyAPIKey,
+                    useHassIngress: profile.useHassIngress,
+                    hassToken: profile.hassToken,
+                    isDemoMode: false,
+                    customHeaders: profile.customHeaders ?? []
+                )
             }
-            isLoading = false
+            if GrocyAPP.supportedVersions.contains(grocyVM.systemInfo?.grocyVersion.version ?? "") {
+                loginState = .success
+                isDemoMode ? grocyVM.setDemoModus() : await grocyVM.setLoginModus()
+            } else {
+                loginState = .unsupportedVersion
+            }
+        } catch {
+            loginState = .fail
+            errorMessage = error.localizedDescription
         }
+        isLoading = false
     }
 
     var body: some View {
