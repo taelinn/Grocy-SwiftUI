@@ -56,36 +56,38 @@ struct AmountSelectionView: View {
                 systemImage: MySymbols.amount
             )
 
-            VStack(alignment: .leading) {
-                Picker(
-                    selection: $quantityUnitID,
-                    label: Label("Quantity unit", systemImage: MySymbols.quantityUnit).foregroundStyle(.primary),
-                    content: {
-                        Text("")
-                            .tag(nil as Int?)
-                        if let stockQU = mdQuantityUnits.first(where: { $0.id == product?.quIDStock }) {
-                            Text(stockQU.name)
-                                .tag(stockQU.id as Int?)
-                        }
-                        ForEach(
-                            quantityUnitConversions,
-                            id: \.id,
-                            content: { quConversion in
-                                Text(mdQuantityUnits.first(where: { $0.id == quConversion.fromQuID })?.name ?? String(quConversion.fromQuID))
-                                    .tag(quConversion.fromQuID as Int?)
+            if productID != nil {
+                VStack(alignment: .leading) {
+                    Picker(
+                        selection: $quantityUnitID,
+                        label: Label("Quantity unit", systemImage: MySymbols.quantityUnit).foregroundStyle(.primary),
+                        content: {
+                            Text("")
+                                .tag(nil as Int?)
+                            if let stockQU = mdQuantityUnits.first(where: { $0.id == product?.quIDStock }) {
+                                Text(stockQU.name)
+                                    .tag(stockQU.id as Int?)
                             }
-                        )
+                            ForEach(
+                                quantityUnitConversions,
+                                id: \.id,
+                                content: { quConversion in
+                                    Text(mdQuantityUnits.first(where: { $0.id == quConversion.fromQuID })?.name ?? String(quConversion.fromQuID))
+                                        .tag(quConversion.fromQuID as Int?)
+                                }
+                            )
+                        }
+                    )
+                    .disabled(quantityUnitConversions.isEmpty)
+                    if quantityUnitID == nil {
+                        Text("A quantity unit is required")
+                            .font(.caption)
+                            .foregroundStyle(.red)
+                    } else if quantityUnitID != stockQuantityUnit?.id {
+                        Text("This equals \(factoredAmount.formatted(.number.precision(.fractionLength(0...8)))) \(factoredAmount == 1 ? stockQuantityUnit?.name ?? "?" : stockQuantityUnit?.namePlural ?? "?")")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
                     }
-                )
-                .disabled(quantityUnitConversions.isEmpty)
-                if quantityUnitID == nil {
-                    Text("A quantity unit is required")
-                        .font(.caption)
-                        .foregroundStyle(.red)
-                } else if quantityUnitID != stockQuantityUnit?.id {
-                    Text("This equals \(factoredAmount.formatted(.number.precision(.fractionLength(0...8)))) \(factoredAmount == 1 ? stockQuantityUnit?.name ?? "?" : stockQuantityUnit?.namePlural ?? "?")")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
                 }
             }
         }
