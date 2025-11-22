@@ -38,6 +38,7 @@ struct StockView: View {
     @Query(sort: \MDLocation.name, order: .forward) var mdLocations: MDLocations
     @Query(sort: \MDQuantityUnit.id, order: .forward) var mdQuantityUnits: MDQuantityUnits
     @Query(sort: \ShoppingListItem.id, order: .forward) var shoppingList: [ShoppingListItem]
+    @Query(sort: \StockEntry.id, order: .forward) var stockEntries: StockEntries
     @Query var volatileStockList: [VolatileStock]
     var volatileStock: VolatileStock? {
         return volatileStockList.first
@@ -75,7 +76,7 @@ struct StockView: View {
     @State private var cachedGroupedStock: [AnyHashable: [StockElement]] = [:]
     @State private var filterComputationTask: Task<Void, Never>?
 
-    private let dataToUpdate: [ObjectEntities] = [.products, .shopping_locations, .locations, .product_groups, .quantity_units, .shopping_lists, .shopping_list, .stock_current_locations]
+    private let dataToUpdate: [ObjectEntities] = [.products, .shopping_locations, .locations, .product_groups, .quantity_units, .shopping_lists, .shopping_list, .stock, .stock_current_locations]
     private let additionalDataToUpdate: [AdditionalEntities] = [.stock, .volatileStock, .system_config, .user_settings]
     private func updateData() async {
         await grocyVM.requestData(objects: dataToUpdate, additionalObjects: additionalDataToUpdate)
@@ -146,7 +147,7 @@ struct StockView: View {
         let mdProductGroups = self.mdProductGroups
         let mdLocations = self.mdLocations
         let volatileStock = self.volatileStock
-        let stockProductDetails = self.grocyVM.stockProductDetails
+        let stockEntries = self.stockEntries
         
         // Pre-convert stock element dates to avoid MainActor access in background task
         let stockWithDates: [(element: StockElement, dueDate: Date?)] = stock.map { element in
@@ -162,8 +163,14 @@ struct StockView: View {
         }
         
         // Pre-convert last purchased dates to avoid MainActor access in background task
-        let lastPurchasedMap = stockProductDetails.reduce(into: [Int: Date?]()) { dict, item in
-            dict[item.key] = item.value.lastPurchased
+        let lastPurchasedMap = stockEntries.reduce(into: [Int: Date?]()) { dict, item in
+            if let purchasedDate = item.purchasedDate {
+                if let existingDate = dict[item.productID], let existingDate = existingDate, purchasedDate > existingDate {
+                    dict[item.productID] = purchasedDate
+                } else if dict[item.productID] == nil {
+                    dict[item.productID] = purchasedDate
+                }
+            }
         }
         
         // Pre-compute product group names to avoid MainActor access in background task

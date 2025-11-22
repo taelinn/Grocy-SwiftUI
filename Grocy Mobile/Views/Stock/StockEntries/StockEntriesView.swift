@@ -23,8 +23,9 @@ struct StockEntriesView: View {
         _stockEntries = Query(filter: predicate, sort: [SortDescriptor(\StockEntry.bestBeforeDate, order: .forward), SortDescriptor(\StockEntry.purchasedDate, order: .forward)])
     }
 
+    private let dataToUpdate: [ObjectEntities] = [.stock]
     private func updateData() async {
-        await grocyVM.requestStockInfo(stockModeGet: .entries, productID: stockElement.productID)
+        await grocyVM.requestData(objects: dataToUpdate)
     }
 
     private func consumeEntry(stockEntry: StockEntry) async {
@@ -69,7 +70,7 @@ struct StockEntriesView: View {
                                     }
                                 },
                                 label: {
-                                    Label("Mark this stock entry as open", systemImage: MySymbols.open)
+                                    Label("Open", systemImage: MySymbols.open)
                                 }
                             )
                             .tint(Color(.GrocyColors.grocyBlue))
@@ -88,7 +89,7 @@ struct StockEntriesView: View {
                                     }
                                 },
                                 label: {
-                                    Label("Consume this stock entry", systemImage: MySymbols.consume)
+                                    Label("Consume", systemImage: MySymbols.consume)
                                 }
                             )
                             .tint(Color(.GrocyColors.grocyDelete))

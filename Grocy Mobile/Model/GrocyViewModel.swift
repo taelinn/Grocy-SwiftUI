@@ -40,6 +40,7 @@ class GrocyViewModel {
     var users: GrocyUsers = []
     var currentUser: GrocyUser? = nil
     var stock: Stock = []
+    var stockEntries: StockEntries = []
     var stockCurrentLocations: StockLocations = []
     var volatileStock: VolatileStock? = nil
     var stockJournal: StockJournal = []
@@ -183,9 +184,7 @@ class GrocyViewModel {
     }
 
     func stopUpdateTimer() {
-        if self.refreshTimer != nil {
-            self.refreshTimer!.invalidate()
-        }
+        self.refreshTimer?.invalidate()
     }
 
     func setUpdateTimer() {
@@ -339,6 +338,8 @@ class GrocyViewModel {
                             self.shoppingListDescriptions = try await self.getObjectAndSaveSwiftData(object: object)
                         case .shopping_locations:
                             self.mdStores = try await self.getObjectAndSaveSwiftData(object: object)
+                        case .stock:
+                            self.stockEntries = try await self.getObjectAndSaveSwiftData(object: object)
                         case .stock_log:
                             self.stockJournal = try await self.getObjectAndSaveSwiftData(object: object)
                         case .stock_current_locations:
@@ -456,6 +457,7 @@ class GrocyViewModel {
         self.users = []
         self.currentUser = nil
         self.stock = []
+        self.stockEntries = []
         self.volatileStock = nil
         self.stockJournal = []
         self.shoppingListDescriptions = []
