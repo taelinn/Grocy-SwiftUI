@@ -12,6 +12,8 @@ struct SettingsShoppingListView: View {
     @Environment(GrocyViewModel.self) private var grocyVM
     
     @Query var mdProducts: MDProducts
+    @Query var shoppingList: [ShoppingListItem]
+    @Query var shoppingListDescriptions: ShoppingListDescriptions
 
     @AppStorage("devMode") private var devMode: Bool = false
     @AppStorage("syncShoppingListToReminders") private var syncShoppingListToReminders: Bool = false
@@ -56,7 +58,7 @@ struct SettingsShoppingListView: View {
                         selection: $shoppingListToSyncID,
                         content: {
                             Text("").tag(0)
-                            ForEach(grocyVM.shoppingListDescriptions, id: \.id) { shoppingListDescription in
+                            ForEach(shoppingListDescriptions, id: \.id) { shoppingListDescription in
                                 Text(shoppingListDescription.name).tag(shoppingListDescription.id)
                             }
                         }
@@ -80,7 +82,7 @@ struct SettingsShoppingListView: View {
                     Button(
                         action: {
                             do {
-                                for shoppingListItem in grocyVM.shoppingList {
+                                for shoppingListItem in shoppingList {
                                     let title = "\(shoppingListItem.amount.formattedAmount) \(mdProducts.first(where: { $0.id == shoppingListItem.productID })?.name ?? "\(shoppingListItem.productID ?? 0)")"
                                     try ReminderStore.shared.save(Reminder(title: title, isComplete: shoppingListItem.done == 1))
                                 }
