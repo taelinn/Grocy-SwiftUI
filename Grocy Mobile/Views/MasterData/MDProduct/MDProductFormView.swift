@@ -456,7 +456,7 @@ struct MDProductFormView: View {
                 helpText: "On moving this product to a freezer location (so when freezing it), the due date will be replaced by today + this amount of days",
                 minAmount: -1,
                 amountName: product.defaultDueDaysAfterFreezing == 1 ? "Day" : "Days",
-                errorMessage: "This cannot be lower than -1 and needs to be a valid number with max. 0 decimal places",
+                errorMessage: "This cannot be lower than \(Double(-1.0).formatted(.number.precision(.fractionLength(0...4)))) and needs to be a valid number with max. \(Int(0)) decimal places",
                 systemImage: MySymbols.freezing
             )
 
@@ -467,7 +467,7 @@ struct MDProductFormView: View {
                 helpText: "On moving this product from a freezer location (so when thawing it), the due date will be replaced by today + this amount of days",
                 minAmount: 0,
                 amountName: product.defaultDueDaysAfterThawing == 1 ? "Day" : "Days",
-                errorMessage: "This cannot be lower than 0 and needs to be a valid number with max. 0 decimal places",
+                errorMessage: "This cannot be lower than \(Double(0.0).formatted(.number.precision(.fractionLength(0...4)))) and needs to be a valid number with max. \(Int(0)) decimal places",
                 systemImage: MySymbols.thawing
             )
         }

@@ -82,7 +82,7 @@ struct MyDoubleStepper: View {
                             }
                         }
                         if let minAmount = minAmount, amount < minAmount {
-                            Text("This cannot be lower than \(smallestValidAmount.formatted(.number.precision(.fractionLength(0...(userSettings?.stockDecimalPlacesAmounts ?? 4))))) and needs to be a valid number with max.  \(userSettings?.stockDecimalPlacesAmounts ?? 4) decimal places")
+                            Text("This cannot be lower than \(smallestValidAmount.formatted(.number.precision(.fractionLength(0...(userSettings?.stockDecimalPlacesAmounts ?? 4))))) and needs to be a valid number with max. \(userSettings?.stockDecimalPlacesAmounts ?? 4) decimal places")
                                 .font(.caption)
                                 .foregroundStyle(.red)
                                 .fixedSize(horizontal: false, vertical: true)
@@ -195,7 +195,7 @@ struct MyDoubleStepperOptional: View {
                             }
                         }
                         if let minAmount = minAmount, let amount = amount, amount < minAmount {
-                            Text("This cannot be lower than \(smallestValidAmount.formatted(.number.precision(.fractionLength(0...(userSettings?.stockDecimalPlacesAmounts ?? 4))))) and needs to be a valid number with max.  \(userSettings?.stockDecimalPlacesAmounts ?? 4) decimal places")
+                            Text("This cannot be lower than \(smallestValidAmount.formatted(.number.precision(.fractionLength(0...(userSettings?.stockDecimalPlacesAmounts ?? 4))))) and needs to be a valid number with max. \(userSettings?.stockDecimalPlacesAmounts ?? 4) decimal places")
                                 .font(.caption)
                                 .foregroundStyle(.red)
                                 .fixedSize(horizontal: false, vertical: true)

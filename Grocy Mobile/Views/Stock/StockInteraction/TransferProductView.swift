@@ -272,7 +272,7 @@ struct TransferProductView: View {
                         }
                     },
                     label: {
-                        Label("Transfer product", systemImage: MySymbols.transfer)
+                        Label("Transfer", systemImage: MySymbols.transfer)
                             .labelStyle(.titleAndIcon)
                     }
                 )

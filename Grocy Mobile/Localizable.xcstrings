@@ -9293,70 +9293,6 @@
         }
       }
     },
-    "Calories (Per stock quantity unit)" : {
-      "localizations" : {
-        "cs" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kalorie (na skladovou jednotku)"
-          }
-        },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kalorien (Pro Bestandsmengeneinheit)"
-          }
-        },
-        "fr-FR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Calories (par unité de quantité de stock)"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Calorie (per unità a magazzino)"
-          }
-        },
-        "nb" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kalorier (per beholdningsenhet)"
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aantal calorieën (per aantal op voorraad)"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kalorie (na jednostkę miary)"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Calorias (Por unidade de quantidade em estoque)"
-          }
-        },
-        "pt-PT" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Calorias (Por unidade de quantidade em estoque)"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "卡路里（每库存量单位）"
-          }
-        }
-      }
-    },
     "Cancel" : {
       "localizations" : {
         "ca" : {
@@ -44793,122 +44729,168 @@
         }
       }
     },
-    "This cannot be lower than -1 and needs to be a valid number with max. 0 decimal places" : {
+    "This cannot be lower than %@ and needs to be a valid number with max. %@ decimal places" : {
       "localizations" : {
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Això no pot ser més baix que %1$@ i ha de ser un nombre vàlid amb un màxim de %2$@ decimals"
+          }
+        },
         "cs" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nemůže být nižší než -1 a musí to být platné číslo s max. 0 desetinných míst"
+            "value" : "Hodnota nesmí být menší než %1$@ a smí mít max. %2$@ desetinná místa"
+          }
+        },
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Værdien kan ikke være mindre end %1$@, og skal være gyldigt med max %2$@ decimaler"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dies darf nicht niedriger als -1 sein und muss eine gültige Zahl mit max. 0 Nachkommastellen sein"
+            "value" : "Dies darf nicht niedriger als %1$@ sein und muss eine gültige Zahl mit max. %2$@ Nachkommastellen sein"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "This cannot be lower than %1$@ and needs to be a valid number with max. %2$@ decimal places"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This cannot be lower than %1$@ and needs to be a valid number with max. %2$@ decimal places"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esto no puede ser menor que %1$@ y tiene que ser un número válido con un máximo de %2$@ cifras decimales"
+          }
+        },
+        "et" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "See ei saa olla väiksem kui %1$@ ja peab olema number maksimaalselt %2$@ komakohaga"
+          }
+        },
+        "fi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tämä ei voi olla pienempi kuin %1$@ ja sen pitää olla luku, jossa on enintään %2$@ desimaalia"
           }
         },
         "fr-FR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pour être valide, le nombre doit avoir au plus 0 décimale, et ne peut pas être inférieur à -1."
+            "value" : "Ce nombre ne peut être plus petit que %1$@ et peut contenir au maximum %2$@ décimaux"
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "לא יכול להיות קטן מ־%1$@ ועליו להיות מספר תקין עם %2$@ מקומות עשרוניים לכל היותר"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nem lehet kevesebb, mint %1$@ és érvényes számnak kell lennie max. %2$@ tizedesjegyel"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Questo non può essere inferiore di -1 e deve essere un numero valido con massimo 0 cifre decimali"
+            "value" : "Questo non può essere inferiore a %1$@ e deve essere un numero valido con al massimo %2$@ cifre decimali"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@未満の値は入力できません。小数点以下%2$@桁までの値が有効です"
+          }
+        },
+        "lt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tai negali būti mažesnis nei %1$@ ir turi būti galiojantis skaičius su maks. %2$@ skaitmenys po kablelio"
           }
         },
         "nb" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dette kan ikke være mindre enn -1 og må være ett tall uten desimaler."
+            "value" : "Dette kan ikke være lavere enn %1$@ og må være et gyldig tall med maks %2$@ desimaler"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "De waarde hiervan mag niet lager zijn dan -1 en dient een geldig getal te zijn met 0 cijfers achter de komma"
+            "value" : "De waarde hiervan mag niet lager zijn dan %1$@ en dient een geldig getal te zijn met %2$@ cijfers achter de komma"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nie może być mniejsze od -1 i musi być liczbą całkowitą"
+            "value" : "Nie może być niższe niż %1$@ i musi być poprawną liczbą z maksymalnie %2$@miejscami dziesiętnymi"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Isso não pode ser menor que -1 e precisa ser um número válido com no máximo 0 casas decimais"
+            "value" : "Não pode ser inferior %1$@ e seja um número válido com máx. de %2$@ casas decimais."
           }
         },
-        "pt-PT" : {
+        "sl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Isso não pode ser menor que -1 e precisa ser um número válido com no máximo 0 casas decimais"
+            "value" : "To ne more biti manjše od %1$@ in mora biti veljavno število z največ %2$@ decimalnimi mesti"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu, %1$@'ten küçük olamaz ve maksimum %2$@ ondalık basamağa sahip geçerli bir sayı olması gerekir"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "必须为整数且不能小于-1"
+            "value" : "此数值不能小于%1$@，并且最多%2$@位小数位"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "此須為整數且不能小於 -1"
+            "value" : "此須為 %2$@ 位小數的有效數字且不能小於 %1$@"
           }
         }
       }
     },
-    "This cannot be lower than %.0f and needs to be a valid number with max.  %lld decimal places" : {
+    "This cannot be lower than %@ and needs to be a valid number with max. %lld decimal places" : {
       "localizations" : {
-        "de" : {
+        "ca" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dies darf nicht niedriger als %1$.0f sein und muss eine gültige Zahl mit max. %2$lld Nachkommastellen sein"
+            "value" : "Això no pot ser més baix que %1$@ i ha de ser un nombre vàlid amb un màxim de %2$lld decimals"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "This cannot be lower than %1$.0f and needs to be a valid number with max.  %2$lld decimal places"
-          }
-        },
-        "fr-FR" : {
+        "cs" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ce chiffre ne peut être inférieur à %1$.0f et doit être un nombre valide avec un maximum de %2$lld décimales."
-          }
-        }
-      }
-    },
-    "This cannot be lower than %.2f and needs to be a valid number with max.  %lld decimal places" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dies darf nicht niedriger als %1$.2f sein und muss eine gültige Zahl mit max. %2$lld Nachkommastellen sein"
+            "value" : "Hodnota nesmí být menší než %1$@ a smí mít max. %2$lld desetinná místa"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "This cannot be lower than %1$.2f and needs to be a valid number with max.  %2$lld decimal places"
-          }
-        },
-        "fr-FR" : {
+        "da" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ce chiffre ne peut être inférieur à %1$.2f et doit être un nombre valide avec un maximum de %2$lld décimales."
+            "value" : "Værdien kan ikke være mindre end %1$@, og skal være gyldigt med max %2$lld decimaler"
           }
-        }
-      }
-    },
-    "This cannot be lower than %@ and needs to be a valid number with max.  %lld decimal places" : {
-      "localizations" : {
+        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
@@ -44918,83 +44900,257 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "This cannot be lower than %1$@ and needs to be a valid number with max.  %2$lld decimal places"
+            "value" : "This cannot be lower than %1$@ and needs to be a valid number with max. %2$lld decimal places"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This cannot be lower than %1$@ and needs to be a valid number with max. %2$lld decimal places"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esto no puede ser menor que %1$@ y tiene que ser un número válido con un máximo de %2$lld cifras decimales"
+          }
+        },
+        "et" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "See ei saa olla väiksem kui %1$@ ja peab olema number maksimaalselt %2$lld komakohaga"
+          }
+        },
+        "fi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tämä ei voi olla pienempi kuin %1$@ ja sen pitää olla luku, jossa on enintään %2$lld desimaalia"
           }
         },
         "fr-FR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ce chiffre ne peut être inférieur à %1$@ et doit être un nombre valide avec un maximum de %2$lld décimales."
-          }
-        }
-      }
-    },
-    "This cannot be lower than 0 and needs to be a valid number with max. 0 decimal places" : {
-      "localizations" : {
-        "cs" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nemůže být méně než 0 a musí být číslo s maximálně 0 desetinnými místy."
+            "value" : "Ce nombre ne peut être plus petit que %1$@ et peut contenir au maximum %2$lld décimaux"
           }
         },
-        "de" : {
+        "he" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dies darf nicht niedriger als 0 sein und muss eine gültige Zahl mit max. 0 Nachkommastellen sein"
+            "value" : "לא יכול להיות קטן מ־%1$@ ועליו להיות מספר תקין עם %2$lld מקומות עשרוניים לכל היותר"
           }
         },
-        "fr-FR" : {
+        "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pour être valide, le nombre doit avoir au plus 0 décimales, et ne peut pas être inférieur à 0."
+            "value" : "Nem lehet kevesebb, mint %1$@ és érvényes számnak kell lennie max. %2$lld tizedesjegyel"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Questo non può essere inferiori di 0 e deve essere un numero valido  con massimo 0 cifre decimali"
+            "value" : "Questo non può essere inferiore a %1$@ e deve essere un numero valido con al massimo %2$lld cifre decimali"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@未満の値は入力できません。小数点以下%2$lld桁までの値が有効です"
+          }
+        },
+        "lt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tai negali būti mažesnis nei %1$@ ir turi būti galiojantis skaičius su maks. %2$lld skaitmenys po kablelio"
           }
         },
         "nb" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dette kan ikke være mindre enn 0 og må være ett tall uten desimaler."
+            "value" : "Dette kan ikke være lavere enn %1$@ og må være et gyldig tall med maks %2$lld desimaler"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "De waarde hiervan mag niet lager zijn dan 0 en dient een geldig getal te zijn met 0 cijfers achter de komma"
+            "value" : "De waarde hiervan mag niet lager zijn dan %1$@ en dient een geldig getal te zijn met %2$lld cijfers achter de komma"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nie może być mniejsze od 0 i musi być liczbą całkowitą"
+            "value" : "Nie może być niższe niż %1$@ i musi być poprawną liczbą z maksymalnie %2$lldmiejscami dziesiętnymi"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Isso não pode ser menor que 0 e precisa ser um número válido com no máximo 0 casas decimais"
+            "value" : "Não pode ser inferior %1$@ e seja um número válido com máx. de %2$lld casas decimais."
           }
         },
-        "pt-PT" : {
+        "sl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Isso não pode ser menor que 0 e precisa ser um número válido com no máximo 0 casas decimais"
+            "value" : "To ne more biti manjše od %1$@ in mora biti veljavno število z največ %2$lld decimalnimi mesti"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu, %1$@'ten küçük olamaz ve maksimum %2$lld ondalık basamağa sahip geçerli bir sayı olması gerekir"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "必须为整数且不能小于0"
+            "value" : "此数值不能小于%1$@，并且最多%2$lld位小数位"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "此須為整數且不能小於 0"
+            "value" : "此須為 %2$lld 位小數的有效數字且不能小於 %1$@"
+          }
+        }
+      }
+    },
+    "This cannot be lower than %lld and needs to be a valid number with max. %lld decimal places" : {
+      "localizations" : {
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Això no pot ser més baix que %1$lld i ha de ser un nombre vàlid amb un màxim de %2$lld decimals"
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hodnota nesmí být menší než %1$lld a smí mít max. %2$lld desetinná místa"
+          }
+        },
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Værdien kan ikke være mindre end %1$lld, og skal være gyldigt med max %2$lld decimaler"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dies darf nicht niedriger als %1$lld sein und muss eine gültige Zahl mit max. %2$lld Nachkommastellen sein"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "This cannot be lower than %1$lld and needs to be a valid number with max. %2$lld decimal places"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This cannot be lower than %1$lld and needs to be a valid number with max. %2$lld decimal places"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esto no puede ser menor que %1$lld y tiene que ser un número válido con un máximo de %2$lld cifras decimales"
+          }
+        },
+        "et" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "See ei saa olla väiksem kui %1$lld ja peab olema number maksimaalselt %2$lld komakohaga"
+          }
+        },
+        "fi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tämä ei voi olla pienempi kuin %1$lld ja sen pitää olla luku, jossa on enintään %2$lld desimaalia"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce nombre ne peut être plus petit que %1$lld et peut contenir au maximum %2$lld décimaux"
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "לא יכול להיות קטן מ־%1$lld ועליו להיות מספר תקין עם %2$lld מקומות עשרוניים לכל היותר"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nem lehet kevesebb, mint %1$lld és érvényes számnak kell lennie max. %2$lld tizedesjegyel"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Questo non può essere inferiore a %1$lld e deve essere un numero valido con al massimo %2$lld cifre decimali"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld未満の値は入力できません。小数点以下%2$lld桁までの値が有効です"
+          }
+        },
+        "lt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tai negali būti mažesnis nei %1$lld ir turi būti galiojantis skaičius su maks. %2$lld skaitmenys po kablelio"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dette kan ikke være lavere enn %1$lld og må være et gyldig tall med maks %2$lld desimaler"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "De waarde hiervan mag niet lager zijn dan %1$lld en dient een geldig getal te zijn met %2$lld cijfers achter de komma"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie może być niższe niż %1$lld i musi być poprawną liczbą z maksymalnie %2$lldmiejscami dziesiętnymi"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não pode ser inferior %1$lld e seja um número válido com máx. de %2$lld casas decimais."
+          }
+        },
+        "sl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "To ne more biti manjše od %1$lld in mora biti veljavno število z največ %2$lld decimalnimi mesti"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu, %1$lld'ten küçük olamaz ve maksimum %2$lld ondalık basamağa sahip geçerli bir sayı olması gerekir"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此数值不能小于%1$lld，并且最多%2$lld位小数位"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此須為 %2$lld 位小數的有效數字且不能小於 %1$lld"
           }
         }
       }
@@ -45538,6 +45694,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dit is een zogeheten ‘client-app’, wat betekent dat je toegang dient te hebben tot een Grocy-instantie, bijv. op je server.Als je deze app gewoon even wilt uitproberen, dan kun je een van de uitprobeerservers van Grocy-ontwikkelaar Bernd Bestel gebruiken. Maar let op: alles wat je invoert op de uitprobeerservers wordt niet bewaard."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "这是一个配套应用程序，意味着您需要访问正在运行的Grocy实例（例如，在您的服务器上）。\\n如果你只想试用这个应用程序，你可以使用Grocy开发人员Bernd Bestel提供的演示服务器之一。但不要将演示服务器用于您的数据，因为它不是持久的。"
           }
         }
       }
@@ -46542,50 +46704,6 @@
         }
       }
     },
-    "This means %@ %@ will be added to stock" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Das bedeutet %1$@ %2$@ wird dem Bestand hinzugefügt"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "This means %1$@ %2$@ will be added to stock"
-          }
-        },
-        "fr-FR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cela signifie que %1$@ %2$@ sera ajouté au stock."
-          }
-        }
-      }
-    },
-    "This means %@ %@ will be removed from stock" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Das bedeutet %1$@ %2$@ wird aus dem Bestand entfernt"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "This means %1$@ %2$@ will be removed from stock"
-          }
-        },
-        "fr-FR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cela signifie que %1$@ %2$@ sera retiré du stock."
-          }
-        }
-      }
-    },
     "This means %@ is the same as %@" : {
       "localizations" : {
         "cs" : {
@@ -46652,6 +46770,374 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "這代表 %@ 與 %@ 相同"
+          }
+        }
+      }
+    },
+    "This means %@ will be added to stock" : {
+      "localizations" : {
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Això vol dir que s'afegiran %@ a l'inventari"
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zásoba se zvýší o %@"
+          }
+        },
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dette betyder %@ bliver tilføjet til beholdningen"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das bedeutet %@ wird dem Bestand hinzugefügt"
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Αυτό σημαίνει ότι το %@ θα προστεθεί στο απόθεμα"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This means %@ will be added to stock"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esto quiere decir que %@ será añadido al inventario"
+          }
+        },
+        "et" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "See tähendab, et %@ lisatakse varudesse"
+          }
+        },
+        "fi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tämä tarkoittaa, että %@ lisätään varastoon"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ sera ajouté au stock"
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "המשמעות היא הוספה של %@ למלאי"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ez azt jelenti, %@ hozzá lesz adva a készlethez"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Questo vuol dire che%@ sarà aggiunto alla dispensa"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ストックに%@追加します"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ 이 저장소에 추가됩니다."
+          }
+        },
+        "lt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tai reiškia, kad%@ bus pridėtas į sandėlį"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dette betyr at %@ vil bli lagt til i beholdningen"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ zal worden toegevoegd aan de voorraad"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " To znaczy, że %@ zostanie dodany na stan"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Significa que %@ será adicionado ao estoque"
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Isto significa que %@ será adicionado ao stock"
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Asta înseamnă că %@ va fi adăugat la stoc"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "To znamená, že výrobok %@ bude pridaný do zásoby"
+          }
+        },
+        "sl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "To pomeni %@ bo dodan v zalogo"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Detta betyder att %@ kommer att läggas till i lager"
+          }
+        },
+        "ta" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ கையிருப்பில் சேர்க்கப்படும்"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu %@'in stoklara ekleneceğini ifade ediyor"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Це означає, що %@ буде додано"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新增%@库存"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "這代表 %@ 將加到庫存中"
+          }
+        }
+      }
+    },
+    "This means %@ will be removed from stock" : {
+      "localizations" : {
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Això vol dir que s'eliminaran %@ de l'inventari"
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zásoba se zmenší o %@"
+          }
+        },
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dette betyder at %@ bliver fjernet fra beholdningen"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das bedeutet %@ wird aus dem Bestand entfernt"
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Αυτό σημαίνει ότι το %@ θα αφαιρεθεί από το απόθεμα"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This means %@ will be removed from stock"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quiere decir que %@ será eliminado del inventario"
+          }
+        },
+        "et" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "See tähendab, et %@ eemaldatakse varudest"
+          }
+        },
+        "fi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tämä tarkoittaa, että %@ poistetaan varastosta"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ sera supprimé du stock"
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "המשמעות היא הסרה של %@ מהמלאי"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ez azt jelenti, %@ el lesz távolítva a készletből"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Questo vuol dire che %@ sarà rimosso dalla dispensa"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ストックから%@削除します"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이것은 \"%@\"이(가) 재고에서 제거된다는 것을 의미합니다."
+          }
+        },
+        "lt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tai reiškia, kad %@ bus pašalintas iš sandėlio"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dette betyr at %@ vil bli fjernet fra beholdningen"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ zal worden verwijderd uit de voorraad"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "To znaczy, że %@ zostanie usunięty ze stanu"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Significa que %@ será removido do estoque"
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Isto significa que %@ será removido do stock"
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Asta înseamnă că %@ va fi eliminat din stoc"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "To znamená, že výrobok %@ bude odobraný zo zásoby"
+          }
+        },
+        "sl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "To pomeni %@ bo izbrisan iz zaloge"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Detta betyder att %@ kommer att tas bort från lager"
+          }
+        },
+        "ta" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ கையிருப்பிலிருந்து விலக்கப்படும்"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu %@'in stoklardan silineceğini ifade ediyor"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Це означає, що %@ буде прибрано"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "移除%@库存"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "這代表 %@ 將從庫存中刪除"
           }
         }
       }
@@ -48018,70 +48504,6 @@
         }
       }
     },
-    "Transfer product" : {
-      "localizations" : {
-        "cs" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Převést produkt"
-          }
-        },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Produkt umlagern"
-          }
-        },
-        "fr-FR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Transfert de produit"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Trasferisci prodotto"
-          }
-        },
-        "nb" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Flytt produkt"
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Verplaats product"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Przenieś produkt"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Transferir produto"
-          }
-        },
-        "pt-PT" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Transferir produto"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "转移物品"
-          }
-        }
-      }
-    },
     "Translators" : {
       "localizations" : {
         "cs" : {
@@ -48732,66 +49154,186 @@
         }
       }
     },
-    "Undone on %@" : {
+    "Undone on" : {
       "localizations" : {
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desfet a "
+          }
+        },
         "cs" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rozbaleno na %@"
+            "value" : "Vráceno zpět:"
+          }
+        },
+        "da" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fortrudt den"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rückgängig gemacht am %@"
+            "value" : "Rückgängig gemacht am"
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Αναίρεση στις"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Undone on"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deshecho el"
+          }
+        },
+        "et" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tagasi võetud kuupäeval"
+          }
+        },
+        "fi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kumottu"
           }
         },
         "fr-FR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Annulé le %@"
+            "value" : "Annulé le"
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "מועד הביטול"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Visszavonva:"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Non eseguito su %@"
+            "value" : "Non terminato il"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "元に戻す"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "실행 취소됨"
+          }
+        },
+        "lt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anuliuota"
           }
         },
         "nb" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Angret den %@"
+            "value" : "Angret den"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ongedaan gemaakt op %@"
+            "value" : "Ongedaan gemaakt op"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cofnięto dnia %@"
+            "value" : "Anulowano dnia"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Desfeito em %@"
+            "value" : "Desfeito em"
           }
         },
         "pt-PT" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Desfeito em %@"
+            "value" : "Desfeito em"
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desfăcut pe"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rezervácia zrušená"
+          }
+        },
+        "sl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nedokončan na"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ogjord den"
+          }
+        },
+        "ta" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "அன்று மீளமைக்கப்பட்டது"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tarihinde tamamlanmamış"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Показати відміни"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "撤销%@"
+            "value" : "撤消"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取消"
           }
         }
       }
@@ -50945,6 +51487,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Welkom bij Grocy Mobile"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "欢迎使用Grocy Mobile"
           }
         }
       }

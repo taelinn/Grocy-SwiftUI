@@ -78,7 +78,7 @@ struct StockJournalRowView: View {
             if journalEntry.undone == 1 {
                 if let date = getDateFromTimestamp(journalEntry.undoneTimestamp ?? "") {
                     HStack(alignment: .bottom){
-                        Text("Undone on \(formatDateAsString(date, showTime: true, localizationKey: localizationKey) ?? "")")
+                        Text("\(Text("Undone on")) \(formatDateAsString(date, showTime: true, localizationKey: localizationKey) ?? "")")
                             .font(.caption)
                         Text(getRelativeDateAsText(date, localizationKey: localizationKey) ?? "")
                             .font(.caption)

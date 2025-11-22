@@ -23,7 +23,7 @@ struct StockTableConfigView: View {
             Toggle("Amount", isOn: $showAmount)
             Toggle("Value", isOn: $showValue)
             Toggle("Next due date", isOn: $showNextBestBeforeDate)
-            Toggle("Calories (Per stock quantity unit)", isOn: $showCaloriesPerStockQU)
+            Toggle("\(Text("Calories")) (\(Text("Per stock quantity unit")))", isOn: $showCaloriesPerStockQU)
             Toggle("Calories", isOn: $showCalories)
         }
     }

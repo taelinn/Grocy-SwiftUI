@@ -153,8 +153,8 @@ struct InventoryProductView: View {
                         if stockAmountDifference != 0 {
                             Text(
                                 stockAmountDifference > 0
-                                    ? "This means \(stockAmountDifference.formattedAmount) \(stockQuantityUnit?.getName(amount: factoredAmount) ?? "") will be added to stock"
-                                    : "This means \((-stockAmountDifference).formattedAmount) \(stockQuantityUnit?.getName(amount: factoredAmount) ?? "") will be removed from stock"
+                                    ? "This means \(Text("\(stockAmountDifference.formattedAmount) \(stockQuantityUnit?.getName(amount: factoredAmount) ?? "")")) will be added to stock"
+                                    : "This means \(Text("\((-stockAmountDifference).formattedAmount) \(stockQuantityUnit?.getName(amount: factoredAmount) ?? "")")) will be removed from stock"
                             )
                             .font(.caption)
                         } else {
