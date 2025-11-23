@@ -8,36 +8,38 @@
 import SwiftUI
 
 struct ServerProblemView: View {
-    var isCompact: Bool = false
-    
     @Environment(GrocyViewModel.self) private var grocyVM
-    
+
     @AppStorage("devMode") private var devMode: Bool = false
-    
+
+    @State private var isLoading: Bool = false
+
+    var isCompact: Bool = false
+
     private enum ServerErrorState: Identifiable {
         case connection, api, other, none
-        
+
         var id: Int {
             self.hashValue
         }
     }
     private var serverErrorState: ServerErrorState {
-//        if grocyVM.failedToLoadErrors.isEmpty {
-//            return .none
-//        }
-//        for error in grocyVM.failedToLoadErrors {
-//            switch error {
-//            case APIError.decodingError:
-//                return .api
-//            case APIError.serverError:
-//                return .connection
-//            default:
-//                break
-//            }
-//        }
+        if grocyVM.failedToLoadErrors.isEmpty {
+            return .none
+        }
+        for error in grocyVM.failedToLoadErrors {
+            switch error {
+            case APIError.decodingError:
+                return .api
+            case APIError.serverError:
+                return .connection
+            default:
+                break
+            }
+        }
         return .other
     }
-    
+
     private var serverErrorInfo: (String, LocalizedStringKey) {
         switch serverErrorState {
         case .connection:
@@ -50,22 +52,29 @@ struct ServerProblemView: View {
             return (MySymbols.success, "")
         }
     }
-    
-    
+
+    func reload() {
+        isLoading = true
+        Task {
+            await grocyVM.retryFailedRequests()
+        }
+        isLoading = false
+    }
+
     var body: some View {
         if !isCompact {
             normalView
         } else {
-#if os(macOS)
-            compactView
-#else
-            compactView
-#endif
+            #if os(macOS)
+                compactView
+            #else
+                compactView
+            #endif
         }
     }
-    
+
     var normalView: some View {
-        VStack(alignment: .center, spacing: 20){
+        VStack(alignment: .center, spacing: 20) {
             Image(systemName: serverErrorInfo.0)
                 .font(.system(size: 100))
             if serverErrorState != .none {
@@ -75,33 +84,29 @@ struct ServerProblemView: View {
                         .font(.caption)
                 }
             }
-            Button(action: {
-                Task {
-                    await grocyVM.retryFailedRequests()
+            Button(
+                action: {
+                    reload()
+                },
+                label: {
+                    Label("Try again", systemImage: MySymbols.reload)
+                        .symbolEffect(.rotate, isActive: isLoading)
                 }
-            }, label: {
-                Label("Try again", systemImage: MySymbols.reload)
-            })
-                .buttonStyle(FilledButtonStyle())
-                .controlSize(.large)
-//            if devMode {
-//                List() {
-//                    ForEach(grocyVM.failedToLoadObjects.sorted(by: { $0.rawValue < $1.rawValue }), id: \.self) { object in
-//                        Text(object.rawValue)
-//                    }
-//                }
-//                List() {
-//                    ForEach(grocyVM.failedToLoadAdditionalObjects.sorted(by:  { $0.rawValue < $1.rawValue }), id: \.self) { additionalObject in
-//                        Text(additionalObject.rawValue)
-//                    }
-//                }
-//            }
+            )
+            .buttonStyle(MyGlassButtonStyle(backgroundColor: .blue))
+            if devMode {
+                List {
+                    ForEach(grocyVM.failedToLoadObjects.sorted(by: { $0.rawValue < $1.rawValue }), id: \.self) { object in
+                        Text(object.rawValue)
+                    }
+                    ForEach(grocyVM.failedToLoadAdditionalObjects.sorted(by: { $0.rawValue < $1.rawValue }), id: \.self) { additionalObject in
+                        Text(additionalObject.rawValue)
+                    }
+                }
+            }
         }
-        .padding()
-        .background(.regularMaterial)
-        .cornerRadius(14)
     }
-    
+
     var compactView: some View {
         HStack(alignment: .center) {
             Image(systemName: serverErrorInfo.0)
@@ -111,15 +116,17 @@ struct ServerProblemView: View {
                     .font(.caption)
             }
             Spacer()
-            Button(action: {
-                Task {
-                    await grocyVM.retryFailedRequests()
+            Button(
+                action: {
+                    reload()
+                },
+                label: {
+                    Label("Try again", systemImage: MySymbols.reload)
+                        .symbolEffect(.rotate, isActive: isLoading)
                 }
-            }, label: {
-                Label("Try again", systemImage: MySymbols.reload)
-            })
-                .buttonStyle(.bordered)
-                .controlSize(.large)
+            )
+            .buttonStyle(.bordered)
+            .controlSize(.large)
         }
         .padding(.horizontal)
         .background(Color.red)
@@ -127,13 +134,10 @@ struct ServerProblemView: View {
     }
 }
 
-struct ServerProblemView_Previews: PreviewProvider {
-    static var previews: some View {
-        Group{
-            ServerProblemView()
-            ServerProblemView()
-                .preferredColorScheme(.dark)
-            ServerProblemView(isCompact: true)
-        }
-    }
+#Preview {
+    ServerProblemView()
+}
+
+#Preview {
+    ServerProblemView(isCompact: true)
 }
