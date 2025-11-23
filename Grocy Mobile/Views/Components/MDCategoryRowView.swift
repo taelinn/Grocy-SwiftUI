@@ -10,15 +10,16 @@ import SwiftUI
 
 struct MDCategoryRowView<T: PersistentModel>: View {
     @Environment(\.modelContext) private var modelContext
+    @State private var itemCount: Int = 0
 
     let categoryName: LocalizedStringKey
     let iconName: String
     let mdType: T.Type
 
-    private var itemCount: Int {
+    private func updateCount() {
         var descriptor = FetchDescriptor<T>()
         descriptor.fetchLimit = 0
-        return (try? modelContext.fetchCount(descriptor)) ?? 0
+        itemCount = (try? modelContext.fetchCount(descriptor)) ?? 0
     }
 
     var body: some View {
@@ -30,6 +31,9 @@ struct MDCategoryRowView<T: PersistentModel>: View {
                     .foregroundStyle(.secondary)
                     .font(.subheadline)
             }
+        }
+        .onAppear {
+            updateCount()
         }
     }
 }
