@@ -109,11 +109,8 @@ struct LoginStatusView: View {
                             }
                         },
                         label: {
-                            HStack {
-                                Text("Try again")
-                                Image(systemName: MySymbols.reload)
-                                    .symbolEffect(.rotate, isActive: isLoading)
-                            }
+                            Label("Try again", systemImage: MySymbols.reload)
+                                .symbolEffect(.rotate, isActive: isLoading)
                         }
                     )
                     .buttonStyle(MyGlassButtonStyle(backgroundColor: .yellow))

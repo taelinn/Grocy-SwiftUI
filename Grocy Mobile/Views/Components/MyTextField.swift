@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct MyTextField: View {
+    @Environment(\.isEnabled) var isEnabled: Bool
     @Binding var textToEdit: String
     var description: LocalizedStringKey
     var subtitle: LocalizedStringKey?
@@ -23,6 +24,7 @@ struct MyTextField: View {
         LabeledContent {
             VStack(alignment: .leading, spacing: 0) {
                 TextField(prompt, text: $textToEdit)
+                    .foregroundColor(isEnabled ? .primary : .gray)
                     .padding(.vertical, 8)
                     .background(
                         VStack {

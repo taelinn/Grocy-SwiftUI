@@ -73,7 +73,7 @@ let previewContainer: ModelContainer = {
                 productGroupID: nil,
                 active: true,
                 locationID: 1,
-                storeID: nil,
+                storeID: -1,
                 quIDPurchase: 1,
                 quIDStock: 1,
                 quIDConsume: 1,

@@ -166,6 +166,7 @@ struct QuickScanModeView: View {
                 #endif
         } else {
             ServerProblemView()
+                .padding()
                 .navigationTitle("Quick-Scan")
         }
     }
