@@ -822,6 +822,10 @@ class GrocyViewModel {
     func deleteFile(groupName: String, fileName: String) async throws {
         try await grocyApi.deleteFile(fileName: fileName, groupName: groupName)
     }
+    
+    func externalBarcodeLookup(barcode: String) async throws -> ExternalBarcodeLookup? {
+        return try await grocyApi.externalBarcodeLookup(barcode: barcode)
+    }
 
     // MARK: -Shopping Lists
 

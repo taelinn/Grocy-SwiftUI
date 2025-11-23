@@ -18,6 +18,10 @@ enum MDProductFormPart: Hashable {
     case productPicture
 }
 
+enum ExternalBarcodeLookupState {
+    case searching, success, notFound, error
+}
+
 struct MDProductFormView: View {
     @Environment(GrocyViewModel.self) private var grocyVM
 
@@ -40,9 +44,9 @@ struct MDProductFormView: View {
     @AppStorage("devMode") private var devMode: Bool = false
 
     @State private var queuedBarcode: String = ""
-
-    @State private var showDeleteConfirmation: Bool = false
-    @State private var showOFFResult: Bool = false
+    @State private var foundExternalBarcode: ExternalBarcodeLookup?
+    @State private var externalBarcodeState: ExternalBarcodeLookupState?
+    @State private var barcodeLookupApplied: Bool = false
 
     var openFoodFactsBarcode: String?
 
@@ -60,16 +64,14 @@ struct MDProductFormView: View {
         return (queuedBarcode.isEmpty || (foundBarcode == nil))
     }
 
-    init(existingProduct: MDProduct? = nil, userSettings: GrocyUserSettings? = nil) {
+    init(existingProduct: MDProduct? = nil, userSettings: GrocyUserSettings? = nil, queuedBarcode: String? = nil) {
         self.existingProduct = existingProduct
+        self.queuedBarcode = queuedBarcode ?? ""
         let initialProduct =
             existingProduct
             ?? MDProduct(
                 id: 0,
-                name: "",
-                mdProductDescription: "",
                 productGroupID: userSettings?.productPresetsProductGroupID,
-                active: true,
                 locationID: userSettings?.productPresetsLocationID ?? -1,
                 storeID: -1,
                 quIDPurchase: userSettings?.productPresetsQuID ?? -1,
@@ -173,10 +175,101 @@ struct MDProductFormView: View {
                 }
 
             if !queuedBarcode.isEmpty && existingProduct == nil {
-                MyTextField(textToEdit: $queuedBarcode, description: "Barcode", isCorrect: $isBarcodeCorrect, leadingIcon: MySymbols.barcode, errorMessage: "The barcode is invalid or already in use.")
-                    .onChange(of: queuedBarcode) {
-                        isBarcodeCorrect = checkBarcodeCorrect()
+                Section("Barcode") {
+                    MyTextField(textToEdit: $queuedBarcode, description: "Barcode", isCorrect: $isBarcodeCorrect, leadingIcon: MySymbols.barcode, errorMessage: "The barcode is invalid or already in use.")
+                        .onChange(of: queuedBarcode) {
+                            isBarcodeCorrect = checkBarcodeCorrect()
+                        }
+                        .disabled(true)
+                    if foundExternalBarcode == nil && (externalBarcodeState == nil || externalBarcodeState == .error) {
+                        Button(
+                            action: {
+                                Task {
+                                    barcodeLookupApplied = false
+                                    externalBarcodeState = .searching
+                                    do {
+                                        foundExternalBarcode = try await grocyVM.externalBarcodeLookup(barcode: queuedBarcode)
+                                        if foundExternalBarcode != nil {
+                                            externalBarcodeState = .success
+                                        } else {
+                                            externalBarcodeState = .notFound
+                                        }
+                                    } catch {
+                                        GrocyLogger.error("\(error)")
+                                        externalBarcodeState = .error
+                                    }
+                                }
+                            },
+                            label: {
+                                Label("External barcode lookup", systemImage: MySymbols.search)
+                            }
+                        )
                     }
+                    if !barcodeLookupApplied {
+                        switch externalBarcodeState {
+                        case .searching:
+                            ProgressView()
+                                .progressViewStyle(.circular)
+                        case .success:
+                            if let foundExternalBarcode {
+                                DisclosureGroup(
+                                    content: {
+                                        LabeledContent(
+                                            content: {
+                                                Text(mdLocations.first(where: { $0.id == foundExternalBarcode.locationID })?.name ?? String(foundExternalBarcode.locationID))
+                                            },
+                                            label: {
+                                                Label("Default location", systemImage: MySymbols.location)
+                                            }
+                                        )
+                                        .foregroundStyle(.primary)
+                                        LabeledContent(
+                                            content: {
+                                                Text(mdQuantityUnits.first(where: { $0.id == foundExternalBarcode.quIDStock })?.name ?? String(foundExternalBarcode.quIDStock))
+                                            },
+                                            label: {
+                                                Label("Quantity unit stock", systemImage: MySymbols.quantityUnit)
+                                            }
+                                        )
+                                        .foregroundStyle(.primary)
+                                        LabeledContent(
+                                            content: {
+                                                Text(mdQuantityUnits.first(where: { $0.id == foundExternalBarcode.quIDPurchase })?.name ?? String(foundExternalBarcode.quIDPurchase))
+                                            },
+                                            label: {
+                                                Label("Default quantity unit purchase", systemImage: MySymbols.quantityUnit)
+                                            }
+                                        )
+                                        .foregroundStyle(.primary)
+                                        AsyncImage(url: URL(string: foundExternalBarcode.imageURL))
+                                    },
+                                    label: {
+                                        Text(foundExternalBarcode.name)
+                                    }
+                                )
+                                Button(
+                                    action: {
+                                        barcodeLookupApplied = true
+                                        product.name = foundExternalBarcode.name
+                                        product.locationID = foundExternalBarcode.locationID
+                                        product.quIDPurchase = foundExternalBarcode.quIDPurchase
+                                        product.quIDStock = foundExternalBarcode.quIDStock
+                                        product.quIDPrice = foundExternalBarcode.quIDStock
+                                        product.quIDConsume = foundExternalBarcode.quIDStock
+                                    },
+                                    label: {
+                                        Label("Apply", systemImage: MySymbols.save)
+                                    }
+                                )
+                            }
+                        case .error:
+                            Text("Error while executing the barcode lookup plugin").foregroundStyle(.red)
+                        case .notFound:
+                            Text("Nothing was found for the given barcode").foregroundStyle(.red)
+                        default: EmptyView()
+                        }
+                    }
+                }
             }
 
             Section {
@@ -219,13 +312,17 @@ struct MDProductFormView: View {
                         MyLabelWithSubtitle(title: "Amount", subTitle: "\(Text("Min. stock amount")), \(Text("Quick consume amount")), \(Text("Factor")), \(Text("Tare weight"))", systemImage: MySymbols.amount)
                     }
                 )
-                NavigationLink(
-                    value: MDProductFormPart.barcode,
-                    label: {
-                        MyLabelWithSubtitle(title: "Barcodes", subTitle: existingProduct == nil ? "Product is not on server" : "", systemImage: MySymbols.barcode, hideSubtitle: existingProduct != nil)
-                    }
-                )
-                .disabled(existingProduct == nil)
+                if queuedBarcode.isEmpty {
+                    NavigationLink(
+                        value: MDProductFormPart.barcode,
+                        label: {
+                            MyLabelWithSubtitle(title: "Barcodes", subTitle: existingProduct == nil ? "Product is not on server" : "", systemImage: MySymbols.barcode, hideSubtitle: existingProduct != nil)
+                        }
+                    )
+                    .disabled(existingProduct == nil)
+                } else {
+                    MyLabelWithSubtitle(title: "\(Text("Barcode")): \(queuedBarcode)", systemImage: MySymbols.barcode)
+                }
             }
         }
         .task {

@@ -92,6 +92,7 @@ protocol GrocyAPI {
     func getBookingWithID(id: Int) async throws -> StockJournalEntry
     func undoBookingWithID(id: Int) async throws
     func getPictureURL(groupName: String, fileName: String) async throws -> String?
+    func externalBarcodeLookup(barcode: String) async throws -> ExternalBarcodeLookup?
     // MARK: - Shopping List
     func shoppingListAddItem(content: Data) async throws
     func shoppingListAction(content: Data, actionType: ShoppingListActionType) async throws
@@ -623,6 +624,10 @@ extension GrocyApi {
         } else {
             return filepath
         }
+    }
+    
+    func externalBarcodeLookup(barcode: String) async throws -> ExternalBarcodeLookup? {
+        return try await call(.stockBarcodeExternalLookup, method: .GET, id: barcode)
     }
 
     // MARK: - SHOPPING LIST

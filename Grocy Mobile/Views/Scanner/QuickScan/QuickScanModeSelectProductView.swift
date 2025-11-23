@@ -11,7 +11,6 @@ import SwiftUI
 struct QuickScanModeSelectProductView: View {
     @Environment(GrocyViewModel.self) private var grocyVM
 
-    @AppStorage("devMode") private var devMode: Bool = false
     @AppStorage("quickScanActionAfterAdd") private var quickScanActionAfterAdd: Bool = false
     @Query var userSettingsList: GrocyUserSettingsList
     var userSettings: GrocyUserSettings? {
@@ -28,7 +27,8 @@ struct QuickScanModeSelectProductView: View {
 
     @Binding var qsActiveSheet: QSActiveSheet?
     @Binding var newRecognizedBarcode: MDProductBarcode?
-    @State var newProductBarcode: MDProductBarcode?
+    
+    @State private var showProductForm: Bool = false
 
     private func resetForm() {
         productID = nil
@@ -69,10 +69,23 @@ struct QuickScanModeSelectProductView: View {
             Section {
                 Text(barcode ?? "Barcode error").font(.title)
             }
-
-            ProductField(productID: $productID, description: "Product for this barcode")
+            
+            Section {
+                ProductField(productID: $productID, description: "Product for this barcode")
+                Button(action: {
+                    showProductForm = true
+                }, label: {
+                    Label("Create product", systemImage: MySymbols.new)
+                })
+                .foregroundStyle(.primary)
+            }
         }
         .navigationTitle("Add barcode")
+        .sheet(isPresented: $showProductForm) {
+            NavigationStack {
+                MDProductFormView(queuedBarcode: barcode)
+            }
+        }
         .toolbar(content: {
             ToolbarItem(
                 placement: .cancellationAction,
