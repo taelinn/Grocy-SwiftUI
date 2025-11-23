@@ -92,7 +92,7 @@ struct MDUserEntityFormView: View {
     
     var body: some View {
         content
-            .navigationTitle(isNewUserEntity ? "New userentity" : "Edit userentity")
+            .navigationTitle(isNewUserEntity ? "Create userentity" : "Edit userentity")
             .toolbar(content: {
                 ToolbarItem(placement: .confirmationAction) {
                     Button(role: .confirm, action: {
@@ -120,7 +120,7 @@ struct MDUserEntityFormView: View {
     var content: some View {
         Form {
 #if os(macOS)
-            Text(isNewUserEntity ? "New userentity" : "Edit userentity")
+            Text(isNewUserEntity ? "Create userentity" : "Edit userentity")
                 .font(.title)
                 .bold()
                 .padding(.bottom, 20.0)

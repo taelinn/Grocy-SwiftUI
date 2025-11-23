@@ -108,7 +108,7 @@ struct MDStoreFormView: View {
             await updateData()
             self.isNameCorrect = checkNameCorrect()
         }
-        .navigationTitle(existingStore == nil ? "New store" : "Edit store")
+        .navigationTitle(existingStore == nil ? "Create store" : "Edit store")
         .toolbar(content: {
             if existingStore == nil {
                 ToolbarItem(

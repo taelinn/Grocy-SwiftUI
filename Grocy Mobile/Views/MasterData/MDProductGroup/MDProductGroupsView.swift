@@ -138,7 +138,7 @@ struct MDProductGroupsView: View {
                         showAddProductGroup.toggle()
                     },
                     label: {
-                        Label("New product group", systemImage: MySymbols.new)
+                        Label("Create product group", systemImage: MySymbols.new)
                     }
                 )
             }

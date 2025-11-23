@@ -81,6 +81,7 @@ struct ShoppingListRowView: View {
                         label: { Label("Done", systemImage: MySymbols.done) }
                     )
                     .tint(.green)
+                    .accessibilityHint("Mark this item as done")
                     if shoppingListItem.productID != nil {
                         Button(
                             action: {

@@ -62,7 +62,7 @@ struct UserManagementView: View {
                                 },
                                 label: {
                                     HStack {
-                                        Text("New user")
+                                        Text("Create user")
                                         Image(systemName: MySymbols.new)
                                     }
                                 }
@@ -92,7 +92,7 @@ struct UserManagementView: View {
                                 },
                                 label: {
                                     HStack {
-                                        Text("New user")
+                                        Text("Create user")
                                         Image(systemName: MySymbols.new)
                                     }
                                 }

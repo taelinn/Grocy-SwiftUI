@@ -133,7 +133,7 @@ struct MDProductsView: View {
                             showAddProduct.toggle()
                         },
                         label: {
-                            Image(systemName: MySymbols.new)
+                            Label("Create product", systemImage: MySymbols.new)
                         }
                     )
                 }

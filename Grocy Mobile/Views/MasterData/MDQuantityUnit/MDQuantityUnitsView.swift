@@ -129,7 +129,7 @@ struct MDQuantityUnitsView: View {
                         showAddQuantityUnit.toggle()
                     },
                     label: {
-                        Label("New quantity unit", systemImage: MySymbols.new)
+                        Label("Create quantity unit", systemImage: MySymbols.new)
                     }
                 )
             }

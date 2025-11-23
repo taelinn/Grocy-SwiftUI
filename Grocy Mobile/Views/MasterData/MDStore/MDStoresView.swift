@@ -123,10 +123,9 @@ struct MDStoresView: View {
             .default,
             value: mdStores.count
         )
-        .confirmationDialog(
+        .alert(
             "Do you really want to delete this store?",
             isPresented: $showDeleteConfirmation,
-            titleVisibility: .visible,
             actions: {
                 Button("Cancel", role: .cancel) {}
                 Button("Delete", role: .destructive) {
@@ -151,7 +150,7 @@ struct MDStoresView: View {
                             showAddStore.toggle()
                         },
                         label: {
-                            Label("New store", systemImage: MySymbols.new)
+                            Label("Create store", systemImage: MySymbols.new)
                         }
                     )
                 }

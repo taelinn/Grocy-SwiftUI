@@ -145,6 +145,7 @@ struct MDQuantityUnitConversionFormView: View {
                     }
                 }
             )
+            .foregroundStyle(.primary)
             .disabled(true)
 
             VStack(alignment: .leading) {
@@ -160,6 +161,7 @@ struct MDQuantityUnitConversionFormView: View {
                         }
                     }
                 )
+                .foregroundStyle(.primary)
 
                 if checkConversionExists() {
                     Text("Such a conversion already exists")
@@ -186,6 +188,7 @@ struct MDQuantityUnitConversionFormView: View {
                 }
             }
         }
+        .navigationTitle("Create QU conversion")
         .onChange(of: quantityUnitConversion.factor) {
             conversionCorrect = checkConversionCorrect()
         }

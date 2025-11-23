@@ -434,7 +434,7 @@ struct StockView: View {
             #if os(iOS)
                 ToolbarItemGroup(placement: .navigation) {
                     Button(action: { showingFilterSheet = true }) {
-                        Image(systemName: MySymbols.filter)
+                        Label("Filter", systemImage: MySymbols.filter)
                     }
                     sortMenu
                 }
@@ -468,7 +468,7 @@ struct StockView: View {
                     placement: .automatic,
                     content: {
                         Button(action: { showingFilterSheet = true }) {
-                            Image(systemName: MySymbols.filter)
+                            Label("Filter", systemImage: MySymbols.filter)
                         }
                         .popover(
                             isPresented: $showingFilterSheet,

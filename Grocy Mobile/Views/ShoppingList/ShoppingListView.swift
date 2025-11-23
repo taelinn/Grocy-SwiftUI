@@ -309,7 +309,7 @@ struct ShoppingListView: View {
                 placement: .navigation,
                 content: {
                     Button(action: { showFilterSheet = true }) {
-                        Image(systemName: MySymbols.filter)
+                        Label("Filter", systemImage: MySymbols.filter)
                     }
                     sortGroupMenu
                 }

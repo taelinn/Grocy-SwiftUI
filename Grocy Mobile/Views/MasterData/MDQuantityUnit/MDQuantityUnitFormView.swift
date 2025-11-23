@@ -167,7 +167,7 @@ struct MDQuantityUnitFormView: View {
                                         showAddQuantityUnitConversion.toggle()
                                     },
                                     label: {
-                                        Label("New quantity unit conversion", systemImage: MySymbols.new)
+                                        Label("Create QU conversion", systemImage: MySymbols.new)
                                     }
                                 )
                             }
@@ -193,7 +193,7 @@ struct MDQuantityUnitFormView: View {
                 MDQuantityUnitConversionFormView(quantityUnit: quantityUnit, existingQuantityUnitConversion: quantityUnitConversion)
             }
         )
-        .navigationTitle(existingQuantityUnit == nil ? "New quantity unit" : "Edit quantity unit")
+        .navigationTitle(existingQuantityUnit == nil ? "Create quantity unit" : "Edit quantity unit")
         .onChange(of: quantityUnit.name) {
             isNameCorrect = checkNameCorrect()
         }

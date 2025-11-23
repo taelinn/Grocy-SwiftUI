@@ -161,7 +161,7 @@ struct StockJournalView: View {
         .toolbar {
             ToolbarItem(placement: .automatic) {
                 Button(action: { showingFilterSheet = true }) {
-                    Image(systemName: MySymbols.filter)
+                    Label("Filter", systemImage: MySymbols.filter)
                 }
             }
             #if os(iOS)

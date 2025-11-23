@@ -157,7 +157,7 @@ struct MDLocationsView: View {
                             showAddLocation.toggle()
                         },
                         label: {
-                            Label("New location", systemImage: MySymbols.new)
+                            Label("Create location", systemImage: MySymbols.new)
                         }
                     )
                 }
