@@ -13,18 +13,17 @@ struct ShoppingListItemWrapped {
     let product: MDProduct?
 }
 
-enum ShoppingListInteraction: Hashable {
-    case editShoppingList
-}
-
 struct ShoppingListView: View {
     @Environment(GrocyViewModel.self) private var grocyVM
+    @Environment(\.colorScheme) var colorScheme
 
     @Query(sort: \ShoppingListDescription.id, order: .forward) var shoppingListDescriptions: ShoppingListDescriptions
     @Query(sort: \ShoppingListItem.id, order: .forward) var shoppingList: [ShoppingListItem]
     @Query(sort: \MDProduct.name, order: .forward) var mdProducts: MDProducts
     @Query(sort: \MDProductGroup.id, order: .forward) var mdProductGroups: MDProductGroups
     @Query(sort: \MDStore.id, order: .forward) var mdStores: MDStores
+    @Query(sort: \MDQuantityUnit.id, order: .forward) var mdQuantityUnits: MDQuantityUnits
+    @Query(sort: \MDQuantityUnitConversion.id, order: .forward) var mdQuantityUnitConversions: MDQuantityUnitConversions
 
     @State private var selectedShoppingListID: Int = 1
 
@@ -50,6 +49,13 @@ struct ShoppingListView: View {
     @State private var showClearListAlert: Bool = false
     @State private var showClearDoneAlert: Bool = false
 
+    // Item interaction state
+    @State private var shlItemToDelete: ShoppingListItem? = nil
+    @State private var showEntryDeleteAlert: Bool = false
+    @State private var showPurchase: Bool = false
+    @State private var showAutoPurchase: Bool = false
+    @State private var selectedItemForPurchase: ShoppingListItem? = nil
+
     private let dataToUpdate: [ObjectEntities] = [
         .products,
         .product_groups,
@@ -69,6 +75,41 @@ struct ShoppingListView: View {
             }
         }
         return false
+    }
+
+    private func changeDoneStatus(shoppingListItem: ShoppingListItem) async {
+        let doneChangedShoppingListItem = ShoppingListItem(
+            id: shoppingListItem.id,
+            productID: shoppingListItem.productID,
+            note: shoppingListItem.note,
+            amount: shoppingListItem.amount,
+            shoppingListID: shoppingListItem.shoppingListID,
+            done: shoppingListItem.done == 1 ? 0 : 1,
+            quID: shoppingListItem.quID,
+            rowCreatedTimestamp: shoppingListItem.rowCreatedTimestamp
+        )
+        do {
+            try await grocyVM.putMDObjectWithID(object: .shopping_list, id: shoppingListItem.id, content: doneChangedShoppingListItem)
+            GrocyLogger.info("Done status changed successfully.")
+            await grocyVM.requestData(objects: [.shopping_list])
+        } catch {
+            GrocyLogger.error("Shopping list done status change failed. \(error)")
+        }
+    }
+
+    private func deleteItem(itemToDelete: ShoppingListItem) {
+        shlItemToDelete = itemToDelete
+        showEntryDeleteAlert.toggle()
+    }
+
+    private func deleteSHLItem(toDelID: Int) async {
+        do {
+            try await grocyVM.deleteMDObject(object: .shopping_list, id: toDelID)
+            GrocyLogger.info("Deleting shopping list item was successful.")
+            await grocyVM.requestData(objects: [.shopping_list])
+        } catch {
+            GrocyLogger.error("Deleting shopping list item failed. \(error)")
+        }
     }
 
     var selectedShoppingList: ShoppingListDescription? {
@@ -215,7 +256,7 @@ struct ShoppingListView: View {
                 }
             }
             ForEach(groupedShoppingList.sorted(by: { $0.key < $1.key }), id: \.key) { groupName, groupElements in
-                #if os(macOS)
+                                #if os(macOS)
                     DisclosureGroup(
                         isExpanded: Binding.constant(true),
                         content: {
@@ -223,10 +264,7 @@ struct ShoppingListView: View {
                                 groupElements.sorted(using: sortSetting),
                                 id: \.shoppingListItem.id,
                                 content: { element in
-                                    ShoppingListEntriesView(
-                                        shoppingListItem: element.shoppingListItem,
-                                        selectedShoppingListID: $selectedShoppingListID
-                                    )
+                                    shoppingListRowWithNavigation(element: element)
                                 }
                             )
                         },
@@ -247,10 +285,7 @@ struct ShoppingListView: View {
                                 groupElements.sorted(using: sortSetting),
                                 id: \.shoppingListItem.id,
                                 content: { element in
-                                    ShoppingListEntriesView(
-                                        shoppingListItem: element.shoppingListItem,
-                                        selectedShoppingListID: $selectedShoppingListID
-                                    )
+                                    shoppingListRowWithNavigation(element: element)
                                 }
                             )
                         },
@@ -298,15 +333,12 @@ struct ShoppingListView: View {
                 }
             )
         }
-        .navigationDestination(
-            for: ShoppingListInteraction.self,
-            destination: { interaction in
-                switch interaction {
-                case ShoppingListInteraction.editShoppingList:
-                    ShoppingListFormView(isNewShoppingListDescription: false, shoppingListDescription: shoppingListDescriptions.first(where: { $0.id == selectedShoppingListID }))
-                }
-            }
-        )
+        .navigationDestination(for: ShoppingListDescription.self, destination: { desc in
+            ShoppingListFormView(isNewShoppingListDescription: false, shoppingListDescription: desc)
+        })
+        .navigationDestination(for: ShoppingListItem.self, destination: { item in
+            ShoppingListEntryFormView(isNewShoppingListEntry: false, shoppingListEntry: item)
+        })
         #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
         #endif
@@ -375,7 +407,46 @@ struct ShoppingListView: View {
                 }
             }
         )
-        .confirmationDialog(
+        .sheet(
+            isPresented: $showPurchase,
+            content: {
+                if let item = selectedItemForPurchase {
+                    NavigationStack {
+                        PurchaseProductView(directProductToPurchaseID: item.productID, productToPurchaseAmount: item.amount)
+                    }
+                }
+            }
+        )
+        .sheet(
+            isPresented: $showAutoPurchase,
+            content: {
+                if let item = selectedItemForPurchase {
+                    NavigationStack {
+                        PurchaseProductView(directProductToPurchaseID: item.productID, productToPurchaseAmount: item.amount, autoPurchase: true)
+                    }
+                }
+            }
+        )
+        .alert(
+            "Do you really want to delete this item?",
+            isPresented: $showEntryDeleteAlert,
+            actions: {
+                Button("Cancel", role: .cancel) {}
+                Button("Delete", role: .destructive) {
+                    if let deleteID = shlItemToDelete?.id {
+                        Task {
+                            await deleteSHLItem(toDelID: deleteID)
+                        }
+                    }
+                }
+            },
+            message: {
+                if let item = shlItemToDelete {
+                    Text(mdProducts.first(where: { $0.id == item.productID })?.name ?? "Name not found")
+                }
+            }
+        )
+        .alert(
             "Do you really want to delete this shopping list?",
             isPresented: $showSHLDeleteAlert,
             actions: {
@@ -388,7 +459,7 @@ struct ShoppingListView: View {
             },
             message: { Text(shoppingListDescriptions.first(where: { $0.id == selectedShoppingListID })?.name ?? "Name not found") }
         )
-        .confirmationDialog(
+        .alert(
             "Do your really want to clear this shopping list?",
             isPresented: $showClearListAlert,
             actions: {
@@ -401,7 +472,7 @@ struct ShoppingListView: View {
             },
             message: { Text(shoppingListDescriptions.first(where: { $0.id == selectedShoppingListID })?.name ?? "Name not found") }
         )
-        .confirmationDialog(
+        .alert(
             "Do you really want to clear all done items?",
             isPresented: $showClearDoneAlert,
             actions: {
@@ -439,7 +510,7 @@ struct ShoppingListView: View {
             )
             .help("New shopping list")
             NavigationLink(
-                value: ShoppingListInteraction.editShoppingList,
+                value: selectedShoppingList,
                 label: {
                     Label("Edit shopping list", systemImage: MySymbols.edit)
                 }
@@ -591,6 +662,33 @@ struct ShoppingListView: View {
             },
             label: {
                 Label("Sort", systemImage: MySymbols.sort)
+            }
+        )
+    }
+
+    @ViewBuilder
+    private func shoppingListRowWithNavigation(element: ShoppingListItemWrapped) -> some View {
+        NavigationLink(
+            value: element.shoppingListItem,
+            label: {
+                ShoppingListRowView(
+                    shoppingListItem: element.shoppingListItem,
+                    isBelowStock: checkBelowStock(item: element.shoppingListItem),
+                    product: element.product,
+                    quantityUnit: mdQuantityUnits.first(where: { $0.id == element.product?.quIDPurchase }),
+                    quantityUnitConversions: mdQuantityUnitConversions.filter { $0.toQuID == element.shoppingListItem.quID },
+                    onToggleDone: changeDoneStatus,
+                    onDelete: deleteItem,
+                    onShowPurchase: { item in
+                        selectedItemForPurchase = item
+                        showPurchase.toggle()
+                    },
+                    onShowAutoPurchase: { item in
+                        selectedItemForPurchase = item
+                        showAutoPurchase.toggle()
+                    },
+                    onEditItem: { _ in }
+                )
             }
         )
     }
