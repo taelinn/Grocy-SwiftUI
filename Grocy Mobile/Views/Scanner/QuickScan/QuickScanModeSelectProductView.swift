@@ -20,6 +20,7 @@ struct QuickScanModeSelectProductView: View {
     @Environment(\.dismiss) var dismiss
 
     @State private var firstOpen: Bool = true
+    @State private var createdProductID: Int? = nil
 
     var barcode: String?
 
@@ -27,7 +28,7 @@ struct QuickScanModeSelectProductView: View {
 
     @Binding var qsActiveSheet: QSActiveSheet?
     @Binding var newRecognizedBarcode: MDProductBarcode?
-    
+
     @State private var showProductForm: Bool = false
 
     private func resetForm() {
@@ -69,21 +70,27 @@ struct QuickScanModeSelectProductView: View {
             Section {
                 Text(barcode ?? "Barcode error").font(.title)
             }
-            
+
             Section {
                 ProductField(productID: $productID, description: "Product for this barcode")
-                Button(action: {
-                    showProductForm = true
-                }, label: {
-                    Label("Create product", systemImage: MySymbols.new)
-                })
+                Button(
+                    action: {
+                        showProductForm = true
+                    },
+                    label: {
+                        Label("Create product", systemImage: MySymbols.new)
+                    }
+                )
                 .foregroundStyle(.primary)
             }
         }
         .navigationTitle("Add barcode")
+        .onChange(of: createdProductID) {
+            self.productID = createdProductID
+        }
         .sheet(isPresented: $showProductForm) {
             NavigationStack {
-                MDProductFormView(queuedBarcode: barcode)
+                MDProductFormView(queuedBarcode: barcode, createdProductID: $createdProductID)
             }
         }
         .toolbar(content: {

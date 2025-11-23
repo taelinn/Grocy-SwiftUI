@@ -38,6 +38,9 @@ struct MDProductFormView: View {
     @State private var isSuccessful: Bool? = nil
     @State private var errorMessage: String? = nil
 
+    @Binding var createdProductID: Int?
+    var createBarcode: Bool
+
     var existingProduct: MDProduct?
     @State var product: MDProduct
 
@@ -47,10 +50,6 @@ struct MDProductFormView: View {
     @State private var foundExternalBarcode: ExternalBarcodeLookup?
     @State private var externalBarcodeState: ExternalBarcodeLookupState?
     @State private var barcodeLookupApplied: Bool = false
-
-    var openFoodFactsBarcode: String?
-
-    var mdBarcodeReturn: Binding<MDProductBarcode?>?
 
     @State private var isNameCorrect: Bool = true
     private func checkNameCorrect() -> Bool {
@@ -64,9 +63,10 @@ struct MDProductFormView: View {
         return (queuedBarcode.isEmpty || (foundBarcode == nil))
     }
 
-    init(existingProduct: MDProduct? = nil, userSettings: GrocyUserSettings? = nil, queuedBarcode: String? = nil) {
+    init(existingProduct: MDProduct? = nil, userSettings: GrocyUserSettings? = nil, queuedBarcode: String? = nil, createBarcode: Bool = false, createdProductID: Binding<Int?> = .constant(nil)) {
         self.existingProduct = existingProduct
         self.queuedBarcode = queuedBarcode ?? ""
+        self.createBarcode = createBarcode
         let initialProduct =
             existingProduct
             ?? MDProduct(
@@ -105,6 +105,7 @@ struct MDProductFormView: View {
             )
         _product = State(initialValue: initialProduct)
         _isNameCorrect = State(initialValue: true)
+        _createdProductID = createdProductID
     }
 
     private var currentQUPurchase: MDQuantityUnit? {
@@ -139,17 +140,17 @@ struct MDProductFormView: View {
             if existingProduct == nil {
                 _ = try await grocyVM.postMDObject(object: .products, content: product)
                 await grocyVM.requestData(objects: [.products])
-                if (openFoodFactsBarcode != nil) || (!queuedBarcode.isEmpty) {
+                createdProductID = product.id
+                if createBarcode == true && !queuedBarcode.isEmpty {
                     let newBarcode = MDProductBarcode(
                         id: grocyVM.findNextID(.product_barcodes),
                         productID: product.id,
-                        barcode: openFoodFactsBarcode ?? queuedBarcode,
+                        barcode: queuedBarcode,
                         rowCreatedTimestamp: Date().iso8601withFractionalSeconds
                     )
                     let _ = try await grocyVM.postMDObject(object: .product_barcodes, content: newBarcode)
                     GrocyLogger.info("Barcode add successful.")
                     await grocyVM.requestData(objects: [.product_barcodes])
-                    //                    mdBarcodeReturn?.wrappedValue = newBarcode
                 }
                 GrocyLogger.info("Product \(product.name) successful.")
                 isSuccessful = true
@@ -312,7 +313,7 @@ struct MDProductFormView: View {
                         MyLabelWithSubtitle(title: "Amount", subTitle: "\(Text("Min. stock amount")), \(Text("Quick consume amount")), \(Text("Factor")), \(Text("Tare weight"))", systemImage: MySymbols.amount)
                     }
                 )
-                if queuedBarcode.isEmpty {
+                if queuedBarcode.isEmpty || createBarcode == false {
                     NavigationLink(
                         value: MDProductFormPart.barcode,
                         label: {
