@@ -11,14 +11,14 @@ public enum GrocyLogger {
     private static let logger = Logger(subsystem: "georgappdev.Grocy", category: "AppLogger")
 
     public static func error(_ message: String) {
-        logger.error("\(message)")
+        logger.error("\(message, privacy: .public)")
     }
 
     public static func info(_ message: String) {
-        logger.info("\(message)")
+        logger.info("\(message, privacy: .public)")
     }
 
     public static func debug(_ message: String) {
-        logger.debug("\(message)")
+        logger.debug("\(message, privacy: .public)")
     }
 }
