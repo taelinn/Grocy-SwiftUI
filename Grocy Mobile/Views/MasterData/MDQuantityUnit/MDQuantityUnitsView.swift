@@ -138,7 +138,7 @@ struct MDQuantityUnitsView: View {
             .default,
             value: mdQuantityUnits.count
         )
-        .confirmationDialog(
+        .alert(
             "Do you really want to delete this quantity unit?",
             isPresented: $showDeleteConfirmation,
             actions: {

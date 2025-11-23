@@ -128,10 +128,9 @@ struct MDLocationsView: View {
             .default,
             value: mdLocations.count
         )
-        .confirmationDialog(
+        .alert(
             "Do you really want to delete this location?",
             isPresented: $showDeleteConfirmation,
-            titleVisibility: .visible,
             actions: {
                 Button("Cancel", role: .cancel) {}
                 Button("Delete", role: .destructive) {

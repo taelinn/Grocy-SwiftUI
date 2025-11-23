@@ -232,7 +232,7 @@ struct MDQuantityUnitFormView: View {
                 .keyboardShortcut(.defaultAction)
             }
         })
-        .confirmationDialog(
+        .alert(
             "Delete",
             isPresented: $showConversionDeleteAlert,
             actions: {

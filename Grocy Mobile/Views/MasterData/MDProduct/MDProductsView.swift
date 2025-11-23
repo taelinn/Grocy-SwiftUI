@@ -106,7 +106,7 @@ struct MDProductsView: View {
             .default,
             value: mdProducts.count
         )
-        .confirmationDialog(
+        .alert(
             "Do you really want to delete this product?",
             isPresented: $showDeleteConfirmation,
             actions: {

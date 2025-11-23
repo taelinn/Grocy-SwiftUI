@@ -143,7 +143,7 @@ struct MDProductGroupsView: View {
                 )
             }
         }
-        .confirmationDialog(
+        .alert(
             "Do you really want to delete this product group?",
             isPresented: $showDeleteConfirmation,
             actions: {
