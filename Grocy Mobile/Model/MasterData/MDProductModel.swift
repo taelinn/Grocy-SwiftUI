@@ -88,7 +88,7 @@ class MDProduct: Codable, Equatable, Identifiable {
         do {
             let container = try decoder.container(keyedBy: CodingKeys.self)
             do { self.id = try container.decode(Int.self, forKey: .id) } catch { self.id = Int(try container.decode(String.self, forKey: .id))! }
-            self.name = try container.decode(String.self, forKey: .name)
+            self.name = (try? container.decodeIfPresent(String.self, forKey: .name)) ?? ""
             self.mdProductDescription = (try? container.decodeIfPresent(String.self, forKey: .mdProductDescription)) ?? ""
             do { self.productGroupID = try container.decodeIfPresent(Int.self, forKey: .productGroupID) } catch { self.productGroupID = try Int(container.decodeIfPresent(String.self, forKey: .productGroupID) ?? "") }
             do {
@@ -255,30 +255,30 @@ class MDProduct: Codable, Equatable, Identifiable {
     }
 
     init(
-        id: Int,
-        name: String,
+        id: Int = 0,
+        name: String = "",
         mdProductDescription: String = "",
         productGroupID: Int? = nil,
-        active: Bool,
-        locationID: Int,
-        storeID: Int? = nil,
-        quIDPurchase: Int,
-        quIDStock: Int,
-        quIDConsume: Int,
-        quIDPrice: Int,
-        minStockAmount: Double,
-        defaultDueDays: Int,
-        defaultDueDaysAfterOpen: Int,
-        defaultDueDaysAfterFreezing: Int,
-        defaultDueDaysAfterThawing: Int,
+        active: Bool = true,
+        locationID: Int = -1,
+        storeID: Int = -1,
+        quIDPurchase: Int = -1,
+        quIDStock: Int = -1,
+        quIDConsume: Int = -1,
+        quIDPrice: Int = -1,
+        minStockAmount: Double = 1.0,
+        defaultDueDays: Int = 0,
+        defaultDueDaysAfterOpen: Int = 0,
+        defaultDueDaysAfterFreezing: Int = 0,
+        defaultDueDaysAfterThawing: Int = 0,
         pictureFileName: String? = nil,
         enableTareWeightHandling: Bool = false,
         tareWeight: Double? = nil,
         notCheckStockFulfillmentForRecipes: Bool = false,
         parentProductID: Int? = nil,
         calories: Double? = nil,
-        cumulateMinStockAmountOfSubProducts: Bool,
-        dueType: Int,
+        cumulateMinStockAmountOfSubProducts: Bool = false,
+        dueType: Int = 1,
         quickConsumeAmount: Double? = nil,
         quickOpenAmount: Double? = nil,
         hideOnStockOverview: Bool = false,
@@ -289,7 +289,7 @@ class MDProduct: Codable, Equatable, Identifiable {
         defaultConsumeLocationID: Int? = nil,
         moveOnOpen: Bool = false,
         autoReprintStockLabel: Bool = false,
-        rowCreatedTimestamp: String
+        rowCreatedTimestamp: String? = nil
     ) {
         self.id = id
         self.name = name
@@ -325,7 +325,11 @@ class MDProduct: Codable, Equatable, Identifiable {
         self.quIDConsume = quIDConsume
         self.autoReprintStockLabel = autoReprintStockLabel
         self.quIDPrice = quIDPrice
-        self.rowCreatedTimestamp = rowCreatedTimestamp
+        if let rowCreatedTimestamp {
+            self.rowCreatedTimestamp = rowCreatedTimestamp
+        } else {
+            self.rowCreatedTimestamp = Date().iso8601withFractionalSeconds
+        }
     }
 
     static func == (lhs: MDProduct, rhs: MDProduct) -> Bool {
