@@ -167,6 +167,8 @@ struct MDLocationsView: View {
     }
 }
 
-#Preview {
-    MDLocationsView()
+#Preview(traits: .previewData) {
+    NavigationStack {
+        MDLocationsView()
+    }
 }

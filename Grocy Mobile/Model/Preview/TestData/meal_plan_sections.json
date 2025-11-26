@@ -1,0 +1,30 @@
+[
+  {
+    "id": -1,
+    "name": null,
+    "sort_number": -1,
+    "row_created_timestamp": "2025-11-26 20:37:47",
+    "time_info": null
+  },
+  {
+    "id": 1,
+    "name": "Breakfast",
+    "sort_number": 10,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "time_info": null
+  },
+  {
+    "id": 2,
+    "name": "Lunch",
+    "sort_number": 20,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "time_info": null
+  },
+  {
+    "id": 3,
+    "name": "Dinner",
+    "sort_number": 30,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "time_info": null
+  }
+]

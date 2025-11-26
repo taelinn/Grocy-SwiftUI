@@ -1,0 +1,322 @@
+[
+  {
+    "id": 1,
+    "product_id": 8,
+    "barcode": "22111968",
+    "qu_id": 5,
+    "amount": null,
+    "shopping_location_id": null,
+    "last_price": null,
+    "note": null
+  },
+  {
+    "id": 2,
+    "product_id": 8,
+    "barcode": "22114358",
+    "qu_id": 5,
+    "amount": null,
+    "shopping_location_id": null,
+    "last_price": null,
+    "note": null
+  },
+  {
+    "id": 3,
+    "product_id": 4,
+    "barcode": "42141099",
+    "qu_id": 3,
+    "amount": null,
+    "shopping_location_id": null,
+    "last_price": null,
+    "note": null
+  },
+  {
+    "id": 1,
+    "product_id": 1,
+    "barcode": "grcy:p:1",
+    "qu_id": 3,
+    "amount": null,
+    "shopping_location_id": null,
+    "last_price": null,
+    "note": null
+  },
+  {
+    "id": 2,
+    "product_id": 2,
+    "barcode": "grcy:p:2",
+    "qu_id": 3,
+    "amount": null,
+    "shopping_location_id": null,
+    "last_price": null,
+    "note": null
+  },
+  {
+    "id": 3,
+    "product_id": 3,
+    "barcode": "grcy:p:3",
+    "qu_id": 3,
+    "amount": null,
+    "shopping_location_id": null,
+    "last_price": null,
+    "note": null
+  },
+  {
+    "id": 4,
+    "product_id": 4,
+    "barcode": "grcy:p:4",
+    "qu_id": 3,
+    "amount": null,
+    "shopping_location_id": null,
+    "last_price": null,
+    "note": null
+  },
+  {
+    "id": 5,
+    "product_id": 5,
+    "barcode": "grcy:p:5",
+    "qu_id": 2,
+    "amount": null,
+    "shopping_location_id": null,
+    "last_price": null,
+    "note": null
+  },
+  {
+    "id": 6,
+    "product_id": 6,
+    "barcode": "grcy:p:6",
+    "qu_id": 3,
+    "amount": null,
+    "shopping_location_id": null,
+    "last_price": null,
+    "note": null
+  },
+  {
+    "id": 7,
+    "product_id": 7,
+    "barcode": "grcy:p:7",
+    "qu_id": 4,
+    "amount": null,
+    "shopping_location_id": null,
+    "last_price": null,
+    "note": null
+  },
+  {
+    "id": 8,
+    "product_id": 8,
+    "barcode": "grcy:p:8",
+    "qu_id": 5,
+    "amount": null,
+    "shopping_location_id": null,
+    "last_price": null,
+    "note": null
+  },
+  {
+    "id": 9,
+    "product_id": 9,
+    "barcode": "grcy:p:9",
+    "qu_id": 6,
+    "amount": null,
+    "shopping_location_id": null,
+    "last_price": null,
+    "note": null
+  },
+  {
+    "id": 10,
+    "product_id": 10,
+    "barcode": "grcy:p:10",
+    "qu_id": 3,
+    "amount": null,
+    "shopping_location_id": null,
+    "last_price": null,
+    "note": null
+  },
+  {
+    "id": 11,
+    "product_id": 11,
+    "barcode": "grcy:p:11",
+    "qu_id": 3,
+    "amount": null,
+    "shopping_location_id": null,
+    "last_price": null,
+    "note": null
+  },
+  {
+    "id": 12,
+    "product_id": 12,
+    "barcode": "grcy:p:12",
+    "qu_id": 2,
+    "amount": null,
+    "shopping_location_id": null,
+    "last_price": null,
+    "note": null
+  },
+  {
+    "id": 13,
+    "product_id": 13,
+    "barcode": "grcy:p:13",
+    "qu_id": 2,
+    "amount": null,
+    "shopping_location_id": null,
+    "last_price": null,
+    "note": null
+  },
+  {
+    "id": 14,
+    "product_id": 14,
+    "barcode": "grcy:p:14",
+    "qu_id": 7,
+    "amount": null,
+    "shopping_location_id": null,
+    "last_price": null,
+    "note": null
+  },
+  {
+    "id": 15,
+    "product_id": 15,
+    "barcode": "grcy:p:15",
+    "qu_id": 2,
+    "amount": null,
+    "shopping_location_id": null,
+    "last_price": null,
+    "note": null
+  },
+  {
+    "id": 16,
+    "product_id": 16,
+    "barcode": "grcy:p:16",
+    "qu_id": 3,
+    "amount": null,
+    "shopping_location_id": null,
+    "last_price": null,
+    "note": null
+  },
+  {
+    "id": 17,
+    "product_id": 17,
+    "barcode": "grcy:p:17",
+    "qu_id": 5,
+    "amount": null,
+    "shopping_location_id": null,
+    "last_price": null,
+    "note": null
+  },
+  {
+    "id": 18,
+    "product_id": 18,
+    "barcode": "grcy:p:18",
+    "qu_id": 3,
+    "amount": null,
+    "shopping_location_id": null,
+    "last_price": null,
+    "note": null
+  },
+  {
+    "id": 19,
+    "product_id": 19,
+    "barcode": "grcy:p:19",
+    "qu_id": 5,
+    "amount": null,
+    "shopping_location_id": null,
+    "last_price": null,
+    "note": null
+  },
+  {
+    "id": 20,
+    "product_id": 20,
+    "barcode": "grcy:p:20",
+    "qu_id": 3,
+    "amount": null,
+    "shopping_location_id": null,
+    "last_price": null,
+    "note": null
+  },
+  {
+    "id": 21,
+    "product_id": 21,
+    "barcode": "grcy:p:21",
+    "qu_id": 8,
+    "amount": null,
+    "shopping_location_id": null,
+    "last_price": null,
+    "note": null
+  },
+  {
+    "id": 22,
+    "product_id": 22,
+    "barcode": "grcy:p:22",
+    "qu_id": 3,
+    "amount": null,
+    "shopping_location_id": null,
+    "last_price": null,
+    "note": null
+  },
+  {
+    "id": 23,
+    "product_id": 23,
+    "barcode": "grcy:p:23",
+    "qu_id": 10,
+    "amount": null,
+    "shopping_location_id": null,
+    "last_price": null,
+    "note": null
+  },
+  {
+    "id": 24,
+    "product_id": 24,
+    "barcode": "grcy:p:24",
+    "qu_id": 3,
+    "amount": null,
+    "shopping_location_id": null,
+    "last_price": null,
+    "note": null
+  },
+  {
+    "id": 25,
+    "product_id": 25,
+    "barcode": "grcy:p:25",
+    "qu_id": 3,
+    "amount": null,
+    "shopping_location_id": null,
+    "last_price": null,
+    "note": null
+  },
+  {
+    "id": 26,
+    "product_id": 26,
+    "barcode": "grcy:p:26",
+    "qu_id": 3,
+    "amount": null,
+    "shopping_location_id": null,
+    "last_price": null,
+    "note": null
+  },
+  {
+    "id": 27,
+    "product_id": 27,
+    "barcode": "grcy:p:27",
+    "qu_id": 14,
+    "amount": null,
+    "shopping_location_id": null,
+    "last_price": null,
+    "note": null
+  },
+  {
+    "id": 28,
+    "product_id": 28,
+    "barcode": "grcy:p:28",
+    "qu_id": 6,
+    "amount": null,
+    "shopping_location_id": null,
+    "last_price": null,
+    "note": null
+  },
+  {
+    "id": 29,
+    "product_id": 29,
+    "barcode": "grcy:p:29",
+    "qu_id": 6,
+    "amount": null,
+    "shopping_location_id": null,
+    "last_price": null,
+    "note": null
+  }
+]

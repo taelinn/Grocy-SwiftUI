@@ -1,0 +1,35 @@
+[
+  {
+    "id": 1,
+    "product_id": 8,
+    "barcode": "22111968",
+    "qu_id": 5,
+    "amount": null,
+    "shopping_location_id": null,
+    "last_price": null,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "note": null
+  },
+  {
+    "id": 2,
+    "product_id": 8,
+    "barcode": "22114358",
+    "qu_id": 5,
+    "amount": null,
+    "shopping_location_id": null,
+    "last_price": null,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "note": null
+  },
+  {
+    "id": 3,
+    "product_id": 4,
+    "barcode": "42141099",
+    "qu_id": 3,
+    "amount": null,
+    "shopping_location_id": null,
+    "last_price": null,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "note": null
+  }
+]

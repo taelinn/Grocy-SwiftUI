@@ -1,0 +1,82 @@
+[
+  {
+    "id": 1,
+    "battery_id": 1,
+    "tracked_time": "2023-12-07 20:37:49",
+    "undone": 0,
+    "undone_timestamp": null,
+    "row_created_timestamp": "2025-11-26 20:37:49"
+  },
+  {
+    "id": 2,
+    "battery_id": 1,
+    "tracked_time": "2024-06-04 20:37:49",
+    "undone": 0,
+    "undone_timestamp": null,
+    "row_created_timestamp": "2025-11-26 20:37:49"
+  },
+  {
+    "id": 3,
+    "battery_id": 1,
+    "tracked_time": "2024-12-01 20:37:49",
+    "undone": 0,
+    "undone_timestamp": null,
+    "row_created_timestamp": "2025-11-26 20:37:49"
+  },
+  {
+    "id": 4,
+    "battery_id": 1,
+    "tracked_time": "2025-05-30 23:59:59",
+    "undone": 0,
+    "undone_timestamp": null,
+    "row_created_timestamp": "2025-11-26 20:37:49"
+  },
+  {
+    "id": 5,
+    "battery_id": 2,
+    "tracked_time": "2025-05-10 20:37:49",
+    "undone": 0,
+    "undone_timestamp": null,
+    "row_created_timestamp": "2025-11-26 20:37:49"
+  },
+  {
+    "id": 6,
+    "battery_id": 2,
+    "tracked_time": "2025-06-29 20:37:49",
+    "undone": 0,
+    "undone_timestamp": null,
+    "row_created_timestamp": "2025-11-26 20:37:49"
+  },
+  {
+    "id": 7,
+    "battery_id": 2,
+    "tracked_time": "2025-08-18 20:37:49",
+    "undone": 0,
+    "undone_timestamp": null,
+    "row_created_timestamp": "2025-11-26 20:37:49"
+  },
+  {
+    "id": 8,
+    "battery_id": 2,
+    "tracked_time": "2025-10-07 20:37:49",
+    "undone": 0,
+    "undone_timestamp": null,
+    "row_created_timestamp": "2025-11-26 20:37:49"
+  },
+  {
+    "id": 9,
+    "battery_id": 3,
+    "tracked_time": "2025-09-22 20:37:49",
+    "undone": 0,
+    "undone_timestamp": null,
+    "row_created_timestamp": "2025-11-26 20:37:49"
+  },
+  {
+    "id": 10,
+    "battery_id": 4,
+    "tracked_time": "2025-10-01 20:37:49",
+    "undone": 0,
+    "undone_timestamp": null,
+    "row_created_timestamp": "2025-11-26 20:37:49"
+  }
+]

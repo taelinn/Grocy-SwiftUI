@@ -1,0 +1,117 @@
+[
+  {
+    "id": 1,
+    "product_id": 1,
+    "price": 3.11
+  },
+  {
+    "id": 1,
+    "product_id": 2,
+    "price": 2.822307692307692
+  },
+  {
+    "id": 1,
+    "product_id": 3,
+    "price": 2.5005
+  },
+  {
+    "id": 1,
+    "product_id": 4,
+    "price": 1.8805
+  },
+  {
+    "id": 1,
+    "product_id": 5,
+    "price": 3.859166666666667
+  },
+  {
+    "id": 1,
+    "product_id": 6,
+    "price": 3.0204999999999997
+  },
+  {
+    "id": 1,
+    "product_id": 7,
+    "price": 3.4475000000000002
+  },
+  {
+    "id": 1,
+    "product_id": 8,
+    "price": 3.9615
+  },
+  {
+    "id": 1,
+    "product_id": 9,
+    "price": 2.5625
+  },
+  {
+    "id": 1,
+    "product_id": 10,
+    "price": 3.9595
+  },
+  {
+    "id": 1,
+    "product_id": 11,
+    "price": 2.7350000000000003
+  },
+  {
+    "id": 1,
+    "product_id": 12,
+    "price": 4.4235
+  },
+  {
+    "id": 1,
+    "product_id": 13,
+    "price": 4.2924999999999995
+  },
+  {
+    "id": 1,
+    "product_id": 14,
+    "price": 4.2415
+  },
+  {
+    "id": 1,
+    "product_id": 15,
+    "price": 3.2964999999999995
+  },
+  {
+    "id": 1,
+    "product_id": 20,
+    "price": 5.22
+  },
+  {
+    "id": 1,
+    "product_id": 22,
+    "price": 2.0725
+  },
+  {
+    "id": 1,
+    "product_id": 23,
+    "price": 1.7691666666666668
+  },
+  {
+    "id": 1,
+    "product_id": 24,
+    "price": 1.49
+  },
+  {
+    "id": 1,
+    "product_id": 25,
+    "price": 2.175
+  },
+  {
+    "id": 1,
+    "product_id": 27,
+    "price": 3.8550000000000004
+  },
+  {
+    "id": 1,
+    "product_id": 28,
+    "price": 2.165
+  },
+  {
+    "id": 1,
+    "product_id": 29,
+    "price": 5.05
+  }
+]

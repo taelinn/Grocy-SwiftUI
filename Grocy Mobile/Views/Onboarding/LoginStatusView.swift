@@ -161,42 +161,18 @@ struct LoginStatusView: View {
     }
 }
 
-#Preview("Loading") {
-    let config = ModelConfiguration(isStoredInMemoryOnly: true)
-    let container = try! ModelContainer(for: ServerProfile.self, configurations: config)
-    let viewModel = GrocyViewModel(modelContext: container.mainContext, profileModelContext: container.mainContext)
-
-    return LoginStatusView(loginState: .loading)
-        .environment(viewModel)
-        .modelContainer(container)
+#Preview("Loading", traits: .previewData) {
+    LoginStatusView(loginState: .loading)
 }
 
-#Preview("Success") {
-    let config = ModelConfiguration(isStoredInMemoryOnly: true)
-    let container = try! ModelContainer(for: ServerProfile.self, configurations: config)
-    let viewModel = GrocyViewModel(modelContext: container.mainContext, profileModelContext: container.mainContext)
-
-    return LoginStatusView(loginState: .success)
-        .environment(viewModel)
-        .modelContainer(container)
+#Preview("Success", traits: .previewData) {
+    LoginStatusView(loginState: .success)
 }
 
-#Preview("Fail") {
-    let config = ModelConfiguration(isStoredInMemoryOnly: true)
-    let container = try! ModelContainer(for: ServerProfile.self, configurations: config)
-    let viewModel = GrocyViewModel(modelContext: container.mainContext, profileModelContext: container.mainContext)
-
-    return LoginStatusView(loginState: .fail, errorMessage: "Error message")
-        .environment(viewModel)
-        .modelContainer(container)
+#Preview("Fail", traits: .previewData) {
+    LoginStatusView(loginState: .fail, errorMessage: "Error message")
 }
 
-#Preview("UnsupportedVersion") {
-    let config = ModelConfiguration(isStoredInMemoryOnly: true)
-    let container = try! ModelContainer(for: ServerProfile.self, configurations: config)
-    let viewModel = GrocyViewModel(modelContext: container.mainContext, profileModelContext: container.mainContext)
-
-    return LoginStatusView(loginState: .unsupportedVersion)
-        .environment(viewModel)
-        .modelContainer(container)
+#Preview("UnsupportedVersion", traits: .previewData) {
+    LoginStatusView(loginState: .unsupportedVersion)
 }

@@ -1,0 +1,11 @@
+[
+  {
+    "id": 1,
+    "name": "exampleuserentity",
+    "caption": "Example userentity",
+    "description": "This is an example user entity...",
+    "show_in_sidebar_menu": 1,
+    "icon_css_class": "fa-solid fa-smile",
+    "row_created_timestamp": "2025-11-26 20:37:48"
+  }
+]

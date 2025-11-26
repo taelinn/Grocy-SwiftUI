@@ -161,6 +161,8 @@ struct MDProductsView: View {
     }
 }
 
-#Preview {
-    MDProductsView()
+#Preview(traits: .previewData) {
+    NavigationStack {
+        MDProductsView()
+    }
 }

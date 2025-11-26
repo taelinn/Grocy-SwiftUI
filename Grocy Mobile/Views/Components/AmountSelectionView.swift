@@ -94,11 +94,9 @@ struct AmountSelectionView: View {
     }
 }
 
-#Preview {
+#Preview(traits: .previewData) {
     @Previewable @State var quantityUnitID: Int? = nil
     @Previewable @State var amount: Double = 250.0
-
-    let grocyVM = GrocyViewModel(modelContext: previewContainer.mainContext, profileModelContext: previewContainer.mainContext)
 
     NavigationStack {
         Form {
@@ -109,6 +107,4 @@ struct AmountSelectionView: View {
             )
         }
     }
-    .modelContainer(previewContainer)
-    .environment(grocyVM)
 }

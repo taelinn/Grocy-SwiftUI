@@ -1,0 +1,1164 @@
+[
+  {
+    "id": 1,
+    "recipe_id": 6,
+    "includes_recipe_id": 4,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 2,
+    "recipe_id": 6,
+    "includes_recipe_id": 5,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 3,
+    "recipe_id": 0,
+    "includes_recipe_id": 1,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 4,
+    "recipe_id": -1,
+    "includes_recipe_id": 1,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 6,
+    "recipe_id": -3,
+    "includes_recipe_id": 1,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 7,
+    "recipe_id": -4,
+    "includes_recipe_id": 1,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 9,
+    "recipe_id": -6,
+    "includes_recipe_id": 1,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 10,
+    "recipe_id": -7,
+    "includes_recipe_id": 1,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 11,
+    "recipe_id": -8,
+    "includes_recipe_id": 1,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 12,
+    "recipe_id": -9,
+    "includes_recipe_id": 2,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 13,
+    "recipe_id": -10,
+    "includes_recipe_id": 1,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 14,
+    "recipe_id": -10,
+    "includes_recipe_id": 2,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 16,
+    "recipe_id": -12,
+    "includes_recipe_id": 2,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 17,
+    "recipe_id": -13,
+    "includes_recipe_id": 1,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 18,
+    "recipe_id": -13,
+    "includes_recipe_id": 2,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 20,
+    "recipe_id": -15,
+    "includes_recipe_id": 2,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 21,
+    "recipe_id": -16,
+    "includes_recipe_id": 1,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 22,
+    "recipe_id": -16,
+    "includes_recipe_id": 2,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 23,
+    "recipe_id": -17,
+    "includes_recipe_id": 2,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 24,
+    "recipe_id": -18,
+    "includes_recipe_id": 3,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 25,
+    "recipe_id": -19,
+    "includes_recipe_id": 1,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 26,
+    "recipe_id": -19,
+    "includes_recipe_id": 2,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 27,
+    "recipe_id": -19,
+    "includes_recipe_id": 3,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 29,
+    "recipe_id": -21,
+    "includes_recipe_id": 3,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 30,
+    "recipe_id": -22,
+    "includes_recipe_id": 1,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 31,
+    "recipe_id": -22,
+    "includes_recipe_id": 2,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 32,
+    "recipe_id": -22,
+    "includes_recipe_id": 3,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 34,
+    "recipe_id": -24,
+    "includes_recipe_id": 3,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 35,
+    "recipe_id": -25,
+    "includes_recipe_id": 1,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 36,
+    "recipe_id": -25,
+    "includes_recipe_id": 2,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 37,
+    "recipe_id": -25,
+    "includes_recipe_id": 3,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 38,
+    "recipe_id": -26,
+    "includes_recipe_id": 3,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 39,
+    "recipe_id": -27,
+    "includes_recipe_id": 4,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 40,
+    "recipe_id": -28,
+    "includes_recipe_id": 1,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 41,
+    "recipe_id": -28,
+    "includes_recipe_id": 2,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 42,
+    "recipe_id": -28,
+    "includes_recipe_id": 3,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 43,
+    "recipe_id": -28,
+    "includes_recipe_id": 4,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 45,
+    "recipe_id": -30,
+    "includes_recipe_id": 4,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 46,
+    "recipe_id": -31,
+    "includes_recipe_id": 1,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 47,
+    "recipe_id": -31,
+    "includes_recipe_id": 2,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 48,
+    "recipe_id": -31,
+    "includes_recipe_id": 3,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 49,
+    "recipe_id": -31,
+    "includes_recipe_id": 4,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 51,
+    "recipe_id": -33,
+    "includes_recipe_id": 4,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 52,
+    "recipe_id": -34,
+    "includes_recipe_id": 1,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 53,
+    "recipe_id": -34,
+    "includes_recipe_id": 2,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 54,
+    "recipe_id": -34,
+    "includes_recipe_id": 3,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 55,
+    "recipe_id": -34,
+    "includes_recipe_id": 4,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 56,
+    "recipe_id": -35,
+    "includes_recipe_id": 4,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 57,
+    "recipe_id": -36,
+    "includes_recipe_id": 2,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 58,
+    "recipe_id": -37,
+    "includes_recipe_id": 1,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 59,
+    "recipe_id": -37,
+    "includes_recipe_id": 2,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 2
+  },
+  {
+    "id": 60,
+    "recipe_id": -37,
+    "includes_recipe_id": 3,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 61,
+    "recipe_id": -37,
+    "includes_recipe_id": 4,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 63,
+    "recipe_id": -39,
+    "includes_recipe_id": 2,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 64,
+    "recipe_id": -40,
+    "includes_recipe_id": 1,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 65,
+    "recipe_id": -40,
+    "includes_recipe_id": 2,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 2
+  },
+  {
+    "id": 66,
+    "recipe_id": -40,
+    "includes_recipe_id": 3,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 67,
+    "recipe_id": -40,
+    "includes_recipe_id": 4,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 69,
+    "recipe_id": -42,
+    "includes_recipe_id": 2,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 70,
+    "recipe_id": -43,
+    "includes_recipe_id": 1,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 71,
+    "recipe_id": -43,
+    "includes_recipe_id": 2,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 2
+  },
+  {
+    "id": 72,
+    "recipe_id": -43,
+    "includes_recipe_id": 3,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 73,
+    "recipe_id": -43,
+    "includes_recipe_id": 4,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 74,
+    "recipe_id": -44,
+    "includes_recipe_id": 2,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 75,
+    "recipe_id": -45,
+    "includes_recipe_id": 1,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 76,
+    "recipe_id": -46,
+    "includes_recipe_id": 1,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 2
+  },
+  {
+    "id": 77,
+    "recipe_id": -46,
+    "includes_recipe_id": 2,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 2
+  },
+  {
+    "id": 78,
+    "recipe_id": -46,
+    "includes_recipe_id": 3,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 79,
+    "recipe_id": -46,
+    "includes_recipe_id": 4,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 81,
+    "recipe_id": -48,
+    "includes_recipe_id": 1,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 82,
+    "recipe_id": -49,
+    "includes_recipe_id": 1,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 2
+  },
+  {
+    "id": 83,
+    "recipe_id": -49,
+    "includes_recipe_id": 2,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 2
+  },
+  {
+    "id": 84,
+    "recipe_id": -49,
+    "includes_recipe_id": 3,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 85,
+    "recipe_id": -49,
+    "includes_recipe_id": 4,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 87,
+    "recipe_id": -51,
+    "includes_recipe_id": 1,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 88,
+    "recipe_id": -52,
+    "includes_recipe_id": 1,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 2
+  },
+  {
+    "id": 89,
+    "recipe_id": -52,
+    "includes_recipe_id": 2,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 2
+  },
+  {
+    "id": 90,
+    "recipe_id": -52,
+    "includes_recipe_id": 3,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 91,
+    "recipe_id": -52,
+    "includes_recipe_id": 4,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 92,
+    "recipe_id": -53,
+    "includes_recipe_id": 1,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 93,
+    "recipe_id": -54,
+    "includes_recipe_id": 4,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 94,
+    "recipe_id": -55,
+    "includes_recipe_id": 1,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 2
+  },
+  {
+    "id": 95,
+    "recipe_id": -55,
+    "includes_recipe_id": 2,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 2
+  },
+  {
+    "id": 96,
+    "recipe_id": -55,
+    "includes_recipe_id": 3,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 97,
+    "recipe_id": -55,
+    "includes_recipe_id": 4,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 2
+  },
+  {
+    "id": 99,
+    "recipe_id": -57,
+    "includes_recipe_id": 4,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 100,
+    "recipe_id": -58,
+    "includes_recipe_id": 1,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 2
+  },
+  {
+    "id": 101,
+    "recipe_id": -58,
+    "includes_recipe_id": 2,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 2
+  },
+  {
+    "id": 102,
+    "recipe_id": -58,
+    "includes_recipe_id": 3,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 103,
+    "recipe_id": -58,
+    "includes_recipe_id": 4,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 2
+  },
+  {
+    "id": 105,
+    "recipe_id": -60,
+    "includes_recipe_id": 4,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 106,
+    "recipe_id": -61,
+    "includes_recipe_id": 1,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 2
+  },
+  {
+    "id": 107,
+    "recipe_id": -61,
+    "includes_recipe_id": 2,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 2
+  },
+  {
+    "id": 108,
+    "recipe_id": -61,
+    "includes_recipe_id": 3,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 109,
+    "recipe_id": -61,
+    "includes_recipe_id": 4,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 2
+  },
+  {
+    "id": 110,
+    "recipe_id": -62,
+    "includes_recipe_id": 4,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 111,
+    "recipe_id": -63,
+    "includes_recipe_id": 2,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 112,
+    "recipe_id": -64,
+    "includes_recipe_id": 1,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 2
+  },
+  {
+    "id": 113,
+    "recipe_id": -64,
+    "includes_recipe_id": 2,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 2
+  },
+  {
+    "id": 114,
+    "recipe_id": -64,
+    "includes_recipe_id": 3,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 115,
+    "recipe_id": -64,
+    "includes_recipe_id": 4,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 2
+  },
+  {
+    "id": 116,
+    "recipe_id": -65,
+    "includes_recipe_id": 2,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 117,
+    "recipe_id": -66,
+    "includes_recipe_id": 1,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 2
+  },
+  {
+    "id": 118,
+    "recipe_id": -66,
+    "includes_recipe_id": 2,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 2
+  },
+  {
+    "id": 119,
+    "recipe_id": -66,
+    "includes_recipe_id": 3,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 120,
+    "recipe_id": -66,
+    "includes_recipe_id": 4,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 2
+  },
+  {
+    "id": 121,
+    "recipe_id": -67,
+    "includes_recipe_id": 2,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 122,
+    "recipe_id": -68,
+    "includes_recipe_id": 1,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 2
+  },
+  {
+    "id": 123,
+    "recipe_id": -68,
+    "includes_recipe_id": 2,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 2
+  },
+  {
+    "id": 124,
+    "recipe_id": -68,
+    "includes_recipe_id": 3,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 125,
+    "recipe_id": -68,
+    "includes_recipe_id": 4,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 2
+  },
+  {
+    "id": 126,
+    "recipe_id": -69,
+    "includes_recipe_id": 2,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 127,
+    "recipe_id": -70,
+    "includes_recipe_id": 1,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 2
+  },
+  {
+    "id": 128,
+    "recipe_id": -70,
+    "includes_recipe_id": 2,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 2
+  },
+  {
+    "id": 129,
+    "recipe_id": -70,
+    "includes_recipe_id": 3,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 130,
+    "recipe_id": -70,
+    "includes_recipe_id": 4,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 2
+  },
+  {
+    "id": 131,
+    "recipe_id": -77,
+    "includes_recipe_id": 1,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 132,
+    "recipe_id": -78,
+    "includes_recipe_id": 1,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 2
+  },
+  {
+    "id": 133,
+    "recipe_id": -78,
+    "includes_recipe_id": 2,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 2
+  },
+  {
+    "id": 134,
+    "recipe_id": -78,
+    "includes_recipe_id": 3,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 135,
+    "recipe_id": -78,
+    "includes_recipe_id": 4,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 2
+  },
+  {
+    "id": 136,
+    "recipe_id": -79,
+    "includes_recipe_id": 1,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 137,
+    "recipe_id": -80,
+    "includes_recipe_id": 1,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 2
+  },
+  {
+    "id": 138,
+    "recipe_id": -80,
+    "includes_recipe_id": 2,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 2
+  },
+  {
+    "id": 139,
+    "recipe_id": -80,
+    "includes_recipe_id": 3,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 140,
+    "recipe_id": -80,
+    "includes_recipe_id": 4,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 2
+  },
+  {
+    "id": 141,
+    "recipe_id": -81,
+    "includes_recipe_id": 1,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 142,
+    "recipe_id": -82,
+    "includes_recipe_id": 1,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 2
+  },
+  {
+    "id": 143,
+    "recipe_id": -82,
+    "includes_recipe_id": 2,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 2
+  },
+  {
+    "id": 144,
+    "recipe_id": -82,
+    "includes_recipe_id": 3,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 145,
+    "recipe_id": -82,
+    "includes_recipe_id": 4,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 2
+  },
+  {
+    "id": 146,
+    "recipe_id": -83,
+    "includes_recipe_id": 3,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 147,
+    "recipe_id": -84,
+    "includes_recipe_id": 1,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 2
+  },
+  {
+    "id": 148,
+    "recipe_id": -84,
+    "includes_recipe_id": 2,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 2
+  },
+  {
+    "id": 149,
+    "recipe_id": -84,
+    "includes_recipe_id": 3,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 150,
+    "recipe_id": -84,
+    "includes_recipe_id": 4,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 2
+  },
+  {
+    "id": 151,
+    "recipe_id": -85,
+    "includes_recipe_id": 3,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 152,
+    "recipe_id": -86,
+    "includes_recipe_id": 1,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 2
+  },
+  {
+    "id": 153,
+    "recipe_id": -86,
+    "includes_recipe_id": 2,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 2
+  },
+  {
+    "id": 154,
+    "recipe_id": -86,
+    "includes_recipe_id": 3,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 155,
+    "recipe_id": -86,
+    "includes_recipe_id": 4,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 2
+  },
+  {
+    "id": 156,
+    "recipe_id": -87,
+    "includes_recipe_id": 3,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 157,
+    "recipe_id": -88,
+    "includes_recipe_id": 1,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 2
+  },
+  {
+    "id": 158,
+    "recipe_id": -88,
+    "includes_recipe_id": 2,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 2
+  },
+  {
+    "id": 159,
+    "recipe_id": -88,
+    "includes_recipe_id": 3,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 160,
+    "recipe_id": -88,
+    "includes_recipe_id": 4,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 2
+  },
+  {
+    "id": 161,
+    "recipe_id": -89,
+    "includes_recipe_id": 1,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 162,
+    "recipe_id": -90,
+    "includes_recipe_id": 1,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 2
+  },
+  {
+    "id": 163,
+    "recipe_id": -90,
+    "includes_recipe_id": 2,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 2
+  },
+  {
+    "id": 164,
+    "recipe_id": -90,
+    "includes_recipe_id": 3,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 165,
+    "recipe_id": -90,
+    "includes_recipe_id": 4,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 2
+  },
+  {
+    "id": 166,
+    "recipe_id": -91,
+    "includes_recipe_id": 1,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 167,
+    "recipe_id": -92,
+    "includes_recipe_id": 1,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 2
+  },
+  {
+    "id": 168,
+    "recipe_id": -92,
+    "includes_recipe_id": 2,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 2
+  },
+  {
+    "id": 169,
+    "recipe_id": -92,
+    "includes_recipe_id": 3,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 170,
+    "recipe_id": -92,
+    "includes_recipe_id": 4,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 2
+  },
+  {
+    "id": 171,
+    "recipe_id": -93,
+    "includes_recipe_id": 1,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 172,
+    "recipe_id": -94,
+    "includes_recipe_id": 1,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 2
+  },
+  {
+    "id": 173,
+    "recipe_id": -94,
+    "includes_recipe_id": 2,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 2
+  },
+  {
+    "id": 174,
+    "recipe_id": -94,
+    "includes_recipe_id": 3,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 175,
+    "recipe_id": -94,
+    "includes_recipe_id": 4,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 2
+  },
+  {
+    "id": 176,
+    "recipe_id": -95,
+    "includes_recipe_id": 1,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 177,
+    "recipe_id": -96,
+    "includes_recipe_id": 1,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 2
+  },
+  {
+    "id": 178,
+    "recipe_id": -96,
+    "includes_recipe_id": 2,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 2
+  },
+  {
+    "id": 179,
+    "recipe_id": -96,
+    "includes_recipe_id": 3,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 1
+  },
+  {
+    "id": 180,
+    "recipe_id": -96,
+    "includes_recipe_id": 4,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "servings": 2
+  }
+]

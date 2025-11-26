@@ -1,0 +1,194 @@
+[
+  {
+    "id": 1,
+    "product_id": 1,
+    "amount": 12,
+    "location_id": 4,
+    "location_name": "Candy cupboard",
+    "location_is_freezer": 0
+  },
+  {
+    "id": 1,
+    "product_id": 2,
+    "amount": 13,
+    "location_id": 4,
+    "location_name": "Candy cupboard",
+    "location_is_freezer": 0
+  },
+  {
+    "id": 1,
+    "product_id": 3,
+    "amount": 5,
+    "location_id": 4,
+    "location_name": "Candy cupboard",
+    "location_is_freezer": 0
+  },
+  {
+    "id": 1,
+    "product_id": 4,
+    "amount": 5,
+    "location_id": 4,
+    "location_name": "Candy cupboard",
+    "location_is_freezer": 0
+  },
+  {
+    "id": 1,
+    "product_id": 5,
+    "amount": 6,
+    "location_id": 2,
+    "location_name": "Fridge",
+    "location_is_freezer": 0
+  },
+  {
+    "id": 1,
+    "product_id": 6,
+    "amount": 5,
+    "location_id": 3,
+    "location_name": "Pantry",
+    "location_is_freezer": 0
+  },
+  {
+    "id": 1,
+    "product_id": 7,
+    "amount": 5,
+    "location_id": 5,
+    "location_name": "Tinned food cupboard",
+    "location_is_freezer": 0
+  },
+  {
+    "id": 1,
+    "product_id": 8,
+    "amount": 5,
+    "location_id": 5,
+    "location_name": "Tinned food cupboard",
+    "location_is_freezer": 0
+  },
+  {
+    "id": 1,
+    "product_id": 9,
+    "amount": 5,
+    "location_id": 2,
+    "location_name": "Fridge",
+    "location_is_freezer": 0
+  },
+  {
+    "id": 1,
+    "product_id": 10,
+    "amount": 5,
+    "location_id": 2,
+    "location_name": "Fridge",
+    "location_is_freezer": 0
+  },
+  {
+    "id": 1,
+    "product_id": 11,
+    "amount": 4,
+    "location_id": 2,
+    "location_name": "Fridge",
+    "location_is_freezer": 0
+  },
+  {
+    "id": 1,
+    "product_id": 12,
+    "amount": 5,
+    "location_id": 2,
+    "location_name": "Fridge",
+    "location_is_freezer": 0
+  },
+  {
+    "id": 1,
+    "product_id": 13,
+    "amount": 5,
+    "location_id": 2,
+    "location_name": "Fridge",
+    "location_is_freezer": 0
+  },
+  {
+    "id": 1,
+    "product_id": 14,
+    "amount": 5,
+    "location_id": 2,
+    "location_name": "Fridge",
+    "location_is_freezer": 0
+  },
+  {
+    "id": 1,
+    "product_id": 15,
+    "amount": 5,
+    "location_id": 2,
+    "location_name": "Fridge",
+    "location_is_freezer": 0
+  },
+  {
+    "id": 1,
+    "product_id": 20,
+    "amount": 1,
+    "location_id": 2,
+    "location_name": "Fridge",
+    "location_is_freezer": 0
+  },
+  {
+    "id": 1,
+    "product_id": 21,
+    "amount": 2000,
+    "location_id": 3,
+    "location_name": "Pantry",
+    "location_is_freezer": 0
+  },
+  {
+    "id": 1,
+    "product_id": 22,
+    "amount": 2,
+    "location_id": 3,
+    "location_name": "Pantry",
+    "location_is_freezer": 0
+  },
+  {
+    "id": 1,
+    "product_id": 23,
+    "amount": 3,
+    "location_id": 2,
+    "location_name": "Fridge",
+    "location_is_freezer": 0
+  },
+  {
+    "id": 1,
+    "product_id": 24,
+    "amount": 2,
+    "location_id": 4,
+    "location_name": "Candy cupboard",
+    "location_is_freezer": 0
+  },
+  {
+    "id": 1,
+    "product_id": 25,
+    "amount": 2,
+    "location_id": 4,
+    "location_name": "Candy cupboard",
+    "location_is_freezer": 0
+  },
+  {
+    "id": 1,
+    "product_id": 27,
+    "amount": 3,
+    "location_id": 6,
+    "location_name": "Freezer",
+    "location_is_freezer": 1
+  },
+  {
+    "id": 1,
+    "product_id": 28,
+    "amount": 12,
+    "location_id": 2,
+    "location_name": "Fridge",
+    "location_is_freezer": 0
+  },
+  {
+    "id": 1,
+    "product_id": 29,
+    "amount": 12,
+    "location_id": 2,
+    "location_name": "Fridge",
+    "location_is_freezer": 0
+  }
+]

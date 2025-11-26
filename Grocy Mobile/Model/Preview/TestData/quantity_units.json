@@ -1,0 +1,119 @@
+[
+  {
+    "id": 2,
+    "name": "Piece",
+    "description": null,
+    "row_created_timestamp": "2025-11-26 20:37:47",
+    "name_plural": "Pieces",
+    "plural_forms": null,
+    "active": 1
+  },
+  {
+    "id": 3,
+    "name": "Pack",
+    "description": null,
+    "row_created_timestamp": "2025-11-26 20:37:47",
+    "name_plural": "Packs",
+    "plural_forms": null,
+    "active": 1
+  },
+  {
+    "id": 4,
+    "name": "Glass",
+    "description": null,
+    "row_created_timestamp": "2025-11-26 20:37:47",
+    "name_plural": "Glasses",
+    "plural_forms": null,
+    "active": 1
+  },
+  {
+    "id": 5,
+    "name": "Tin",
+    "description": null,
+    "row_created_timestamp": "2025-11-26 20:37:47",
+    "name_plural": "Tins",
+    "plural_forms": null,
+    "active": 1
+  },
+  {
+    "id": 6,
+    "name": "Can",
+    "description": null,
+    "row_created_timestamp": "2025-11-26 20:37:47",
+    "name_plural": "Cans",
+    "plural_forms": null,
+    "active": 1
+  },
+  {
+    "id": 7,
+    "name": "Bunch",
+    "description": null,
+    "row_created_timestamp": "2025-11-26 20:37:47",
+    "name_plural": "Bunches",
+    "plural_forms": null,
+    "active": 1
+  },
+  {
+    "id": 8,
+    "name": "Gram",
+    "description": null,
+    "row_created_timestamp": "2025-11-26 20:37:47",
+    "name_plural": "Grams",
+    "plural_forms": null,
+    "active": 1
+  },
+  {
+    "id": 9,
+    "name": "Liter",
+    "description": null,
+    "row_created_timestamp": "2025-11-26 20:37:47",
+    "name_plural": "Liters",
+    "plural_forms": null,
+    "active": 1
+  },
+  {
+    "id": 10,
+    "name": "Bottle",
+    "description": null,
+    "row_created_timestamp": "2025-11-26 20:37:47",
+    "name_plural": "Bottles",
+    "plural_forms": null,
+    "active": 1
+  },
+  {
+    "id": 11,
+    "name": "Milliliter",
+    "description": null,
+    "row_created_timestamp": "2025-11-26 20:37:47",
+    "name_plural": "Milliliters",
+    "plural_forms": null,
+    "active": 1
+  },
+  {
+    "id": 12,
+    "name": "Slice",
+    "description": null,
+    "row_created_timestamp": "2025-11-26 20:37:47",
+    "name_plural": "Slices",
+    "plural_forms": null,
+    "active": 1
+  },
+  {
+    "id": 13,
+    "name": "Kilogram",
+    "description": null,
+    "row_created_timestamp": "2025-11-26 20:37:47",
+    "name_plural": "Kilograms",
+    "plural_forms": null,
+    "active": 1
+  },
+  {
+    "id": 14,
+    "name": "Pint",
+    "description": null,
+    "row_created_timestamp": "2025-11-26 20:37:47",
+    "name_plural": "Pint",
+    "plural_forms": null,
+    "active": 1
+  }
+]

@@ -1,0 +1,130 @@
+[
+  {
+    "id": 1,
+    "from_qu_id": 3,
+    "to_qu_id": 2,
+    "factor": 10,
+    "product_id": 5,
+    "row_created_timestamp": "2025-11-26 20:37:47"
+  },
+  {
+    "id": 2,
+    "from_qu_id": 2,
+    "to_qu_id": 3,
+    "factor": 0.1,
+    "product_id": 5,
+    "row_created_timestamp": "2025-11-26 20:37:47"
+  },
+  {
+    "id": 3,
+    "from_qu_id": 3,
+    "to_qu_id": 12,
+    "factor": 10,
+    "product_id": 10,
+    "row_created_timestamp": "2025-11-26 20:37:48"
+  },
+  {
+    "id": 4,
+    "from_qu_id": 12,
+    "to_qu_id": 3,
+    "factor": 0.1,
+    "product_id": 10,
+    "row_created_timestamp": "2025-11-26 20:37:48"
+  },
+  {
+    "id": 5,
+    "from_qu_id": 3,
+    "to_qu_id": 8,
+    "factor": 1000,
+    "product_id": 22,
+    "row_created_timestamp": "2025-11-26 20:37:48"
+  },
+  {
+    "id": 6,
+    "from_qu_id": 8,
+    "to_qu_id": 3,
+    "factor": 0.001,
+    "product_id": 22,
+    "row_created_timestamp": "2025-11-26 20:37:48"
+  },
+  {
+    "id": 7,
+    "from_qu_id": 10,
+    "to_qu_id": 9,
+    "factor": 1,
+    "product_id": 23,
+    "row_created_timestamp": "2025-11-26 20:37:48"
+  },
+  {
+    "id": 8,
+    "from_qu_id": 9,
+    "to_qu_id": 10,
+    "factor": 1,
+    "product_id": 23,
+    "row_created_timestamp": "2025-11-26 20:37:48"
+  },
+  {
+    "id": 9,
+    "from_qu_id": 3,
+    "to_qu_id": 8,
+    "factor": 500,
+    "product_id": 6,
+    "row_created_timestamp": "2025-11-26 20:37:48"
+  },
+  {
+    "id": 10,
+    "from_qu_id": 8,
+    "to_qu_id": 3,
+    "factor": 0.002,
+    "product_id": 6,
+    "row_created_timestamp": "2025-11-26 20:37:48"
+  },
+  {
+    "id": 11,
+    "from_qu_id": 3,
+    "to_qu_id": 8,
+    "factor": 200,
+    "product_id": 18,
+    "row_created_timestamp": "2025-11-26 20:37:48"
+  },
+  {
+    "id": 12,
+    "from_qu_id": 8,
+    "to_qu_id": 3,
+    "factor": 0.005,
+    "product_id": 18,
+    "row_created_timestamp": "2025-11-26 20:37:48"
+  },
+  {
+    "id": 13,
+    "from_qu_id": 13,
+    "to_qu_id": 8,
+    "factor": 1000,
+    "product_id": null,
+    "row_created_timestamp": "2025-11-26 20:37:48"
+  },
+  {
+    "id": 14,
+    "from_qu_id": 8,
+    "to_qu_id": 13,
+    "factor": 0.001,
+    "product_id": null,
+    "row_created_timestamp": "2025-11-26 20:37:48"
+  },
+  {
+    "id": 15,
+    "from_qu_id": 9,
+    "to_qu_id": 11,
+    "factor": 1000,
+    "product_id": null,
+    "row_created_timestamp": "2025-11-26 20:37:48"
+  },
+  {
+    "id": 16,
+    "from_qu_id": 11,
+    "to_qu_id": 9,
+    "factor": 0.001,
+    "product_id": null,
+    "row_created_timestamp": "2025-11-26 20:37:48"
+  }
+]

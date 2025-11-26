@@ -159,3 +159,9 @@ struct MDStoresView: View {
         .navigationTitle("Stores")
     }
 }
+
+#Preview(traits: .previewData) {
+    NavigationStack {
+        MDStoresView()
+    }
+}

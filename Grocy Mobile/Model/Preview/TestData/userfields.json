@@ -1,0 +1,28 @@
+[
+  {
+    "id": 1,
+    "entity": "userentity-exampleuserentity",
+    "name": "customfield1",
+    "caption": "Custom field 1",
+    "type": "text-single-line",
+    "show_as_column_in_tables": 1,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "config": null,
+    "sort_number": null,
+    "input_required": 0,
+    "default_value": null
+  },
+  {
+    "id": 2,
+    "entity": "userentity-exampleuserentity",
+    "name": "customfield2",
+    "caption": "Custom field 2",
+    "type": "text-single-line",
+    "show_as_column_in_tables": 1,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "config": null,
+    "sort_number": null,
+    "input_required": 0,
+    "default_value": null
+  }
+]

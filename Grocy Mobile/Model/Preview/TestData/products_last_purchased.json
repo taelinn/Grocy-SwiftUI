@@ -1,0 +1,242 @@
+[
+  {
+    "id": 1,
+    "product_id": 1,
+    "amount": 12,
+    "best_before_date": "2026-05-25",
+    "purchased_date": "2025-11-25",
+    "location_id": 4,
+    "shopping_location_id": 1,
+    "price": 3.11
+  },
+  {
+    "id": 1,
+    "product_id": 2,
+    "amount": 12,
+    "best_before_date": "2026-11-26",
+    "purchased_date": "2025-11-25",
+    "location_id": 4,
+    "shopping_location_id": 2,
+    "price": 2.675
+  },
+  {
+    "id": 1,
+    "product_id": 3,
+    "amount": 1,
+    "best_before_date": "2026-05-25",
+    "purchased_date": "2025-11-16",
+    "location_id": 4,
+    "shopping_location_id": 1,
+    "price": 2.8525
+  },
+  {
+    "id": 1,
+    "product_id": 4,
+    "amount": 1,
+    "best_before_date": "2026-05-25",
+    "purchased_date": "2025-11-16",
+    "location_id": 4,
+    "shopping_location_id": 2,
+    "price": 1.2575
+  },
+  {
+    "id": 1,
+    "product_id": 5,
+    "amount": 1,
+    "best_before_date": "2025-11-27",
+    "purchased_date": "2025-11-25",
+    "location_id": 2,
+    "shopping_location_id": 2,
+    "price": 2.32
+  },
+  {
+    "id": 1,
+    "product_id": 6,
+    "amount": 1,
+    "best_before_date": "2027-07-19",
+    "purchased_date": "2025-11-16",
+    "location_id": 3,
+    "shopping_location_id": 2,
+    "price": 2.23
+  },
+  {
+    "id": 1,
+    "product_id": 7,
+    "amount": 1,
+    "best_before_date": "2028-02-04",
+    "purchased_date": "2025-11-16",
+    "location_id": 5,
+    "shopping_location_id": 1,
+    "price": 4.49
+  },
+  {
+    "id": 1,
+    "product_id": 8,
+    "amount": 1,
+    "best_before_date": "2028-05-14",
+    "purchased_date": "2025-11-16",
+    "location_id": 5,
+    "shopping_location_id": 2,
+    "price": 1.8525
+  },
+  {
+    "id": 1,
+    "product_id": 9,
+    "amount": 1,
+    "best_before_date": "2025-12-10",
+    "purchased_date": "2025-11-16",
+    "location_id": 2,
+    "shopping_location_id": 1,
+    "price": 0.5175
+  },
+  {
+    "id": 1,
+    "product_id": 10,
+    "amount": 1,
+    "best_before_date": "2025-12-17",
+    "purchased_date": "2025-11-16",
+    "location_id": 2,
+    "shopping_location_id": 2,
+    "price": 5.5725
+  },
+  {
+    "id": 1,
+    "product_id": 11,
+    "amount": 1,
+    "best_before_date": "2025-12-06",
+    "purchased_date": "2025-11-16",
+    "location_id": 2,
+    "shopping_location_id": 1,
+    "price": 0.945
+  },
+  {
+    "id": 1,
+    "product_id": 12,
+    "amount": 1,
+    "best_before_date": "2025-11-28",
+    "purchased_date": "2025-11-16",
+    "location_id": 2,
+    "shopping_location_id": 2,
+    "price": 5.99
+  },
+  {
+    "id": 1,
+    "product_id": 13,
+    "amount": 1,
+    "best_before_date": "2025-11-24",
+    "purchased_date": "2025-11-16",
+    "location_id": 2,
+    "shopping_location_id": 1,
+    "price": 5.51
+  },
+  {
+    "id": 1,
+    "product_id": 14,
+    "amount": 1,
+    "best_before_date": "2025-11-28",
+    "purchased_date": "2025-11-16",
+    "location_id": 2,
+    "shopping_location_id": 2,
+    "price": 3.165
+  },
+  {
+    "id": 1,
+    "product_id": 15,
+    "amount": 1,
+    "best_before_date": "2025-11-24",
+    "purchased_date": "2025-11-16",
+    "location_id": 2,
+    "shopping_location_id": 1,
+    "price": 3.2575
+  },
+  {
+    "id": 1,
+    "product_id": 20,
+    "amount": 1,
+    "best_before_date": "2025-11-25",
+    "purchased_date": "2025-11-16",
+    "location_id": 2,
+    "shopping_location_id": 2,
+    "price": 5.22
+  },
+  {
+    "id": 1,
+    "product_id": 21,
+    "amount": 1000,
+    "best_before_date": "2026-06-14",
+    "purchased_date": "2025-11-16",
+    "location_id": 3,
+    "shopping_location_id": 1,
+    "price": 0
+  },
+  {
+    "id": 1,
+    "product_id": 22,
+    "amount": 1,
+    "best_before_date": "2026-06-14",
+    "purchased_date": "2025-11-16",
+    "location_id": 3,
+    "shopping_location_id": 1,
+    "price": 0.585
+  },
+  {
+    "id": 1,
+    "product_id": 23,
+    "amount": 1,
+    "best_before_date": "2026-01-25",
+    "purchased_date": "2025-11-26",
+    "location_id": 2,
+    "shopping_location_id": 1,
+    "price": 1.7675
+  },
+  {
+    "id": 1,
+    "product_id": 24,
+    "amount": 2,
+    "best_before_date": "2026-05-25",
+    "purchased_date": "2025-11-16",
+    "location_id": 4,
+    "shopping_location_id": 1,
+    "price": 1.49
+  },
+  {
+    "id": 1,
+    "product_id": 25,
+    "amount": 2,
+    "best_before_date": "2026-05-25",
+    "purchased_date": "2025-11-16",
+    "location_id": 4,
+    "shopping_location_id": 2,
+    "price": 2.175
+  },
+  {
+    "id": 1,
+    "product_id": 27,
+    "amount": 1,
+    "best_before_date": "2025-12-26",
+    "purchased_date": "2025-11-26",
+    "location_id": 6,
+    "shopping_location_id": 2,
+    "price": 5.7575
+  },
+  {
+    "id": 1,
+    "product_id": 28,
+    "amount": 12,
+    "best_before_date": "2026-05-25",
+    "purchased_date": "2025-11-19",
+    "location_id": 2,
+    "shopping_location_id": 2,
+    "price": 2.165
+  },
+  {
+    "id": 1,
+    "product_id": 29,
+    "amount": 12,
+    "best_before_date": "2026-11-26",
+    "purchased_date": "2025-11-12",
+    "location_id": 2,
+    "shopping_location_id": 1,
+    "price": 5.05
+  }
+]

@@ -156,6 +156,8 @@ struct MDQuantityUnitsView: View {
     }
 }
 
-#Preview {
-    MDQuantityUnitsView()
+#Preview(traits: .previewData) {
+    NavigationStack {
+        MDQuantityUnitsView()
+    }
 }

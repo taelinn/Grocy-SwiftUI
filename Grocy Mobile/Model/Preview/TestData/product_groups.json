@@ -1,0 +1,51 @@
+[
+  {
+    "id": 1,
+    "name": "01 Sweets",
+    "description": null,
+    "row_created_timestamp": "2025-11-26 20:37:47",
+    "active": 1
+  },
+  {
+    "id": 2,
+    "name": "02 Bakery products",
+    "description": null,
+    "row_created_timestamp": "2025-11-26 20:37:47",
+    "active": 1
+  },
+  {
+    "id": 3,
+    "name": "03 Tinned food",
+    "description": null,
+    "row_created_timestamp": "2025-11-26 20:37:47",
+    "active": 1
+  },
+  {
+    "id": 4,
+    "name": "04 Butchery products",
+    "description": null,
+    "row_created_timestamp": "2025-11-26 20:37:47",
+    "active": 1
+  },
+  {
+    "id": 5,
+    "name": "05 Vegetables/Fruits",
+    "description": null,
+    "row_created_timestamp": "2025-11-26 20:37:47",
+    "active": 1
+  },
+  {
+    "id": 6,
+    "name": "06 Refrigerated products",
+    "description": null,
+    "row_created_timestamp": "2025-11-26 20:37:47",
+    "active": 1
+  },
+  {
+    "id": 7,
+    "name": "07 Beverages",
+    "description": null,
+    "row_created_timestamp": "2025-11-26 20:37:47",
+    "active": 1
+  }
+]

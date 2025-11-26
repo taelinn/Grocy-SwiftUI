@@ -1,0 +1,42 @@
+[
+  {
+    "id": 2,
+    "name": "Fridge",
+    "description": null,
+    "row_created_timestamp": "2025-11-26 20:37:47",
+    "is_freezer": 0,
+    "active": 1
+  },
+  {
+    "id": 3,
+    "name": "Pantry",
+    "description": null,
+    "row_created_timestamp": "2025-11-26 20:37:47",
+    "is_freezer": 0,
+    "active": 1
+  },
+  {
+    "id": 4,
+    "name": "Candy cupboard",
+    "description": null,
+    "row_created_timestamp": "2025-11-26 20:37:47",
+    "is_freezer": 0,
+    "active": 1
+  },
+  {
+    "id": 5,
+    "name": "Tinned food cupboard",
+    "description": null,
+    "row_created_timestamp": "2025-11-26 20:37:47",
+    "is_freezer": 0,
+    "active": 1
+  },
+  {
+    "id": 6,
+    "name": "Freezer",
+    "description": null,
+    "row_created_timestamp": "2025-11-26 20:37:47",
+    "is_freezer": 1,
+    "active": 1
+  }
+]

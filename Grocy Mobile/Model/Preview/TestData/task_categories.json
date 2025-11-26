@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "name": "Category1",
+    "description": null,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "active": 1
+  },
+  {
+    "id": 2,
+    "name": "Category2",
+    "description": null,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "active": 1
+  },
+  {
+    "id": 3,
+    "name": "Category3",
+    "description": null,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "active": 1
+  }
+]
