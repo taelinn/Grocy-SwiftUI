@@ -23,10 +23,10 @@ struct MySymbols {
     static let tasks = "point.fill.topleft.down.curvedto.point.fill.bottomright.up"
 
     static let stockOverview = "archivebox"
-    static let product = "tag"
+    static let product = "shippingbox"
     static let quantityUnit = "scalemass"
     static let location = "location"
-    static let store = "house"
+    static let store = "storefront"
     static let productGroup = "square.on.circle"
     static let recipe = "book"
     static let picture = "photo"
