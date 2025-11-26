@@ -16,6 +16,7 @@ struct Grocy_MobileApp: App {
     @AppStorage("onboardingNeeded") var onboardingNeeded: Bool = true
     @AppStorage("isLoggedIn") var isLoggedIn: Bool = false
     @AppStorage("isDemoModus") var isDemoModus: Bool = false
+    @AppStorage("selectedServerProfileID") private var selectedServerProfileID: UUID?
 
     // For legacy migration reasons
     @AppStorage("grocyServerURL") var grocyServerURL: String = ""
@@ -113,7 +114,7 @@ struct Grocy_MobileApp: App {
         let numProfiles: Int = (try? profileModelContext.fetchCount(descriptor)) ?? 0
         if isLoggedIn && !isDemoModus && numProfiles == 0 && !grocyServerURL.isEmpty && !grocyAPIKey.isEmpty {
             let profile = ServerProfile(name: "", grocyServerURL: grocyServerURL, grocyAPIKey: grocyAPIKey, useHassIngress: useHassIngress, hassToken: hassToken)
-            profile.isActive = true
+            selectedServerProfileID = profile.id
             profileModelContext.insert(profile)
             let vm = grocyVM
             Task {

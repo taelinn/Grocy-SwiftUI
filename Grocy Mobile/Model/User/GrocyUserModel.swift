@@ -9,7 +9,7 @@ import Foundation
 import SwiftData
 
 @Model
-class GrocyUser: Codable {
+class GrocyUser: Codable, Equatable {
     @Attribute(.unique) var id: Int
     var username: String
     var firstName: String?
@@ -17,16 +17,17 @@ class GrocyUser: Codable {
     var displayName: String
     var pictureFileName: String?
     var rowCreatedTimestamp: String
-    
+
     enum CodingKeys: String, CodingKey {
-        case id, username
+        case id
+        case username
         case firstName = "first_name"
         case lastName = "last_name"
         case rowCreatedTimestamp = "row_created_timestamp"
         case displayName = "display_name"
         case pictureFileName = "picture_file_name"
     }
-    
+
     required init(from decoder: Decoder) throws {
         do {
             let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -41,7 +42,7 @@ class GrocyUser: Codable {
             throw APIError.decodingError(error: error)
         }
     }
-    
+
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(id, forKey: .id)
@@ -52,6 +53,16 @@ class GrocyUser: Codable {
         try container.encode(pictureFileName, forKey: .pictureFileName)
         try container.encode(rowCreatedTimestamp, forKey: .rowCreatedTimestamp)
     }
+
+    static func == (lhs: GrocyUser, rhs: GrocyUser) -> Bool {
+        lhs.id == rhs.id
+            && lhs.username == rhs.username
+            && lhs.firstName == rhs.firstName
+            && lhs.lastName == rhs.lastName
+            && lhs.displayName == rhs.displayName
+            && lhs.pictureFileName == rhs.pictureFileName
+            && lhs.rowCreatedTimestamp == rhs.rowCreatedTimestamp
+    }
 }
 
 typealias GrocyUsers = [GrocyUser]
@@ -61,9 +72,10 @@ struct GrocyUserPOST: Codable {
     let id: Int
     let username, firstName, lastName, password: String
     let rowCreatedTimestamp: String
-    
+
     enum CodingKeys: String, CodingKey {
-        case id, username
+        case id
+        case username
         case firstName = "first_name"
         case lastName = "last_name"
         case password

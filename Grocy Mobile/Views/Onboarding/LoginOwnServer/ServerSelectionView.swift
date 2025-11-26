@@ -13,6 +13,8 @@ struct ServerSelectionView: View {
     @State private var showAddServer: Bool = false
     @State private var serverProfiles: [ServerProfile] = []
 
+    @AppStorage("selectedServerProfileID") private var selectedServerProfileID: UUID?
+
     private func fetchServerProfiles() {
         guard let modelContext = profileModelContext else { return }
         let descriptor = FetchDescriptor<ServerProfile>(sortBy: [SortDescriptor(\.id, order: .forward)])
@@ -20,7 +22,8 @@ struct ServerSelectionView: View {
     }
 
     var selectedServerProfile: ServerProfile? {
-        return serverProfiles.first(where: { $0.isActive == true })
+        guard let selectedServerProfileID = selectedServerProfileID else { return nil }
+        return serverProfiles.first(where: { $0.id == selectedServerProfileID })
     }
 
     var body: some View {
@@ -28,7 +31,7 @@ struct ServerSelectionView: View {
             ForEach(serverProfiles, id: \.id) { serverProfile in
                 Button(
                     action: {
-                        setActiveProfile(serverProfile)
+                        selectedServerProfileID = serverProfile.id
                     },
                     label: {
                         ServerProfileRowView(profile: serverProfile)
@@ -84,6 +87,9 @@ struct ServerSelectionView: View {
         #if os(iOS)
             .sheet(
                 isPresented: $showAddServer,
+                onDismiss: {
+                    fetchServerProfiles()
+                },
                 content: {
                     NavigationStack {
                         ServerProfileFormView()
@@ -94,17 +100,15 @@ struct ServerSelectionView: View {
         #else
             .sheet(
                 isPresented: $showAddServer,
+                onDismiss: {
+                    fetchServerProfiles()
+                },
                 content: {
                     ServerProfileFormView()
                         .environment(\.profileModelContext, profileModelContext)
                 }
             )
         #endif
-    }
-
-    private func setActiveProfile(_ profile: ServerProfile) {
-        serverProfiles.forEach { $0.isActive = false }
-        profile.isActive = true
     }
 
     private func deleteProfiles(at offsets: IndexSet) {
@@ -121,11 +125,14 @@ struct ServerSelectionView: View {
                 Label("Edit", systemImage: MySymbols.edit)
             }
         )
-        Button(action: {
-            duplicateProfile(profile)
-        }, label: {
-            Label("Duplicate", systemImage: MySymbols.duplicate)
-        })
+        Button(
+            action: {
+                duplicateProfile(profile)
+            },
+            label: {
+                Label("Duplicate", systemImage: MySymbols.duplicate)
+            }
+        )
     }
 
     private func duplicateProfile(_ profile: ServerProfile) {
@@ -136,7 +143,6 @@ struct ServerSelectionView: View {
             useHassIngress: profile.useHassIngress,
             hassToken: profile.hassToken,
             customHeaders: profile.customHeaders ?? [],
-            isActive: false
         )
         profileModelContext?.insert(newServerProfile)
         _ = try? profileModelContext?.save()

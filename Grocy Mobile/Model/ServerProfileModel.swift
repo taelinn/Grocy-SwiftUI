@@ -31,9 +31,11 @@ final class ServerProfile {
     var useHassIngress: Bool = false
     var hassToken: String = ""
     @Relationship(deleteRule: .cascade, inverse: \LoginCustomHeader.serverProfile) var customHeaders: [LoginCustomHeader]? = nil
-    var isActive: Bool = false
+    var userName: String = ""
+    var displayName: String = ""
+    @Attribute(.externalStorage) var profilePicture: Data?
 
-    init(name: String = "", grocyServerURL: String = "", grocyAPIKey: String = "", useHassIngress: Bool = false, hassToken: String = "", customHeaders: [LoginCustomHeader] = [], isActive: Bool = false) {
+    init(name: String = "", grocyServerURL: String = "", grocyAPIKey: String = "", useHassIngress: Bool = false, hassToken: String = "", customHeaders: [LoginCustomHeader] = [], userName: String = "", displayName: String = "", profilePicture: Data? = nil) {
         self.id = UUID()
         self.name = name
         self.grocyServerURL = grocyServerURL
@@ -41,6 +43,8 @@ final class ServerProfile {
         self.useHassIngress = useHassIngress
         self.hassToken = hassToken
         self.customHeaders = customHeaders
-        self.isActive = isActive
+        self.userName = userName
+        self.displayName = displayName
+        self.profilePicture = profilePicture
     }
 }

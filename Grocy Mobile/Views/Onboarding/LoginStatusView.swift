@@ -48,6 +48,15 @@ struct LoginStatusView: View {
                     customHeaders: profile.customHeaders ?? []
                 )
             }
+            await grocyVM.requestData(additionalObjects: [.current_user])
+            grocyVM.selectedServerProfile?.userName = grocyVM.currentUser?.username ?? ""
+            grocyVM.selectedServerProfile?.displayName = grocyVM.currentUser?.displayName ?? ""
+            if let pictureFileName = grocyVM.currentUser?.pictureFileName, let base64Encoded = pictureFileName.data(using: .utf8)?.base64EncodedString(options: Data.Base64EncodingOptions(rawValue: 0)),
+                let pictureData = try await grocyVM.getUserPicture(fileName: base64Encoded)
+            {
+                grocyVM.selectedServerProfile?.profilePicture = pictureData
+            }
+            try grocyVM.selectedServerProfile?.modelContext?.save()
             if GrocyAPP.supportedVersions.contains(grocyVM.systemInfo?.grocyVersion.version ?? "") {
                 loginState = .success
                 isDemoMode ? grocyVM.setDemoModus() : await grocyVM.setLoginModus()

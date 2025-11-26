@@ -32,6 +32,7 @@ struct ServerProfileFormView: View {
     @Environment(\.dismiss) private var dismiss
 
     @State private var serverProfile: ServerProfile
+    @AppStorage("selectedServerProfileID") private var selectedServerProfileID: UUID?
     #if os(iOS)
         @AppStorage("useLegacyScanner") private var useLegacyScanner: Bool = false
     #endif
@@ -45,7 +46,8 @@ struct ServerProfileFormView: View {
     }
 
     var selectedServerProfile: ServerProfile? {
-        let descriptor = FetchDescriptor<ServerProfile>(predicate: #Predicate<ServerProfile> { $0.isActive == true })
+        guard let selectedServerProfileID = selectedServerProfileID else { return nil }
+        let descriptor = FetchDescriptor<ServerProfile>(predicate: #Predicate<ServerProfile> { $0.id == selectedServerProfileID })
         return (try? profileModelContext?.fetch(descriptor))?.first
     }
 
@@ -265,10 +267,15 @@ struct ServerProfileFormView: View {
                     role: .confirm,
                     action: {
                         if isEditing {
+                            if serverProfile.hasChanges {
+                                serverProfile.userName = ""
+                                serverProfile.displayName = ""
+                                serverProfile.profilePicture = nil
+                            }
                             try? serverProfile.modelContext?.save()
                         } else {
                             if selectedServerProfile == nil {
-                                serverProfile.isActive = true
+                                selectedServerProfileID = serverProfile.id
                             }
                             profileModelContext?.insert(serverProfile)
                             try? profileModelContext?.save()

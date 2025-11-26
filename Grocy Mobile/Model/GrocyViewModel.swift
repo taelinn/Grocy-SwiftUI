@@ -29,6 +29,7 @@ class GrocyViewModel {
     @ObservationIgnored @AppStorage("autoReloadInterval") private var autoReloadInterval: Int = 0
     @ObservationIgnored @AppStorage("syncShoppingListToReminders") private var syncShoppingListToReminders: Bool = false
     @ObservationIgnored @AppStorage("shoppingListToSyncID") private var shoppingListToSyncID: Int = 0
+    @ObservationIgnored @AppStorage("selectedServerProfileID") private var selectedServerProfileID: UUID?
 
     @ObservationIgnored @State private var refreshTimer: Timer?
 
@@ -91,7 +92,9 @@ class GrocyViewModel {
 
     var selectedServerProfile: ServerProfile? {
         guard let modelContext = profileModelContext else { return nil }
-        let descriptor = FetchDescriptor<ServerProfile>(predicate: #Predicate<ServerProfile> { $0.isActive == true })
+        guard let selectedServerProfileID = selectedServerProfileID else { return nil }
+
+        let descriptor = FetchDescriptor<ServerProfile>(predicate: #Predicate<ServerProfile> { $0.id == selectedServerProfileID })
         return (try? modelContext.fetch(descriptor))?.first
     }
 
@@ -822,7 +825,7 @@ class GrocyViewModel {
     func deleteFile(groupName: String, fileName: String) async throws {
         try await grocyApi.deleteFile(fileName: fileName, groupName: groupName)
     }
-    
+
     func externalBarcodeLookup(barcode: String) async throws -> ExternalBarcodeLookup? {
         return try await grocyApi.externalBarcodeLookup(barcode: barcode)
     }
