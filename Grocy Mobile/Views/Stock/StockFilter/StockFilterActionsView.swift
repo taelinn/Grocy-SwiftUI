@@ -40,11 +40,4 @@ struct StockFilterActionsView: View {
     @Previewable @State var filteredStatus: ProductStatus = .all
 
     StockFilterActionsView(filteredStatus: $filteredStatus, numExpiringSoon: 1, numOverdue: 2, numExpired: 2, numBelowStock: 3)
-        .environment(\.colorScheme, .light)
-}
-#Preview("Darkmode") {
-    @Previewable @State var filteredStatus: ProductStatus = .all
-
-    StockFilterActionsView(filteredStatus: $filteredStatus, numExpiringSoon: 1, numOverdue: 2, numExpired: 2, numBelowStock: 3)
-        .environment(\.colorScheme, .dark)
 }

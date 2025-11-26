@@ -97,12 +97,3 @@ struct StockFilterView: View {
     StockFilterView(filteredLocationID: $filteredLocationID, filteredProductGroupID: $filteredProductGroupID, filteredStatus: $filteredStatus)
         .environment(\.colorScheme, .light)
 }
-
-#Preview("Darkmode") {
-    @Previewable @State var filteredStatus: ProductStatus = .all
-    @Previewable @State var filteredLocationID: Int? = nil
-    @Previewable @State var filteredProductGroupID: Int? = nil
-
-    StockFilterView(filteredLocationID: $filteredLocationID, filteredProductGroupID: $filteredProductGroupID, filteredStatus: $filteredStatus)
-        .environment(\.colorScheme, .dark)
-}

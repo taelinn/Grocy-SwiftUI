@@ -21,7 +21,6 @@ private enum MasterDataItem: Hashable {
 }
 
 struct MasterDataView: View {
-    @Environment(\.modelContext) private var modelContext
     @AppStorage("devMode") private var devMode: Bool = false
 
     var body: some View {
