@@ -19,7 +19,6 @@ struct ShoppingListFormView: View {
 
     @State private var name: String = ""
 
-    var isNewShoppingListDescription: Bool
     var shoppingListDescription: ShoppingListDescription?
 
     @State private var isNameCorrect: Bool = false
@@ -86,7 +85,7 @@ struct ShoppingListFormView: View {
     var body: some View {
         Form {
             #if os(macOS)
-                Text(isNewShoppingListDescription ? "Create shopping list" : "Edit shopping list")
+                Text(shoppingListDescription == nil ? "Create shopping list" : "Edit shopping list")
                     .font(.headline)
             #endif
             MyTextField(
@@ -120,7 +119,7 @@ struct ShoppingListFormView: View {
         .onAppear(perform: resetForm)
         .navigationTitle(shoppingListDescription == nil ? "Create shopping list" : "Edit shopping list")
         .toolbar {
-            if isNewShoppingListDescription {
+            if shoppingListDescription == nil {
                 ToolbarItem(
                     placement: .cancellationAction,
                     content: {
@@ -153,6 +152,14 @@ struct ShoppingListFormView: View {
     }
 }
 
-#Preview {
-    ShoppingListFormView(isNewShoppingListDescription: true)
+#Preview("Create", traits: .previewData) {
+    NavigationStack {
+        ShoppingListFormView()
+    }
+}
+
+#Preview("Edit", traits: .previewData) {
+    NavigationStack {
+        ShoppingListFormView(shoppingListDescription: ShoppingListDescription(id: 1, name: "Shopping list", rowCreatedTimestamp: ""))
+    }
 }

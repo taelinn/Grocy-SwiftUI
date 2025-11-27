@@ -11,45 +11,45 @@ import SwiftUI
 
 struct ShoppingListEntryFormView: View {
     @Environment(GrocyViewModel.self) private var grocyVM
+    @Environment(\.dismiss) var dismiss
 
     @Query(sort: \MDProduct.name, order: .forward) var mdProducts: MDProducts
     @Query(sort: \MDQuantityUnit.id, order: .forward) var mdQuantityUnits: MDQuantityUnits
     @Query(sort: \ShoppingListDescription.id, order: .forward) var shoppingListDescriptions: ShoppingListDescriptions
 
-    @Environment(\.dismiss) var dismiss
+    @State private var isProcessing: Bool = false
+    @State private var isSuccessful: Bool? = nil
+    @State private var errorMessage: String? = nil
 
-    @State private var firstAppear: Bool = true
+    var existingShoppingListEntry: ShoppingListItem?
+    @State private var shoppingListEntry: ShoppingListItem
 
-    @State private var shoppingListID: Int = 1
-    @State private var productID: Int?
-    @State private var amount: Double = 1.0
-    @State private var quantityUnitID: Int?
-    @State private var note: String = ""
-
-    @State private var showFailToast: Bool = false
-
-    var isNewShoppingListEntry: Bool
-    var shoppingListEntry: ShoppingListItem?
     var selectedShoppingListID: Int?
     var productIDToSelect: Int?
-    var isPopup: Bool = false
 
     var isFormValid: Bool {
-        amount > 0
+        shoppingListEntry.amount > 0
     }
 
     var product: MDProduct? {
-        mdProducts.first(where: { $0.id == productID })
+        mdProducts.first(where: { $0.id == shoppingListEntry.productID })
+    }
+
+    init(existingShoppingListEntry: ShoppingListItem? = nil, selectedShoppingListID: Int? = nil, productIDToSelect: Int? = nil) {
+        self.existingShoppingListEntry = existingShoppingListEntry
+        self.selectedShoppingListID = selectedShoppingListID
+        self.productIDToSelect = productIDToSelect
+        _shoppingListEntry = State(initialValue: existingShoppingListEntry ?? ShoppingListItem())
     }
 
     private func getQuantityUnit() -> MDQuantityUnit? {
-        let quIDP = mdProducts.first(where: { $0.id == productID })?.quIDPurchase
+        let quIDP = mdProducts.first(where: { $0.id == shoppingListEntry.productID })?.quIDPurchase
         let qu = mdQuantityUnits.first(where: { $0.id == quIDP })
         return qu
     }
 
     private var currentQuantityUnit: MDQuantityUnit? {
-        let quIDP = mdProducts.first(where: { $0.id == productID })?.quIDPurchase
+        let quIDP = mdProducts.first(where: { $0.id == shoppingListEntry.productID })?.quIDPurchase
         return mdQuantityUnits.first(where: { $0.id == quIDP })
     }
 
@@ -65,133 +65,61 @@ struct ShoppingListEntryFormView: View {
         #endif
     }
 
-    func saveShoppingListEntry() async {
-        if isNewShoppingListEntry {
-            let newShoppingListEntry = ShoppingListItemAdd(
-                amount: amount,
-                note: note,
-                productID: productID,
-                quID: quantityUnitID,
-                shoppingListID: shoppingListID
-            )
-            do {
-                try await grocyVM.addShoppingListItem(content: newShoppingListEntry)
-                GrocyLogger.info("Shopping list entry saved successfully.")
-                await updateData()
-                finishForm()
-            } catch {
-                GrocyLogger.error("Shopping list entry save failed. \(error)")
-                showFailToast = true
-            }
-        } else {
-            if let entry = shoppingListEntry {
-                let editedShoppingListEntry = ShoppingListItem(
-                    id: entry.id,
-                    productID: productID,
-                    note: note,
-                    amount: amount,
-                    shoppingListID: shoppingListID,
-                    done: entry.done,
-                    quID: quantityUnitID,
-                    rowCreatedTimestamp: entry.rowCreatedTimestamp
-                )
-                do {
-                    try await grocyVM.putMDObjectWithID(
-                        object: .shopping_list,
-                        id: entry.id,
-                        content: editedShoppingListEntry
-                    )
-                    GrocyLogger.info("Shopping entry edited successfully.")
-                    await updateData()
-                    finishForm()
-                } catch {
-                    GrocyLogger.error("Shopping entry edit failed. \(error)")
-                    showFailToast = true
-                }
-            }
+    private func saveShoppingListEntry() async {
+        if shoppingListEntry.id == -1 {
+            shoppingListEntry.id = grocyVM.findNextID(.shopping_list)
         }
-    }
-
-    private func resetForm() {
-        shoppingListID = shoppingListEntry?.shoppingListID ?? selectedShoppingListID ?? 1
-        productID = shoppingListEntry?.productID ?? product?.id ?? productIDToSelect
-        amount = shoppingListEntry?.amount ?? (product != nil ? 1.0 : 0.0)
-        quantityUnitID = shoppingListEntry?.quID ?? product?.quIDPurchase
-        note = shoppingListEntry?.note ?? ""
+        isProcessing = true
+        isSuccessful = nil
+        do {
+            try shoppingListEntry.modelContext?.save()
+            if existingShoppingListEntry == nil {
+                _ = try await grocyVM.postMDObject(object: .shopping_list, content: shoppingListEntry)
+            } else {
+                try await grocyVM.putMDObjectWithID(object: .shopping_list, id: shoppingListEntry.id, content: shoppingListEntry)
+            }
+            GrocyLogger.info("Shopping list entry saved successfully.")
+            await updateData()
+            isSuccessful = true
+        } catch {
+            GrocyLogger.error("Shopping entry failed. \(error)")
+            errorMessage = error.localizedDescription
+            isSuccessful = false
+        }
+        isProcessing = false
     }
 
     var body: some View {
-        content
-            .navigationTitle(isNewShoppingListEntry ? "Create shopping list item" : "Edit shopping list item")
-            #if os(iOS)
-                .toolbar {
-                    if isNewShoppingListEntry {
-                        ToolbarItem(
-                            placement: .cancellationAction,
-                            content: {
-                                Button(
-                                    role: .cancel,
-                                    action: {
-                                        finishForm()
-                                    }
-                                )
-                                .keyboardShortcut(.cancelAction)
-                            }
-                        )
-                    }
-                    ToolbarItem(
-                        placement: .confirmationAction,
-                        content: {
-                            Button(
-                                role: .confirm,
-                                action: {
-                                    Task {
-                                        await saveShoppingListEntry()
-                                    }
-                                }
-                            )
-                            .keyboardShortcut(.defaultAction)
-                            .disabled(!isFormValid)
-                        }
-                    )
-                }
-            #endif
-    }
-
-    var content: some View {
         Form {
             #if os(macOS)
-                Text(isNewShoppingListEntry ? "Create shopping list item" : "Edit shopping list item").font(.headline)
+                Text(shoppingListEntry == nil ? "Create shopping list item" : "Edit shopping list item").font(.headline)
             #endif
             Picker(
-                selection: $shoppingListID,
-                label: HStack {
-                    Image(systemName: MySymbols.shoppingList)
-                        .foregroundStyle(.primary)
-                    Text("Shopping list")
-                },
+                selection: $shoppingListEntry.shoppingListID,
+                label: Label("Shopping list", systemImage: MySymbols.shoppingList),
                 content: {
                     ForEach(shoppingListDescriptions, id: \.id) { shLDescription in
                         Text(shLDescription.name).tag(shLDescription.id)
                     }
                 }
             )
+            .foregroundStyle(.primary)
 
-            ProductField(productID: $productID, description: "Product")
-                .onChange(of: productID) {
-                    if let selectedProduct = mdProducts.first(where: { $0.id == productID }) {
-                        quantityUnitID = selectedProduct.quIDPurchase
+            ProductField(productID: $shoppingListEntry.productID, description: "Product")
+                .onChange(of: shoppingListEntry.productID) {
+                    if let selectedProduct = mdProducts.first(where: { $0.id == shoppingListEntry.productID }) {
+                        shoppingListEntry.quID = selectedProduct.quIDPurchase
                     }
                 }
 
-            AmountSelectionView(productID: $productID, amount: $amount, quantityUnitID: $quantityUnitID)
+            AmountSelectionView(productID: $shoppingListEntry.productID, amount: $shoppingListEntry.amount, quantityUnitID: $shoppingListEntry.quID)
 
             Section(
                 header: Label("Note", systemImage: "square.and.pencil")
                     .labelStyle(.titleAndIcon)
                     .font(.headline)
             ) {
-                TextEditor(text: $note)
+                TextEditor(text: $shoppingListEntry.note)
                     .frame(height: 50)
             }
             #if os(macOS)
@@ -211,18 +139,59 @@ struct ShoppingListEntryFormView: View {
                 }
             #endif
         }
+        .navigationTitle(existingShoppingListEntry == nil ? "Create shopping list item" : "Edit shopping list item")
         .task {
-            if firstAppear {
-                await updateData()
-                resetForm()
-                firstAppear = false
+            await updateData()
+        }
+        .toolbar {
+            if existingShoppingListEntry == nil {
+                ToolbarItem(
+                    placement: .cancellationAction,
+                    content: {
+                        Button(
+                            role: .cancel,
+                            action: {
+                                finishForm()
+                            }
+                        )
+                        .keyboardShortcut(.cancelAction)
+                    }
+                )
+            }
+            ToolbarItem(
+                placement: .confirmationAction,
+                content: {
+                    Button(
+                        role: .confirm,
+                        action: {
+                            Task {
+                                await saveShoppingListEntry()
+                            }
+                        }
+                    )
+                    .keyboardShortcut(.defaultAction)
+                    .disabled(!isFormValid)
+                }
+            )
+        }
+        .onChange(of: isSuccessful) {
+            if isSuccessful == true {
+                finishForm()
             }
         }
+        .sensoryFeedback(.success, trigger: isSuccessful == true)
+        .sensoryFeedback(.error, trigger: isSuccessful == false)
     }
 }
 
-struct ShoppingListEntryFormView_Previews: PreviewProvider {
-    static var previews: some View {
-        ShoppingListEntryFormView(isNewShoppingListEntry: true)
+#Preview("Create", traits: .previewData) {
+    NavigationStack {
+        ShoppingListEntryFormView()
+    }
+}
+
+#Preview("Edit", traits: .previewData) {
+    NavigationStack {
+        ShoppingListEntryFormView(existingShoppingListEntry: ShoppingListItem(id: 1, amount: 1.0, shoppingListID: 1, done: 0, rowCreatedTimestamp: ""))
     }
 }

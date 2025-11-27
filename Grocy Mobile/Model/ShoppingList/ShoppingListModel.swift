@@ -12,12 +12,12 @@ import SwiftData
 class ShoppingListItem: Codable, Equatable {
     @Attribute(.unique) var id: Int
     var productID: Int?
-    var note: String?
+    var note: String
     var amount: Double
     var shoppingListID: Int
     var done: Int
     var quID: Int?
-    var rowCreatedTimestamp: String
+    var rowCreatedTimestamp: String?
     
     enum CodingKeys: String, CodingKey {
         case id
@@ -34,12 +34,12 @@ class ShoppingListItem: Codable, Equatable {
             let container = try decoder.container(keyedBy: CodingKeys.self)
             do { self.id = try container.decode(Int.self, forKey: .id) } catch { self.id = Int(try container.decode(String.self, forKey: .id))! }
             do { self.productID = try container.decodeIfPresent(Int.self, forKey: .productID) } catch { self.productID = try? Int(container.decodeIfPresent(String.self, forKey: .productID) ?? "") }
-            self.note = try? container.decodeIfPresent(String.self, forKey: .note) ?? nil
+            self.note = try container.decodeIfPresent(String.self, forKey: .note) ?? ""
             do { self.amount = try container.decode(Double.self, forKey: .amount) } catch { self.amount = try Double(container.decode(String.self, forKey: .amount))! }
             do { self.shoppingListID = try container.decode(Int.self, forKey: .shoppingListID) } catch { self.shoppingListID = try Int(container.decode(String.self, forKey: .shoppingListID))! }
             do { self.done = try container.decode(Int.self, forKey: .done) } catch { self.done = try Int(container.decode(String.self, forKey: .done))! }
             do { self.quID = try container.decodeIfPresent(Int.self, forKey: .quID) } catch { self.quID = try? Int(container.decodeIfPresent(String.self, forKey: .quID) ?? "") }
-            self.rowCreatedTimestamp = try container.decode(String.self, forKey: .rowCreatedTimestamp)
+            self.rowCreatedTimestamp = try? container.decode(String.self, forKey: .rowCreatedTimestamp)
         } catch {
             throw APIError.decodingError(error: error)
         }
@@ -58,14 +58,14 @@ class ShoppingListItem: Codable, Equatable {
     }
     
     init(
-        id: Int,
-        productID: Int? = nil,
-        note: String? = nil,
-        amount: Double,
-        shoppingListID: Int,
-        done: Int,
+        id: Int = -1,
+        productID: Int = -1,
+        note: String = "",
+        amount: Double = 1.0,
+        shoppingListID: Int = -1,
+        done: Int = 0,
         quID: Int? = nil,
-        rowCreatedTimestamp: String
+        rowCreatedTimestamp: String? = nil
     ) {
         self.id = id
         self.productID = productID
@@ -74,7 +74,11 @@ class ShoppingListItem: Codable, Equatable {
         self.shoppingListID = shoppingListID
         self.done = done
         self.quID = quID
-        self.rowCreatedTimestamp = rowCreatedTimestamp
+        if let rowCreatedTimestamp {
+            self.rowCreatedTimestamp = rowCreatedTimestamp
+        } else {
+            self.rowCreatedTimestamp = Date().iso8601withFractionalSeconds
+        }
     }
     
     static func == (lhs: ShoppingListItem, rhs: ShoppingListItem) -> Bool {
@@ -86,21 +90,5 @@ class ShoppingListItem: Codable, Equatable {
         lhs.done == rhs.done &&
         lhs.quID == rhs.quID &&
         lhs.rowCreatedTimestamp == rhs.rowCreatedTimestamp
-    }
-}
-
-// MARK: - ShoppingListAddItem
-
-struct ShoppingListItemAdd: Codable {
-    let amount: Double
-    let note: String?
-    let productID, quID: Int?
-    let shoppingListID: Int
-    
-    enum CodingKeys: String, CodingKey {
-        case amount, note
-        case productID = "product_id"
-        case quID = "qu_id"
-        case shoppingListID = "shopping_list_id"
     }
 }

@@ -148,7 +148,7 @@ struct StockView: View {
         let mdLocations = self.mdLocations
         let volatileStock = self.volatileStock
         let stockEntries = self.stockEntries
-        
+
         // Pre-convert stock element dates to avoid MainActor access in background task
         let stockWithDates: [(element: StockElement, dueDate: Date?)] = stock.map { element in
             (element, element.bestBeforeDate)
@@ -156,12 +156,12 @@ struct StockView: View {
         let missingStockWithDates: [(element: StockElement, dueDate: Date?)] = missingStock.map { element in
             (element, element.bestBeforeDate)
         }
-        
+
         // Pre-convert min stock amounts to strings to avoid MainActor access in background task
         let minStockAmountMap = (stock + missingStock).reduce(into: [Int: String]()) { dict, element in
             dict[element.productID] = element.product?.minStockAmount.formattedAmount ?? ""
         }
-        
+
         // Pre-convert last purchased dates to avoid MainActor access in background task
         let lastPurchasedMap = stockEntries.reduce(into: [Int: Date?]()) { dict, item in
             if let purchasedDate = item.purchasedDate {
@@ -172,17 +172,17 @@ struct StockView: View {
                 }
             }
         }
-        
+
         // Pre-compute product group names to avoid MainActor access in background task
         let productGroupNameMap = mdProductGroups.reduce(into: [Int: String]()) { dict, group in
             dict[group.id] = group.name
         }
-        
+
         // Pre-compute product names to avoid MainActor access in background task
         _ = mdProducts.reduce(into: [Int: String]()) { dict, product in
             dict[product.id] = product.name
         }
-        
+
         // Pre-compute parent product names to avoid MainActor access in background task
         let parentProductNameMap = mdProducts.reduce(into: [Int: String]()) { dict, product in
             if let parentID = product.parentProductID {
@@ -191,7 +191,7 @@ struct StockView: View {
                 dict[product.id] = ""
             }
         }
-        
+
         // Pre-compute location names to avoid MainActor access in background task
         let locationNameMap = mdLocations.reduce(into: [Int: String]()) { dict, location in
             dict[location.id] = location.name
@@ -213,7 +213,8 @@ struct StockView: View {
 
             // Then apply complex filters using Swift
             let stockForFiltering = stockWithDates.map { $0.element } + missingStockWithDates.map { $0.element }
-            let filtered = stockForFiltering
+            let filtered =
+                stockForFiltering
                 .filter { (try? simplePredicate.evaluate($0)) ?? false }
                 .filter { stockElement in
                     // Location filter
@@ -234,7 +235,7 @@ struct StockView: View {
             let nextDueDateMap = (stockWithDates + missingStockWithDates).reduce(into: [UUID: Date?]()) { dict, item in
                 dict[item.element.id] = item.dueDate
             }
-            
+
             let lastPurchasedDateMap = lastPurchasedMap
 
             // Compute grouped stock using pre-captured lookup data to avoid MainActor access
@@ -329,7 +330,7 @@ struct StockView: View {
             if let numA = a.key as? Double, let numB = b.key as? Double { return numA < numB }
             return String(describing: a.key) < String(describing: b.key)
         }
-        
+
         return ForEach(sortedGroups, id: \.key) { groupKey, groupElements in
             Section(
                 content: {
@@ -355,7 +356,7 @@ struct StockView: View {
                         formatter.timeStyle = .none
                         return formatter
                     }()
-                    
+
                     if stockGrouping == .productGroup, (groupKey as? String)?.isEmpty ?? false {
                         Text("Ungrouped")
                             .italic()
@@ -532,7 +533,7 @@ struct StockView: View {
                 case .productJournal(let stockElement):
                     StockJournalView(stockElement: stockElement)
                 case .addToShL(let stockElement):
-                    ShoppingListEntryFormView(isNewShoppingListEntry: true, productIDToSelect: stockElement.productID)
+                    ShoppingListEntryFormView(productIDToSelect: stockElement.productID)
                 }
             }
         )
@@ -686,8 +687,7 @@ struct StockView: View {
 }
 
 #Preview {
-    ForEach([ColorScheme.light, .dark], id: \.self) { scheme in
+    NavigationStack {
         StockView()
-            .preferredColorScheme(scheme)
     }
 }

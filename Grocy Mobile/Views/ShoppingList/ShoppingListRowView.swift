@@ -48,7 +48,7 @@ struct ShoppingListRowView: View {
 
     var body: some View {
         VStack(alignment: .leading) {
-            Text(product?.name ?? shoppingListItem.note ?? "?")
+            Text(product?.name ?? shoppingListItem.note)
                 .font(.headline)
                 .strikethrough(shoppingListItem.done == 1)
             Text("\(Text("Amount")): \(amountString)")

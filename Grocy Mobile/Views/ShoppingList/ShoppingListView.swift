@@ -78,18 +78,10 @@ struct ShoppingListView: View {
     }
 
     private func changeDoneStatus(shoppingListItem: ShoppingListItem) async {
-        let doneChangedShoppingListItem = ShoppingListItem(
-            id: shoppingListItem.id,
-            productID: shoppingListItem.productID,
-            note: shoppingListItem.note,
-            amount: shoppingListItem.amount,
-            shoppingListID: shoppingListItem.shoppingListID,
-            done: shoppingListItem.done == 1 ? 0 : 1,
-            quID: shoppingListItem.quID,
-            rowCreatedTimestamp: shoppingListItem.rowCreatedTimestamp
-        )
+        shoppingListItem.done = shoppingListItem.done == 1 ? 0 : 1
         do {
-            try await grocyVM.putMDObjectWithID(object: .shopping_list, id: shoppingListItem.id, content: doneChangedShoppingListItem)
+            try shoppingListItem.modelContext?.save()
+            try await grocyVM.putMDObjectWithID(object: .shopping_list, id: shoppingListItem.id, content: shoppingListItem)
             GrocyLogger.info("Done status changed successfully.")
             await grocyVM.requestData(objects: [.shopping_list])
         } catch {
@@ -102,9 +94,10 @@ struct ShoppingListView: View {
         showEntryDeleteAlert.toggle()
     }
 
-    private func deleteSHLItem(toDelID: Int) async {
+    private func deleteSHLItem(item: ShoppingListItem) async {
         do {
-            try await grocyVM.deleteMDObject(object: .shopping_list, id: toDelID)
+            try await grocyVM.deleteMDObject(object: .shopping_list, id: item.id)
+            item.modelContext?.delete(item)
             GrocyLogger.info("Deleting shopping list item was successful.")
             await grocyVM.requestData(objects: [.shopping_list])
         } catch {
@@ -256,7 +249,7 @@ struct ShoppingListView: View {
                 }
             }
             ForEach(groupedShoppingList.sorted(by: { $0.key < $1.key }), id: \.key) { groupName, groupElements in
-                                #if os(macOS)
+                #if os(macOS)
                     DisclosureGroup(
                         isExpanded: Binding.constant(true),
                         content: {
@@ -333,12 +326,18 @@ struct ShoppingListView: View {
                 }
             )
         }
-        .navigationDestination(for: ShoppingListDescription.self, destination: { desc in
-            ShoppingListFormView(isNewShoppingListDescription: false, shoppingListDescription: desc)
-        })
-        .navigationDestination(for: ShoppingListItem.self, destination: { item in
-            ShoppingListEntryFormView(isNewShoppingListEntry: false, shoppingListEntry: item)
-        })
+        .navigationDestination(
+            for: ShoppingListDescription.self,
+            destination: { desc in
+                ShoppingListFormView(shoppingListDescription: desc)
+            }
+        )
+        .navigationDestination(
+            for: ShoppingListItem.self,
+            destination: { item in
+                ShoppingListEntryFormView(existingShoppingListEntry: item)
+            }
+        )
         #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
         #endif
@@ -395,7 +394,7 @@ struct ShoppingListView: View {
             isPresented: $showNewShoppingListEntry,
             content: {
                 NavigationStack {
-                    ShoppingListEntryFormView(isNewShoppingListEntry: true, selectedShoppingListID: selectedShoppingListID)
+                    ShoppingListEntryFormView(selectedShoppingListID: selectedShoppingListID)
                 }
             }
         )
@@ -403,7 +402,7 @@ struct ShoppingListView: View {
             isPresented: $showNewShoppingList,
             content: {
                 NavigationStack {
-                    ShoppingListFormView(isNewShoppingListDescription: true)
+                    ShoppingListFormView()
                 }
             }
         )
@@ -433,9 +432,9 @@ struct ShoppingListView: View {
             actions: {
                 Button("Cancel", role: .cancel) {}
                 Button("Delete", role: .destructive) {
-                    if let deleteID = shlItemToDelete?.id {
+                    if let item = shlItemToDelete {
                         Task {
-                            await deleteSHLItem(toDelID: deleteID)
+                            await deleteSHLItem(item: item)
                         }
                     }
                 }
@@ -694,8 +693,8 @@ struct ShoppingListView: View {
     }
 }
 
-struct ShoppingListView_Previews: PreviewProvider {
-    static var previews: some View {
+#Preview(traits: .previewData) {
+    NavigationStack {
         ShoppingListView()
     }
 }

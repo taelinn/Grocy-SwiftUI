@@ -563,8 +563,8 @@ class GrocyViewModel {
             {
                 let shoppingListEntryNew = ShoppingListItem(
                     id: entry.id,
-                    productID: entry.productID,
-                    note: reminder.notes,
+                    productID: entry.productID ?? -1,
+                    note: reminder.notes ?? "",
                     amount: amount ?? entry.amount,
                     shoppingListID: entry.shoppingListID,
                     done: reminder.isComplete ? 1 : 0,
@@ -831,12 +831,6 @@ class GrocyViewModel {
     }
 
     // MARK: -Shopping Lists
-
-    func addShoppingListItem(content: ShoppingListItemAdd) async throws {
-        let jsonContent = try! jsonEncoder.encode(content)
-        try await grocyApi.shoppingListAddItem(content: jsonContent)
-    }
-
     func shoppingListAction(content: ShoppingListAction, actionType: ShoppingListActionType) async throws {
         let jsonContent = try! jsonEncoder.encode(content)
         try await grocyApi.shoppingListAction(content: jsonContent, actionType: actionType)
