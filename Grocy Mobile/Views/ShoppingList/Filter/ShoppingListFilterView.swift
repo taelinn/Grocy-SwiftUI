@@ -53,7 +53,7 @@ struct ShoppingListFilterView: View {
     }
 }
 
-#Preview {
+#Preview(traits: .previewData) {
     @Previewable @State var filteredStatus: ShoppingListStatus = .all
 
     ShoppingListFilterView(filteredStatus: $filteredStatus)

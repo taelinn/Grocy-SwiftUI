@@ -1,0 +1,38 @@
+[
+  {
+    "id": 1,
+    "name": "Battery1",
+    "description": "Warranty ends 2023",
+    "used_in": "TV remote control",
+    "charge_interval_days": 180,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "active": 1
+  },
+  {
+    "id": 2,
+    "name": "Battery2",
+    "description": "Warranty ends 2022",
+    "used_in": "Alarm clock",
+    "charge_interval_days": 0,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "active": 1
+  },
+  {
+    "id": 3,
+    "name": "Battery3",
+    "description": "Warranty ends 2022",
+    "used_in": "Heat remote control",
+    "charge_interval_days": 60,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "active": 1
+  },
+  {
+    "id": 4,
+    "name": "Battery4",
+    "description": "Warranty ends 2028",
+    "used_in": "Heat remote control",
+    "charge_interval_days": 60,
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "active": 1
+  }
+]

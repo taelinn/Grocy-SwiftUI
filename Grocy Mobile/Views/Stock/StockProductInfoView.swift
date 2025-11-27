@@ -134,8 +134,17 @@ struct StockProductInfoView: View {
     }
 }
 
-//struct ProductOverviewView_Previews: PreviewProvider {
-//    static var previews: some View {
-//            ProductOverviewView(product: MDProduct(id: "1", name: "Product name", mdProductDescription: "Product description", productGroupID: "1", active: "1", locationID: "1", storeID: "1", quIDPurchase: "1", quIDStock: "1", minStockAmount: "1", defaultBestBeforeDays: "1", defaultBestBeforeDaysAfterOpen: "1", defaultBestBeforeDaysAfterFreezing: "1", defaultBestBeforeDaysAfterThawing: "1", pictureFileName: nil, enableTareWeightHandling: "0", tareWeight: "0", notCheckStockFulfillmentForRecipes: "1", parentProductID: "1", calories: "1", cumulateMinStockAmountOfSubProducts: "0", dueType: "1", quickConsumeAmount: "1", rowCreatedTimestamp: "TS", userfields: nil))
-//    }
-//}
+#Preview(traits: .previewData) {
+    let container = PreviewContainer.shared
+    let context = ModelContext(container)
+
+    // Fetch one object from the preview store
+    let descriptor = FetchDescriptor<StockElement>(sortBy: [SortDescriptor(\.productID)])
+    let stockElement = (try? context.fetch(descriptor).first)
+    
+    if let stockElement{
+        StockProductInfoView(stockElement: stockElement)
+    } else {
+        EmptyView()
+    }
+}

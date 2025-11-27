@@ -23,49 +23,64 @@ final class ModelTests: XCTestCase {
         let fetched = try context.fetch(FetchDescriptor<MDLocation>())
         XCTAssertGreaterThan(fetched.count, 0)
     }
-    
+
     func testMDProductGroupModel() throws {
         let fetched = try context.fetch(FetchDescriptor<MDProductGroup>())
         XCTAssertGreaterThan(fetched.count, 0)
     }
-    
+
     func testMDProductModel() throws {
         let fetched = try context.fetch(FetchDescriptor<MDProduct>())
         XCTAssertGreaterThan(fetched.count, 0)
     }
-    
+
     func testMDQuantityUnitConversionModel() throws {
         let fetched = try context.fetch(FetchDescriptor<MDQuantityUnitConversion>())
         XCTAssertGreaterThan(fetched.count, 0)
     }
-    
+
     func testMDQuantityUnitModel() throws {
         let fetched = try context.fetch(FetchDescriptor<MDQuantityUnit>())
         XCTAssertGreaterThan(fetched.count, 0)
     }
-    
+
     func testShoppingListItemModel() throws {
         let fetched = try context.fetch(FetchDescriptor<ShoppingListItem>())
         XCTAssertGreaterThan(fetched.count, 0)
     }
-    
+
     func testShoppingListDescriptionModel() throws {
         let fetched = try context.fetch(FetchDescriptor<ShoppingListDescription>())
         XCTAssertGreaterThan(fetched.count, 0)
     }
-    
+
     func testMDStoreModel() throws {
         let fetched = try context.fetch(FetchDescriptor<MDStore>())
         XCTAssertGreaterThan(fetched.count, 0)
     }
-    
+
     func testStockEntryModel() throws {
         let fetched = try context.fetch(FetchDescriptor<StockEntry>())
         XCTAssertGreaterThan(fetched.count, 0)
     }
-    
+
     func testStockJournalEntryModel() throws {
         let fetched = try context.fetch(FetchDescriptor<StockJournalEntry>())
+        XCTAssertGreaterThan(fetched.count, 0)
+    }
+
+    func testStockElementModel() throws {
+        let fetched = try context.fetch(FetchDescriptor<StockElement>())
+        XCTAssertGreaterThan(fetched.count, 0)
+    }
+
+    func testVolatileStockModel() throws {
+        let fetched = try context.fetch(FetchDescriptor<VolatileStock>())
+        XCTAssertGreaterThan(fetched.count, 0)
+    }
+
+    func testGrocyUserModel() throws {
+        let fetched = try context.fetch(FetchDescriptor<GrocyUser>())
         XCTAssertGreaterThan(fetched.count, 0)
     }
 }

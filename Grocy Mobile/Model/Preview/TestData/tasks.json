@@ -8,7 +8,9 @@
     "done_timestamp": null,
     "category_id": null,
     "assigned_to_user_id": null,
-    "row_created_timestamp": "2025-11-26 20:37:48"
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "assigned_to_user": null,
+    "category": null
   },
   {
     "id": 2,
@@ -19,7 +21,23 @@
     "done_timestamp": null,
     "category_id": 1,
     "assigned_to_user_id": 1,
-    "row_created_timestamp": "2025-11-26 20:37:48"
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "assigned_to_user": {
+      "id": 1,
+      "username": "Demo User",
+      "first_name": null,
+      "last_name": null,
+      "row_created_timestamp": "2025-11-26 20:37:47",
+      "display_name": "Demo User",
+      "picture_file_name": null
+    },
+    "category": {
+      "id": 1,
+      "name": "Category1",
+      "description": null,
+      "row_created_timestamp": "2025-11-26 20:37:48",
+      "active": 1
+    }
   },
   {
     "id": 3,
@@ -30,7 +48,23 @@
     "done_timestamp": null,
     "category_id": 1,
     "assigned_to_user_id": 1,
-    "row_created_timestamp": "2025-11-26 20:37:48"
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "assigned_to_user": {
+      "id": 1,
+      "username": "Demo User",
+      "first_name": null,
+      "last_name": null,
+      "row_created_timestamp": "2025-11-26 20:37:47",
+      "display_name": "Demo User",
+      "picture_file_name": null
+    },
+    "category": {
+      "id": 1,
+      "name": "Category1",
+      "description": null,
+      "row_created_timestamp": "2025-11-26 20:37:48",
+      "active": 1
+    }
   },
   {
     "id": 4,
@@ -41,7 +75,17 @@
     "done_timestamp": null,
     "category_id": null,
     "assigned_to_user_id": 1,
-    "row_created_timestamp": "2025-11-26 20:37:48"
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "assigned_to_user": {
+      "id": 1,
+      "username": "Demo User",
+      "first_name": null,
+      "last_name": null,
+      "row_created_timestamp": "2025-11-26 20:37:47",
+      "display_name": "Demo User",
+      "picture_file_name": null
+    },
+    "category": null
   },
   {
     "id": 5,
@@ -52,28 +96,8 @@
     "done_timestamp": null,
     "category_id": null,
     "assigned_to_user_id": null,
-    "row_created_timestamp": "2025-11-26 20:37:48"
-  },
-  {
-    "id": 6,
-    "name": "Task6",
-    "description": null,
-    "due_date": "2025-11-16",
-    "done": 1,
-    "done_timestamp": null,
-    "category_id": null,
-    "assigned_to_user_id": null,
-    "row_created_timestamp": "2025-11-26 20:37:48"
-  },
-  {
-    "id": 7,
-    "name": "Task7",
-    "description": null,
-    "due_date": "2025-11-06",
-    "done": 1,
-    "done_timestamp": null,
-    "category_id": null,
-    "assigned_to_user_id": null,
-    "row_created_timestamp": "2025-11-26 20:37:48"
+    "row_created_timestamp": "2025-11-26 20:37:48",
+    "assigned_to_user": null,
+    "category": null
   }
 ]

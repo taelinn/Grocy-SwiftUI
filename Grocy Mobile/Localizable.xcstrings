@@ -4,9 +4,6 @@
     "" : {
       "shouldTranslate" : false
     },
-    " " : {
-      "shouldTranslate" : false
-    },
     ":" : {
       "shouldTranslate" : false
     },
@@ -46207,7 +46204,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dies ist eine Begleiter-App, das heißt du musst Zugriff zu einer laufenden Grocy-Instanz haben.\\n Wenn du diese App nur kurz ausprobieren willst, kannst du einen der vom Grocy-Entwickler Bernd Bestel bereitgestellten Demo-Server verwenden. Nutze den Demo-Server jedoch nicht produktiv, da die Daten gelöscht werden könnten."
+            "value" : "Dies ist eine Begleiter-App, das heißt du musst Zugriff zu einer laufenden Grocy-Instanz haben. Wenn du diese App nur kurz ausprobieren willst, kannst du einen der vom Grocy-Entwickler Bernd Bestel bereitgestellten Demo-Server verwenden. Nutze den Demo-Server jedoch nicht produktiv, da die Daten gelöscht werden könnten."
           }
         },
         "fr-FR" : {
@@ -46225,7 +46222,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "这是一个配套应用程序，意味着您需要访问正在运行的Grocy实例（例如，在您的服务器上）。\\n如果你只想试用这个应用程序，你可以使用Grocy开发人员Bernd Bestel提供的演示服务器之一。但不要将演示服务器用于您的数据，因为它不是持久的。"
+            "value" : "这是一个配套应用程序，意味着您需要访问正在运行的Grocy实例（例如，在您的服务器上）。如果你只想试用这个应用程序，你可以使用Grocy开发人员Bernd Bestel提供的演示服务器之一。但不要将演示服务器用于您的数据，因为它不是持久的。"
           }
         }
       }

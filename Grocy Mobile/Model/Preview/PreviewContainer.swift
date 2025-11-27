@@ -45,6 +45,9 @@ struct PreviewContainer {
                 MDStore.self,
                 StockElement.self,
                 StockJournalEntry.self,
+                StockElement.self,
+                VolatileStock.self,
+                GrocyUser.self,
             ])
 
             let container = try ModelContainer(
@@ -63,16 +66,22 @@ struct PreviewContainer {
     private static func seedData(container: ModelContainer) {
         let context = container.mainContext
 
-        loadAndInsert(modelType: MDLocation.self, filename: "locations.json", into: context)
-        loadAndInsert(modelType: MDProductGroup.self, filename: "product_groups.json", into: context)
-        loadAndInsert(modelType: MDProduct.self, filename: "products.json", into: context)
-        loadAndInsert(modelType: MDQuantityUnitConversion.self, filename: "quantity_unit_conversions.json", into: context)
-        loadAndInsert(modelType: MDQuantityUnit.self, filename: "quantity_units.json", into: context)
-        loadAndInsert(modelType: ShoppingListItem.self, filename: "shopping_list.json", into: context)
-        loadAndInsert(modelType: ShoppingListDescription.self, filename: "shopping_lists.json", into: context)
-        loadAndInsert(modelType: MDStore.self, filename: "shopping_locations.json", into: context)
-        loadAndInsert(modelType: StockEntry.self, filename: "stock.json", into: context)
-        loadAndInsert(modelType: StockJournalEntry.self, filename: "stock_log.json", into: context)
+        // Objects
+        loadAndInsert(modelType: MDLocation.self, filename: "objects__locations.json", into: context)
+        loadAndInsert(modelType: MDProductGroup.self, filename: "objects__product_groups.json", into: context)
+        loadAndInsert(modelType: MDProduct.self, filename: "objects__products.json", into: context)
+        loadAndInsert(modelType: MDQuantityUnitConversion.self, filename: "objects__quantity_unit_conversions.json", into: context)
+        loadAndInsert(modelType: MDQuantityUnit.self, filename: "objects__quantity_units.json", into: context)
+        loadAndInsert(modelType: ShoppingListItem.self, filename: "objects__shopping_list.json", into: context)
+        loadAndInsert(modelType: ShoppingListDescription.self, filename: "objects__shopping_lists.json", into: context)
+        loadAndInsert(modelType: MDStore.self, filename: "objects__shopping_locations.json", into: context)
+        loadAndInsert(modelType: StockEntry.self, filename: "objects__stock.json", into: context)
+        loadAndInsert(modelType: StockJournalEntry.self, filename: "objects__stock_log.json", into: context)
+        
+        // Other
+        loadAndInsert(modelType: StockElement.self, filename: "stock.json", into: context)
+        loadAndInsert(modelType: VolatileStock.self, filename: "stock__volatile.json", into: context, singleElement: true)
+        loadAndInsert(modelType: GrocyUser.self, filename: "users.json", into: context)
 
         try? context.save()
     }
@@ -80,7 +89,8 @@ struct PreviewContainer {
     private static func loadAndInsert<T>(
         modelType: T.Type,
         filename: String,
-        into context: ModelContext
+        into context: ModelContext,
+        singleElement: Bool = false
     ) where T: PersistentModel & Decodable {
         let fileManager = FileManager.default
         let currentFileURL = URL(fileURLWithPath: #file)
@@ -96,10 +106,16 @@ struct PreviewContainer {
         do {
             let data = try Data(contentsOf: fileURL)
             let decoder = JSONDecoder()
-            let items = try decoder.decode([T].self, from: data)
-
-            for item in items {
+            
+            if singleElement {
+                let item = try decoder.decode(T.self, from: data)
                 context.insert(item)
+            } else {
+                let items = try decoder.decode([T].self, from: data)
+                
+                for item in items {
+                    context.insert(item)
+                }
             }
         } catch {
             print("⚠️ Failed to decode \(filename): \(error)")

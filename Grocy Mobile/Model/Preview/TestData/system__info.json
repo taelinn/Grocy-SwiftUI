@@ -1,0 +1,11 @@
+{
+  "grocy_version": {
+    "Version": "4.5.0",
+    "ReleaseDate": "2025-03-28"
+  },
+  "php_version": "8.3.19",
+  "sqlite_version": "3.48.0",
+  "db_version": 253,
+  "os": "Linux 6.12.54-linuxkit #1 SMP Tue Nov  4 21:21:47 UTC 2025 aarch64",
+  "client": "python-requests/2.32.5"
+}
