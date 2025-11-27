@@ -30,17 +30,7 @@ struct MDLocationFormView: View {
 
     init(existingLocation: MDLocation? = nil) {
         self.existingLocation = existingLocation
-        let initialLocation =
-            existingLocation
-            ?? MDLocation(
-                id: 0,
-                name: "",
-                active: true,
-                mdLocationDescription: "",
-                isFreezer: false,
-                rowCreatedTimestamp: Date().iso8601withFractionalSeconds
-            )
-        _location = State(initialValue: initialLocation)
+        _location = State(initialValue: existingLocation ?? MDLocation())
         _isNameCorrect = State(initialValue: true)
     }
 

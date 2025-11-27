@@ -36,5 +36,8 @@ struct MDLocationRowView: View {
 }
 
 #Preview {
-    MDLocationRowView(location: MDLocation(id: 1, name: "Location", active: true, mdLocationDescription: "Description", isFreezer: true, rowCreatedTimestamp: ""))
+    List {
+        MDLocationRowView(location: MDLocation(id: 1, name: "Location", active: true, mdLocationDescription: "Description", isFreezer: false, rowCreatedTimestamp: ""))
+        MDLocationRowView(location: MDLocation(id: 2, name: "Freezer", active: true, mdLocationDescription: "Description", isFreezer: true, rowCreatedTimestamp: ""))
+    }
 }
