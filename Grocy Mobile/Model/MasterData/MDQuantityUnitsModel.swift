@@ -59,19 +59,19 @@ class MDQuantityUnit: Codable, Equatable, Identifiable {
     }
 
     init(
-        id: Int,
-        name: String,
+        id: Int = -1,
+        name: String = "",
         namePlural: String = "",
-        active: Bool,
+        active: Bool = true,
         mdQuantityUnitDescription: String = "",
-        rowCreatedTimestamp: String
+        rowCreatedTimestamp: String? = nil
     ) {
         self.id = id
         self.name = name
         self.namePlural = namePlural
         self.active = active
         self.mdQuantityUnitDescription = mdQuantityUnitDescription
-        self.rowCreatedTimestamp = rowCreatedTimestamp
+        self.rowCreatedTimestamp = rowCreatedTimestamp ?? Date().iso8601withFractionalSeconds
     }
 
     static func == (lhs: MDQuantityUnit, rhs: MDQuantityUnit) -> Bool {

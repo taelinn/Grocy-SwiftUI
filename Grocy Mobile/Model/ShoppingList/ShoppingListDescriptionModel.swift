@@ -42,13 +42,13 @@ class ShoppingListDescription: Codable, Equatable {
     }
 
     init(
-        id: Int,
-        name: String,
-        rowCreatedTimestamp: String
+        id: Int = -1,
+        name: String = "",
+        rowCreatedTimestamp: String? = nil
     ) {
         self.id = id
         self.name = name
-        self.rowCreatedTimestamp = rowCreatedTimestamp
+        self.rowCreatedTimestamp = rowCreatedTimestamp ?? Date().iso8601withFractionalSeconds
     }
     
     static func == (lhs: ShoppingListDescription, rhs: ShoppingListDescription) -> Bool {

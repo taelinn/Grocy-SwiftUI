@@ -34,15 +34,15 @@ struct MDTaskCategory: Codable {
     }
 
     init(
-        id: Int,
-        name: String,
+        id: Int = -1,
+        name: String = "",
         mdTaskCategoryDescription: String? = nil,
-        rowCreatedTimestamp: String
+        rowCreatedTimestamp: String? = nil
     ) {
         self.id = id
         self.name = name
         self.mdTaskCategoryDescription = mdTaskCategoryDescription
-        self.rowCreatedTimestamp = rowCreatedTimestamp
+        self.rowCreatedTimestamp = rowCreatedTimestamp ?? Date().iso8601withFractionalSeconds
     }
 }
 

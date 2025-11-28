@@ -36,16 +36,7 @@ struct MDQuantityUnitFormView: View {
 
     init(existingQuantityUnit: MDQuantityUnit? = nil) {
         self.existingQuantityUnit = existingQuantityUnit
-        let initialQuantityUnit =
-            existingQuantityUnit
-            ?? MDQuantityUnit(
-                id: 0,
-                name: "",
-                namePlural: "",
-                active: true,
-                mdQuantityUnitDescription: "",
-                rowCreatedTimestamp: Date().iso8601withFractionalSeconds
-            )
+        let initialQuantityUnit = existingQuantityUnit ?? MDQuantityUnit()
         _quantityUnit = State(initialValue: initialQuantityUnit)
         _isNameCorrect = State(initialValue: true)
     }
@@ -82,7 +73,7 @@ struct MDQuantityUnitFormView: View {
     }
 
     private func saveQuantityUnit() async {
-        if quantityUnit.id == 0 {
+        if quantityUnit.id == -1 {
             quantityUnit.id = grocyVM.findNextID(.quantity_units)
         }
         isProcessing = true

@@ -63,12 +63,12 @@ class StockLocation: Codable, Equatable {
     }
     
     init(
-        id: Int,
-        productID: Int,
-        amount: Double,
-        locationID: Int,
-        locationName: String,
-        locationIsFreezer: Bool
+        id: Int = -1,
+        productID: Int = -1,
+        amount: Double = 1.0,
+        locationID: Int = -1,
+        locationName: String = "",
+        locationIsFreezer: Bool = false
     ) {
         self.id = UUID()
         self.equalID = id

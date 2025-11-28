@@ -28,16 +28,12 @@ struct MDProductRowView: View {
                     Text(product.name)
                         .font(.title)
                         .foregroundStyle(product.active ? .primary : .secondary)
-                    //                    if product.hasChanges {
-                    //                        Image(systemName: MySymbols.notSaved)
-                    //                            .foregroundStyle(.orange)
-                    //                    }
                 }
-                if let locationID = mdLocations.firstIndex(where: { $0.id == product.locationID }) {
-                    Text("\(Text("Location")): \(Text(mdLocations[locationID].name).font(.caption))")
+                if let locationName = mdLocations.first(where: { $0.id == product.locationID })?.name {
+                    Text("\(Text("Location")): \(Text(locationName).font(.caption))")
                 }
-                if let productGroup = mdProductGroups.firstIndex(where: { $0.id == product.productGroupID }) {
-                    Text("\(Text("Product group")): \(Text(mdProductGroups[productGroup].name).font(.caption))")
+                if let productGroupName = mdProductGroups.first(where: { $0.id == product.productGroupID })?.name {
+                    Text("\(Text("Product group")): \(Text(productGroupName).font(.caption))")
                 }
                 if !product.mdProductDescription.isEmpty {
                     Text(product.mdProductDescription)
@@ -49,44 +45,22 @@ struct MDProductRowView: View {
     }
 }
 
-#Preview {
-    MDProductRowView(
-        product: MDProduct(
-            id: 1,
-            name: "Product",
-            mdProductDescription: "Description",
-            productGroupID: nil,
-            active: true,
-            locationID: 1,
-            storeID: -1,
-            quIDPurchase: 1,
-            quIDStock: 1,
-            quIDConsume: 1,
-            quIDPrice: 1,
-            minStockAmount: 1.0,
-            defaultDueDays: 1,
-            defaultDueDaysAfterOpen: 1,
-            defaultDueDaysAfterFreezing: 1,
-            defaultDueDaysAfterThawing: 1,
-            pictureFileName: nil,
-            enableTareWeightHandling: false,
-            tareWeight: nil,
-            notCheckStockFulfillmentForRecipes: false,
-            parentProductID: nil,
-            calories: nil,
-            cumulateMinStockAmountOfSubProducts: false,
-            dueType: 1,
-            quickConsumeAmount: nil,
-            quickOpenAmount: nil,
-            hideOnStockOverview: false,
-            defaultStockLabelType: nil,
-            shouldNotBeFrozen: false,
-            treatOpenedAsOutOfStock: false,
-            noOwnStock: false,
-            defaultConsumeLocationID: nil,
-            moveOnOpen: false,
-            autoReprintStockLabel: false,
-            rowCreatedTimestamp: ""
+#Preview(traits: .previewData) {
+    List {
+        MDProductRowView(
+            product: MDProduct(
+                id: 1,
+                name: "Product",
+            )
         )
-    )
+        MDProductRowView(
+            product: MDProduct(
+                id: 2,
+                name: "Product 2",
+                mdProductDescription: "Description",
+                productGroupID: 1,
+                locationID: 2,
+            )
+        )
+    }
 }

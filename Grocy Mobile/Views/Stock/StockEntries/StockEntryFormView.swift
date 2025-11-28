@@ -42,23 +42,7 @@ struct StockEntryFormView: View {
 
     init(existingStockEntry: StockEntry? = nil) {
         self.existingStockEntry = existingStockEntry
-        let initialStockEntry =
-            existingStockEntry
-            ?? StockEntry(
-                id: 0,
-                productID: 0,
-                amount: 1.0,
-                bestBeforeDate: Date(),
-                purchasedDate: nil,
-                stockID: "",
-                price: nil,
-                stockEntryOpen: false,
-                openedDate: nil,
-                rowCreatedTimestamp: Date().iso8601withFractionalSeconds,
-                locationID: nil,
-                storeID: nil,
-                note: nil
-            )
+        let initialStockEntry = existingStockEntry ?? StockEntry()
         _productDoesntSpoil = State(initialValue: (existingStockEntry?.bestBeforeDate == getNeverOverdueDate()))
         _note = State(initialValue: existingStockEntry?.note ?? "")
         _stockEntry = State(initialValue: initialStockEntry)
@@ -145,7 +129,7 @@ struct StockEntryFormView: View {
                         } else {
                             Text(location.name)
                                 .tag(location.id as Int?)
-                        } 
+                        }
                     }
                 }
             )

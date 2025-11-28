@@ -54,17 +54,17 @@ class MDProductGroup: Codable, Equatable, Identifiable {
     }
 
     init(
-        id: Int,
-        name: String,
-        active: Bool,
+        id: Int = -1,
+        name: String = "",
+        active: Bool = true,
         mdProductGroupDescription: String = "",
-        rowCreatedTimestamp: String
+        rowCreatedTimestamp: String? = nil
     ) {
         self.id = id
         self.name = name
         self.active = active
         self.mdProductGroupDescription = mdProductGroupDescription
-        self.rowCreatedTimestamp = rowCreatedTimestamp
+        self.rowCreatedTimestamp = rowCreatedTimestamp ?? Date().iso8601withFractionalSeconds
     }
 
     static func == (lhs: MDProductGroup, rhs: MDProductGroup) -> Bool {

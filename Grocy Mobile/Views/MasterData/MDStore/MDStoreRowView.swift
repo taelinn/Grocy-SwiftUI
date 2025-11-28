@@ -17,10 +17,6 @@ struct MDStoreRowView: View {
                 Text(store.name)
                     .font(.title)
                     .foregroundStyle(store.active ? .primary : .secondary)
-                //                if store.hasChanges {
-                //                    Image(systemName: MySymbols.notSaved)
-                //                        .foregroundStyle(.orange)
-                //                }
             }
             if !store.mdStoreDescription.isEmpty {
                 Text(store.mdStoreDescription)
@@ -32,5 +28,7 @@ struct MDStoreRowView: View {
 }
 
 #Preview {
-    MDStoreRowView(store: MDStore(id: 1, name: "Store", active: true, mdStoreDescription: "Description", rowCreatedTimestamp: ""))
+    List {
+        MDStoreRowView(store: MDStore(id: 1, name: "Store", mdStoreDescription: "Description"))
+    }
 }

@@ -77,15 +77,15 @@ class MDProductBarcode: Codable, Equatable, Identifiable, CustomStringConvertibl
     }
 
     init(
-        id: Int,
-        productID: Int,
-        barcode: String,
+        id: Int = -1,
+        productID: Int = -1,
+        barcode: String = "",
         quID: Int? = nil,
         amount: Double? = nil,
         storeID: Int? = nil,
         lastPrice: Double? = nil,
         note: String = "",
-        rowCreatedTimestamp: String
+        rowCreatedTimestamp: String? = nil
     ) {
         self.id = id
         self.productID = productID
@@ -95,7 +95,7 @@ class MDProductBarcode: Codable, Equatable, Identifiable, CustomStringConvertibl
         self.storeID = storeID
         self.lastPrice = lastPrice
         self.note = note
-        self.rowCreatedTimestamp = rowCreatedTimestamp
+        self.rowCreatedTimestamp = rowCreatedTimestamp ?? Date().iso8601withFractionalSeconds
     }
 
     static func == (lhs: MDProductBarcode, rhs: MDProductBarcode) -> Bool {

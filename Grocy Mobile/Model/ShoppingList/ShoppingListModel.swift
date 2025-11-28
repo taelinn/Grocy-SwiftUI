@@ -74,11 +74,7 @@ class ShoppingListItem: Codable, Equatable {
         self.shoppingListID = shoppingListID
         self.done = done
         self.quID = quID
-        if let rowCreatedTimestamp {
-            self.rowCreatedTimestamp = rowCreatedTimestamp
-        } else {
-            self.rowCreatedTimestamp = Date().iso8601withFractionalSeconds
-        }
+        self.rowCreatedTimestamp = rowCreatedTimestamp ?? Date().iso8601withFractionalSeconds
     }
     
     static func == (lhs: ShoppingListItem, rhs: ShoppingListItem) -> Bool {

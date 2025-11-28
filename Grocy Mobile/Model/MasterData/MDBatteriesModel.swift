@@ -44,13 +44,13 @@ struct MDBattery: Codable {
     }
 
     init(
-        id: Int,
+        id: Int = -1,
         name: String,
         mdBatteryDescription: String? = nil,
         usedIn: String? = nil,
         chargeIntervalDays: Int,
         active: Int,
-        rowCreatedTimestamp: String
+        rowCreatedTimestamp: String? = nil
     ) {
         self.id = id
         self.name = name
@@ -58,7 +58,7 @@ struct MDBattery: Codable {
         self.usedIn = usedIn
         self.chargeIntervalDays = chargeIntervalDays
         self.active = active
-        self.rowCreatedTimestamp = rowCreatedTimestamp
+        self.rowCreatedTimestamp = rowCreatedTimestamp ?? Date().iso8601withFractionalSeconds
     }
 }
 

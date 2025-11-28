@@ -50,8 +50,7 @@ struct QuickScanModeSelectProductView: View {
             let newBarcode = MDProductBarcode(
                 id: grocyVM.findNextID(.product_barcodes),
                 productID: productID,
-                barcode: barcode,
-                rowCreatedTimestamp: Date().iso8601withFractionalSeconds
+                barcode: barcode
             )
             do {
                 _ = try await grocyVM.postMDObject(object: .product_barcodes, content: newBarcode)

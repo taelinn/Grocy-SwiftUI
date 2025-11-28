@@ -255,7 +255,7 @@ class MDProduct: Codable, Equatable, Identifiable {
     }
 
     init(
-        id: Int = 0,
+        id: Int = -1,
         name: String = "",
         mdProductDescription: String = "",
         productGroupID: Int? = nil,
@@ -325,11 +325,7 @@ class MDProduct: Codable, Equatable, Identifiable {
         self.quIDConsume = quIDConsume
         self.autoReprintStockLabel = autoReprintStockLabel
         self.quIDPrice = quIDPrice
-        if let rowCreatedTimestamp {
-            self.rowCreatedTimestamp = rowCreatedTimestamp
-        } else {
-            self.rowCreatedTimestamp = Date().iso8601withFractionalSeconds
-        }
+        self.rowCreatedTimestamp = rowCreatedTimestamp ?? Date().iso8601withFractionalSeconds
     }
 
     static func == (lhs: MDProduct, rhs: MDProduct) -> Bool {

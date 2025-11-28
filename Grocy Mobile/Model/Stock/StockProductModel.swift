@@ -241,7 +241,7 @@ class StockProduct: Codable, Equatable {
         defaultConsumeLocationID: Int? = nil,
         moveOnOpen: Bool = false,
         autoReprintStockLabel: Bool = false,
-        rowCreatedTimestamp: String
+        rowCreatedTimestamp: String? = nil
     ) {
         self.id = id
         self.name = name
@@ -277,7 +277,7 @@ class StockProduct: Codable, Equatable {
         self.quIDConsume = quIDConsume
         self.autoReprintStockLabel = autoReprintStockLabel
         self.quIDPrice = quIDPrice
-        self.rowCreatedTimestamp = rowCreatedTimestamp
+        self.rowCreatedTimestamp = rowCreatedTimestamp ?? Date().iso8601withFractionalSeconds
     }
     
     func encode(to encoder: Encoder) throws {

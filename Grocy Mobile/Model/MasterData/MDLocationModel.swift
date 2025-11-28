@@ -76,17 +76,13 @@ class MDLocation: Codable, Equatable, Identifiable, CustomStringConvertible {
         try container.encode(rowCreatedTimestamp, forKey: .rowCreatedTimestamp)
     }
 
-    init(id: Int = 0, name: String = "", active: Bool = true, mdLocationDescription: String = "", isFreezer: Bool = false, rowCreatedTimestamp: String? = nil) {
+    init(id: Int = -1, name: String = "", active: Bool = true, mdLocationDescription: String = "", isFreezer: Bool = false, rowCreatedTimestamp: String? = nil) {
         self.id = id
         self.name = name
         self.active = active
         self.mdLocationDescription = mdLocationDescription
         self.isFreezer = isFreezer
-        if let rowCreatedTimestamp {
-            self.rowCreatedTimestamp = rowCreatedTimestamp
-        } else {
-            self.rowCreatedTimestamp = Date().iso8601withFractionalSeconds
-        }
+        self.rowCreatedTimestamp = rowCreatedTimestamp ?? Date().iso8601withFractionalSeconds
     }
 
     static func == (lhs: MDLocation, rhs: MDLocation) -> Bool {

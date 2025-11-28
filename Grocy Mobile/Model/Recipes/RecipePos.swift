@@ -5,6 +5,8 @@
 //  Created by Georg Meißner on 18.08.25.
 //
 
+import Foundation
+
 class RecipePos: Codable {
     var id, recipeID, productID: Int
     var amount: Double
@@ -32,7 +34,7 @@ class RecipePos: Codable {
         case roundUp = "round_up"
     }
 
-    init(id: Int, recipeID: Int, productID: Int, amount: Double, note: String?, quID: Int, onlyCheckSingleUnitInStock: Int, ingredientGroup: String?, notCheckStockFulfillment: Int, rowCreatedTimestamp: String, variableAmount: Int?, priceFactor: Double, roundUp: Int) {
+    init(id: Int, recipeID: Int, productID: Int, amount: Double, note: String?, quID: Int, onlyCheckSingleUnitInStock: Int, ingredientGroup: String?, notCheckStockFulfillment: Int, rowCreatedTimestamp: String? = nil, variableAmount: Int?, priceFactor: Double, roundUp: Int) {
         self.id = id
         self.recipeID = recipeID
         self.productID = productID
@@ -42,9 +44,9 @@ class RecipePos: Codable {
         self.onlyCheckSingleUnitInStock = onlyCheckSingleUnitInStock
         self.ingredientGroup = ingredientGroup
         self.notCheckStockFulfillment = notCheckStockFulfillment
-        self.rowCreatedTimestamp = rowCreatedTimestamp
         self.variableAmount = variableAmount
         self.priceFactor = priceFactor
         self.roundUp = roundUp
+        self.rowCreatedTimestamp = rowCreatedTimestamp ?? Date().iso8601withFractionalSeconds
     }
 }

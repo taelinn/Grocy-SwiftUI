@@ -44,13 +44,13 @@ struct MDUserEntity: Codable {
     }
 
     init(
-        id: Int,
-        name: String,
-        caption: String,
+        id: Int = -1,
+        name: String = "",
+        caption: String = "",
         mdUserEntityDescription: String? = nil,
         showInSidebarMenu: Int? = nil,
         iconCSSClass: String? = nil,
-        rowCreatedTimestamp: String
+        rowCreatedTimestamp: String? = nil
     ) {
         self.id = id
         self.name = name
@@ -58,7 +58,7 @@ struct MDUserEntity: Codable {
         self.mdUserEntityDescription = mdUserEntityDescription
         self.showInSidebarMenu = showInSidebarMenu
         self.iconCSSClass = iconCSSClass
-        self.rowCreatedTimestamp = rowCreatedTimestamp
+        self.rowCreatedTimestamp = rowCreatedTimestamp ?? Date().iso8601withFractionalSeconds
     }
 }
 

@@ -70,38 +70,14 @@ struct MDProductFormView: View {
         let initialProduct =
             existingProduct
             ?? MDProduct(
-                id: 0,
                 productGroupID: userSettings?.productPresetsProductGroupID,
                 locationID: userSettings?.productPresetsLocationID ?? -1,
-                storeID: -1,
                 quIDPurchase: userSettings?.productPresetsQuID ?? -1,
                 quIDStock: userSettings?.productPresetsQuID ?? -1,
                 quIDConsume: userSettings?.productPresetsQuID ?? -1,
                 quIDPrice: userSettings?.productPresetsQuID ?? -1,
-                minStockAmount: 1.0,
                 defaultDueDays: userSettings?.productPresetsDefaultDueDays ?? 0,
-                defaultDueDaysAfterOpen: 0,
-                defaultDueDaysAfterFreezing: 0,
-                defaultDueDaysAfterThawing: 0,
-                pictureFileName: nil,
-                enableTareWeightHandling: false,
-                tareWeight: nil,
-                notCheckStockFulfillmentForRecipes: false,
-                parentProductID: nil,
-                calories: nil,
-                cumulateMinStockAmountOfSubProducts: false,
-                dueType: 1,
-                quickConsumeAmount: nil,
-                quickOpenAmount: nil,
-                hideOnStockOverview: false,
-                defaultStockLabelType: nil,
-                shouldNotBeFrozen: false,
                 treatOpenedAsOutOfStock: userSettings?.productPresetsTreatOpenedAsOutOfStock ?? false,
-                noOwnStock: false,
-                defaultConsumeLocationID: -1,
-                moveOnOpen: false,
-                autoReprintStockLabel: false,
-                rowCreatedTimestamp: Date().iso8601withFractionalSeconds
             )
         _product = State(initialValue: initialProduct)
         _isNameCorrect = State(initialValue: true)
@@ -130,7 +106,7 @@ struct MDProductFormView: View {
     }
 
     private func saveProduct() async {
-        if product.id == 0 {
+        if product.id == -1 {
             product.id = grocyVM.findNextID(.products)
         }
         isProcessing = true
@@ -145,8 +121,7 @@ struct MDProductFormView: View {
                     let newBarcode = MDProductBarcode(
                         id: grocyVM.findNextID(.product_barcodes),
                         productID: product.id,
-                        barcode: queuedBarcode,
-                        rowCreatedTimestamp: Date().iso8601withFractionalSeconds
+                        barcode: queuedBarcode
                     )
                     let _ = try await grocyVM.postMDObject(object: .product_barcodes, content: newBarcode)
                     GrocyLogger.info("Barcode add successful.")

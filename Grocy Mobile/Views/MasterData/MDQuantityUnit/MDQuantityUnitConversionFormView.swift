@@ -56,16 +56,7 @@ struct MDQuantityUnitConversionFormView: View {
     init(quantityUnit: MDQuantityUnit, existingQuantityUnitConversion: MDQuantityUnitConversion? = nil) {
         self.quantityUnit = quantityUnit
         self.existingQuantityUnitConversion = existingQuantityUnitConversion
-        let initialQuantityUnitConversion =
-            existingQuantityUnitConversion
-            ?? MDQuantityUnitConversion(
-                id: 0,
-                fromQuID: quantityUnit.id,
-                toQuID: 0,
-                factor: 1,
-                productID: nil,
-                rowCreatedTimestamp: Date().iso8601withFractionalSeconds
-            )
+        let initialQuantityUnitConversion = existingQuantityUnitConversion ?? MDQuantityUnitConversion(fromQuID: quantityUnit.id)
         _quantityUnitConversion = State(initialValue: initialQuantityUnitConversion)
     }
 
@@ -87,7 +78,7 @@ struct MDQuantityUnitConversionFormView: View {
     }
 
     private func saveQuantityUnitConversion() async {
-        if quantityUnitConversion.id == 0 {
+        if quantityUnitConversion.id == -1 {
             quantityUnitConversion.id = grocyVM.findNextID(.quantity_unit_conversions)
         }
         isProcessing = true
@@ -103,8 +94,7 @@ struct MDQuantityUnitConversionFormView: View {
                             fromQuID: quantityUnitConversion.toQuID,
                             toQuID: quantityUnitConversion.fromQuID,
                             factor: (1 / quantityUnitConversion.factor),
-                            productID: nil,
-                            rowCreatedTimestamp: Date().iso8601withFractionalSeconds
+                            productID: nil
                         )
                         _ = try await grocyVM.postMDObject(object: .quantity_unit_conversions, content: inverseQuantityUnitConversion)
                         GrocyLogger.info("Inverse quantity unit conversion add successful.")

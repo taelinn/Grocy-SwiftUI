@@ -17,10 +17,6 @@ struct MDLocationRowView: View {
                 Text(location.name)
                     .font(.title)
                     .foregroundStyle(location.active ? .primary : .secondary)
-                //                if location.hasChanges {
-                //                    Image(systemName: MySymbols.notSaved)
-                //                        .foregroundStyle(.orange)
-                //                }
                 if location.isFreezer {
                     Image(systemName: MySymbols.freezing)
                         .font(.title)

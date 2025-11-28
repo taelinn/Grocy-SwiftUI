@@ -30,15 +30,7 @@ struct MDStoreFormView: View {
 
     init(existingStore: MDStore? = nil) {
         self.existingStore = existingStore
-        let initialStore =
-            existingStore
-            ?? MDStore(
-                id: 0,
-                name: "",
-                active: true,
-                mdStoreDescription: "",
-                rowCreatedTimestamp: Date().iso8601withFractionalSeconds
-            )
+        let initialStore = existingStore ?? MDStore()
         _store = State(initialValue: initialStore)
         _isNameCorrect = State(initialValue: true)
     }
@@ -53,7 +45,7 @@ struct MDStoreFormView: View {
     }
 
     private func saveStore() async {
-        if store.id == 0 {
+        if store.id == -1 {
             store.id = grocyVM.findNextID(.shopping_locations)
         }
         isProcessing = true

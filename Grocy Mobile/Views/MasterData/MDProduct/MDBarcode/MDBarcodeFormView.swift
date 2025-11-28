@@ -39,15 +39,8 @@ struct MDBarcodeFormView: View {
         let initialBarcode =
             existingBarcode
             ?? MDProductBarcode(
-                id: 0,
                 productID: product.id,
-                barcode: "",
                 quID: product.quIDPurchase,
-                amount: nil,
-                storeID: nil,
-                lastPrice: nil,
-                note: "",
-                rowCreatedTimestamp: Date().iso8601withFractionalSeconds
             )
         _barcode = State(initialValue: initialBarcode)
         _isBarcodeCorrect = State(initialValue: true)
@@ -63,7 +56,7 @@ struct MDBarcodeFormView: View {
     }
 
     private func saveBarcode() async {
-        if barcode.id == 0 {
+        if barcode.id == -1 {
             barcode.id = grocyVM.findNextID(.product_barcodes)
         }
         isProcessing = true

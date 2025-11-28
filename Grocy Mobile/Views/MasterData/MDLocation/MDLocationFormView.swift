@@ -44,7 +44,7 @@ struct MDLocationFormView: View {
     }
 
     private func saveLocation() async {
-        if location.id == 0 {
+        if location.id == -1 {
             location.id = grocyVM.findNextID(.locations)
         }
         isProcessing = true

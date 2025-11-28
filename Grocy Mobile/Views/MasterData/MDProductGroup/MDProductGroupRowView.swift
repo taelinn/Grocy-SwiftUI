@@ -17,10 +17,6 @@ struct MDProductGroupRowView: View {
                 Text(productGroup.name)
                     .font(.title)
                     .foregroundColor(productGroup.active ? .primary : .gray)
-                //                if productGroup.hasChanges {
-                //                    Image(systemName: MySymbols.notSaved)
-                //                        .foregroundStyle(.orange)
-                //                }
             }
             if !productGroup.mdProductGroupDescription.isEmpty {
                 Text(productGroup.mdProductGroupDescription)
@@ -32,5 +28,7 @@ struct MDProductGroupRowView: View {
 }
 
 #Preview {
-    MDProductGroupRowView(productGroup: MDProductGroup(id: 1, name: "Product group", active: true, rowCreatedTimestamp: ""))
+    List {
+        MDProductGroupRowView(productGroup: MDProductGroup(id: 1, name: "Product group"))
+    }
 }

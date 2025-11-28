@@ -58,7 +58,7 @@ struct MDUserField: Codable {
         showAsColumnInTables: Int,
         config: String? = nil,
         sortNumber: Int? = nil,
-        rowCreatedTimestamp: String
+        rowCreatedTimestamp: String? = nil
     ) {
         self.id = id
         self.name = name
@@ -68,7 +68,7 @@ struct MDUserField: Codable {
         self.showAsColumnInTables = showAsColumnInTables
         self.config = config
         self.sortNumber = sortNumber
-        self.rowCreatedTimestamp = rowCreatedTimestamp
+        self.rowCreatedTimestamp = rowCreatedTimestamp ?? Date().iso8601withFractionalSeconds
     }
 }
 

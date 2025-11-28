@@ -30,15 +30,7 @@ struct MDProductGroupFormView: View {
 
     init(existingProductGroup: MDProductGroup? = nil) {
         self.existingProductGroup = existingProductGroup
-        let initialProductGroup =
-            existingProductGroup
-            ?? MDProductGroup(
-                id: 0,
-                name: "",
-                active: true,
-                mdProductGroupDescription: "",
-                rowCreatedTimestamp: Date().iso8601withFractionalSeconds
-            )
+        let initialProductGroup = existingProductGroup ?? MDProductGroup()
         _productGroup = State(initialValue: initialProductGroup)
         _isNameCorrect = State(initialValue: true)
     }
@@ -53,7 +45,7 @@ struct MDProductGroupFormView: View {
     }
 
     private func saveProductGroup() async {
-        if productGroup.id == 0 {
+        if productGroup.id == -1 {
             productGroup.id = grocyVM.findNextID(.product_groups)
         }
         isProcessing = true

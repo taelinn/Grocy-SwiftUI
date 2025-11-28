@@ -51,19 +51,19 @@ class MDQuantityUnitConversion: Codable, Equatable, Identifiable {
     }
 
     init(
-        id: Int,
-        fromQuID: Int,
-        toQuID: Int,
-        factor: Double,
-        productID: Int?,
-        rowCreatedTimestamp: String
+        id: Int = -1,
+        fromQuID: Int = -1,
+        toQuID: Int = -1,
+        factor: Double = 1.0,
+        productID: Int? = nil,
+        rowCreatedTimestamp: String? = nil
     ) {
         self.id = id
         self.fromQuID = fromQuID
         self.toQuID = toQuID
         self.factor = factor
         self.productID = productID
-        self.rowCreatedTimestamp = rowCreatedTimestamp
+        self.rowCreatedTimestamp = rowCreatedTimestamp ?? Date().iso8601withFractionalSeconds
     }
 
     static func == (lhs: MDQuantityUnitConversion, rhs: MDQuantityUnitConversion) -> Bool {

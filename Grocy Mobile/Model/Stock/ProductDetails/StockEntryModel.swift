@@ -73,19 +73,19 @@ class StockEntry: Codable, Equatable, Identifiable {
     }
 
     init(
-        id: Int,
-        productID: Int,
-        amount: Double,
-        bestBeforeDate: Date,
-        purchasedDate: Date?,
-        stockID: String,
-        price: Double?,
-        stockEntryOpen: Bool,
-        openedDate: Date?,
-        rowCreatedTimestamp: String,
+        id: Int = -1,
+        productID: Int = -1,
+        amount: Double = 1.0,
+        bestBeforeDate: Date = Date(),
+        purchasedDate: Date? = nil,
+        stockID: String = "",
+        price: Double? = nil,
+        stockEntryOpen: Bool = false,
+        openedDate: Date? = nil,
         locationID: Int? = nil,
         storeID: Int? = nil,
-        note: String?
+        note: String = "",
+        rowCreatedTimestamp: String? = nil
     ) {
         self.id = id
         self.productID = productID
@@ -96,10 +96,10 @@ class StockEntry: Codable, Equatable, Identifiable {
         self.price = price
         self.stockEntryOpen = stockEntryOpen
         self.openedDate = openedDate
-        self.rowCreatedTimestamp = rowCreatedTimestamp
         self.locationID = locationID
         self.storeID = storeID
         self.note = note
+        self.rowCreatedTimestamp = rowCreatedTimestamp ?? Date().iso8601withFractionalSeconds
     }
 
     func encode(to encoder: Encoder) throws {
