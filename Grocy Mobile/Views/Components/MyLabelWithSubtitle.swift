@@ -14,9 +14,9 @@ struct MyLabelWithSubtitle: View {
     var isProblem: Bool = false
     var isSubtitleProblem: Bool = false
     var hideSubtitle: Bool = false
-    
+
     var body: some View {
-        HStack{
+        HStack {
             if let systemImage = systemImage {
                 Image(systemName: systemImage)
                     .foregroundStyle(.primary)
@@ -36,12 +36,10 @@ struct MyLabelWithSubtitle: View {
     }
 }
 
-struct MyLabelWithSubtitle_Previews: PreviewProvider {
-    static var previews: some View {
-        Group {
-            MyLabelWithSubtitle(title: "Title", subTitle: "subtitle", systemImage: "tag")
-            MyLabelWithSubtitle(title: "Title", subTitle: "subtitle", systemImage: "tag", isProblem: true)
-            MyLabelWithSubtitle(title: "Title", subTitle: "subtitle", systemImage: "tag", isSubtitleProblem: true)
-        }
+#Preview {
+    Form {
+        MyLabelWithSubtitle(title: "Title", subTitle: "subtitle", systemImage: "tag")
+        MyLabelWithSubtitle(title: "Title", subTitle: "subtitle", systemImage: "tag", isProblem: true)
+        MyLabelWithSubtitle(title: "Title", subTitle: "subtitle", systemImage: "tag", isSubtitleProblem: true)
     }
 }

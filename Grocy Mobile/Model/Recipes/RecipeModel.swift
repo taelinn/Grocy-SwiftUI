@@ -20,7 +20,7 @@ class Recipe: Codable, Identifiable {
     var type: RecipeType
     var productID: Int?
     var rowCreatedTimestamp: String
-    
+
     enum CodingKeys: String, CodingKey {
         case id
         case name
@@ -34,9 +34,17 @@ class Recipe: Codable, Identifiable {
         case rowCreatedTimestamp = "row_created_timestamp"
     }
 
-    init(id: Int, name: String, recipeDescription: String = "", pictureFileName: String? = nil,
-         baseServings: Int = 4, desiredServings: Int = 4, notCheckShoppinglist: Int = 0,
-         type: RecipeType, productID: Int? = nil) {
+    init(
+        id: Int,
+        name: String,
+        recipeDescription: String = "",
+        pictureFileName: String? = nil,
+        baseServings: Int = 4,
+        desiredServings: Int = 4,
+        notCheckShoppinglist: Int = 0,
+        type: RecipeType,
+        productID: Int? = nil
+    ) {
         self.id = id
         self.name = name
         self.recipeDescription = recipeDescription
@@ -48,7 +56,7 @@ class Recipe: Codable, Identifiable {
         self.productID = productID
         self.rowCreatedTimestamp = String(Date().timeIntervalSince1970)
     }
-    
+
     required init(from decoder: Decoder) throws {
         do {
             let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -58,7 +66,9 @@ class Recipe: Codable, Identifiable {
             self.pictureFileName = try? container.decodeIfPresent(String.self, forKey: .pictureFileName) ?? nil
             do { self.baseServings = try container.decode(Int.self, forKey: .baseServings) } catch { self.baseServings = Int(try container.decode(String.self, forKey: .baseServings))! }
             do { self.desiredServings = try container.decodeIfPresent(Int.self, forKey: .desiredServings) } catch { self.desiredServings = try? Int(container.decodeIfPresent(String.self, forKey: .desiredServings) ?? "") }
-            do { self.notCheckShoppinglist = try container.decodeIfPresent(Int.self, forKey: .notCheckShoppinglist) } catch { self.notCheckShoppinglist = try? Int(container.decodeIfPresent(String.self, forKey: .notCheckShoppinglist) ?? "") }
+            do { self.notCheckShoppinglist = try container.decodeIfPresent(Int.self, forKey: .notCheckShoppinglist) } catch {
+                self.notCheckShoppinglist = try? Int(container.decodeIfPresent(String.self, forKey: .notCheckShoppinglist) ?? "")
+            }
             self.type = try container.decode(RecipeType.self, forKey: .type)
             do { self.productID = try container.decodeIfPresent(Int.self, forKey: .productID) } catch { self.productID = try? Int(container.decodeIfPresent(String.self, forKey: .productID) ?? "") }
             self.rowCreatedTimestamp = try container.decode(String.self, forKey: .rowCreatedTimestamp)
@@ -66,7 +76,31 @@ class Recipe: Codable, Identifiable {
             throw APIError.decodingError(error: error)
         }
     }
-    
+
+    init(
+        id: Int = -1,
+        name: String = "",
+        recipeDescription: String? = nil,
+        pictureFileName: String? = nil,
+        baseServings: Int = 0,
+        desiredServings: Int? = nil,
+        notCheckShoppinglist: Int? = nil,
+        type: RecipeType = .normal,
+        productID: Int? = nil,
+        rowCreatedTimestamp: String? = nil
+    ) {
+        self.id = id
+        self.name = name
+        self.recipeDescription = recipeDescription
+        self.pictureFileName = pictureFileName
+        self.baseServings = baseServings
+        self.desiredServings = desiredServings
+        self.notCheckShoppinglist = notCheckShoppinglist
+        self.type = type
+        self.productID = productID
+        self.rowCreatedTimestamp = rowCreatedTimestamp ?? Date().iso8601withFractionalSeconds
+    }
+
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(id, forKey: .id)

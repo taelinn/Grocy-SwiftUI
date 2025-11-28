@@ -87,5 +87,7 @@ struct Navigation: View {
 }
 
 #Preview {
-    Navigation(selection: Binding.constant(.stockOverview))
+    NavigationStack {
+        Navigation(selection: Binding.constant(.settings))
+    }
 }

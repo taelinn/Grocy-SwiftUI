@@ -34,5 +34,8 @@ struct MyToggle: View {
 
 #Preview {
     @Previewable @State var isOn: Bool = true
-    MyToggle(isOn: $isOn, description: "Description", descriptionInfo: "Descriptioninfo", icon: "tag")
+    
+    Form {
+        MyToggle(isOn: $isOn, description: "Description", descriptionInfo: "Descriptioninfo", icon: "tag")
+    }
 }

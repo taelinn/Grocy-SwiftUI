@@ -65,3 +65,14 @@ struct StockJournalFilterView: View {
         }
     }
 }
+
+#Preview(traits: .previewData) {
+    @Previewable @State var filteredProductID: Int? = nil
+    @Previewable @State var filteredTransactionType: TransactionType? = nil
+    @Previewable @State var filteredLocationID: Int? = nil
+    @Previewable @State var filteredUserID: Int? = nil
+    
+    NavigationStack {
+        StockJournalFilterView(filteredProductID: $filteredProductID, filteredTransactionType: $filteredTransactionType, filteredLocationID: $filteredLocationID, filteredUserID: $filteredUserID)
+    }
+}

@@ -293,8 +293,14 @@ struct ServerProfileFormView: View {
     }
 }
 
-#Preview {
+#Preview("Create", traits: .previewData) {
     NavigationStack {
         ServerProfileFormView()
+    }
+}
+
+#Preview("Edit", traits: .previewData) {
+    NavigationStack {
+        ServerProfileFormView(serverProfile: ServerProfile(name: "My Server", grocyServerURL: "http://homeserver.local", grocyAPIKey: "API_KEY", useHassIngress: true, hassToken: "HASS_TOKEN", customHeaders: [LoginCustomHeader(headerName: "MY_HEADER", headerValue: "Header_VAL")]))
     }
 }

@@ -412,6 +412,8 @@ struct ConsumeProductView: View {
     }
 }
 
-#Preview {
-    ConsumeProductView()
+#Preview(traits: .previewData) {
+    NavigationStack {
+        ConsumeProductView()
+    }
 }

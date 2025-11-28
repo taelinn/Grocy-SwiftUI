@@ -12,6 +12,10 @@ struct StockJournalRowView: View {
     @Environment(GrocyViewModel.self) private var grocyVM
     @Environment(\.modelContext) private var modelContext
     
+    var journalEntry: StockJournalEntry
+    
+    @Query(sort: \GrocyUser.id, order: .forward) var grocyUsers: GrocyUsers
+    
     var product: MDProduct? {
         let predicate = #Predicate<MDProduct> { product in
             product.id == journalEntry.productID
@@ -64,11 +68,7 @@ struct StockJournalRowView: View {
         return (try? modelContext.fetch(descriptor))?.first
     }
     
-    @Query(sort: \GrocyUser.id, order: .forward) var grocyUsers: GrocyUsers
-    
     @AppStorage("localizationKey") var localizationKey: String = "en"
-    
-    var journalEntry: StockJournalEntry
     
     var body: some View {
         VStack(alignment: .leading){
@@ -104,6 +104,17 @@ struct StockJournalRowView: View {
     }
 }
 
-//#Preview {
-//    StockJournalRowView()
-//}
+#Preview(traits: .previewData) {
+    let container = PreviewContainer.shared
+    let context = ModelContext(container)
+    
+    // Fetch one object from the preview store
+    let descriptor = FetchDescriptor<StockJournalEntry>(sortBy: [SortDescriptor(\.rowCreatedTimestamp)])
+    let journalEntry = (try? context.fetch(descriptor).randomElement())
+    
+    List {
+        if let journalEntry {
+            StockJournalRowView(journalEntry: journalEntry)
+        }
+    }
+}

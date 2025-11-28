@@ -5,12 +5,12 @@
 //  Created by Georg Meissner on 29.04.22.
 //
 
-import SwiftUI
 import SwiftData
+import SwiftUI
 
 struct SettingsShoppingListView: View {
     @Environment(GrocyViewModel.self) private var grocyVM
-    
+
     @Query var mdProducts: MDProducts
     @Query var shoppingList: [ShoppingListItem]
     @Query var shoppingListDescriptions: ShoppingListDescriptions
@@ -130,6 +130,8 @@ struct SettingsShoppingListView: View {
     }
 }
 
-#Preview {
-    SettingsShoppingListView()
+#Preview(traits: .previewData) {
+    NavigationStack {
+        SettingsShoppingListView()
+    }
 }

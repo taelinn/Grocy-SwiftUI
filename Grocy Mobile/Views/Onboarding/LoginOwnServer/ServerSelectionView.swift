@@ -148,3 +148,9 @@ struct ServerSelectionView: View {
         _ = try? profileModelContext?.save()
     }
 }
+
+#Preview(traits: .previewData) {
+    NavigationStack {
+        ServerSelectionView()
+    }
+}

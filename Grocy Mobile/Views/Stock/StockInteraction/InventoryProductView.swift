@@ -290,6 +290,8 @@ struct InventoryProductView: View {
     }
 }
 
-#Preview {
-    InventoryProductView()
+#Preview(traits: .previewData) {
+    NavigationStack {
+        InventoryProductView()
+    }
 }

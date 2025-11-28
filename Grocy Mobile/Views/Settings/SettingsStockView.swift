@@ -137,6 +137,8 @@ struct SettingsStockView: View {
     }
 }
 
-#Preview {
-    SettingsStockView()
+#Preview(traits: .previewData) {
+    NavigationStack {
+        SettingsStockView()
+    }
 }

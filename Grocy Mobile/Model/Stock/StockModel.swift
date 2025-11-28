@@ -77,15 +77,15 @@ class StockElement: Codable, Equatable {
     }
     
     init(
-        amount: Double,
-        amountAggregated: Double,
-        value: Double,
-        bestBeforeDate: Date?,
-        amountOpened: Double,
-        amountOpenedAggregated: Double,
-        isAggregatedAmount: Bool,
-        dueType: Int,
-        productID: Int,
+        amount: Double = 0.0,
+        amountAggregated: Double = 0.0,
+        value: Double = 0.0,
+        bestBeforeDate: Date? = nil,
+        amountOpened: Double = 0.0,
+        amountOpenedAggregated: Double = 0.0,
+        isAggregatedAmount: Bool = false,
+        dueType: Int = 1,
+        productID: Int = -1,
         product: MDProduct
     ) {
         self.amount = amount

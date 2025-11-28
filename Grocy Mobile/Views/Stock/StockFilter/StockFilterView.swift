@@ -89,11 +89,10 @@ struct StockFilterView: View {
     }
 }
 
-#Preview {
+#Preview(traits: .previewData) {
     @Previewable @State var filteredStatus: ProductStatus = .all
     @Previewable @State var filteredLocationID: Int? = nil
     @Previewable @State var filteredProductGroupID: Int? = nil
 
     StockFilterView(filteredLocationID: $filteredLocationID, filteredProductGroupID: $filteredProductGroupID, filteredStatus: $filteredStatus)
-        .environment(\.colorScheme, .light)
 }

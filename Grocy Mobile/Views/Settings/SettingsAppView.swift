@@ -10,22 +10,20 @@ import SwiftUI
 
 struct SettingsAppView: View {
     @Environment(GrocyViewModel.self) private var grocyVM
-    @Environment(\.modelContext) private var modelContext
 
     @AppStorage("devMode") private var devMode: Bool = false
-    #if os(iOS)
-        @AppStorage("iPhoneTabNavigation") var iPhoneTabNavigation: Bool = true
-        @AppStorage("useLegacyScanner") private var useLegacyScanner: Bool = false
-        @Environment(\.horizontalSizeClass) private var horizontalSizeClass
-    #endif
-
     @AppStorage("quickScanActionAfterAdd") private var quickScanActionAfterAdd: Bool = false
     @AppStorage("autoReload") private var autoReload: Bool = false
     @AppStorage("autoReloadInterval") private var autoReloadInterval: Int = 0
     @AppStorage("isDemoModus") var isDemoModus: Bool = true
     @AppStorage("localizationKey") var localizationKey: String = "en"
-
     @AppStorage("timeoutInterval") var timeoutInterval: Double = 60.0
+
+    #if os(iOS)
+        @AppStorage("iPhoneTabNavigation") var iPhoneTabNavigation: Bool = true
+        @AppStorage("useLegacyScanner") private var useLegacyScanner: Bool = false
+        @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    #endif
 
     let refreshIntervals: [Int] = [3, 5, 10, 30, 60, 300]
 
@@ -85,9 +83,9 @@ struct SettingsAppView: View {
                 amountName: "s",
                 systemImage: MySymbols.timeout
             )
-            //            .onChange(of: timeoutInterval) {
-            //                grocyVM.grocyApi.setTimeoutInterval(timeoutInterval: timeoutInterval)
-            //            }
+            .onChange(of: timeoutInterval) {
+                grocyVM.grocyApi.setTimeoutInterval(timeoutInterval: timeoutInterval)
+            }
             #if os(iOS)
                 NavigationLink(
                     destination: CodeTypeSelectionView(),
@@ -150,6 +148,8 @@ struct SettingsAppView: View {
     }
 }
 
-#Preview {
-    SettingsAppView()
+#Preview(traits: .previewData) {
+    NavigationStack {
+        SettingsAppView()
+    }
 }

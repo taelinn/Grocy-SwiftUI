@@ -44,8 +44,8 @@ struct RecipeRowView: View {
     }
 }
 
-//struct RecipeRowView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        RecipeRowView(recipe: Recipe())
-//    }
-//}
+#Preview {
+    List {
+        RecipeRowView(recipe: Recipe())
+    }
+}

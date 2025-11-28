@@ -61,8 +61,8 @@ struct TranslatorsView: View {
     }
 }
 
-struct TranslatorsView_Previews: PreviewProvider {
-    static var previews: some View {
+#Preview {
+    NavigationStack {
         TranslatorsView()
     }
 }

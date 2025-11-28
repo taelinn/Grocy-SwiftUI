@@ -117,10 +117,12 @@ struct QuickScanModeSelectProductView: View {
     }
 }
 
-#Preview {
-    QuickScanModeSelectProductView(
-        barcode: "12345",
-        qsActiveSheet: Binding.constant(QSActiveSheet.selectProduct),
-        newRecognizedBarcode: Binding.constant(nil)
-    )
+#Preview(traits: .previewData) {
+    NavigationStack {
+        QuickScanModeSelectProductView(
+            barcode: "12345",
+            qsActiveSheet: Binding.constant(QSActiveSheet.selectProduct),
+            newRecognizedBarcode: Binding.constant(nil)
+        )
+    }
 }

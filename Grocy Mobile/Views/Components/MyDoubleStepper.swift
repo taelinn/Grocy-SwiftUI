@@ -82,10 +82,12 @@ struct MyDoubleStepper: View {
                             }
                         }
                         if let minAmount = minAmount, amount < minAmount {
-                            Text("This cannot be lower than \(smallestValidAmount.formatted(.number.precision(.fractionLength(0...(userSettings?.stockDecimalPlacesAmounts ?? 4))))) and needs to be a valid number with max. \(userSettings?.stockDecimalPlacesAmounts ?? 4) decimal places")
-                                .font(.caption)
-                                .foregroundStyle(.red)
-                                .fixedSize(horizontal: false, vertical: true)
+                            Text(
+                                "This cannot be lower than \(smallestValidAmount.formatted(.number.precision(.fractionLength(0...(userSettings?.stockDecimalPlacesAmounts ?? 4))))) and needs to be a valid number with max. \(userSettings?.stockDecimalPlacesAmounts ?? 4) decimal places"
+                            )
+                            .font(.caption)
+                            .foregroundStyle(.red)
+                            .fixedSize(horizontal: false, vertical: true)
                         }
                         if let maxAmount = maxAmount, amount > maxAmount, let errorMessageMax = errorMessageMax {
                             Text(errorMessageMax)
@@ -195,10 +197,12 @@ struct MyDoubleStepperOptional: View {
                             }
                         }
                         if let minAmount = minAmount, let amount = amount, amount < minAmount {
-                            Text("This cannot be lower than \(smallestValidAmount.formatted(.number.precision(.fractionLength(0...(userSettings?.stockDecimalPlacesAmounts ?? 4))))) and needs to be a valid number with max. \(userSettings?.stockDecimalPlacesAmounts ?? 4) decimal places")
-                                .font(.caption)
-                                .foregroundStyle(.red)
-                                .fixedSize(horizontal: false, vertical: true)
+                            Text(
+                                "This cannot be lower than \(smallestValidAmount.formatted(.number.precision(.fractionLength(0...(userSettings?.stockDecimalPlacesAmounts ?? 4))))) and needs to be a valid number with max. \(userSettings?.stockDecimalPlacesAmounts ?? 4) decimal places"
+                            )
+                            .font(.caption)
+                            .foregroundStyle(.red)
+                            .fixedSize(horizontal: false, vertical: true)
                         }
                         if let maxAmount = maxAmount, let amount = amount, amount > maxAmount, let errorMessageMax = errorMessageMax {
                             Text(errorMessageMax)
@@ -213,15 +217,13 @@ struct MyDoubleStepperOptional: View {
     }
 }
 
-//#Preview {
-//    let config = ModelConfiguration(isStoredInMemoryOnly: true)
-//    let container = try! ModelContainer(for: GrocyUserSettings.self, configurations: config)
-//
-//    let userSettings = GrocyUserSettings()
-//    container.mainContext.insert(userSettings)
-//
-//    @Previewable @State var amount: Double = 1.0
-//
-//    MyDoubleStepper(amount: $amount, description: "Description", descriptionInfo: "Description info Text", minAmount: 1.0, amountStep: 0.1, amountName: "QuantityUnit", systemImage: "tag")
-//        .modelContainer(container)
-//}
+#Preview(traits: .previewData) {
+    @Previewable @State var amount: Double = 1.0
+    @Previewable @State var amountOptional: Double? = nil
+
+    List {
+        MyDoubleStepper(amount: $amount, description: "Description", descriptionInfo: "Description info Text", minAmount: 1.0, amountStep: 0.1, amountName: "QuantityUnit", systemImage: "tag")
+        
+        MyDoubleStepperOptional(amount: $amountOptional, description: "Description", descriptionInfo: "Description info Text", minAmount: 1.0, amountStep: 0.1, amountName: "QuantityUnit", systemImage: "tag")
+    }
+}

@@ -291,8 +291,8 @@ struct TransferProductView: View {
     }
 }
 
-struct TransferProductView_Previews: PreviewProvider {
-    static var previews: some View {
+#Preview(traits: .previewData) {
+    NavigationStack {
         TransferProductView()
     }
 }

@@ -107,6 +107,8 @@ struct StockEntryRowView: View {
     }
 }
 
-//#Preview {
-//    StockEntryRowView()
-//}
+#Preview(traits: .previewData) {
+    Form {
+        StockEntryRowView(stockEntry: StockEntry(), dueType: 1, productID: 2)
+    }
+}

@@ -5,26 +5,25 @@
 //  Created by Georg Meissner on 02.12.22.
 //
 
-import SwiftUI
 import SwiftData
-
+import SwiftUI
 
 struct RecipesView: View {
     @Environment(GrocyViewModel.self) private var grocyVM
-    
+
     @Query(sort: \Recipe.name, order: .forward) var recipes: Recipes
-    
+
     @State private var searchString: String = ""
     @State private var sortOrder = [KeyPathComparator(\Recipe.name)]
-    
+
     private let dataToUpdate: [ObjectEntities] = [.recipes, .products]
     private let additionalDataToUpdate: [AdditionalEntities] = [.recipeFulfillments]
     private func updateData() async {
         await grocyVM.requestData(objects: dataToUpdate, additionalObjects: additionalDataToUpdate)
     }
-    
+
     private var gridLayout = [GridItem(.flexible()), GridItem(.flexible())]
-    
+
     var filteredRecipes: Recipes {
         recipes
             .filter({
@@ -35,42 +34,51 @@ struct RecipesView: View {
             })
             .sorted(using: sortOrder)
     }
-    
+
     var body: some View {
         ScrollView {
             LazyVGrid(columns: gridLayout, alignment: .center, spacing: 10.0) {
-                ForEach(filteredRecipes, id:\.id) { recipe in
-                    NavigationLink(value: recipe, label: {
-                        RecipeRowView(recipe: recipe)
-                            .foregroundStyle(.foreground)
-                    })
+                ForEach(filteredRecipes, id: \.id) { recipe in
+                    NavigationLink(
+                        value: recipe,
+                        label: {
+                            RecipeRowView(recipe: recipe)
+                                .foregroundStyle(.foreground)
+                        }
+                    )
                 }
             }
         }
         .navigationTitle("Recipes")
-        .navigationDestination(for: Recipe.self, destination: { recipe in
-            RecipeView(recipe: recipe)
-        })
+        .navigationDestination(
+            for: Recipe.self,
+            destination: { recipe in
+                RecipeView(recipe: recipe)
+            }
+        )
         .refreshable(action: {
             await updateData()
         })
         .task {
-                await updateData()
+            await updateData()
         }
         .searchable(text: $searchString, prompt: "Search")
         .animation(.default, value: recipes.count)
         .toolbar(content: {
-            ToolbarItem(placement: .automatic, content: {
-#if os(macOS)
-                RefreshButton(updateData: { Task { await updateData() } })
-#endif
-            })
+            ToolbarItem(
+                placement: .automatic,
+                content: {
+                    #if os(macOS)
+                        RefreshButton(updateData: { Task { await updateData() } })
+                    #endif
+                }
+            )
         })
     }
 }
 
-struct RecipesView_Previews: PreviewProvider {
-    static var previews: some View {
+#Preview(traits: .previewData) {
+    NavigationStack {
         RecipesView()
     }
 }

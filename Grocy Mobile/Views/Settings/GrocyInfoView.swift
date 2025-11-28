@@ -130,6 +130,6 @@ struct GrocyInfoView: View {
     }
 }
 
-#Preview {
+#Preview(traits: .previewData) {
     GrocyInfoView(systemInfo: SystemInfo(grocyVersion: SystemInfo.GrocyVersion(version: "version", releaseDate: "date"), phpVersion: "php", sqliteVersion: "sqlite", os: "iOS", client: "Grocy Mobile"))
 }

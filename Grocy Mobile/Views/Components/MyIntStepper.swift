@@ -18,7 +18,7 @@ struct MyIntStepper: View {
     var errorMessage: LocalizedStringKey?
 
     var systemImage: String?
-    
+
     var formatter: NumberFormatter {
         let f = NumberFormatter()
         f.allowsFloats = false
@@ -78,7 +78,7 @@ struct MyIntStepperOptional: View {
     var errorMessage: LocalizedStringKey?
 
     var systemImage: String?
-    
+
     var formatter: NumberFormatter {
         let f = NumberFormatter()
         f.allowsFloats = false
@@ -146,17 +146,19 @@ struct MyIntStepperOptional: View {
     }
 }
 
-#Preview("Default") {
+#Preview(traits: .previewData) {
     @Previewable @State var amount: Int = 1
+    @Previewable @State var amountOptional: Int? = nil
 
-    MyIntStepper(amount: $amount, description: "Description", helpText: "Help Text", minAmount: 1, amountName: "QuantityUnit", systemImage: "tag")
-}
-#Preview("Optional") {
-    @Previewable @State var amount: Int? = nil
-
-    MyIntStepperOptional(amount: $amount, description: "Description", helpText: "Help Text", minAmount: 1, amountName: "QuantityUnit", systemImage: "tag")
-}
-
-#Preview("Default Error") {
-    MyIntStepper(amount: .constant(-1), description: "Description", helpText: "Help Text", minAmount: 1, amountName: "QuantityUnit", errorMessage: "Error Message", systemImage: "tag")
+    Form {
+        Section {
+            MyIntStepper(amount: $amount, description: "Description", helpText: "Help Text", minAmount: 1, amountName: "QuantityUnit", systemImage: "tag")
+        }
+        Section("Optional") {
+            MyIntStepperOptional(amount: $amountOptional, description: "Description", helpText: "Help Text", minAmount: 1, amountName: "QuantityUnit", systemImage: "tag")
+        }
+        Section("Error") {
+            MyIntStepper(amount: .constant(-1), description: "Description", helpText: "Help Text", minAmount: 1, amountName: "QuantityUnit", errorMessage: "Error Message", systemImage: "tag")
+        }
+    }
 }

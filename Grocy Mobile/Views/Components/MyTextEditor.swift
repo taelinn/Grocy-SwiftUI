@@ -11,12 +11,13 @@ struct MyTextEditor: View {
     @Binding var textToEdit: String
     var description: LocalizedStringKey
     var leadingIcon: String?
-    
+
     var body: some View {
-        LabeledContent(content: {
-            TextEditor(text: $textToEdit)
-        }, label: {
-            HStack {
+        LabeledContent(
+            content: {
+                TextEditor(text: $textToEdit)
+            },
+            label: {
                 if let leadingIcon = leadingIcon {
                     Label(description, systemImage: leadingIcon)
                         .foregroundStyle(.primary)
@@ -24,13 +25,15 @@ struct MyTextEditor: View {
                     Text(description)
                 }
             }
-        })
-        
+        )
+
     }
 }
 
 #Preview {
     @Previewable @State var text: String = "TEST"
-    
-    MyTextEditor(textToEdit: $text, description: "DESCRIPTION")
+
+    Form {
+        MyTextEditor(textToEdit: $text, description: "DESCRIPTION")
+    }
 }

@@ -43,6 +43,24 @@ class GrocyUser: Codable, Equatable {
         }
     }
 
+    init(
+        id: Int = -1,
+        username: String = "",
+        firstName: String? = nil,
+        lastName: String? = nil,
+        displayName: String = "",
+        pictureFileName: String? = nil,
+        rowCreatedTimestamp: String? = nil
+    ) {
+        self.id = id
+        self.username = username
+        self.firstName = firstName
+        self.lastName = lastName
+        self.displayName = displayName
+        self.pictureFileName = pictureFileName
+        self.rowCreatedTimestamp = rowCreatedTimestamp ?? Date().iso8601withFractionalSeconds
+    }
+
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(id, forKey: .id)

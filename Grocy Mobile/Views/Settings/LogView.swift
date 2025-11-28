@@ -93,12 +93,8 @@ struct LogView: View {
     }
 }
 
-#Preview {
-    #if os(iOS)
-        NavigationStack {
-            LogView()
-        }
-    #else
+#Preview(traits: .previewData) {
+    NavigationStack {
         LogView()
-    #endif
+    }
 }

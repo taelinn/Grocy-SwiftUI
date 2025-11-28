@@ -8,15 +8,13 @@
 import SwiftUI
 
 struct GrocyUserInfoView: View {
-    @Environment(GrocyViewModel.self) private var grocyVM
-
     @State private var userPictureURL: URL? = nil
 
     var grocyUser: GrocyUser? = nil
 
     var body: some View {
-        if let grocyUser = grocyUser {
-            HStack {
+        Form {
+            if let grocyUser = grocyUser {
                 if let pictureFileName = grocyUser.pictureFileName {
                     PictureView(pictureFileName: pictureFileName, pictureType: .userPictures)
                         .clipShape(.rect(cornerRadius: 5.0))
@@ -26,13 +24,15 @@ struct GrocyUserInfoView: View {
                         .font(.title)
                     Text(grocyUser.displayName)
                 }
+            } else {
+                Text("Unknown")
             }
-        } else {
-            Text("Unknown")
         }
     }
 }
 
-#Preview {
-    GrocyUserInfoView(grocyUser: nil)
+#Preview(traits: .previewData) {
+    NavigationStack {
+        GrocyUserInfoView(grocyUser: GrocyUser(username: "Username", displayName: "Display Name"))
+    }
 }

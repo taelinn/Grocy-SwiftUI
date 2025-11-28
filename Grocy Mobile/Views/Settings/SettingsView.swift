@@ -115,6 +115,8 @@ struct SettingsView: View {
     }
 }
 
-#Preview {
-    SettingsView()
+#Preview(traits: .previewData) {
+    NavigationStack {
+        SettingsView()
+    }
 }

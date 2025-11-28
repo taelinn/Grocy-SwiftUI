@@ -331,6 +331,8 @@ struct PurchaseProductView: View {
     }
 }
 
-#Preview {
-    PurchaseProductView()
+#Preview(traits: .previewData) {
+    NavigationStack {
+        PurchaseProductView()
+    }
 }

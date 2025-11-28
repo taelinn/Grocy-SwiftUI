@@ -37,3 +37,9 @@ struct MDCategoryRowView<T: PersistentModel>: View {
         }
     }
 }
+
+#Preview(traits: .previewData) {
+    List {
+        MDCategoryRowView(categoryName: "Stores", iconName: MySymbols.store, mdType: MDStore.self)
+    }
+}

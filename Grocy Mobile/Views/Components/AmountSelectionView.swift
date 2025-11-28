@@ -98,13 +98,11 @@ struct AmountSelectionView: View {
     @Previewable @State var quantityUnitID: Int? = nil
     @Previewable @State var amount: Double = 250.0
 
-    NavigationStack {
-        Form {
-            AmountSelectionView(
-                productID: .constant(1),
-                amount: $amount,
-                quantityUnitID: $quantityUnitID
-            )
-        }
+    Form {
+        AmountSelectionView(
+            productID: .constant(1),
+            amount: $amount,
+            quantityUnitID: $quantityUnitID
+        )
     }
 }

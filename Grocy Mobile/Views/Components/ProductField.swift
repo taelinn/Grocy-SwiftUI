@@ -67,8 +67,7 @@ struct ProductField: View {
             case .success(let code):
                 searchTerm = code.string
             case .failure(let error):
-                print("Scanning for product failed. \(error)")
-            //            GrocyLogger.error("Scanning for product failed. \(error)")
+                GrocyLogger.error("Scanning for product failed. \(error)")
             }
         }
     #endif
@@ -100,12 +99,7 @@ struct ProductField: View {
         var pickerView: some View {
             Picker(
                 selection: $productID,
-                label: HStack {
-                    Image(systemName: MySymbols.product)
-                        .foregroundStyle(.primary)
-                    Text(description)
-
-                },
+                label: Label(description, systemImage: MySymbols.product).foregroundStyle(.primary),
                 content: {
                     HStack {
                         SearchBar(text: $searchTerm)
@@ -180,10 +174,12 @@ struct ProductField: View {
     #endif
 }
 
-#Preview {
+#Preview(traits: .previewData) {
+    @Previewable @State var productID: Int? = nil
+    
     NavigationStack {
         Form {
-            ProductField(productID: Binding.constant(1), description: "Product")
+            ProductField(productID: $productID, description: "Product")
         }
     }
 }

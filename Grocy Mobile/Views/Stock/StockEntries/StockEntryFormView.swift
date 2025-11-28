@@ -161,8 +161,8 @@ struct StockEntryFormView: View {
     }
 }
 
-//struct StockEntryFormView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        StockEntryFormView()
-//    }
-//}
+#Preview(traits: .previewData) {
+    NavigationStack {
+        StockEntryFormView()
+    }
+}

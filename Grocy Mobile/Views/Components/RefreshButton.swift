@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct RefreshButton: View {
-    let updateData: () -> Void
+    let updateData: () async -> Void
 
     @State private var isLoading: Bool = false
 
@@ -16,8 +16,10 @@ struct RefreshButton: View {
         Button(
             action: {
                 isLoading = true
-                updateData()
-                isLoading = false
+                Task {
+                    await updateData()
+                    isLoading = false
+                }
             },
             label: {
                 Image(systemName: MySymbols.reload)
@@ -28,5 +30,11 @@ struct RefreshButton: View {
 }
 
 #Preview {
-    RefreshButton(updateData: { print("Update") })
+    Form {
+        RefreshButton(updateData: {
+            Task {
+                try await Task.sleep(nanoseconds: 5_000_000_000)
+            }
+        })
+    }
 }

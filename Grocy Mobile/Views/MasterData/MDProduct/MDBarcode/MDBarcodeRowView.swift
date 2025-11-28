@@ -16,10 +16,6 @@ struct MDBarcodeRowView: View {
 
     var barcode: MDProductBarcode
 
-    var quantityUnit: MDQuantityUnit? {
-        mdQuantityUnits.first(where: { $0.id == barcode.quID })
-    }
-
     var body: some View {
         VStack(alignment: .leading) {
             HStack {
@@ -27,7 +23,7 @@ struct MDBarcodeRowView: View {
                     .font(.title)
             }
             if let amount = barcode.amount {
-                Text("\(Text("Amount")): \(amount.formattedAmount) \(amount == 1 ? quantityUnit?.name ?? String(barcode.quID ?? 0) : quantityUnit?.namePlural ?? String(barcode.quID ?? 0))")
+                Text("\(Text("Amount")): \(amount.formattedAmount) \(mdQuantityUnits.first(where: { $0.id == barcode.quID })?.getName(amount: amount) ?? String(barcode.quID ?? 0))")
                     .font(.caption)
             }
             if let storeName = mdStores.first(where: { $0.id == barcode.storeID })?.name {
@@ -41,6 +37,7 @@ struct MDBarcodeRowView: View {
 #Preview(traits: .previewData) {
     List {
         MDBarcodeRowView(barcode: MDProductBarcode(id: 1, productID: 1, barcode: "123456789"))
-        MDBarcodeRowView(barcode: MDProductBarcode(id: 2, productID: 1, barcode: "543242124", quID: 2, amount: 10.0, storeID: 1))
+        MDBarcodeRowView(barcode: MDProductBarcode(id: 2, productID: 1, barcode: "543242214", quID: 2, amount: 1.0, storeID: 1))
+        MDBarcodeRowView(barcode: MDProductBarcode(id: 3, productID: 1, barcode: "543242124", quID: 2, amount: 10.0, storeID: 2))
     }
 }

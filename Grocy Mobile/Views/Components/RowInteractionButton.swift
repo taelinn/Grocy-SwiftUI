@@ -10,19 +10,19 @@ import SwiftUI
 struct RowInteractionButton: View {
     var title: LocalizedStringKey?
     var image: String
-    
+
     var backgroundColor: Color
-    
+
     let paddingValue: CGFloat = 7
     let cornerRadiusValue: CGFloat = 3
     let fontSizeValue: CGFloat = 15
-    
+
     var foregroundColor: Color?
-    
+
     var helpString: LocalizedStringKey?
-    
+
     var body: some View {
-        HStack(alignment: .center, spacing: 2){
+        HStack(alignment: .center, spacing: 2) {
             Image(systemName: image)
                 .font(Font.system(size: fontSizeValue, weight: .bold))
             if let title = title {
@@ -53,8 +53,8 @@ struct GreenInteractionButtonStyle: ButtonStyle {
     }
 }
 
-struct RowInteractionButton_Previews: PreviewProvider {
-    static var previews: some View {
+#Preview {
+    Form {
         RowInteractionButton(title: "test", image: "trash", backgroundColor: Color.blue)
     }
 }

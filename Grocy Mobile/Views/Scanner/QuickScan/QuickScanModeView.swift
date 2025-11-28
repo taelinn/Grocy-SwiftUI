@@ -330,7 +330,9 @@ struct QuickScanModeView: View {
     }
 }
 
-#Preview {
-    QuickScanModeView()
+#Preview(traits: .previewData) {
+    NavigationStack {
+        QuickScanModeView()
+    }
 }
 

@@ -112,8 +112,8 @@ struct StockEntriesView: View {
     }
 }
 
-//struct StockEntriesView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        StockEntriesView(stockElement: )
-//    }
-//}
+#Preview(traits: .previewData) {
+    NavigationStack {
+        StockEntriesView(stockElement: StockElement(product: MDProduct(id: 4)))
+    }
+}

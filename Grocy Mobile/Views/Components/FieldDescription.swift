@@ -11,25 +11,28 @@ struct FieldDescription: View {
     var description: LocalizedStringKey
 
     @State private var showDescription: Bool = false
-    
+
     var body: some View {
         Image(systemName: MySymbols.hint)
             .help(description)
-#if os(iOS)
-            .onTapGesture {
-                showDescription.toggle()
-            }
-            .popover(isPresented: $showDescription, content: {
-                Text(description)
-                    .padding()
-                    .fixedSize(horizontal: false, vertical: true)
-            })
-#endif
+            #if os(iOS)
+                .onTapGesture {
+                    showDescription.toggle()
+                }
+                .popover(
+                    isPresented: $showDescription,
+                    content: {
+                        Text(description)
+                            .padding()
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                )
+            #endif
     }
 }
 
-struct FieldDescription_Previews: PreviewProvider {
-    static var previews: some View {
+#Preview {
+    NavigationStack {
         FieldDescription(description: "Description")
     }
 }
