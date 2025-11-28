@@ -23,94 +23,91 @@ struct SettingsView: View {
     @Environment(\.dismiss) var dismiss
 
     @State private var selection: SettingsNavigationItem? = nil
-    @State private var path = NavigationPath()
 
     @AppStorage("isLoggedIn") var isLoggedIn: Bool = false
 
     var body: some View {
-        NavigationStack(path: $path) {
-            List {
-                if isLoggedIn {
-                    Section("Grocy") {
-                        NavigationLink(value: SettingsNavigationItem.serverInfo) {
-                            Label("Information about Grocy Server", systemImage: MySymbols.info)
+        List {
+            if isLoggedIn {
+                Section("Grocy") {
+                    NavigationLink(value: SettingsNavigationItem.serverInfo) {
+                        Label("Information about Grocy Server", systemImage: MySymbols.info)
+                            .foregroundStyle(.primary)
+                    }
+                    if let currentUser = grocyVM.currentUser {
+                        NavigationLink(value: SettingsNavigationItem.userInfo) {
+                            Label("Logged in as user \(currentUser.displayName)", systemImage: MySymbols.user)
                                 .foregroundStyle(.primary)
                         }
-                        if let currentUser = grocyVM.currentUser {
-                            NavigationLink(value: SettingsNavigationItem.userInfo) {
-                                Label("Logged in as user \(currentUser.displayName)", systemImage: MySymbols.user)
-                                    .foregroundStyle(.primary)
-                            }
+                    }
+                    Button(
+                        action: {
+                            grocyVM.deleteAllCachedData()
+                        },
+                        label: {
+                            Label("Reset cache", systemImage: MySymbols.delete)
+                                .foregroundStyle(.primary)
                         }
-                        Button(
-                            action: {
-                                grocyVM.deleteAllCachedData()
-                            },
-                            label: {
-                                Label("Reset cache", systemImage: MySymbols.delete)
-                                    .foregroundStyle(.primary)
-                            }
-                        )
-                        Button(
-                            action: {
-                                grocyVM.logout()
-                            },
-                            label: {
-                                Label("Logout", systemImage: MySymbols.logout)
-                                    .foregroundStyle(.red)
-                            }
-                        )
-                    }
+                    )
+                    Button(
+                        action: {
+                            grocyVM.logout()
+                        },
+                        label: {
+                            Label("Logout", systemImage: MySymbols.logout)
+                                .foregroundStyle(.red)
+                        }
+                    )
                 }
+            }
 
-                Section("Grocy settings") {
-                    NavigationLink(value: SettingsNavigationItem.appSettings) {
-                        Label("App settings", systemImage: MySymbols.app)
-                            .foregroundStyle(.primary)
-                    }
-                    NavigationLink(value: SettingsNavigationItem.stockSettings) {
-                        Label("Stock settings", systemImage: MySymbols.stockOverview)
-                            .foregroundStyle(.primary)
-                    }
-                    NavigationLink(value: SettingsNavigationItem.shoppingListSettings) {
-                        Label("Shopping list settings", systemImage: MySymbols.shoppingList)
-                            .foregroundStyle(.primary)
-                    }
+            Section("Grocy settings") {
+                NavigationLink(value: SettingsNavigationItem.appSettings) {
+                    Label("App settings", systemImage: MySymbols.app)
+                        .foregroundStyle(.primary)
                 }
+                NavigationLink(value: SettingsNavigationItem.stockSettings) {
+                    Label("Stock settings", systemImage: MySymbols.stockOverview)
+                        .foregroundStyle(.primary)
+                }
+                NavigationLink(value: SettingsNavigationItem.shoppingListSettings) {
+                    Label("Shopping list settings", systemImage: MySymbols.shoppingList)
+                        .foregroundStyle(.primary)
+                }
+            }
 
-                Section("App") {
-                    NavigationLink(value: SettingsNavigationItem.appLog) {
-                        Label("App log", systemImage: MySymbols.logFile)
-                            .foregroundStyle(.primary)
-                    }
-                    NavigationLink(value: SettingsNavigationItem.aboutApp) {
-                        Label("About this app", systemImage: MySymbols.info)
-                            .foregroundStyle(.primary)
-                    }
+            Section("App") {
+                NavigationLink(value: SettingsNavigationItem.appLog) {
+                    Label("App log", systemImage: MySymbols.logFile)
+                        .foregroundStyle(.primary)
+                }
+                NavigationLink(value: SettingsNavigationItem.aboutApp) {
+                    Label("About this app", systemImage: MySymbols.info)
+                        .foregroundStyle(.primary)
                 }
             }
-            .navigationDestination(for: SettingsNavigationItem.self) { destination in
-                switch destination {
-                case .serverInfo:
-                    GrocyInfoView(systemInfo: grocyVM.systemInfo)
-                case .userInfo:
-                    GrocyUserInfoView(grocyUser: grocyVM.currentUser)
-                case .appSettings:
-                    SettingsAppView()
-                case .stockSettings:
-                    SettingsStockView()
-                case .shoppingListSettings:
-                    SettingsShoppingListView()
-                case .appLog:
-                    LogView()
-                case .aboutApp:
-                    AboutView()
-                }
+        }
+        .navigationDestination(for: SettingsNavigationItem.self) { destination in
+            switch destination {
+            case .serverInfo:
+                GrocyInfoView(systemInfo: grocyVM.systemInfo)
+            case .userInfo:
+                GrocyUserInfoView(grocyUser: grocyVM.currentUser)
+            case .appSettings:
+                SettingsAppView()
+            case .stockSettings:
+                SettingsStockView()
+            case .shoppingListSettings:
+                SettingsShoppingListView()
+            case .appLog:
+                LogView()
+            case .aboutApp:
+                AboutView()
             }
-            .navigationTitle("Settings")
-            .task {
-                await grocyVM.requestData(additionalObjects: [.system_info, .current_user])
-            }
+        }
+        .navigationTitle("Settings")
+        .task {
+            await grocyVM.requestData(additionalObjects: [.system_info, .current_user])
         }
     }
 }
