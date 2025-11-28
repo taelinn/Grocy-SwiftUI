@@ -92,7 +92,7 @@ struct ShoppingListEntryFormView: View {
     var body: some View {
         Form {
             #if os(macOS)
-                Text(shoppingListEntry == nil ? "Create shopping list item" : "Edit shopping list item").font(.headline)
+                Text(existingShoppingListEntry == nil ? "Create shopping list item" : "Edit shopping list item").font(.headline)
             #endif
             Picker(
                 selection: $shoppingListEntry.shoppingListID,

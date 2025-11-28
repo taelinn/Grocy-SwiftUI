@@ -14,6 +14,18 @@ struct StockEntriesView: View {
     var stockElement: StockElement
 
     @Query var stockEntries: StockEntries
+    @Query var mdProducts: MDProducts
+    @Query var mdQuantityUnits: MDQuantityUnits
+    @Query var mdStores: MDStores
+    @Query var mdLocations: MDLocations
+    @Query var systemConfigList: [SystemConfig]
+    var systemConfig: SystemConfig? {
+        systemConfigList.first
+    }
+    @Query var userSettingsList: GrocyUserSettingsList
+    var userSettings: GrocyUserSettings? {
+        userSettingsList.first
+    }
 
     init(stockElement: StockElement) {
         self.stockElement = stockElement
@@ -58,7 +70,16 @@ struct StockEntriesView: View {
                 Text("No matching records found")
             }
             ForEach(stockEntries, id: \.id) { stockEntry in
-                StockEntryRowView(stockEntry: stockEntry, dueType: stockElement.dueType, productID: stockElement.productID)
+                StockEntryRowView(
+                    stockEntry: stockEntry,
+                    stockElement: stockElement,
+                    product: mdProducts.first(where: { $0.id == stockEntry.productID }),
+                    quantityUnit: mdQuantityUnits.first(where: { $0.id == mdProducts.first(where: { $0.id == stockEntry.productID })?.quIDStock }),
+                    location: mdLocations.first(where: { $0.id == stockEntry.locationID }),
+                    store: mdStores.first(where: { $0.id == stockEntry.storeID }),
+                    currency: systemConfig?.currency,
+                    userSettings: userSettings
+                )
                     .swipeActions(
                         edge: .leading,
                         allowsFullSwipe: true,

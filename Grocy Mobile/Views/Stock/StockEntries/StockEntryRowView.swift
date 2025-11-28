@@ -9,42 +9,29 @@ import SwiftData
 import SwiftUI
 
 struct StockEntryRowView: View {
-    @Query var systemConfigList: [SystemConfig]
-    @Query var userSettingsList: GrocyUserSettingsList
-    var userSettings: GrocyUserSettings? {
-        userSettingsList.first
-    }
-
-    @Query(sort: \MDProduct.name, order: .forward) var mdProducts: MDProducts
-    @Query(sort: \MDQuantityUnit.id, order: .forward) var mdQuantityUnits: MDQuantityUnits
-    @Query(sort: \MDStore.name, order: .forward) var mdStores: MDStores
-    @Query(sort: \MDLocation.name, order: .forward) var mdLocations: MDLocations
-
     @AppStorage("localizationKey") var localizationKey: String = "en"
     @Environment(\.colorScheme) var colorScheme
 
     var stockEntry: StockEntry
-    var dueType: Int
-    var productID: Int
+    var stockElement: StockElement
+    var product: MDProduct?
+    var quantityUnit: MDQuantityUnit?
+    var location: MDLocation?
+    var store: MDStore?
+    var currency: String?
+    var userSettings: GrocyUserSettings?
 
     var backgroundColor: Color {
         if (0..<(userSettings?.stockDueSoonDays ?? 5 + 1)) ~= getTimeDistanceFromNow(date: stockEntry.bestBeforeDate) ?? 100 {
             return Color(.GrocyColors.grocyYellowBackground)
         }
-        if dueType == 1 ? (getTimeDistanceFromNow(date: stockEntry.bestBeforeDate) ?? 100 < 0) : false {
+        if stockElement.dueType == 1 ? (getTimeDistanceFromNow(date: stockEntry.bestBeforeDate) ?? 100 < 0) : false {
             return Color(.GrocyColors.grocyGrayBackground)
         }
-        if dueType == 2 ? (getTimeDistanceFromNow(date: stockEntry.bestBeforeDate) ?? 100 < 0) : false {
+        if stockElement.dueType == 2 ? (getTimeDistanceFromNow(date: stockEntry.bestBeforeDate) ?? 100 < 0) : false {
             return Color(.GrocyColors.grocyRedBackground)
         }
         return colorScheme == .light ? Color.white : Color.black
-    }
-
-    var product: MDProduct? {
-        mdProducts.first(where: { $0.id == stockEntry.productID })
-    }
-    var quantityUnit: MDQuantityUnit? {
-        mdQuantityUnits.first(where: { $0.id == product?.quIDStock })
     }
 
     var body: some View {
@@ -73,16 +60,16 @@ struct StockEntryRowView: View {
                         }
                     }
 
-                    if let locationID = stockEntry.locationID, let location = mdLocations.first(where: { $0.id == locationID }) {
+                    if let location {
                         Text("\(Text("Location")): \(location.name)")
                     }
 
-                    if let storeID = stockEntry.storeID, let store = mdStores.first(where: { $0.id == storeID }) {
+                    if let store {
                         Text("\(Text("Store")): \(store.name)")
                     }
 
                     if let price = stockEntry.price, price > 0 {
-                        Text("\(Text("Price")): \(price.formattedAmount) \(systemConfigList.first?.currency ?? "")")
+                        Text("\(Text("Price")): \(price.formattedAmount) \(currency ?? "")")
                     }
 
                     HStack(alignment: .bottom) {
@@ -107,8 +94,8 @@ struct StockEntryRowView: View {
     }
 }
 
-#Preview(traits: .previewData) {
-    Form {
-        StockEntryRowView(stockEntry: StockEntry(), dueType: 1, productID: 2)
-    }
-}
+//#Preview(traits: .previewData) {
+//    Form {
+//        StockEntryRowView(stockEntry: StockEntry(), dueType: 1, productID: 2)
+//    }
+//}
