@@ -19,26 +19,26 @@ enum TransactionType: String, Codable, CaseIterable {
     case transferFrom = "transfer_from"
     case transferTo = "transfer_to"
 
-    func formatTransactionType() -> String {
+    var localizedName: LocalizedStringKey {
         switch self {
         case .consume:
-            return "Consume"
+            return LocalizedStringKey("Consume")
         case .inventoryCorrection:
-            return "Inventory correction"
+            return LocalizedStringKey("Inventory correction")
         case .productOpened:
-            return "Product opened"
+            return LocalizedStringKey("Product opened")
         case .purchase:
-            return "Purchase"
+            return LocalizedStringKey("Purchase")
         case .selfProduction:
-            return "Self-production"
+            return LocalizedStringKey("Self-production")
         case .stockEditNew:
-            return "Stock entry edited (new values)"
+            return LocalizedStringKey("Stock entry edited (new values)")
         case .stockEditOld:
-            return "Stock entry edited (old values)"
+            return LocalizedStringKey("Stock entry edited (old values)")
         case .transferFrom:
-            return "Transfer from"
+            return LocalizedStringKey("Transfer From")
         case .transferTo:
-            return "Transfer to"
+            return LocalizedStringKey("Transfer To")
         }
     }
 }

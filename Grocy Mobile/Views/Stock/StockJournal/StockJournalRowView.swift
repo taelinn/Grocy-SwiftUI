@@ -5,79 +5,26 @@
 //  Created by Georg Meissner on 20.10.23.
 //
 
-import SwiftUI
 import SwiftData
+import SwiftUI
 
 struct StockJournalRowView: View {
-    @Environment(GrocyViewModel.self) private var grocyVM
-    @Environment(\.modelContext) private var modelContext
-    
     var journalEntry: StockJournalEntry
-    
-    @Query(sort: \GrocyUser.id, order: .forward) var grocyUsers: GrocyUsers
-    
-    var product: MDProduct? {
-        let predicate = #Predicate<MDProduct> { product in
-            product.id == journalEntry.productID
-        }
-        
-        let descriptor = FetchDescriptor<MDProduct>(
-            predicate: predicate,
-            sortBy: []
-        )
-        
-        return (try? modelContext.fetch(descriptor))?.first
-    }
-    
-    var location: MDLocation? {
-        let predicate = #Predicate<MDLocation> { location in
-            location.id == journalEntry.locationID
-        }
-        
-        let descriptor = FetchDescriptor<MDLocation>(
-            predicate: predicate,
-            sortBy: []
-        )
-        
-        return (try? modelContext.fetch(descriptor))?.first
-    }
-    
-    var quantityUnit: MDQuantityUnit? {
-        let predicate = #Predicate<MDQuantityUnit> { quantityUnit in
-            product != nil ? quantityUnit.id == product!.quIDStock : false
-        }
-        
-        let descriptor = FetchDescriptor<MDQuantityUnit>(
-            predicate: predicate,
-            sortBy: []
-        )
-        
-        return (try? modelContext.fetch(descriptor))?.first
-    }
-    
-    var grocyUser: GrocyUser? {
-        let predicate = #Predicate<GrocyUser> { grocyUser in
-            grocyUser.id == journalEntry.userID
-        }
-        
-        let descriptor = FetchDescriptor<GrocyUser>(
-            predicate: predicate,
-            sortBy: []
-        )
-        
-        return (try? modelContext.fetch(descriptor))?.first
-    }
-    
+    var product: MDProduct?
+    var location: MDLocation?
+    var quantityUnit: MDQuantityUnit?
+    var grocyUser: GrocyUser?
+
     @AppStorage("localizationKey") var localizationKey: String = "en"
-    
+
     var body: some View {
-        VStack(alignment: .leading){
+        VStack(alignment: .leading) {
             Text(product?.name ?? "Name Error")
                 .font(.title)
                 .strikethrough(journalEntry.undone == 1, color: .primary)
             if journalEntry.undone == 1 {
                 if let date = getDateFromTimestamp(journalEntry.undoneTimestamp ?? "") {
-                    HStack(alignment: .bottom){
+                    HStack(alignment: .bottom) {
                         Text("\(Text("Undone on")) \(formatDateAsString(date, showTime: true, localizationKey: localizationKey) ?? "")")
                             .font(.caption)
                         Text(getRelativeDateAsText(date, localizationKey: localizationKey) ?? "")
@@ -88,14 +35,14 @@ struct StockJournalRowView: View {
                 }
             }
             Group {
-                Text("\(Text(LocalizedStringKey("Amount"))): \(journalEntry.amount.formattedAmount) \(quantityUnit?.getName(amount: journalEntry.amount) ?? "")")
-                Text("\(Text(LocalizedStringKey("Transaction time"))): \(formatTimestampOutput(journalEntry.rowCreatedTimestamp, localizationKey: localizationKey) ?? "")")
-                Text("\(Text(LocalizedStringKey("Transaction type"))): \(journalEntry.transactionType.formatTransactionType())")
+                Text("\(Text("Amount")): \(journalEntry.amount.formattedAmount) \(quantityUnit?.getName(amount: journalEntry.amount) ?? "")")
+                Text("\(Text("Transaction time")): \(formatTimestampOutput(journalEntry.rowCreatedTimestamp, localizationKey: localizationKey) ?? "")")
+                Text("\(Text("Transaction type")): \(Text(journalEntry.transactionType.localizedName))")
                     .font(.caption)
-                Text("\(Text(LocalizedStringKey("Location"))): \(location?.name ?? "Location Error")")
-                Text("\(Text(LocalizedStringKey("Done by"))): \(grocyUser?.displayName ?? "Username Error")")
+                Text("\(Text("Location")): \(location?.name ?? "Location Error")")
+                Text("\(Text("Done by")): \(grocyUser?.displayName ?? "Username Error")")
                 if let note = journalEntry.note {
-                    Text("\(Text(LocalizedStringKey("Note"))): \(note)")
+                    Text("\(Text("Note")): \(note)")
                 }
             }
             .foregroundStyle(journalEntry.undone == 1 ? Color.gray : Color.primary)
@@ -107,14 +54,17 @@ struct StockJournalRowView: View {
 #Preview(traits: .previewData) {
     let container = PreviewContainer.shared
     let context = ModelContext(container)
-    
+
     // Fetch one object from the preview store
-    let descriptor = FetchDescriptor<StockJournalEntry>(sortBy: [SortDescriptor(\.rowCreatedTimestamp)])
-    let journalEntry = (try? context.fetch(descriptor).randomElement())
+    let descriptor = FetchDescriptor<StockJournalEntry>()
+    let journalEntry = (try? context.fetch(descriptor))?.randomElement()
     
+//    let productDescriptor = FetchDescriptor<MDProduct>(predicate: #Predicate<MDProduct> { $0.id == journalEntry?.productID })
+//    let product = (try? context.fetch(productDescriptor))?.first
+
     List {
         if let journalEntry {
-            StockJournalRowView(journalEntry: journalEntry)
+            StockJournalRowView(journalEntry: journalEntry, product: MDProduct())
         }
     }
 }

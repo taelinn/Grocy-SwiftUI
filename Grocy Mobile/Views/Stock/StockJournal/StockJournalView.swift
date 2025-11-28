@@ -12,6 +12,11 @@ struct StockJournalView: View {
     @Environment(GrocyViewModel.self) private var grocyVM
     @Environment(\.modelContext) private var modelContext
 
+    @Query var mdProducts: MDProducts
+    @Query var mdLocations: MDLocations
+    @Query var mdQuantityUnits: MDQuantityUnits
+    @Query var grocyUsers: GrocyUsers
+
     @State private var searchString: String = ""
 
     @State private var filteredProductID: Int?
@@ -137,24 +142,30 @@ struct StockJournalView: View {
                 ContentUnavailableView.search
             }
             ForEach(stockJournal, id: \.id) { (journalEntry: StockJournalEntry) in
-                StockJournalRowView(journalEntry: journalEntry)
-                    .swipeActions(
-                        edge: .leading,
-                        allowsFullSwipe: true,
-                        content: {
-                            Button(
-                                action: {
-                                    Task {
-                                        await undoTransaction(stockJournalEntry: journalEntry)
-                                    }
-                                },
-                                label: {
-                                    Label("Undo transaction", systemImage: MySymbols.undo)
+                StockJournalRowView(
+                    journalEntry: journalEntry,
+                    product: mdProducts.first(where: { $0.id == journalEntry.productID }),
+                    location: mdLocations.first(where: { $0.id == journalEntry.locationID }),
+                    quantityUnit: mdQuantityUnits.first(where: { $0.id == mdProducts.first(where: { $0.id == journalEntry.productID })?.locationID }),
+                    grocyUser: grocyUsers.first(where: { $0.id == journalEntry.userID })
+                )
+                .swipeActions(
+                    edge: .leading,
+                    allowsFullSwipe: true,
+                    content: {
+                        Button(
+                            action: {
+                                Task {
+                                    await undoTransaction(stockJournalEntry: journalEntry)
                                 }
-                            )
-                            .disabled(journalEntry.undone == 1)
-                        }
-                    )
+                            },
+                            label: {
+                                Label("Undo transaction", systemImage: MySymbols.undo)
+                            }
+                        )
+                        .disabled(journalEntry.undone == 1)
+                    }
+                )
             }
         }
         .navigationTitle("Stock journal")
@@ -230,6 +241,8 @@ struct StockJournalView: View {
     }
 }
 
-#Preview {
-    StockJournalView()
+#Preview(traits: .previewData) {
+    NavigationStack {
+        StockJournalView()
+    }
 }

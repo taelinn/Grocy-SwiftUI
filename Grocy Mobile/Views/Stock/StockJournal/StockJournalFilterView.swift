@@ -35,7 +35,7 @@ struct StockJournalFilterView: View {
             Picker(selection: $filteredTransactionType, content: {
                 Text("All").tag(nil as TransactionType?)
                 ForEach(TransactionType.allCases, id: \.rawValue) { transactionType in
-                    Text(transactionType.formatTransactionType())
+                    Text(transactionType.localizedName)
                         .tag(transactionType as TransactionType?)
                 }
             }, label: {
