@@ -708,6 +708,14 @@ struct MDProductFormView: View {
     }
 }
 
-#Preview {
-    MDProductFormView()
+#Preview("Create", traits: .previewData) {
+    NavigationStack {
+        MDProductFormView()
+    }
+}
+
+#Preview("Edit", traits: .previewData) {
+    NavigationStack {
+        MDProductFormView(existingProduct: MDProduct(name: "Product", locationID: 2, quIDPurchase: 2, quIDStock: 2, quIDConsume: 2, quIDPrice: 2))
+    }
 }

@@ -145,3 +145,15 @@ struct MDProductGroupFormView: View {
         .sensoryFeedback(.error, trigger: isSuccessful == false)
     }
 }
+
+#Preview("Create", traits: .previewData) {
+    NavigationStack {
+        MDProductGroupFormView()
+    }
+}
+
+#Preview("Edit", traits: .previewData) {
+    NavigationStack {
+        MDProductGroupFormView(existingProductGroup: MDProductGroup(name: "Product group"))
+    }
+}

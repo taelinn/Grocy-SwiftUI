@@ -146,3 +146,15 @@ struct MDLocationFormView: View {
         .sensoryFeedback(.error, trigger: isSuccessful == false)
     }
 }
+
+#Preview("Create", traits: .previewData) {
+    NavigationStack {
+        MDLocationFormView()
+    }
+}
+
+#Preview("Edit", traits: .previewData) {
+    NavigationStack {
+        MDLocationFormView(existingLocation: MDLocation(name: "Location"))
+    }
+}

@@ -253,3 +253,15 @@ struct MDQuantityUnitFormView: View {
         .sensoryFeedback(.error, trigger: isSuccessful == false)
     }
 }
+
+#Preview("Create", traits: .previewData) {
+    NavigationStack {
+        MDQuantityUnitFormView()
+    }
+}
+
+#Preview("Edit", traits: .previewData) {
+    NavigationStack {
+        MDQuantityUnitFormView(existingQuantityUnit: MDQuantityUnit(name: "Quantity unit", namePlural: "Quantity units"))
+    }
+}

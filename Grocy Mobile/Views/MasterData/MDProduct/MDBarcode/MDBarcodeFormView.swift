@@ -185,3 +185,15 @@ struct MDBarcodeFormView: View {
         .sensoryFeedback(.error, trigger: isSuccessful == false)
     }
 }
+
+#Preview("Create", traits: .previewData) {
+    NavigationStack {
+        MDBarcodeFormView(product: MDProduct())
+    }
+}
+
+#Preview("Edit", traits: .previewData) {
+    NavigationStack {
+        MDBarcodeFormView(product: MDProduct(), existingBarcode: MDProductBarcode(barcode: "123456789", quID: 2, amount: 4.0, storeID: 2, note: "Note"))
+    }
+}

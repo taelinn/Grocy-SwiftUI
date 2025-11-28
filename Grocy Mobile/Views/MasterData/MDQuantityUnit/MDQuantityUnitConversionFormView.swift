@@ -231,6 +231,14 @@ struct MDQuantityUnitConversionFormView: View {
     }
 }
 
-#Preview {
-    MDQuantityUnitConversionFormView(quantityUnit: MDQuantityUnit(id: 1, name: "Quantity unit", active: true, rowCreatedTimestamp: ""))
+#Preview("Create", traits: .previewData) {
+    NavigationStack {
+        MDQuantityUnitConversionFormView(quantityUnit: MDQuantityUnit(name: "Quantity unit"))
+    }
+}
+
+#Preview("Edit", traits: .previewData) {
+    NavigationStack {
+        MDQuantityUnitConversionFormView(quantityUnit: MDQuantityUnit(name: "Piece"), existingQuantityUnitConversion: MDQuantityUnitConversion(fromQuID: 2, toQuID: 3))
+    }
 }

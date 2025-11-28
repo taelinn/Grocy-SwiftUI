@@ -138,3 +138,15 @@ struct MDStoreFormView: View {
         .sensoryFeedback(.error, trigger: isSuccessful == false)
     }
 }
+
+#Preview("Create", traits: .previewData) {
+    NavigationStack {
+        MDStoreFormView()
+    }
+}
+
+#Preview("Edit", traits: .previewData) {
+    NavigationStack {
+        MDStoreFormView(existingStore: MDStore(name: "Store"))
+    }
+}
