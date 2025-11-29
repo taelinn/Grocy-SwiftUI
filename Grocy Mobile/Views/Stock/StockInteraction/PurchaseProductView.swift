@@ -29,6 +29,7 @@ struct PurchaseProductView: View {
     @AppStorage("localizationKey") var localizationKey: String = "en"
 
     @State private var firstAppear: Bool = true
+    @State private var actionPending: Bool = true
     @State private var isProcessingAction: Bool = false
 
     var stockElement: StockElement? = nil
@@ -41,7 +42,6 @@ struct PurchaseProductView: View {
     var autoPurchase: Bool = false
     var barcode: MDProductBarcode? = nil
     var quickScan: Bool = false
-    var actionFinished: Binding<Bool>? = nil
 
     @State private var productID: Int?
     @State private var amount: Double = 0.0
@@ -50,8 +50,8 @@ struct PurchaseProductView: View {
     @State private var productDoesntSpoil: Bool = false
     @State private var price: Double?
     @State private var isTotalPrice: Bool = false
-    @State private var storeID: Int?
-    @State private var locationID: Int?
+    @State private var storeID: Int = -1
+    @State private var locationID: Int = -1
     @State private var note: String = ""
     @State private var selfProduction: Bool = false
 
@@ -103,9 +103,9 @@ struct PurchaseProductView: View {
     }
 
     private func resetForm() {
-        self.productID = firstAppear ? productToPurchaseID : nil
-        self.amount = firstAppear ? (productToPurchaseAmount ?? barcode?.amount ?? userSettings?.stockDefaultPurchaseAmount ?? 1.0) : (userSettings?.stockDefaultPurchaseAmount ?? 1.0)
-        self.quantityUnitID = barcode?.quID ?? (firstAppear ? product?.quIDPurchase : nil)
+        self.productID = actionPending ? productToPurchaseID : nil
+        self.amount = actionPending ? (productToPurchaseAmount ?? barcode?.amount ?? userSettings?.stockDefaultPurchaseAmount ?? 1.0) : (userSettings?.stockDefaultPurchaseAmount ?? 1.0)
+        self.quantityUnitID = barcode?.quID ?? (actionPending ? product?.quIDPurchase : nil)
         if product?.defaultDueDays ?? 0 == -1 {
             self.productDoesntSpoil = true
             self.dueDate = Calendar.current.startOfDay(for: Date())
@@ -116,10 +116,10 @@ struct PurchaseProductView: View {
         }
         self.price = nil
         self.isTotalPrice = false
-        self.storeID = barcode?.storeID
+        self.storeID = barcode?.storeID ?? -1
         self.locationID = -1
         self.note = ""
-        if autoPurchase, firstAppear, product?.defaultDueDays != nil, productID != nil, isFormValid {
+        if autoPurchase, actionPending, product?.defaultDueDays != nil, productID != nil, isFormValid {
             self.price = productDetails?.lastPrice
             Task {
                 await purchaseProduct()
@@ -141,13 +141,11 @@ struct PurchaseProductView: View {
                 try await grocyVM.postStockObject(id: productID, stockModePost: .add, content: purchaseInfo)
                 GrocyLogger.info("Purchase \(product?.name ?? String(productID)) successful.")
                 await grocyVM.requestData(additionalObjects: [.stock, .volatileStock])
+                if autoPurchase || quickScan || productToPurchaseID != nil {
+                    self.finishForm()
+                }
+                actionPending = false
                 resetForm()
-                if autoPurchase {
-                    self.dismiss()
-                }
-                if quickScan == true {
-                    self.dismiss()
-                }
             } catch {
                 GrocyLogger.error("Purchase failed: \(error)")
             }
@@ -167,8 +165,8 @@ struct PurchaseProductView: View {
                 .disabled(quickScan)
                 .onChange(of: productID) {
                     if let selectedProduct = mdProducts.first(where: { $0.id == productID }) {
-                        if locationID == nil { locationID = selectedProduct.locationID }
-                        if storeID == nil { storeID = selectedProduct.storeID }
+                        if locationID == -1 { locationID = selectedProduct.locationID }
+                        if storeID == -1 { storeID = selectedProduct.storeID ?? -1 }
                         quantityUnitID = selectedProduct.quIDPurchase
                         if product?.defaultDueDays == -1 {
                             productDoesntSpoil = true
@@ -240,9 +238,9 @@ struct PurchaseProductView: View {
                             selection: $storeID,
                             label: Label("Store", systemImage: MySymbols.store).foregroundStyle(.primary),
                             content: {
-                                Text("").tag(nil as Int?)
+                                Text("").tag(-1 as Int)
                                 ForEach(mdStores, id: \.id) { store in
-                                    Text(store.name).tag(store.id as Int?)
+                                    Text(store.name).tag(store.id as Int)
                                 }
                             }
                         )
@@ -252,15 +250,15 @@ struct PurchaseProductView: View {
                         selection: $locationID,
                         label: Label("Location", systemImage: MySymbols.location).foregroundStyle(.primary),
                         content: {
-                            Text("").tag(-1 as Int?)
+                            Text("").tag(-1 as Int)
                             ForEach(mdLocations, id: \.id) { location in
                                 if location.id == product?.locationID {
                                     Text("\(location.name) (\(Text("Default location")))")
-                                        .tag(location.id as Int?)
+                                        .tag(location.id as Int)
                                 } else {
                                     Text(location.name)
-                                        .tag(location.id as Int?)
-                                }                                   
+                                        .tag(location.id as Int)
+                                }
                             }
                         }
                     )
@@ -280,7 +278,7 @@ struct PurchaseProductView: View {
             }
         }
         .toolbar(content: {
-            if directProductToPurchaseID == nil {
+            if productToPurchaseID == nil {
                 ToolbarItem(id: "clear", placement: .cancellationAction) {
                     if !quickScan {
                         if isProcessingAction {
@@ -288,7 +286,10 @@ struct PurchaseProductView: View {
                                 .progressViewStyle(.circular)
                         } else {
                             Button(
-                                action: resetForm,
+                                action: {
+                                    actionPending = false
+                                    resetForm()
+                                },
                                 label: {
                                     Label("Clear", systemImage: MySymbols.cancel)
                                         .help("Clear")
@@ -298,7 +299,7 @@ struct PurchaseProductView: View {
                         }
                     }
                 }
-            } else {
+            } else if quickScan {
                 ToolbarItem(
                     placement: .cancellationAction,
                     content: {

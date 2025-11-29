@@ -25,6 +25,7 @@ struct TransferProductView: View {
     @Environment(\.dismiss) var dismiss
 
     @State private var firstAppear: Bool = true
+    @State private var actionPending: Bool = true
     @State private var isProcessingAction: Bool = false
 
     var stockElement: StockElement? = nil
@@ -89,10 +90,10 @@ struct TransferProductView: View {
     }
 
     private func resetForm() {
-        productID = firstAppear ? productToTransferID : nil
+        productID = actionPending ? productToTransferID : nil
         locationIDFrom = nil
         amount = 1.0
-        quantityUnitID = firstAppear ? product?.quIDStock : nil
+        quantityUnitID = actionPending ? product?.quIDStock : nil
         locationIDTo = nil
         useSpecificStockEntry = false
         stockEntryID = nil
@@ -107,6 +108,10 @@ struct TransferProductView: View {
                 try await grocyVM.postStockObject(id: productID, stockModePost: .transfer, content: transferInfo)
                 GrocyLogger.info("Transfer successful.")
                 await grocyVM.requestData(additionalObjects: [.stock])
+                if productToTransferID != nil {
+                    finishForm()
+                }
+                actionPending = false
                 resetForm()
             } catch {
                 GrocyLogger.error("Transfer failed: \(error)")
@@ -235,13 +240,16 @@ struct TransferProductView: View {
         }
         .formStyle(.grouped)
         .toolbar(content: {
-            if directProductToTransferID == nil {
+            if productToTransferID == nil {
                 ToolbarItem(id: "reset", placement: .cancellationAction) {
                     if isProcessingAction {
                         ProgressView().progressViewStyle(.circular)
                     } else {
                         Button(
-                            action: resetForm,
+                            action: {
+                                actionPending = false
+                                resetForm()
+                            },
                             label: {
                                 Label("Clear", systemImage: MySymbols.cancel)
                                     .help("Clear")
@@ -250,19 +258,6 @@ struct TransferProductView: View {
                         .keyboardShortcut("r", modifiers: [.command])
                     }
                 }
-            } else {
-                ToolbarItem(
-                    placement: .cancellationAction,
-                    content: {
-                        Button(
-                            role: .cancel,
-                            action: {
-                                finishForm()
-                            }
-                        )
-                        .keyboardShortcut(.cancelAction)
-                    }
-                )
             }
             ToolbarItem(id: "transfer", placement: .primaryAction) {
                 Button(

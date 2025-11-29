@@ -21,8 +21,9 @@ struct InventoryProductView: View {
     @Environment(\.dismiss) var dismiss
 
     @State private var firstAppear: Bool = true
+    @State private var actionPending: Bool = true
     @State private var isProcessingAction: Bool = false
-    @State private var productInventory: ProductInventory
+    @State private var productInventory: ProductInventory = ProductInventory()
 
     @State private var productID: Int?
     @State private var quantityUnitID: Int?
@@ -34,19 +35,6 @@ struct InventoryProductView: View {
         return directProductToInventoryID ?? stockElement?.productID
     }
     var directStockEntryID: String? = nil
-
-    init(stockElement: StockElement? = nil) {
-        _productID = State(initialValue: stockElement?.productID)
-        let initialProductInventory = ProductInventory(
-            newAmount: 1.0,
-            bestBeforeDate: Date(),
-            storeID: nil,
-            locationID: nil,
-            price: nil,
-            note: ""
-        )
-        _productInventory = State(initialValue: initialProductInventory)
-    }
 
     private let dataToUpdate: [ObjectEntities] = [.products, .shopping_locations, .locations, .quantity_units, .quantity_unit_conversions]
     private let additionalDataToUpdate: [AdditionalEntities] = [.stock, .volatileStock, .system_config, .system_info]
@@ -104,15 +92,8 @@ struct InventoryProductView: View {
     }
 
     private func resetForm() {
-        productID = firstAppear ? productToInventoryID : nil
-        productInventory = ProductInventory(
-            newAmount: 1.0,
-            bestBeforeDate: Date(),
-            storeID: nil,
-            locationID: nil,
-            price: nil,
-            note: ""
-        )
+        productID = actionPending ? productToInventoryID : nil
+        productInventory = ProductInventory()
         quantityUnitID = nil
         productNeverOverdue = false
     }
@@ -127,6 +108,10 @@ struct InventoryProductView: View {
                 try await grocyVM.postStockObject(id: productID, stockModePost: .inventory, content: productInventory)
                 GrocyLogger.info("Inventory successful.")
                 await grocyVM.requestData(additionalObjects: [.stock, .volatileStock])
+                if directProductToInventoryID != nil || stockElement != nil {
+                    finishForm()
+                }
+                actionPending = false
                 resetForm()
             } catch {
                 GrocyLogger.error("Inventory failed: \(error)")
@@ -240,7 +225,7 @@ struct InventoryProductView: View {
             productInventory.newAmount = selectedProductStock?.amount ?? 1
         }
         .toolbar(content: {
-            if directProductToInventoryID == nil {
+            if productToInventoryID == nil {
                 ToolbarItem(id: "clear", placement: .cancellationAction) {
                     if isProcessingAction {
                         ProgressView().progressViewStyle(CircularProgressViewStyle())
@@ -255,19 +240,6 @@ struct InventoryProductView: View {
                         .keyboardShortcut("r", modifiers: [.command])
                     }
                 }
-            } else {
-                ToolbarItem(
-                    placement: .cancellationAction,
-                    content: {
-                        Button(
-                            role: .cancel,
-                            action: {
-                                finishForm()
-                            }
-                        )
-                        .keyboardShortcut(.cancelAction)
-                    }
-                )
             }
             ToolbarItem(id: "inventory", placement: .primaryAction) {
                 Button(

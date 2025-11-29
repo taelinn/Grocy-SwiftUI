@@ -30,6 +30,7 @@ struct ConsumeProductView: View {
     @AppStorage("devMode") private var devMode: Bool = false
 
     @State private var firstAppear: Bool = true
+    @State private var actionPending: Bool = true
     @State private var isProcessingAction: Bool = false
 
     var stockElement: StockElement? = nil
@@ -50,12 +51,11 @@ struct ConsumeProductView: View {
     }
     var consumeType: ConsumeType = .both
     var quickScan: Bool = false
-    var actionFinished: Binding<Bool>? = nil
 
     @State private var productID: Int?
     @State private var amount: Double = 1.0
     @State private var quantityUnitID: Int?
-    @State private var locationID: Int?
+    @State private var locationID: Int = -1
     @State private var spoiled: Bool = false
     @State private var useSpecificStockEntry: Bool = false
     @State private var stockEntryID: String?
@@ -128,12 +128,12 @@ struct ConsumeProductView: View {
     private let priceFormatter = NumberFormatter()
 
     private var isFormValid: Bool {
-        return (productID != nil) && (amount > 0) && (quantityUnitID != nil) && (locationID != nil) && !(useSpecificStockEntry && stockEntryID == nil) && !(useSpecificStockEntry && amount != 1.0) && !(amount > maxAmount ?? 0)
+        return (productID != nil) && (amount > 0) && (quantityUnitID != nil) && (locationID != -1) && !(useSpecificStockEntry && stockEntryID == nil) && !(useSpecificStockEntry && amount != 1.0) && !(amount > maxAmount ?? 0)
     }
 
     private var stockEntriesForLocation: StockEntries {
         if let productID = productID {
-            if let locationID = locationID {
+            if locationID != -1 {
                 return
                     stockProductEntries
                     .filter({ $0.productID == productID })
@@ -156,10 +156,10 @@ struct ConsumeProductView: View {
     }
 
     private func resetForm() {
-        productID = firstAppear ? productToConsumeID : nil
+        productID = actionPending ? productToConsumeID : nil
         amount = barcode?.amount ?? userSettings?.stockDefaultConsumeAmount ?? 1.0
-        quantityUnitID = firstAppear ? product?.quIDStock : nil
-        locationID = nil
+        quantityUnitID = actionPending ? product?.quIDStock : nil
+        locationID = -1
         spoiled = false
         useSpecificStockEntry = false
         stockEntryID = nil
@@ -175,10 +175,11 @@ struct ConsumeProductView: View {
                 try await grocyVM.postStockObject(id: productID, stockModePost: .open, content: openInfo)
                 GrocyLogger.info("Opening successful.")
                 await grocyVM.requestData(additionalObjects: [.stock])
-                resetForm()
-                if quickScan == true {
+                if quickScan || productToConsumeID != nil {
                     self.dismiss()
                 }
+                actionPending = false
+                resetForm()
             } catch {
                 GrocyLogger.error("Opening failed: \(error)")
             }
@@ -203,9 +204,6 @@ struct ConsumeProductView: View {
                     }
                 }
                 resetForm()
-                if self.actionFinished != nil {
-                    self.actionFinished?.wrappedValue = true
-                }
             } catch {
                 GrocyLogger.error("Consume failed: \(error)")
             }
@@ -249,14 +247,14 @@ struct ConsumeProductView: View {
                     },
                     content: {
                         Text("")
-                            .tag(nil as Int?)
+                            .tag(-1 as Int)
                         ForEach(filteredLocations, id: \.id) { location in
                             if location.id == product?.locationID {
                                 Text("\(location.name) (\(getAmountForLocation(lID: location.id).formattedAmount)) (\(Text("Default location")))")
-                                    .tag(location.id as Int?)
+                                    .tag(location.id as Int)
                             } else {
                                 Text("\(location.name) (\(getAmountForLocation(lID: location.id).formattedAmount))")
-                                    .tag(location.id as Int?)
+                                    .tag(location.id as Int)
                             }
                         }
                     }
@@ -341,14 +339,17 @@ struct ConsumeProductView: View {
             }
         }
         .toolbar(content: {
-            if directProductToConsumeID == nil {
+            if productToConsumeID == nil {
                 ToolbarItem(id: "clear", placement: .cancellationAction) {
                     if !quickScan {
                         if isProcessingAction {
                             ProgressView().progressViewStyle(.circular)
                         } else {
                             Button(
-                                action: resetForm,
+                                action: {
+                                    actionPending = false
+                                    resetForm()
+                                },
                                 label: {
                                     Label("Clear", systemImage: MySymbols.cancel)
                                         .help("Clear")
@@ -358,7 +359,7 @@ struct ConsumeProductView: View {
                         }
                     }
                 }
-            } else {
+            } else if quickScan {
                 ToolbarItem(
                     placement: .cancellationAction,
                     content: {

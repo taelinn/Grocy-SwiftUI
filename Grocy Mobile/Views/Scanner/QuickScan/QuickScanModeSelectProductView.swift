@@ -10,6 +10,7 @@ import SwiftUI
 
 struct QuickScanModeSelectProductView: View {
     @Environment(GrocyViewModel.self) private var grocyVM
+    @Environment(\.dismiss) var dismiss
 
     @AppStorage("quickScanActionAfterAdd") private var quickScanActionAfterAdd: Bool = false
     @Query var userSettingsList: GrocyUserSettingsList
@@ -17,16 +18,12 @@ struct QuickScanModeSelectProductView: View {
         userSettingsList.first
     }
 
-    @Environment(\.dismiss) var dismiss
+    var barcode: String?
 
     @State private var firstOpen: Bool = true
     @State private var createdProductID: Int? = nil
-
-    var barcode: String?
-
     @State private var productID: Int?
 
-    @Binding var qsActiveSheet: QSActiveSheet?
     @Binding var newRecognizedBarcode: MDProductBarcode?
 
     @State private var showProductForm: Bool = false
@@ -121,7 +118,6 @@ struct QuickScanModeSelectProductView: View {
     NavigationStack {
         QuickScanModeSelectProductView(
             barcode: "12345",
-            qsActiveSheet: Binding.constant(QSActiveSheet.selectProduct),
             newRecognizedBarcode: Binding.constant(nil)
         )
     }

@@ -39,7 +39,6 @@ struct QuickScanModeView: View {
     @State private var quickScanMode: QuickScanMode = .consume
 
     @State private var qsActiveSheet: QSActiveSheet?
-    @State var actionFinished: Bool = false
 
     //    @State private var firstInSession: Bool = true
 
@@ -257,6 +256,7 @@ struct QuickScanModeView: View {
                     }
                 }
                 .onChange(of: newRecognizedBarcode?.id) {
+                    print("New recognized barcode: \(String(describing: newRecognizedBarcode?.id))")
                     DispatchQueue.main.async {
                         if quickScanActionAfterAdd {
                             recognizedBarcode = newRecognizedBarcode
@@ -297,7 +297,6 @@ struct QuickScanModeView: View {
                         barcode: recognizedBarcode,
                         consumeType: .consume,
                         quickScan: true,
-                        actionFinished: $actionFinished
                     )
                 case .markAsOpened:
                     ConsumeProductView(
@@ -306,14 +305,12 @@ struct QuickScanModeView: View {
                         barcode: recognizedBarcode,
                         consumeType: .open,
                         quickScan: true,
-                        actionFinished: $actionFinished
                     )
                 case .purchase:
                     PurchaseProductView(
                         directProductToPurchaseID: product.id,
                         barcode: recognizedBarcode,
                         quickScan: true,
-                        actionFinished: $actionFinished
                     )
                 }
             } else {
@@ -322,7 +319,6 @@ struct QuickScanModeView: View {
         case .selectProduct:
             QuickScanModeSelectProductView(
                 barcode: notRecognizedBarcode,
-                qsActiveSheet: $qsActiveSheet,
                 newRecognizedBarcode: $newRecognizedBarcode
             )
 

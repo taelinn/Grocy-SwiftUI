@@ -37,12 +37,12 @@ struct ProductInventory: Codable {
     }
     
     init(
-        newAmount: Double,
-        bestBeforeDate: Date,
-        storeID: Int?,
-        locationID: Int?,
-        price: Double?,
-        note: String
+        newAmount: Double = 1.0,
+        bestBeforeDate: Date = Date(),
+        storeID: Int? = nil,
+        locationID: Int? = nil,
+        price: Double? = nil,
+        note: String = ""
     ) {
         self.newAmount = newAmount
         self.bestBeforeDate = bestBeforeDate
