@@ -266,7 +266,7 @@ class MDProduct: Codable, Equatable, Identifiable {
         quIDStock: Int = -1,
         quIDConsume: Int = -1,
         quIDPrice: Int = -1,
-        minStockAmount: Double = 1.0,
+        minStockAmount: Double = 0.0,
         defaultDueDays: Int = 0,
         defaultDueDaysAfterOpen: Int = 0,
         defaultDueDaysAfterFreezing: Int = 0,
