@@ -15,7 +15,6 @@ struct ShoppingListItemWrapped {
 
 struct ShoppingListView: View {
     @Environment(GrocyViewModel.self) private var grocyVM
-    @Environment(\.colorScheme) var colorScheme
 
     @Query(sort: \ShoppingListDescription.id, order: .forward) var shoppingListDescriptions: ShoppingListDescriptions
     @Query(sort: \ShoppingListItem.id, order: .forward) var shoppingList: [ShoppingListItem]

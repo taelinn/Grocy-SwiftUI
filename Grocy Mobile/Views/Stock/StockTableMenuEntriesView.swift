@@ -12,8 +12,6 @@ struct StockTableMenuEntriesView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(GrocyViewModel.self) private var grocyVM
 
-    @State private var navPath = NavigationPath()
-
     @Query(sort: \MDQuantityUnit.id, order: .forward) var mdQuantityUnits: MDQuantityUnits
 
     var stockElement: StockElement
