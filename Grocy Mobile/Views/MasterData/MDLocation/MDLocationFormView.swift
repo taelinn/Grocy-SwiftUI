@@ -61,8 +61,12 @@ struct MDLocationFormView: View {
             isSuccessful = true
         } catch {
             GrocyLogger.error("Location \(location.name) failed. \(error)")
-            errorMessage = error.localizedDescription
             isSuccessful = false
+            if let apiError = error as? APIError {
+                errorMessage = apiError.displayMessage
+            } else {
+                errorMessage = error.localizedDescription
+            }
         }
         isProcessing = false
     }

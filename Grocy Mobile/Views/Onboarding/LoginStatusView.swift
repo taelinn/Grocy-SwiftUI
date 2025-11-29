@@ -65,7 +65,11 @@ struct LoginStatusView: View {
             }
         } catch {
             loginState = .fail
-            errorMessage = error.localizedDescription
+            if let apiError = error as? APIError {
+                errorMessage = apiError.displayMessage
+            } else {
+                errorMessage = error.localizedDescription
+            }
         }
         isLoading = false
     }

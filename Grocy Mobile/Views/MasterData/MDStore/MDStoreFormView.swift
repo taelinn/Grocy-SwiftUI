@@ -62,7 +62,11 @@ struct MDStoreFormView: View {
             isSuccessful = true
         } catch {
             GrocyLogger.error("Store \(store.name) failed. \(error)")
-            errorMessage = error.localizedDescription
+            if let apiError = error as? APIError {
+                errorMessage = apiError.displayMessage
+            } else {
+                errorMessage = error.localizedDescription
+            }
             isSuccessful = false
         }
         isProcessing = false

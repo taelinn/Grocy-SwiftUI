@@ -73,7 +73,11 @@ struct MDBarcodeFormView: View {
             isSuccessful = true
         } catch {
             GrocyLogger.error("Barcode \(barcode.barcode) failed. \(error)")
-            errorMessage = error.localizedDescription
+            if let apiError = error as? APIError {
+                errorMessage = apiError.displayMessage
+            } else {
+                errorMessage = error.localizedDescription
+            }
             isSuccessful = false
         }
         isProcessing = false

@@ -70,7 +70,11 @@ struct StockEntryFormView: View {
             isSuccessful = true
         } catch {
             GrocyLogger.error("Stock entry edit failed.")
-            errorMessage = error.localizedDescription
+            if let apiError = error as? APIError {
+                errorMessage = apiError.displayMessage
+            } else {
+                errorMessage = error.localizedDescription
+            }
             isSuccessful = false
         }
         isProcessing = false
