@@ -26,6 +26,8 @@ struct TransferProductView: View {
     @State private var firstAppear: Bool = true
     @State private var actionPending: Bool = true
     @State private var isProcessingAction: Bool = false
+    @State private var isSuccessful: Bool? = nil
+    @State private var errorMessage: String? = nil
 
     var stockElement: StockElement? = nil
     var directProductToTransferID: Int? = nil
@@ -104,10 +106,12 @@ struct TransferProductView: View {
         if let productID = productID, let locationIDFrom = locationIDFrom, let locationIDTo = locationIDTo {
             let transferInfo = ProductTransfer(amount: factoredAmount, locationIDFrom: locationIDFrom, locationIDTo: locationIDTo, stockEntryID: stockEntryID)
             isProcessingAction = true
+            isSuccessful = nil
             do {
                 try await grocyVM.postStockObject(id: productID, stockModePost: .transfer, content: transferInfo)
                 GrocyLogger.info("Transfer successful.")
                 await grocyVM.requestData(additionalObjects: [.stock])
+                isSuccessful = true
                 if productToTransferID != nil {
                     finishForm()
                 }
@@ -115,6 +119,12 @@ struct TransferProductView: View {
                 resetForm()
             } catch {
                 GrocyLogger.error("Transfer failed: \(error)")
+                isSuccessful = false
+                if let apiError = error as? APIError {
+                    errorMessage = apiError.displayMessage
+                } else {
+                    errorMessage = error.localizedDescription
+                }
             }
             isProcessingAction = false
         }
@@ -122,6 +132,10 @@ struct TransferProductView: View {
 
     var body: some View {
         Form {
+            if isSuccessful == false, let errorMessage = errorMessage {
+                ErrorMessageView(errorMessage: errorMessage)
+            }
+
             if grocyVM.failedToLoadObjects.filter({ dataToUpdate.contains($0) }).count > 0 {
                 Section {
                     ServerProblemView(isCompact: true)
@@ -238,6 +252,7 @@ struct TransferProductView: View {
                 }
             }
         }
+        .navigationTitle("Transfer")
         .formStyle(.grouped)
         .toolbar(content: {
             if isPopup {
@@ -275,6 +290,7 @@ struct TransferProductView: View {
             }
             ToolbarItem(id: "transfer", placement: .primaryAction) {
                 Button(
+                    role: .confirm,
                     action: {
                         Task {
                             await transferProduct()
@@ -296,7 +312,8 @@ struct TransferProductView: View {
                 firstAppear = false
             }
         }
-        .navigationTitle("Transfer")
+        .sensoryFeedback(.success, trigger: isSuccessful == true)
+        .sensoryFeedback(.error, trigger: isSuccessful == false)
     }
 }
 

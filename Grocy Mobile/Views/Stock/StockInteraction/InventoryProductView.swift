@@ -23,6 +23,9 @@ struct InventoryProductView: View {
     @State private var firstAppear: Bool = true
     @State private var actionPending: Bool = true
     @State private var isProcessingAction: Bool = false
+    @State private var isSuccessful: Bool? = nil
+    @State private var errorMessage: String? = nil
+
     @State private var productInventory: ProductInventory = ProductInventory()
 
     @State private var productID: Int?
@@ -105,10 +108,12 @@ struct InventoryProductView: View {
         }
         if let productID = productID {
             isProcessingAction = true
+            isSuccessful = nil
             do {
                 try await grocyVM.postStockObject(id: productID, stockModePost: .inventory, content: productInventory)
                 GrocyLogger.info("Inventory successful.")
                 await grocyVM.requestData(additionalObjects: [.stock, .volatileStock])
+                isSuccessful = true
                 if directProductToInventoryID != nil || stockElement != nil {
                     finishForm()
                 }
@@ -116,6 +121,12 @@ struct InventoryProductView: View {
                 resetForm()
             } catch {
                 GrocyLogger.error("Inventory failed: \(error)")
+                isSuccessful = false
+                if let apiError = error as? APIError {
+                    errorMessage = apiError.displayMessage
+                } else {
+                    errorMessage = error.localizedDescription
+                }
             }
             isProcessingAction = false
         }
@@ -123,6 +134,10 @@ struct InventoryProductView: View {
 
     var body: some View {
         Form {
+            if isSuccessful == false, let errorMessage = errorMessage {
+                ErrorMessageView(errorMessage: errorMessage)
+            }
+
             if grocyVM.failedToLoadObjects.filter({ dataToUpdate.contains($0) }).count > 0 || grocyVM.failedToLoadAdditionalObjects.filter({ additionalDataToUpdate.contains($0) }).count > 0 {
                 Section {
                     ServerProblemView(isCompact: true)
@@ -204,6 +219,7 @@ struct InventoryProductView: View {
                 }
             }
         }
+        .navigationTitle("Inventory")
         .formStyle(.grouped)
         .task {
             if firstAppear {
@@ -258,6 +274,7 @@ struct InventoryProductView: View {
             }
             ToolbarItem(id: "inventory", placement: .primaryAction) {
                 Button(
+                    role: .confirm,
                     action: {
                         Task {
                             await inventoryProduct()
@@ -273,7 +290,8 @@ struct InventoryProductView: View {
                 .keyboardShortcut("s", modifiers: [.command])
             }
         })
-        .navigationTitle("Inventory")
+        .sensoryFeedback(.success, trigger: isSuccessful == true)
+        .sensoryFeedback(.error, trigger: isSuccessful == false)
     }
 }
 

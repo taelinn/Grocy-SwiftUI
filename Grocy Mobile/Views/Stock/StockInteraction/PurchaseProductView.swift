@@ -31,6 +31,8 @@ struct PurchaseProductView: View {
     @State private var firstAppear: Bool = true
     @State private var actionPending: Bool = true
     @State private var isProcessingAction: Bool = false
+    @State private var isSuccessful: Bool? = nil
+    @State private var errorMessage: String? = nil
 
     var stockElement: StockElement? = nil
     var directProductToPurchaseID: Int? = nil
@@ -138,10 +140,12 @@ struct PurchaseProductView: View {
         let purchaseInfo = ProductBuy(amount: factoredAmount, bestBeforeDate: strDueDate, transactionType: selfProduction ? .selfProduction : .purchase, price: purchasePrice, locationID: locationID, storeID: purchaseStoreID, note: noteText)
         if let productID = productID {
             isProcessingAction = true
+            isSuccessful = nil
             do {
                 try await grocyVM.postStockObject(id: productID, stockModePost: .add, content: purchaseInfo)
                 GrocyLogger.info("Purchase \(product?.name ?? String(productID)) successful.")
                 await grocyVM.requestData(additionalObjects: [.stock, .volatileStock])
+                isSuccessful = true
                 if autoPurchase || quickScan || productToPurchaseID != nil {
                     self.finishForm()
                 }
@@ -149,6 +153,12 @@ struct PurchaseProductView: View {
                 resetForm()
             } catch {
                 GrocyLogger.error("Purchase failed: \(error)")
+                isSuccessful = false
+                if let apiError = error as? APIError {
+                    errorMessage = apiError.displayMessage
+                } else {
+                    errorMessage = error.localizedDescription
+                }
             }
             isProcessingAction = false
         }
@@ -156,6 +166,10 @@ struct PurchaseProductView: View {
 
     var body: some View {
         Form {
+            if isSuccessful == false, let errorMessage = errorMessage {
+                ErrorMessageView(errorMessage: errorMessage)
+            }
+
             if grocyVM.failedToLoadObjects.filter({ dataToUpdate.contains($0) }).count > 0 || grocyVM.failedToLoadAdditionalObjects.filter({ additionalDataToUpdate.contains($0) }).count > 0 {
                 Section {
                     ServerProblemView(isCompact: true)
@@ -331,6 +345,8 @@ struct PurchaseProductView: View {
                 .keyboardShortcut("s", modifiers: [.command])
             }
         })
+        .sensoryFeedback(.success, trigger: isSuccessful == true)
+        .sensoryFeedback(.error, trigger: isSuccessful == false)
     }
 }
 

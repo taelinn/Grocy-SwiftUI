@@ -11,6 +11,12 @@ public enum APIError: Error, Equatable {
     var value: String? {
         return String(describing: self).components(separatedBy: "(").first
     }
+    var displayMessage: String {
+        if case let .errorString(description) = self {
+            return description
+        }
+        return self.localizedDescription
+    }
     public static func == (lhs: APIError, rhs: APIError) -> Bool {
         lhs.value == rhs.value
     }
@@ -354,7 +360,7 @@ public class GrocyApi: GrocyAPI {
                 do {
                     let responseErrorDecoded = try JSONDecoder().decode(ErrorMessage.self, from: result.0)
                     throw APIError.errorString(description: responseErrorDecoded.errorMessage)
-                } catch {
+                } catch let error as DecodingError {
                     throw APIError.decodingError(error: error)
                 }
             }

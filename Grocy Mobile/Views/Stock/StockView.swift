@@ -574,7 +574,6 @@ struct StockView: View {
                     StockJournalView(stockElement: stockElement, isPopup: true)
                 case .addToShL(let stockElement):
                     ShoppingListEntryFormView(productIDToSelect: stockElement.productID, isPopup: true)
-                default: EmptyView()
                 }
             }
         }

@@ -32,6 +32,8 @@ struct ConsumeProductView: View {
     @State private var firstAppear: Bool = true
     @State private var actionPending: Bool = true
     @State private var isProcessingAction: Bool = false
+    @State private var isSuccessful: Bool? = nil
+    @State private var errorMessage: String? = nil
 
     var stockElement: StockElement? = nil
     var directProductToConsumeID: Int? = nil
@@ -172,17 +174,25 @@ struct ConsumeProductView: View {
         if let productID = productID {
             let openInfo = ProductOpen(amount: factoredAmount, stockEntryID: stockEntryID, allowSubproductSubstitution: nil)
             isProcessingAction = true
+            isSuccessful = nil
             do {
                 try await grocyVM.postStockObject(id: productID, stockModePost: .open, content: openInfo)
                 GrocyLogger.info("Opening successful.")
                 await grocyVM.requestData(additionalObjects: [.stock])
+                isSuccessful = true
                 if quickScan || productToConsumeID != nil {
-                    self.dismiss()
+                    finishForm()
                 }
                 actionPending = false
                 resetForm()
             } catch {
                 GrocyLogger.error("Opening failed: \(error)")
+                isSuccessful = false
+                if let apiError = error as? APIError {
+                    errorMessage = apiError.displayMessage
+                } else {
+                    errorMessage = error.localizedDescription
+                }
             }
             isProcessingAction = false
         }
@@ -192,6 +202,8 @@ struct ConsumeProductView: View {
         if let productID = productID {
             let consumeInfo = ProductConsume(amount: factoredAmount, transactionType: .consume, spoiled: spoiled, stockEntryID: stockEntryID, recipeID: recipeID, locationID: locationID, exactAmount: nil, allowSubproductSubstitution: nil)
             isProcessingAction = true
+            isSuccessful = nil
+            var shlActionSuccessful: Bool = false
             do {
                 try await grocyVM.postStockObject(id: productID, stockModePost: .consume, content: consumeInfo)
                 GrocyLogger.info("Consume \(amount.formattedAmount) \(productName) successful.")
@@ -202,11 +214,28 @@ struct ConsumeProductView: View {
                         await grocyVM.requestData(objects: [.shopping_list])
                     } catch {
                         GrocyLogger.error("SHLAction failed. \(error)")
+                        shlActionSuccessful = false
+                        if let apiError = error as? APIError {
+                            errorMessage = apiError.displayMessage
+                        } else {
+                            errorMessage = error.localizedDescription
+                        }
                     }
+                } else { shlActionSuccessful = true }
+                isSuccessful = true && shlActionSuccessful
+                if quickScan || productToConsumeID != nil {
+                    self.dismiss()
                 }
+                actionPending = false
                 resetForm()
             } catch {
                 GrocyLogger.error("Consume failed: \(error)")
+                isSuccessful = false
+                if let apiError = error as? APIError {
+                    errorMessage = apiError.displayMessage
+                } else {
+                    errorMessage = error.localizedDescription
+                }
             }
             isProcessingAction = false
         }
@@ -214,6 +243,9 @@ struct ConsumeProductView: View {
 
     var body: some View {
         Form {
+            if isSuccessful == false, let errorMessage = errorMessage {
+                ErrorMessageView(errorMessage: errorMessage)
+            }
             if grocyVM.failedToLoadObjects.filter({ dataToUpdate.contains($0) }).count > 0 {
                 Section {
                     ServerProblemView(isCompact: true)
@@ -412,6 +444,8 @@ struct ConsumeProductView: View {
                 }
             }
         })
+        .sensoryFeedback(.success, trigger: isSuccessful == true)
+        .sensoryFeedback(.error, trigger: isSuccessful == false)
     }
 }
 
