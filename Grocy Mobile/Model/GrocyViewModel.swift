@@ -19,6 +19,7 @@ class GrocyViewModel {
 
     let modelContext: ModelContext
     let profileModelContext: ModelContext?
+    let actor: SwiftDataActor
 
     @ObservationIgnored @AppStorage("isLoggedIn") var isLoggedIn: Bool = false
     @ObservationIgnored @AppStorage("isDemoModus") var isDemoModus: Bool = false
@@ -103,6 +104,7 @@ class GrocyViewModel {
         self.modelContext = modelContext
         self.modelContext.autosaveEnabled = false
         self.profileModelContext = profileModelContext
+        self.actor = SwiftDataActor(modelContainer: modelContext.container)
         jsonEncoder.dateEncodingStrategy = .custom({ (date, encoder) in
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "yyyy-MM-dd"
@@ -271,39 +273,10 @@ class GrocyViewModel {
 
     func getObjectAndSaveSwiftData<T: Codable & Equatable & Identifiable & PersistentModel>(object: ObjectEntities) async throws -> [T] {
         do {
-            let incomingObjects: [T] = try await grocyApi.getObject(object: object)
-            let fetchDescriptor = FetchDescriptor<T>(sortBy: [SortDescriptor(\T.id)])
-            let existingObjects = try modelContext.fetch(fetchDescriptor)
-
-            // Process any pending changes before proceeding
-            modelContext.processPendingChanges()
-
-            // Build lookup dictionaries
-            let existingById = Dictionary(uniqueKeysWithValues: existingObjects.map { ($0.id, $0) })
-            let incomingById = Dictionary(uniqueKeysWithValues: incomingObjects.map { ($0.id, $0) })
-
-            // Delete removed objects
-            for (id, existingObject) in existingById {
-                if incomingById[id] == nil {
-                    modelContext.delete(existingObject)
-                }
-            }
-
-            // Insert new or updated objects
-            for (id, newObject) in incomingById {
-                if let existing = existingById[id] {
-                    if existing != newObject {
-                        modelContext.delete(existing)
-                        modelContext.insert(newObject)
-                    }
-                    // else: identical, skip
-                } else {
-                    modelContext.insert(newObject)
-                }
-            }
-
-            try modelContext.save()
-            return incomingObjects
+            return try await actor.getObjectAndSaveSwiftData(
+                object: object,
+                grocyApi: grocyApi
+            )
         } catch {
             GrocyLogger.error("Failed to save data: \(error)")
             throw error
@@ -528,17 +501,18 @@ class GrocyViewModel {
 
         GrocyLogger.info("Deleted all cached data from the viewmodel.")
     }
-    
+
     func getLogEntries() async {
         await Task.detached {
             do {
                 let logStore = try OSLogStore(scope: .currentProcessIdentifier)
                 let oneHourAgo = logStore.position(date: Date().addingTimeInterval(-3600))
                 let allEntries = try logStore.getEntries(at: oneHourAgo)
-                let filtered = allEntries
+                let filtered =
+                    allEntries
                     .compactMap { $0 as? OSLogEntryLog }
                     .filter { $0.subsystem == "georgappdev.Grocy" }
-                
+
                 await MainActor.run {
                     self.logEntries = filtered
                 }
@@ -549,7 +523,6 @@ class GrocyViewModel {
             }
         }.value
     }
-
 
     func updateShoppingListFromReminders(reminders: [Reminder]) async {
         for reminder in reminders {
