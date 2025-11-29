@@ -104,7 +104,7 @@ struct StockProductInfoView: View {
                 )
                 LabeledContent(
                     content: {
-                        Text(productDetails.averageShelfLifeDays > 0 ? formatDays(daysToFormat: productDetails.averageShelfLifeDays) ?? "Unknown" : "Unknown")
+                        Text(productDetails.averageShelfLifeDays ?? 0 > 0 ? formatDays(daysToFormat: productDetails.averageShelfLifeDays) ?? "Unknown" : "Unknown")
                     },
                     label: {
                         Label("Average shelf life", systemImage: MySymbols.date)
