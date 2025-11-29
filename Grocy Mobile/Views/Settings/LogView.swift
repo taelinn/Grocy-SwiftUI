@@ -16,6 +16,7 @@ struct LogView: View {
 
     @State private var exportLog: ExportLog = ExportLog(content: Data())
     @State private var isExporting: Bool = false
+    @State private var isLoadingLog: Bool = false
 
     struct ExportLog: FileDocument {
         static var readableContentTypes: [UTType] { [.plainText] }
@@ -47,7 +48,10 @@ struct LogView: View {
 
     var body: some View {
         List {
-            if grocyVM.logEntries.isEmpty {
+            if isLoadingLog {
+                ProgressView()
+                    .progressViewStyle(.circular)
+            } else if grocyVM.logEntries.isEmpty {
                 Text("No log entry found.")
             }
             ForEach(grocyVM.logEntries.reversed(), id: \.self) { logEntry in
@@ -74,9 +78,13 @@ struct LogView: View {
                 )
             })
         #endif
-        .task { grocyVM.getLogEntries() }
+        .task {
+            isLoadingLog = true
+            await grocyVM.getLogEntries()
+            isLoadingLog = false
+        }
         .refreshable {
-            grocyVM.getLogEntries()
+            await grocyVM.getLogEntries()
         }
         .fileExporter(
             isPresented: $isExporting,

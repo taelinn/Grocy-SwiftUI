@@ -528,30 +528,28 @@ class GrocyViewModel {
 
         GrocyLogger.info("Deleted all cached data from the viewmodel.")
     }
-
-    func getLogEntries() {
-        do {
-            // Open the log store.
-            let logStore = try OSLogStore(scope: .currentProcessIdentifier)
-
-            // Get all the logs from the last hour.
-            let oneHourAgo = logStore.position(date: Date().addingTimeInterval(-3600))
-
-            // Fetch log objects.
-            let allEntries = try logStore.getEntries(at: oneHourAgo)
-
-            // Filter the log to be relevant for our specific subsystem
-            // and remove other elements (signposts, etc).
-            let logEntriesFiltered =
-                allEntries
-                .compactMap { $0 as? OSLogEntryLog }
-                .filter { $0.subsystem == "georgappdev.Grocy" }
-
-            self.logEntries = logEntriesFiltered
-        } catch {
-            GrocyLogger.error("Error getting log entries")
-        }
+    
+    func getLogEntries() async {
+        await Task.detached {
+            do {
+                let logStore = try OSLogStore(scope: .currentProcessIdentifier)
+                let oneHourAgo = logStore.position(date: Date().addingTimeInterval(-3600))
+                let allEntries = try logStore.getEntries(at: oneHourAgo)
+                let filtered = allEntries
+                    .compactMap { $0 as? OSLogEntryLog }
+                    .filter { $0.subsystem == "georgappdev.Grocy" }
+                
+                await MainActor.run {
+                    self.logEntries = filtered
+                }
+            } catch {
+                await MainActor.run {
+                    GrocyLogger.error("Error getting log entries")
+                }
+            }
+        }.value
     }
+
 
     func updateShoppingListFromReminders(reminders: [Reminder]) async {
         for reminder in reminders {
