@@ -10,6 +10,7 @@ import SwiftUI
 
 struct TransferProductView: View {
     @Environment(GrocyViewModel.self) private var grocyVM
+    @Environment(\.dismiss) var dismiss
 
     @Query(filter: #Predicate<MDProduct> { $0.active }, sort: \MDProduct.name, order: .forward) var mdProducts: MDProducts
     @Query(filter: #Predicate<MDQuantityUnit> { $0.active }, sort: \MDQuantityUnit.id, order: .forward) var mdQuantityUnits: MDQuantityUnits
@@ -22,8 +23,6 @@ struct TransferProductView: View {
 
     @AppStorage("localizationKey") var localizationKey: String = "en"
 
-    @Environment(\.dismiss) var dismiss
-
     @State private var firstAppear: Bool = true
     @State private var actionPending: Bool = true
     @State private var isProcessingAction: Bool = false
@@ -33,6 +32,7 @@ struct TransferProductView: View {
     var productToTransferID: Int? {
         return directProductToTransferID ?? stockElement?.productID
     }
+    var isPopup: Bool = false
 
     @State private var productID: Int?
     @State private var locationIDFrom: Int?
@@ -240,6 +240,20 @@ struct TransferProductView: View {
         }
         .formStyle(.grouped)
         .toolbar(content: {
+            if isPopup {
+                ToolbarItem(
+                    placement: .cancellationAction,
+                    content: {
+                        Button(
+                            role: .cancel,
+                            action: {
+                                finishForm()
+                            }
+                        )
+                        .keyboardShortcut(.cancelAction)
+                    }
+                )
+            }
             if productToTransferID == nil {
                 ToolbarItem(id: "reset", placement: .cancellationAction) {
                     if isProcessingAction {

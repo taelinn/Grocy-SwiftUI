@@ -11,6 +11,7 @@ import SwiftUI
 struct StockTableMenuEntriesView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(GrocyViewModel.self) private var grocyVM
+    @Environment(StockInteractionNavigationRouter.self) private var interactionRouter
 
     @Query(sort: \MDQuantityUnit.id, order: .forward) var mdQuantityUnits: MDQuantityUnits
 
@@ -35,43 +36,38 @@ struct StockTableMenuEntriesView: View {
     }
 
     var body: some View {
-        NavigationLink(
-            value: StockInteraction.addToShL(stockElement: stockElement),
-            label: {
-                Label("Add to shopping list", systemImage: MySymbols.addToShoppingList)
-                    .labelStyle(.titleAndIcon)
-            }
-        )
+        Button(action: {
+            interactionRouter.present(.addToShL(stockElement: stockElement))
+        }, label: {
+            Label("Add to shopping list", systemImage: MySymbols.addToShoppingList)
+                .labelStyle(.titleAndIcon)
+        })
         Divider()
         Group {
-            NavigationLink(
-                value: StockInteraction.productPurchase(stockElement: stockElement),
-                label: {
-                    Label("Purchase", systemImage: MySymbols.purchase)
-                        .labelStyle(.titleAndIcon)
-                }
-            )
-            NavigationLink(
-                value: StockInteraction.productConsume(stockElement: stockElement),
-                label: {
-                    Label("Consume", systemImage: MySymbols.consume)
-                        .labelStyle(.titleAndIcon)
-                }
-            )
-            NavigationLink(
-                value: StockInteraction.productTransfer(stockElement: stockElement),
-                label: {
-                    Label("Transfer", systemImage: MySymbols.transfer)
-                        .labelStyle(.titleAndIcon)
-                }
-            )
-            NavigationLink(
-                value: StockInteraction.productInventory(stockElement: stockElement),
-                label: {
-                    Label("Inventory", systemImage: MySymbols.inventory)
-                        .labelStyle(.titleAndIcon)
-                }
-            )
+            Button(action: {
+                interactionRouter.present(.productPurchase(stockElement: stockElement))
+            }, label: {
+                Label("Purchase", systemImage: MySymbols.purchase)
+                    .labelStyle(.titleAndIcon)
+            })
+            Button(action: {
+                interactionRouter.present(.productConsume(stockElement: stockElement))
+            }, label: {
+                Label("Consume", systemImage: MySymbols.consume)
+                    .labelStyle(.titleAndIcon)
+            })
+            Button(action: {
+                interactionRouter.present(.productTransfer(stockElement: stockElement))
+            }, label: {
+                Label("Transfer", systemImage: MySymbols.transfer)
+                    .labelStyle(.titleAndIcon)
+            })
+            Button(action: {
+                interactionRouter.present(.productInventory(stockElement: stockElement))
+            }, label: {
+                Label("Inventory", systemImage: MySymbols.inventory)
+                    .labelStyle(.titleAndIcon)
+            })
         }
         Divider()
         Group {
@@ -91,25 +87,23 @@ struct StockTableMenuEntriesView: View {
         }
         Divider()
         Group {
-            NavigationLink(
-                value: StockInteraction.productOverview(stockElement: stockElement),
-                label: {
-                    Label("Product overview", systemImage: MySymbols.info)
-                        .labelStyle(.titleAndIcon)
-                }
-            )
+            Button(action: {
+                interactionRouter.present(.productOverview(stockElement: stockElement))
+            }, label: {
+                Label("Product overview", systemImage: MySymbols.info)
+                    .labelStyle(.titleAndIcon)
+            })
             //            //                Button(action: {
             //            //                    print("Stock entries are not accessed here")
             //            //                }, label: {
             //            //                    Text("Stock entries")
             //            //                })
-            NavigationLink(
-                value: StockInteraction.productJournal(stockElement: stockElement),
-                label: {
-                    Label("Stock journal", systemImage: MySymbols.stockJournal)
-                        .labelStyle(.titleAndIcon)
-                }
-            )
+            Button(action: {
+                interactionRouter.present(.productJournal(stockElement: stockElement))
+            }, label: {
+                Label("Stock journal", systemImage: MySymbols.stockJournal)
+                    .labelStyle(.titleAndIcon)
+            })
             //            //                Button(action: {
             //            //                    print("Stock Journal summary is not available yet")
             //            //                }, label: {

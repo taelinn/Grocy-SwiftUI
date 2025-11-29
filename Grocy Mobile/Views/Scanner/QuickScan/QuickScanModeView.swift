@@ -297,6 +297,7 @@ struct QuickScanModeView: View {
                         barcode: recognizedBarcode,
                         consumeType: .consume,
                         quickScan: true,
+                        isPopup: true
                     )
                 case .markAsOpened:
                     ConsumeProductView(
@@ -305,12 +306,14 @@ struct QuickScanModeView: View {
                         barcode: recognizedBarcode,
                         consumeType: .open,
                         quickScan: true,
+                        isPopup: true
                     )
                 case .purchase:
                     PurchaseProductView(
                         directProductToPurchaseID: product.id,
                         barcode: recognizedBarcode,
                         quickScan: true,
+                        isPopup: true
                     )
                 }
             } else {

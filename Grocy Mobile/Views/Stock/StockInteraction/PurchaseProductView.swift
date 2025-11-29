@@ -42,6 +42,7 @@ struct PurchaseProductView: View {
     var autoPurchase: Bool = false
     var barcode: MDProductBarcode? = nil
     var quickScan: Bool = false
+    var isPopup: Bool = false
 
     @State private var productID: Int?
     @State private var amount: Double = 0.0
@@ -278,6 +279,20 @@ struct PurchaseProductView: View {
             }
         }
         .toolbar(content: {
+            if isPopup {
+                ToolbarItem(
+                    placement: .cancellationAction,
+                    content: {
+                        Button(
+                            role: .cancel,
+                            action: {
+                                finishForm()
+                            }
+                        )
+                        .keyboardShortcut(.cancelAction)
+                    }
+                )
+            }
             if productToPurchaseID == nil {
                 ToolbarItem(id: "clear", placement: .cancellationAction) {
                     if !quickScan {
@@ -299,19 +314,6 @@ struct PurchaseProductView: View {
                         }
                     }
                 }
-            } else if quickScan {
-                ToolbarItem(
-                    placement: .cancellationAction,
-                    content: {
-                        Button(
-                            role: .cancel,
-                            action: {
-                                finishForm()
-                            }
-                        )
-                        .keyboardShortcut(.cancelAction)
-                    }
-                )
             }
             ToolbarItem(placement: .primaryAction) {
                 Button(

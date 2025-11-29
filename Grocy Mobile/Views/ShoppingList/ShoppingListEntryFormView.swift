@@ -26,16 +26,17 @@ struct ShoppingListEntryFormView: View {
 
     var selectedShoppingListID: Int?
     var productIDToSelect: Int?
+    var isPopup: Bool = false
 
     var isFormValid: Bool {
-        shoppingListEntry.amount > 0
+        shoppingListEntry.amount > 0 && (shoppingListEntry.productID != nil || !shoppingListEntry.note.isEmpty)
     }
 
     var product: MDProduct? {
         mdProducts.first(where: { $0.id == shoppingListEntry.productID })
     }
 
-    init(existingShoppingListEntry: ShoppingListItem? = nil, selectedShoppingListID: Int? = nil, productIDToSelect: Int? = nil) {
+    init(existingShoppingListEntry: ShoppingListItem? = nil, selectedShoppingListID: Int? = nil, productIDToSelect: Int? = nil, isPopup: Bool = false) {
         self.existingShoppingListEntry = existingShoppingListEntry
         self.selectedShoppingListID = selectedShoppingListID
         self.productIDToSelect = productIDToSelect
@@ -144,7 +145,7 @@ struct ShoppingListEntryFormView: View {
             await updateData()
         }
         .toolbar {
-            if existingShoppingListEntry == nil {
+            if isPopup {
                 ToolbarItem(
                     placement: .cancellationAction,
                     content: {

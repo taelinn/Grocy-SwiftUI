@@ -51,6 +51,7 @@ struct ConsumeProductView: View {
     }
     var consumeType: ConsumeType = .both
     var quickScan: Bool = false
+    var isPopup: Bool = false
 
     @State private var productID: Int?
     @State private var amount: Double = 1.0
@@ -339,6 +340,20 @@ struct ConsumeProductView: View {
             }
         }
         .toolbar(content: {
+            if isPopup {
+                ToolbarItem(
+                    placement: .cancellationAction,
+                    content: {
+                        Button(
+                            role: .cancel,
+                            action: {
+                                finishForm()
+                            }
+                        )
+                        .keyboardShortcut(.cancelAction)
+                    }
+                )
+            }
             if productToConsumeID == nil {
                 ToolbarItem(id: "clear", placement: .cancellationAction) {
                     if !quickScan {
@@ -359,19 +374,6 @@ struct ConsumeProductView: View {
                         }
                     }
                 }
-            } else if quickScan {
-                ToolbarItem(
-                    placement: .cancellationAction,
-                    content: {
-                        Button(
-                            role: .cancel,
-                            action: {
-                                finishForm()
-                            }
-                        )
-                        .keyboardShortcut(.cancelAction)
-                    }
-                )
             }
             if (consumeType == .open) || (consumeType == .both) {
                 ToolbarItem(id: "open", placement: .primaryAction) {

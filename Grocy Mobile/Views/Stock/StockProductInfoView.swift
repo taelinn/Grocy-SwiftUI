@@ -10,6 +10,7 @@ import SwiftUI
 
 struct StockProductInfoView: View {
     @Environment(GrocyViewModel.self) private var grocyVM
+    @Environment(\.dismiss) var dismiss
 
     @Query() var detailsList: [StockProductDetails]
     var productDetails: StockProductDetails? {
@@ -23,6 +24,7 @@ struct StockProductInfoView: View {
     @AppStorage("localizationKey") var localizationKey: String = "en"
 
     var stockElement: StockElement
+    var isPopup: Bool = false
 
     var body: some View {
         Form {
@@ -131,6 +133,22 @@ struct StockProductInfoView: View {
         .task {
             await grocyVM.requestStockInfo(stockModeGet: .details, productID: stockElement.productID)
         }
+        .toolbar {
+            if isPopup {
+                ToolbarItem(
+                    placement: .cancellationAction,
+                    content: {
+                        Button(
+                            role: .cancel,
+                            action: {
+                                dismiss()
+                            }
+                        )
+                        .keyboardShortcut(.cancelAction)
+                    }
+                )
+            }
+        }
     }
 }
 
@@ -141,8 +159,8 @@ struct StockProductInfoView: View {
     // Fetch one object from the preview store
     let descriptor = FetchDescriptor<StockElement>(sortBy: [SortDescriptor(\.productID)])
     let stockElement = (try? context.fetch(descriptor).first)
-    
-    if let stockElement{
+
+    if let stockElement {
         StockProductInfoView(stockElement: stockElement)
     } else {
         EmptyView()

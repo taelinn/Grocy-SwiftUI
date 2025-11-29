@@ -11,6 +11,7 @@ import SwiftUI
 struct StockJournalView: View {
     @Environment(GrocyViewModel.self) private var grocyVM
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.dismiss) var dismiss
 
     @Query var mdProducts: MDProducts
     @Query var mdLocations: MDLocations
@@ -24,6 +25,9 @@ struct StockJournalView: View {
     @State private var filteredTransactionType: TransactionType?
     @State private var filteredUserID: Int?
     @State private var showingFilterSheet = false
+
+    var stockElement: StockElement? = nil
+    var isPopup: Bool = false
 
     // Fetch the data with a dynamic predicate
     var stockJournal: StockJournal {
@@ -117,11 +121,6 @@ struct StockJournalView: View {
         await grocyVM.requestData(objects: dataToUpdate, additionalObjects: additionalDataToUpdate)
     }
 
-    var stockElement: StockElement? = nil
-    var selectedProductID: Int? {
-        return stockElement?.productID
-    }
-
     private func undoTransaction(stockJournalEntry: StockJournalEntry) async {
         do {
             try await grocyVM.undoBookingWithID(id: stockJournalEntry.id)
@@ -170,6 +169,20 @@ struct StockJournalView: View {
         }
         .navigationTitle("Stock journal")
         .toolbar {
+            if isPopup {
+                ToolbarItem(
+                    placement: .cancellationAction,
+                    content: {
+                        Button(
+                            role: .cancel,
+                            action: {
+                                dismiss()
+                            }
+                        )
+                        .keyboardShortcut(.cancelAction)
+                    }
+                )
+            }
             ToolbarItem(placement: .automatic) {
                 Button(action: { showingFilterSheet = true }) {
                     Label("Filter", systemImage: MySymbols.filter)
@@ -236,7 +249,7 @@ struct StockJournalView: View {
         )
         .task {
             await updateData()
-            filteredProductID = selectedProductID
+            filteredProductID = stockElement?.productID
         }
     }
 }

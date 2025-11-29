@@ -35,6 +35,7 @@ struct InventoryProductView: View {
         return directProductToInventoryID ?? stockElement?.productID
     }
     var directStockEntryID: String? = nil
+    var isPopup: Bool = false
 
     private let dataToUpdate: [ObjectEntities] = [.products, .shopping_locations, .locations, .quantity_units, .quantity_unit_conversions]
     private let additionalDataToUpdate: [AdditionalEntities] = [.stock, .volatileStock, .system_config, .system_info]
@@ -225,6 +226,20 @@ struct InventoryProductView: View {
             productInventory.newAmount = selectedProductStock?.amount ?? 1
         }
         .toolbar(content: {
+            if isPopup {
+                ToolbarItem(
+                    placement: .cancellationAction,
+                    content: {
+                        Button(
+                            role: .cancel,
+                            action: {
+                                finishForm()
+                            }
+                        )
+                        .keyboardShortcut(.cancelAction)
+                    }
+                )
+            }
             if productToInventoryID == nil {
                 ToolbarItem(id: "clear", placement: .cancellationAction) {
                     if isProcessingAction {

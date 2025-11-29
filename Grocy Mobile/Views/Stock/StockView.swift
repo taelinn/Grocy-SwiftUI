@@ -12,7 +12,7 @@ enum StockColumn {
     case product, productGroup, amount, value, nextDueDate, caloriesPerStockQU, calories
 }
 
-enum StockInteraction: Hashable {
+enum StockInteraction: Hashable, Identifiable {
     case purchaseProduct
     case consumeProduct
     case transferProduct
@@ -25,6 +25,21 @@ enum StockInteraction: Hashable {
     case productInventory(stockElement: StockElement)
     case productOverview(stockElement: StockElement)
     case productJournal(stockElement: StockElement)
+
+    var id: Self { self }
+}
+
+@Observable
+class StockInteractionNavigationRouter {
+    var presentedInteraction: StockInteraction?
+
+    func present(_ interaction: StockInteraction) {
+        presentedInteraction = interaction
+    }
+
+    func dismiss() {
+        presentedInteraction = nil
+    }
 }
 
 struct StockView: View {
@@ -70,6 +85,8 @@ struct StockView: View {
     @State private var filteredStatus: ProductStatus = .all
 
     @State var selectedStockElement: StockElement? = nil
+
+    @State private var interactionRouter = StockInteractionNavigationRouter()
 
     // Cached filtered/grouped results to prevent blocking during filter changes
     @State private var cachedFilteredStock: [StockElement] = []
@@ -442,27 +459,50 @@ struct StockView: View {
                 ToolbarSpacer(.fixed)
                 if horizontalSizeClass == .compact && iPhoneTabNavigation {
                     ToolbarItem(placement: .automatic) {
-                        NavigationLink(value: StockInteraction.stockJournal) {
-                            Label("Stock journal", systemImage: MySymbols.stockJournal)
-                        }
+                        Button(
+                            action: {
+                                interactionRouter.present(.stockJournal)
+                            },
+                            label: {
+                                Label("Stock journal", systemImage: MySymbols.stockJournal)
+                            }
+                        )
                     }
                     ToolbarSpacer(.fixed)
                 }
-            #endif
-            #if os(iOS)
                 ToolbarItemGroup(placement: horizontalSizeClass == .compact ? .secondaryAction : .primaryAction) {
-                    NavigationLink(value: StockInteraction.inventoryProduct) {
-                        Label("Inventory", systemImage: MySymbols.inventory)
-                    }
-                    NavigationLink(value: StockInteraction.transferProduct) {
-                        Label("Transfer", systemImage: MySymbols.transfer)
-                    }
-                    NavigationLink(value: StockInteraction.consumeProduct) {
-                        Label("Consume", systemImage: MySymbols.consume)
-                    }
-                    NavigationLink(value: StockInteraction.purchaseProduct) {
-                        Label("Purchase", systemImage: MySymbols.purchase)
-                    }
+                    Button(
+                        action: {
+                            interactionRouter.present(.inventoryProduct)
+                        },
+                        label: {
+                            Label("Inventory", systemImage: MySymbols.inventory)
+                        }
+                    )
+                    Button(
+                        action: {
+                            interactionRouter.present(.transferProduct)
+                        },
+                        label: {
+                            Label("Transfer", systemImage: MySymbols.transfer)
+                        }
+                    )
+                    Button(
+                        action: {
+                            interactionRouter.present(.consumeProduct)
+                        },
+                        label: {
+                            Label("Consume", systemImage: MySymbols.consume)
+                        }
+                    )
+                    Button(
+                        action: {
+                            interactionRouter.present(.purchaseProduct)
+                        },
+                        label: {
+                            Label("Purchase", systemImage: MySymbols.purchase)
+                        }
+                    )
                 }
             #elseif os(macOS)
                 ToolbarItemGroup(
@@ -506,37 +546,38 @@ struct StockView: View {
                 )
             #endif
         })
-        .navigationDestination(
-            for: StockInteraction.self,
-            destination: { interaction in
+        .environment(interactionRouter)
+        .sheet(item: $interactionRouter.presentedInteraction) { interaction in
+            NavigationStack {
                 switch interaction {
                 case .stockJournal:
-                    StockJournalView()
+                    StockJournalView(isPopup: true)
                 case .inventoryProduct:
-                    InventoryProductView()
+                    InventoryProductView(isPopup: true)
                 case .transferProduct:
-                    TransferProductView()
+                    TransferProductView(isPopup: true)
                 case .consumeProduct:
-                    ConsumeProductView()
+                    ConsumeProductView(isPopup: true)
                 case .purchaseProduct:
-                    PurchaseProductView()
+                    PurchaseProductView(isPopup: true)
                 case .productPurchase(let stockElement):
-                    PurchaseProductView(stockElement: stockElement)
+                    PurchaseProductView(stockElement: stockElement, isPopup: true)
                 case .productConsume(let stockElement):
-                    ConsumeProductView(stockElement: stockElement)
+                    ConsumeProductView(stockElement: stockElement, isPopup: true)
                 case .productTransfer(let stockElement):
-                    TransferProductView(stockElement: stockElement)
+                    TransferProductView(stockElement: stockElement, isPopup: true)
                 case .productInventory(let stockElement):
-                    InventoryProductView(stockElement: stockElement)
+                    InventoryProductView(stockElement: stockElement, isPopup: true)
                 case .productOverview(let stockElement):
-                    StockProductInfoView(stockElement: stockElement)
+                    StockProductInfoView(stockElement: stockElement, isPopup: true)
                 case .productJournal(let stockElement):
-                    StockJournalView(stockElement: stockElement)
+                    StockJournalView(stockElement: stockElement, isPopup: true)
                 case .addToShL(let stockElement):
-                    ShoppingListEntryFormView(productIDToSelect: stockElement.productID)
+                    ShoppingListEntryFormView(productIDToSelect: stockElement.productID, isPopup: true)
+                default: EmptyView()
                 }
             }
-        )
+        }
         .navigationDestination(
             for: StockElement.self,
             destination: { stockElement in
