@@ -11,10 +11,9 @@ import SwiftUI
 struct MDProductRowView: View {
     @Environment(GrocyViewModel.self) private var grocyVM
 
-    @Query(sort: \MDLocation.id, order: .forward) var mdLocations: MDLocations
-    @Query(sort: \MDProductGroup.id, order: .forward) var mdProductGroups: MDProductGroups
-
     var product: MDProduct
+    var location: MDLocation?
+    var productGroup: MDProductGroup?
 
     var body: some View {
         HStack {
@@ -29,10 +28,10 @@ struct MDProductRowView: View {
                         .font(.title)
                         .foregroundStyle(product.active ? .primary : .secondary)
                 }
-                if let locationName = mdLocations.first(where: { $0.id == product.locationID })?.name {
+                if let locationName = location?.name {
                     Text("\(Text("Location")): \(Text(locationName).font(.caption))")
                 }
-                if let productGroupName = mdProductGroups.first(where: { $0.id == product.productGroupID })?.name {
+                if let productGroupName = productGroup?.name {
                     Text("\(Text("Product group")): \(Text(productGroupName).font(.caption))")
                 }
                 if !product.mdProductDescription.isEmpty {
@@ -51,7 +50,9 @@ struct MDProductRowView: View {
             product: MDProduct(
                 id: 1,
                 name: "Product",
-            )
+            ),
+            location: nil,
+            productGroup: nil
         )
         MDProductRowView(
             product: MDProduct(
@@ -60,7 +61,9 @@ struct MDProductRowView: View {
                 mdProductDescription: "Description",
                 productGroupID: 1,
                 locationID: 2,
-            )
+            ),
+            location: nil,
+            productGroup: nil
         )
     }
 }

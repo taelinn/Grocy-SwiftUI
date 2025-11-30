@@ -342,7 +342,7 @@ struct MDProductFormView: View {
                         }
                     }
                 )
-                .disabled(!isFormValid)
+                .disabled(!isFormValid || isProcessing)
                 .keyboardShortcut(.defaultAction)
             }
         })

@@ -12,6 +12,8 @@ struct MDProductsView: View {
     @Environment(GrocyViewModel.self) private var grocyVM
     @Environment(\.modelContext) private var modelContext
 
+    @Query var mdLocations: MDLocations
+    @Query var mdProductGroups: MDProductGroups
     @Query var userSettingsList: GrocyUserSettingsList
     var userSettings: GrocyUserSettings? {
         userSettingsList.first
@@ -80,7 +82,11 @@ struct MDProductsView: View {
             }
             ForEach(mdProducts, id: \.id) { product in
                 NavigationLink(value: product) {
-                    MDProductRowView(product: product)
+                    MDProductRowView(
+                        product: product,
+                        location: mdLocations.first(where: { $0.id == product.locationID }),
+                        productGroup: mdProductGroups.first(where: { $0.id == product.productGroupID })
+                    )
                 }
                 .swipeActions(
                     edge: .trailing,

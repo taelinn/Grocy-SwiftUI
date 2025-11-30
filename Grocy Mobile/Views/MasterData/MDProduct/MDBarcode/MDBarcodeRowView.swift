@@ -9,12 +9,9 @@ import SwiftData
 import SwiftUI
 
 struct MDBarcodeRowView: View {
-    @Environment(GrocyViewModel.self) private var grocyVM
-
-    @Query(sort: \MDQuantityUnit.id, order: .forward) var mdQuantityUnits: MDQuantityUnits
-    @Query(sort: \MDStore.name, order: .forward) var mdStores: MDStores
-
     var barcode: MDProductBarcode
+    var quantityUnit: MDQuantityUnit?
+    var store: MDStore?
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -23,10 +20,10 @@ struct MDBarcodeRowView: View {
                     .font(.title)
             }
             if let amount = barcode.amount {
-                Text("\(Text("Amount")): \(amount.formattedAmount) \(mdQuantityUnits.first(where: { $0.id == barcode.quID })?.getName(amount: amount) ?? String(barcode.quID ?? 0))")
+                Text("\(Text("Amount")): \(amount.formattedAmount) \(quantityUnit?.getName(amount: amount) ?? String(barcode.quID ?? 0))")
                     .font(.caption)
             }
-            if let storeName = mdStores.first(where: { $0.id == barcode.storeID })?.name {
+            if let storeName = store?.name {
                 Text("\(Text("Store")): \(storeName)")
                     .font(.caption)
             }
@@ -36,8 +33,8 @@ struct MDBarcodeRowView: View {
 
 #Preview(traits: .previewData) {
     List {
-        MDBarcodeRowView(barcode: MDProductBarcode(id: 1, productID: 1, barcode: "123456789"))
-        MDBarcodeRowView(barcode: MDProductBarcode(id: 2, productID: 1, barcode: "543242214", quID: 2, amount: 1.0, storeID: 1))
-        MDBarcodeRowView(barcode: MDProductBarcode(id: 3, productID: 1, barcode: "543242124", quID: 2, amount: 10.0, storeID: 2))
+        MDBarcodeRowView(barcode: MDProductBarcode(id: 1, productID: 1, barcode: "123456789"), quantityUnit: nil, store: nil)
+        MDBarcodeRowView(barcode: MDProductBarcode(id: 2, productID: 1, barcode: "543242214", quID: 2, amount: 1.0, storeID: 1), quantityUnit: nil, store: nil)
+        MDBarcodeRowView(barcode: MDProductBarcode(id: 3, productID: 1, barcode: "543242124", quID: 2, amount: 10.0, storeID: 2), quantityUnit: nil, store: nil)
     }
 }

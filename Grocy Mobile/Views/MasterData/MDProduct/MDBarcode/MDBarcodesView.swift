@@ -21,6 +21,9 @@ struct MDBarcodesView: View {
 
     @State private var showAddBarcode: Bool = false
 
+    @Query var mdQuantityUnits: MDQuantityUnits
+    @Query var mdStores: MDStores
+
     // Fetch the data with a dynamic predicate
     var mdProductBarcodes: MDProductBarcodes {
         let sortDescriptor = SortDescriptor<MDProductBarcode>(\.barcode)
@@ -83,7 +86,11 @@ struct MDBarcodesView: View {
                 NavigationLink(
                     value: productBarcode,
                     label: {
-                        MDBarcodeRowView(barcode: productBarcode)
+                        MDBarcodeRowView(
+                            barcode: productBarcode,
+                            quantityUnit: mdQuantityUnits.first(where: { $0.id == productBarcode.quID }),
+                            store: mdStores.first(where: { $0.id == productBarcode.storeID })
+                        )
                     }
                 )
                 .swipeActions(
