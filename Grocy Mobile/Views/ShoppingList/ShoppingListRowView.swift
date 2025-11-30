@@ -10,19 +10,18 @@ import SwiftUI
 
 struct ShoppingListRowView: View {
     @Environment(\.colorScheme) var colorScheme
+    @Environment(ShoppingListInteractionNavigationRouter.self) private var shoppingListInteractionRouter
 
     var shoppingListItem: ShoppingListItem
     var isBelowStock: Bool
     var product: MDProduct? = nil
     var quantityUnit: MDQuantityUnit? = nil
     var quantityUnitConversions: MDQuantityUnitConversions = []
+    var userSettings: GrocyUserSettings? = nil
 
     // Callbacks for interactions
     var onToggleDone: (ShoppingListItem) async -> Void = { _ in }
     var onDelete: (ShoppingListItem) -> Void = { _ in }
-    var onShowPurchase: (ShoppingListItem) -> Void = { _ in }
-    var onShowAutoPurchase: (ShoppingListItem) -> Void = { _ in }
-    var onEditItem: (ShoppingListItem) -> Void = { _ in }
 
     private var factoredAmount: Double {
         shoppingListItem.amount * (quantityUnitConversions.first(where: { $0.fromQuID == shoppingListItem.quID })?.factor ?? 1)
@@ -51,11 +50,54 @@ struct ShoppingListRowView: View {
             Text(product?.name ?? shoppingListItem.note)
                 .font(.headline)
                 .strikethrough(shoppingListItem.done == 1)
+            if !shoppingListItem.note.isEmpty {
+                Text(shoppingListItem.note)
+                    .font(.caption)
+            }
             Text("\(Text("Amount")): \(amountString)")
                 .strikethrough(shoppingListItem.done == 1)
         }
         .foregroundStyle(shoppingListItem.done == 1 ? Color.gray : Color.primary)
         .listRowBackground(backgroundColor)
+        .contextMenu(menuItems: {
+            Button(
+                action: {
+                    Task {
+                        if shoppingListItem.done == 0 && userSettings?.shoppingListToStockWorkflowAutoSubmitWhenPrefilled ?? false {
+                            shoppingListInteractionRouter.present(.autoPurchase(item: shoppingListItem))
+                        }
+                        await onToggleDone(shoppingListItem)
+                    }
+                },
+                label: {
+                    if shoppingListItem.done == 0 {
+                        Label("Mark this item as done", systemImage: MySymbols.done)
+                    } else {
+                        Label("Mark this item as undone", systemImage: MySymbols.undone)
+                    }
+                }
+            )
+            if shoppingListItem.productID != nil {
+                Button(
+                    action: {
+                        shoppingListInteractionRouter.present(.purchase(item: shoppingListItem))
+                    },
+                    label: {
+                        Label("Add this item to stock", systemImage: MySymbols.purchase)
+                    }
+                )
+            }
+            Divider()
+            Button(
+                role: .destructive,
+                action: {
+                    onDelete(shoppingListItem)
+                },
+                label: {
+                    Label("Delete this item", systemImage: MySymbols.delete)
+                }
+            )
+        })
         .swipeActions(
             edge: .trailing,
             allowsFullSwipe: true,
@@ -75,17 +117,20 @@ struct ShoppingListRowView: View {
                     Button(
                         action: {
                             Task {
+                                if shoppingListItem.done == 0 && userSettings?.shoppingListToStockWorkflowAutoSubmitWhenPrefilled ?? false {
+                                    shoppingListInteractionRouter.present(.autoPurchase(item: shoppingListItem))
+                                }
                                 await onToggleDone(shoppingListItem)
                             }
                         },
                         label: { Label("Done", systemImage: MySymbols.done) }
                     )
                     .tint(.green)
-                    .accessibilityHint("Mark this item as done")
+                    .accessibilityHint(shoppingListItem.done == 0 ? "Mark this item as done" : "Mark this item as undone")
                     if shoppingListItem.productID != nil {
                         Button(
                             action: {
-                                onShowPurchase(shoppingListItem)
+                                shoppingListInteractionRouter.present(.purchase(item: shoppingListItem))
                             },
                             label: { Label("Purchase", systemImage: "shippingbox") }
                         )

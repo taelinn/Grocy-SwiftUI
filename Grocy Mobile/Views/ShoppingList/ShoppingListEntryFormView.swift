@@ -29,7 +29,7 @@ struct ShoppingListEntryFormView: View {
     var isPopup: Bool = false
 
     var isFormValid: Bool {
-        shoppingListEntry.amount > 0 && (shoppingListEntry.productID != nil || !shoppingListEntry.note.isEmpty)
+        shoppingListEntry.amount > 0 && (shoppingListEntry.productID != -1 || !shoppingListEntry.note.isEmpty) && selectedShoppingListID != -1
     }
 
     var product: MDProduct? {
@@ -40,7 +40,8 @@ struct ShoppingListEntryFormView: View {
         self.existingShoppingListEntry = existingShoppingListEntry
         self.selectedShoppingListID = selectedShoppingListID
         self.productIDToSelect = productIDToSelect
-        _shoppingListEntry = State(initialValue: existingShoppingListEntry ?? ShoppingListItem())
+        self.isPopup = isPopup
+        self.shoppingListEntry = existingShoppingListEntry ?? ShoppingListItem(productID: productIDToSelect ?? -1, shoppingListID: selectedShoppingListID ?? -1)
     }
 
     private func getQuantityUnit() -> MDQuantityUnit? {
@@ -84,7 +85,11 @@ struct ShoppingListEntryFormView: View {
             isSuccessful = true
         } catch {
             GrocyLogger.error("Shopping entry failed. \(error)")
-            errorMessage = error.localizedDescription
+            if let apiError = error as? APIError {
+                errorMessage = apiError.displayMessage
+            } else {
+                errorMessage = error.localizedDescription
+            }
             isSuccessful = false
         }
         isProcessing = false
@@ -99,6 +104,7 @@ struct ShoppingListEntryFormView: View {
                 selection: $shoppingListEntry.shoppingListID,
                 label: Label("Shopping list", systemImage: MySymbols.shoppingList),
                 content: {
+                    Text("").tag(-1)
                     ForEach(shoppingListDescriptions, id: \.id) { shLDescription in
                         Text(shLDescription.name).tag(shLDescription.id)
                     }
@@ -143,6 +149,12 @@ struct ShoppingListEntryFormView: View {
         .navigationTitle(existingShoppingListEntry == nil ? "Create shopping list item" : "Edit shopping list item")
         .task {
             await updateData()
+            if shoppingListEntry.shoppingListID == -1 {
+                shoppingListEntry.shoppingListID = shoppingListDescriptions.first?.id ?? -1
+            }
+            if shoppingListEntry.quID == -1, let selectedProduct = mdProducts.first(where: { $0.id == shoppingListEntry.productID }) {
+                shoppingListEntry.quID = selectedProduct.quIDPurchase
+            }
         }
         .toolbar {
             if isPopup {

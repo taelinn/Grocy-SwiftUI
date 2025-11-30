@@ -13,6 +13,28 @@ struct ShoppingListItemWrapped {
     let product: MDProduct?
 }
 
+enum ShoppingListInteraction: Hashable, Identifiable {
+    case newShoppingList
+    case newShoppingListEntry
+    case purchase(item: ShoppingListItem)
+    case autoPurchase(item: ShoppingListItem)
+
+    var id: Self { self }
+}
+
+@Observable
+class ShoppingListInteractionNavigationRouter {
+    var presentedInteraction: ShoppingListInteraction?
+
+    func present(_ interaction: ShoppingListInteraction) {
+        presentedInteraction = interaction
+    }
+
+    func dismiss() {
+        presentedInteraction = nil
+    }
+}
+
 struct ShoppingListView: View {
     @Environment(GrocyViewModel.self) private var grocyVM
 
@@ -23,8 +45,12 @@ struct ShoppingListView: View {
     @Query(sort: \MDStore.id, order: .forward) var mdStores: MDStores
     @Query(sort: \MDQuantityUnit.id, order: .forward) var mdQuantityUnits: MDQuantityUnits
     @Query(sort: \MDQuantityUnitConversion.id, order: .forward) var mdQuantityUnitConversions: MDQuantityUnitConversions
+    @Query var userSettingsList: GrocyUserSettingsList
+    var userSettings: GrocyUserSettings? {
+        userSettingsList.first
+    }
 
-    @State private var selectedShoppingListID: Int = 1
+    @State private var selectedShoppingListID: Int = -1
 
     @State private var firstAppear: Bool = true
 
@@ -41,19 +67,14 @@ struct ShoppingListView: View {
     @State private var sortOrder: SortOrder = .forward
 
     @State private var showFilterSheet: Bool = false
-    @State private var showNewShoppingList: Bool = false
-    @State private var showNewShoppingListEntry: Bool = false
+    
+    @State private var shoppingListInteractionRouter = ShoppingListInteractionNavigationRouter()
 
     @State private var showSHLDeleteAlert: Bool = false
     @State private var showClearListAlert: Bool = false
     @State private var showClearDoneAlert: Bool = false
-
-    // Item interaction state
     @State private var shlItemToDelete: ShoppingListItem? = nil
     @State private var showEntryDeleteAlert: Bool = false
-    @State private var showPurchase: Bool = false
-    @State private var showAutoPurchase: Bool = false
-    @State private var selectedItemForPurchase: ShoppingListItem? = nil
 
     private let dataToUpdate: [ObjectEntities] = [
         .products,
@@ -318,7 +339,7 @@ struct ShoppingListView: View {
                         "Add item",
                         systemImage: MySymbols.new,
                         action: {
-                            showNewShoppingListEntry.toggle()
+                            shoppingListInteractionRouter.present(.newShoppingListEntry)
                         }
                     )
                     .help("Add item")
@@ -343,6 +364,9 @@ struct ShoppingListView: View {
         .task {
             if firstAppear {
                 await updateData()
+                if selectedShoppingListID == -1 {
+                    selectedShoppingListID = shoppingListDescriptions.first?.id ?? -1
+                }
                 firstAppear = false
             }
         }
@@ -389,42 +413,21 @@ struct ShoppingListView: View {
             }
             .presentationDetents([.medium])
         }
-        .sheet(
-            isPresented: $showNewShoppingListEntry,
-            content: {
-                NavigationStack {
-                    ShoppingListEntryFormView(selectedShoppingListID: selectedShoppingListID)
-                }
-            }
-        )
-        .sheet(
-            isPresented: $showNewShoppingList,
-            content: {
-                NavigationStack {
+        .environment(shoppingListInteractionRouter)
+        .sheet(item: $shoppingListInteractionRouter.presentedInteraction) { interaction in
+            NavigationStack {
+                switch interaction {
+                case .newShoppingList:
                     ShoppingListFormView()
+                case .newShoppingListEntry:
+                    ShoppingListEntryFormView(selectedShoppingListID: selectedShoppingListID, isPopup: true)
+                case .purchase(let item):
+                    PurchaseProductView(directProductToPurchaseID: item.productID, productToPurchaseAmount: item.amount, isPopup: true)
+                case .autoPurchase(let item):
+                    PurchaseProductView(directProductToPurchaseID: item.productID, productToPurchaseAmount: item.amount, autoPurchase: true, isPopup: true)
                 }
             }
-        )
-        .sheet(
-            isPresented: $showPurchase,
-            content: {
-                if let item = selectedItemForPurchase {
-                    NavigationStack {
-                        PurchaseProductView(directProductToPurchaseID: item.productID, productToPurchaseAmount: item.amount)
-                    }
-                }
-            }
-        )
-        .sheet(
-            isPresented: $showAutoPurchase,
-            content: {
-                if let item = selectedItemForPurchase {
-                    NavigationStack {
-                        PurchaseProductView(directProductToPurchaseID: item.productID, productToPurchaseAmount: item.amount, autoPurchase: true)
-                    }
-                }
-            }
-        )
+        }
         .alert(
             "Do you really want to delete this item?",
             isPresented: $showEntryDeleteAlert,
@@ -500,7 +503,7 @@ struct ShoppingListView: View {
             Divider()
             Button(
                 action: {
-                    showNewShoppingList.toggle()
+                    shoppingListInteractionRouter.present(.newShoppingList)
                 },
                 label: {
                     Label("New shopping list", systemImage: MySymbols.new)
@@ -675,17 +678,9 @@ struct ShoppingListView: View {
                     product: element.product,
                     quantityUnit: mdQuantityUnits.first(where: { $0.id == element.product?.quIDPurchase }),
                     quantityUnitConversions: mdQuantityUnitConversions.filter { $0.toQuID == element.shoppingListItem.quID },
+                    userSettings: userSettings,
                     onToggleDone: changeDoneStatus,
-                    onDelete: deleteItem,
-                    onShowPurchase: { item in
-                        selectedItemForPurchase = item
-                        showPurchase.toggle()
-                    },
-                    onShowAutoPurchase: { item in
-                        selectedItemForPurchase = item
-                        showAutoPurchase.toggle()
-                    },
-                    onEditItem: { _ in }
+                    onDelete: deleteItem
                 )
             }
         )
