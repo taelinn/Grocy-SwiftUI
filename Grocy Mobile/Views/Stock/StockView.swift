@@ -84,9 +84,7 @@ struct StockView: View {
     @State private var filteredProductGroupID: Int?
     @State private var filteredStatus: ProductStatus = .all
 
-    @State var selectedStockElement: StockElement? = nil
-
-    @State private var interactionRouter = StockInteractionNavigationRouter()
+    @State private var stockInteractionRouter = StockInteractionNavigationRouter()
 
     // Cached filtered/grouped results to prevent blocking during filter changes
     @State private var cachedFilteredStock: [StockElement] = []
@@ -361,8 +359,7 @@ struct StockView: View {
                             mdProductGroups: mdProductGroups,
                             volatileStock: volatileStock,
                             userSettings: userSettings,
-                            stockElement: stockElement,
-                            selectedStockElement: $selectedStockElement
+                            stockElement: stockElement
                         )
                     }
                 },
@@ -461,7 +458,7 @@ struct StockView: View {
                     ToolbarItem(placement: .automatic) {
                         Button(
                             action: {
-                                interactionRouter.present(.stockJournal)
+                                stockInteractionRouter.present(.stockJournal)
                             },
                             label: {
                                 Label("Stock journal", systemImage: MySymbols.stockJournal)
@@ -473,7 +470,7 @@ struct StockView: View {
                 ToolbarItemGroup(placement: horizontalSizeClass == .compact ? .secondaryAction : .primaryAction) {
                     Button(
                         action: {
-                            interactionRouter.present(.inventoryProduct)
+                            stockInteractionRouter.present(.inventoryProduct)
                         },
                         label: {
                             Label("Inventory", systemImage: MySymbols.inventory)
@@ -481,7 +478,7 @@ struct StockView: View {
                     )
                     Button(
                         action: {
-                            interactionRouter.present(.transferProduct)
+                            stockInteractionRouter.present(.transferProduct)
                         },
                         label: {
                             Label("Transfer", systemImage: MySymbols.transfer)
@@ -489,7 +486,7 @@ struct StockView: View {
                     )
                     Button(
                         action: {
-                            interactionRouter.present(.consumeProduct)
+                            stockInteractionRouter.present(.consumeProduct)
                         },
                         label: {
                             Label("Consume", systemImage: MySymbols.consume)
@@ -497,7 +494,7 @@ struct StockView: View {
                     )
                     Button(
                         action: {
-                            interactionRouter.present(.purchaseProduct)
+                            stockInteractionRouter.present(.purchaseProduct)
                         },
                         label: {
                             Label("Purchase", systemImage: MySymbols.purchase)
@@ -546,8 +543,8 @@ struct StockView: View {
                 )
             #endif
         })
-        .environment(interactionRouter)
-        .sheet(item: $interactionRouter.presentedInteraction) { interaction in
+        .environment(stockInteractionRouter)
+        .sheet(item: $stockInteractionRouter.presentedInteraction) { interaction in
             NavigationStack {
                 switch interaction {
                 case .stockJournal:

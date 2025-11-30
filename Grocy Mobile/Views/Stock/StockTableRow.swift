@@ -25,7 +25,6 @@ struct StockTableRow: View {
     let userSettings: GrocyUserSettings?
 
     var stockElement: StockElement
-    @Binding var selectedStockElement: StockElement?
 
     @State private var showDetailView: Bool = false
 
@@ -64,14 +63,17 @@ struct StockTableRow: View {
             }
         )
         .contextMenu(menuItems: {
-            StockTableMenuEntriesView(stockElement: stockElement, selectedStockElement: $selectedStockElement)
+            StockTableMenuEntriesView(stockElement: stockElement, mdQuantityUnits: mdQuantityUnits)
         })
         .swipeActions(
             edge: .leading,
             allowsFullSwipe: true,
             content: {
                 if stockElement.amount > 0 {
-                    StockTableRowActionsView(stockElement: stockElement, selectedStockElement: $selectedStockElement, shownActions: [.consumeQA, .openQA])
+                    StockTableRowActionsView(stockElement: stockElement, shownActions: [.consumeQA], mdQuantityUnits: mdQuantityUnits)
+                }
+                if (stockElement.amount - stockElement.amountOpened) > 0 {
+                    StockTableRowActionsView(stockElement: stockElement, shownActions: [.openQA], mdQuantityUnits: mdQuantityUnits)
                 }
             }
         )
@@ -80,7 +82,7 @@ struct StockTableRow: View {
             allowsFullSwipe: true,
             content: {
                 if stockElement.amount > 0 {
-                    StockTableRowActionsView(stockElement: stockElement, selectedStockElement: $selectedStockElement, shownActions: [.consumeAll])
+                    StockTableRowActionsView(stockElement: stockElement, shownActions: [.consumeAll], mdQuantityUnits: mdQuantityUnits)
                 }
             }
         )
@@ -177,6 +179,6 @@ struct StockTableRow: View {
 
 //struct StockTableRow_Previews: PreviewProvider {
 //    static var previews: some View {
-//        StockTableRow(stockElement: StockElement(amount: "2", amountAggregated: "5", value: "1.0", bestBeforeDate: "12.12.2021", amountOpened: "1", amountOpenedAggregated: "2", isAggregatedAmount: "0", dueType: "1", productID: "1", product: MDProduct(id: "1", name: "Product", mdProductDescription: "", productGroupID: "1", active: "1", locationID: "1", storeID: "1", quIDPurchase: "1", quIDStock: "1", minStockAmount: "0", defaultBestBeforeDays: "0", defaultBestBeforeDaysAfterOpen: "0", defaultBestBeforeDaysAfterFreezing: "0", defaultBestBeforeDaysAfterThawing: "0", pictureFileName: nil, enableTareWeightHandling: "0", tareWeight: "0", notCheckStockFulfillmentForRecipes: "0", parentProductID: nil, calories: "13", cumulateMinStockAmountOfSubProducts: "1", dueType: "1", quickConsumeAmount: "1", rowCreatedTimestamp: "ts", hideOnStockOverview: nil, userfields: nil)), selectedStockElement: Binding.constant(nil), activeSheet: Binding.constant(nil))
+//        StockTableRow(stockElement: StockElement(amount: "2", amountAggregated: "5", value: "1.0", bestBeforeDate: "12.12.2021", amountOpened: "1", amountOpenedAggregated: "2", isAggregatedAmount: "0", dueType: "1", productID: "1", product: MDProduct(id: "1", name: "Product", mdProductDescription: "", productGroupID: "1", active: "1", locationID: "1", storeID: "1", quIDPurchase: "1", quIDStock: "1", minStockAmount: "0", defaultBestBeforeDays: "0", defaultBestBeforeDaysAfterOpen: "0", defaultBestBeforeDaysAfterFreezing: "0", defaultBestBeforeDaysAfterThawing: "0", pictureFileName: nil, enableTareWeightHandling: "0", tareWeight: "0", notCheckStockFulfillmentForRecipes: "0", parentProductID: nil, calories: "13", cumulateMinStockAmountOfSubProducts: "1", dueType: "1", quickConsumeAmount: "1", rowCreatedTimestamp: "ts", hideOnStockOverview: nil, userfields: nil)), activeSheet: Binding.constant(nil))
 //    }
 //}

@@ -11,13 +11,9 @@ import SwiftUI
 struct StockTableRowActionsView: View {
     @Environment(GrocyViewModel.self) private var grocyVM
 
-    @Query(sort: \MDQuantityUnit.id, order: .forward) var mdQuantityUnits: MDQuantityUnits
-
     var stockElement: StockElement
-
-    @Binding var selectedStockElement: StockElement?
-
     var shownActions: [ShownAction] = []
+    var mdQuantityUnits: MDQuantityUnits
 
     enum ShownAction: Identifiable {
         case consumeQA, consumeAll, openQA
@@ -32,7 +28,6 @@ struct StockTableRowActionsView: View {
     }
 
     private func consumeQuickConsumeAmount() async {
-        selectedStockElement = stockElement
         do {
             try await grocyVM.postStockObject(
                 id: stockElement.productID,
@@ -55,7 +50,6 @@ struct StockTableRowActionsView: View {
     }
 
     private func consumeAll() async {
-        selectedStockElement = stockElement
         do {
             try await grocyVM.postStockObject(
                 id: stockElement.productID,
@@ -69,7 +63,6 @@ struct StockTableRowActionsView: View {
     }
 
     private func openQuickConsumeAmount() async {
-        selectedStockElement = stockElement
         do {
             try await grocyVM.postStockObject(
                 id: stockElement.productID,

@@ -9,14 +9,11 @@ import SwiftData
 import SwiftUI
 
 struct StockTableMenuEntriesView: View {
-    @Environment(\.modelContext) private var modelContext
     @Environment(GrocyViewModel.self) private var grocyVM
-    @Environment(StockInteractionNavigationRouter.self) private var interactionRouter
-
-    @Query(sort: \MDQuantityUnit.id, order: .forward) var mdQuantityUnits: MDQuantityUnits
+    @Environment(StockInteractionNavigationRouter.self) private var stockInteractionRouter
 
     var stockElement: StockElement
-    @Binding var selectedStockElement: StockElement?
+    var mdQuantityUnits: MDQuantityUnits
 
     var quantityUnit: MDQuantityUnit? {
         mdQuantityUnits.first(where: { $0.id == stockElement.product?.quIDStock })
@@ -37,7 +34,7 @@ struct StockTableMenuEntriesView: View {
 
     var body: some View {
         Button(action: {
-            interactionRouter.present(.addToShL(stockElement: stockElement))
+            stockInteractionRouter.present(.addToShL(stockElement: stockElement))
         }, label: {
             Label("Add to shopping list", systemImage: MySymbols.addToShoppingList)
                 .labelStyle(.titleAndIcon)
@@ -45,25 +42,25 @@ struct StockTableMenuEntriesView: View {
         Divider()
         Group {
             Button(action: {
-                interactionRouter.present(.productPurchase(stockElement: stockElement))
+                stockInteractionRouter.present(.productPurchase(stockElement: stockElement))
             }, label: {
                 Label("Purchase", systemImage: MySymbols.purchase)
                     .labelStyle(.titleAndIcon)
             })
             Button(action: {
-                interactionRouter.present(.productConsume(stockElement: stockElement))
+                stockInteractionRouter.present(.productConsume(stockElement: stockElement))
             }, label: {
                 Label("Consume", systemImage: MySymbols.consume)
                     .labelStyle(.titleAndIcon)
             })
             Button(action: {
-                interactionRouter.present(.productTransfer(stockElement: stockElement))
+                stockInteractionRouter.present(.productTransfer(stockElement: stockElement))
             }, label: {
                 Label("Transfer", systemImage: MySymbols.transfer)
                     .labelStyle(.titleAndIcon)
             })
             Button(action: {
-                interactionRouter.present(.productInventory(stockElement: stockElement))
+                stockInteractionRouter.present(.productInventory(stockElement: stockElement))
             }, label: {
                 Label("Inventory", systemImage: MySymbols.inventory)
                     .labelStyle(.titleAndIcon)
@@ -88,7 +85,7 @@ struct StockTableMenuEntriesView: View {
         Divider()
         Group {
             Button(action: {
-                interactionRouter.present(.productOverview(stockElement: stockElement))
+                stockInteractionRouter.present(.productOverview(stockElement: stockElement))
             }, label: {
                 Label("Product overview", systemImage: MySymbols.info)
                     .labelStyle(.titleAndIcon)
@@ -99,7 +96,7 @@ struct StockTableMenuEntriesView: View {
             //            //                    Text("Stock entries")
             //            //                })
             Button(action: {
-                interactionRouter.present(.productJournal(stockElement: stockElement))
+                stockInteractionRouter.present(.productJournal(stockElement: stockElement))
             }, label: {
                 Label("Stock journal", systemImage: MySymbols.stockJournal)
                     .labelStyle(.titleAndIcon)
