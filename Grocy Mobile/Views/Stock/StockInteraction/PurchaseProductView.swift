@@ -117,10 +117,10 @@ struct PurchaseProductView: View {
             let dateComponents = DateComponents(day: product?.defaultDueDays ?? 0)
             self.dueDate = Calendar.current.date(byAdding: dateComponents, to: Calendar.current.startOfDay(for: Date())) ?? Calendar.current.startOfDay(for: Date())
         }
-        self.price = nil
+        self.price = actionPending ? barcode?.lastPrice ?? productDetails?.lastPrice : nil
         self.isTotalPrice = false
-        self.storeID = barcode?.storeID ?? -1
-        self.locationID = -1
+        self.storeID = actionPending ? (barcode?.storeID ?? product?.storeID ?? -1) : -1
+        self.locationID = actionPending ? product?.locationID ?? -1 : -1
         self.note = ""
         if autoPurchase, actionPending, product?.defaultDueDays != nil, productID != nil, isFormValid {
             self.price = productDetails?.lastPrice

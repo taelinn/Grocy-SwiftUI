@@ -63,7 +63,7 @@ struct StockTableRow: View {
             }
         )
         .contextMenu(menuItems: {
-            StockTableMenuEntriesView(stockElement: stockElement, mdQuantityUnits: mdQuantityUnits)
+            StockTableMenuEntriesView(stockElement: stockElement, quantityUnit: mdQuantityUnits.first(where: { $0.id == stockElement.product?.quIDStock }))
         })
         .swipeActions(
             edge: .leading,

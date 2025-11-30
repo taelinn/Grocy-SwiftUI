@@ -13,11 +13,7 @@ struct StockTableMenuEntriesView: View {
     @Environment(StockInteractionNavigationRouter.self) private var stockInteractionRouter
 
     var stockElement: StockElement
-    var mdQuantityUnits: MDQuantityUnits
-
-    var quantityUnit: MDQuantityUnit? {
-        mdQuantityUnits.first(where: { $0.id == stockElement.product?.quIDStock })
-    }
+    var quantityUnit: MDQuantityUnit?
 
     func consumeAsSpoiled() async {
         do {
@@ -33,38 +29,53 @@ struct StockTableMenuEntriesView: View {
     }
 
     var body: some View {
-        Button(action: {
-            stockInteractionRouter.present(.addToShL(stockElement: stockElement))
-        }, label: {
-            Label("Add to shopping list", systemImage: MySymbols.addToShoppingList)
-                .labelStyle(.titleAndIcon)
-        })
+        Button(
+            action: {
+                stockInteractionRouter.present(.addToShL(stockElement: stockElement))
+            },
+            label: {
+                Label("Add to shopping list", systemImage: MySymbols.addToShoppingList)
+                    .labelStyle(.titleAndIcon)
+            }
+        )
         Divider()
         Group {
-            Button(action: {
-                stockInteractionRouter.present(.productPurchase(stockElement: stockElement))
-            }, label: {
-                Label("Purchase", systemImage: MySymbols.purchase)
-                    .labelStyle(.titleAndIcon)
-            })
-            Button(action: {
-                stockInteractionRouter.present(.productConsume(stockElement: stockElement))
-            }, label: {
-                Label("Consume", systemImage: MySymbols.consume)
-                    .labelStyle(.titleAndIcon)
-            })
-            Button(action: {
-                stockInteractionRouter.present(.productTransfer(stockElement: stockElement))
-            }, label: {
-                Label("Transfer", systemImage: MySymbols.transfer)
-                    .labelStyle(.titleAndIcon)
-            })
-            Button(action: {
-                stockInteractionRouter.present(.productInventory(stockElement: stockElement))
-            }, label: {
-                Label("Inventory", systemImage: MySymbols.inventory)
-                    .labelStyle(.titleAndIcon)
-            })
+            Button(
+                action: {
+                    stockInteractionRouter.present(.productPurchase(stockElement: stockElement))
+                },
+                label: {
+                    Label("Purchase", systemImage: MySymbols.purchase)
+                        .labelStyle(.titleAndIcon)
+                }
+            )
+            Button(
+                action: {
+                    stockInteractionRouter.present(.productConsume(stockElement: stockElement))
+                },
+                label: {
+                    Label("Consume", systemImage: MySymbols.consume)
+                        .labelStyle(.titleAndIcon)
+                }
+            )
+            Button(
+                action: {
+                    stockInteractionRouter.present(.productTransfer(stockElement: stockElement))
+                },
+                label: {
+                    Label("Transfer", systemImage: MySymbols.transfer)
+                        .labelStyle(.titleAndIcon)
+                }
+            )
+            Button(
+                action: {
+                    stockInteractionRouter.present(.productInventory(stockElement: stockElement))
+                },
+                label: {
+                    Label("Inventory", systemImage: MySymbols.inventory)
+                        .labelStyle(.titleAndIcon)
+                }
+            )
         }
         Divider()
         Group {
@@ -84,23 +95,29 @@ struct StockTableMenuEntriesView: View {
         }
         Divider()
         Group {
-            Button(action: {
-                stockInteractionRouter.present(.productOverview(stockElement: stockElement))
-            }, label: {
-                Label("Product overview", systemImage: MySymbols.info)
-                    .labelStyle(.titleAndIcon)
-            })
+            Button(
+                action: {
+                    stockInteractionRouter.present(.productOverview(stockElement: stockElement))
+                },
+                label: {
+                    Label("Product overview", systemImage: MySymbols.info)
+                        .labelStyle(.titleAndIcon)
+                }
+            )
             //            //                Button(action: {
             //            //                    print("Stock entries are not accessed here")
             //            //                }, label: {
             //            //                    Text("Stock entries")
             //            //                })
-            Button(action: {
-                stockInteractionRouter.present(.productJournal(stockElement: stockElement))
-            }, label: {
-                Label("Stock journal", systemImage: MySymbols.stockJournal)
-                    .labelStyle(.titleAndIcon)
-            })
+            Button(
+                action: {
+                    stockInteractionRouter.present(.productJournal(stockElement: stockElement))
+                },
+                label: {
+                    Label("Stock journal", systemImage: MySymbols.stockJournal)
+                        .labelStyle(.titleAndIcon)
+                }
+            )
             //            //                Button(action: {
             //            //                    print("Stock Journal summary is not available yet")
             //            //                }, label: {
@@ -116,8 +133,8 @@ struct StockTableMenuEntriesView: View {
     }
 }
 
-//struct StockTableMenuView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        StockTableMenuView(stockElement: StockElement(amount: "3", amountAggregated: "3", value: "25", bestBeforeDate: "2020-12-12", amountOpened: "1", amountOpenedAggregated: "1", isAggregatedAmount: "0", dueType: "1", productID: "3", product: MDProduct(id: "3", name: "Productname", mdProductDescription: "Description", productGroupID: "1", active: "1", locationID: "1", storeID: "1", quIDPurchase: "1", quIDStock: "1", minStockAmount: "1", defaultBestBeforeDays: "1", defaultBestBeforeDaysAfterOpen: "1", defaultBestBeforeDaysAfterFreezing: "1", defaultBestBeforeDaysAfterThawing: "1", pictureFileName: nil, enableTareWeightHandling: "0", tareWeight: "1", notCheckStockFulfillmentForRecipes: "1", parentProductID: "1", calories: "1233", cumulateMinStockAmountOfSubProducts: "0", dueType: "1", quickConsumeAmount: "1", rowCreatedTimestamp: "ts", hideOnStockOverview: "0", userfields: nil)), selectedStockElement)
-//    }
-//}
+#Preview(traits: .previewData) {
+    Menu("Preview") {
+        StockTableMenuEntriesView(stockElement: StockElement(product: MDProduct()), quantityUnit: MDQuantityUnit())
+    }
+}

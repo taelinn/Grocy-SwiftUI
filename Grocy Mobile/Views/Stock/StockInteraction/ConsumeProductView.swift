@@ -40,7 +40,7 @@ struct ConsumeProductView: View {
     var productToConsumeID: Int? {
         return directProductToConsumeID ?? stockElement?.productID
     }
-    var directStockEntryID: String? = nil
+    var directStockEntryID: Int? = nil
 
     var barcode: MDProductBarcode? = nil
 
@@ -160,12 +160,12 @@ struct ConsumeProductView: View {
 
     private func resetForm() {
         productID = actionPending ? productToConsumeID : nil
-        amount = barcode?.amount ?? userSettings?.stockDefaultConsumeAmount ?? 1.0
+        amount = (actionPending ? barcode?.amount : nil) ?? userSettings?.stockDefaultConsumeAmount ?? 1.0
         quantityUnitID = actionPending ? product?.quIDStock : nil
-        locationID = -1
+        locationID = actionPending ? product?.locationID ?? -1 : -1
         spoiled = false
-        useSpecificStockEntry = false
-        stockEntryID = nil
+        useSpecificStockEntry = actionPending ? directStockEntryID != nil : false
+        stockEntryID = actionPending ? directStockEntryID : nil
         recipeID = nil
         searchProductTerm = ""
     }
