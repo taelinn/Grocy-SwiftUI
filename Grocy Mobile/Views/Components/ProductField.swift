@@ -150,9 +150,9 @@ struct ProductField: View {
                             )
                         }
                     }
-                    Text("").tag(nil as Int?)
+                    Text("").tag(-1)
                     ForEach(filteredProducts, id: \.id) { productElement in
-                        Text(productElement.name).tag(productElement.id as Int?)
+                        Text(productElement.name).tag(productElement.id)
                     }
                 }
             )
@@ -163,9 +163,9 @@ struct ProductField: View {
                 selection: $productID,
                 label: Label(description, systemImage: MySymbols.product),
                 content: {
-                    Text("").tag(nil as Int?)
+                    Text("").tag(-1)
                     ForEach(filteredProducts, id: \.id) { productElement in
-                        Text(productElement.name).tag(productElement.id as Int?)
+                        Text(productElement.name).tag(productElement.id)
                     }
                 }
             )
@@ -175,7 +175,7 @@ struct ProductField: View {
 }
 
 #Preview(traits: .previewData) {
-    @Previewable @State var productID: Int? = nil
+    @Previewable @State var productID: Int? = -1
     
     NavigationStack {
         Form {

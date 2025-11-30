@@ -64,7 +64,7 @@ class ShoppingListItem: Codable, Equatable {
         amount: Double = 1.0,
         shoppingListID: Int = -1,
         done: Int = 0,
-        quID: Int? = nil,
+        quID: Int = -1,
         rowCreatedTimestamp: String? = nil
     ) {
         self.id = id

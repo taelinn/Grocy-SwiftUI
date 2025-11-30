@@ -63,17 +63,17 @@ struct AmountSelectionView: View {
                         label: Label("Quantity unit", systemImage: MySymbols.quantityUnit).foregroundStyle(.primary),
                         content: {
                             Text("")
-                                .tag(nil as Int?)
+                                .tag(-1)
                             if let stockQU = mdQuantityUnits.first(where: { $0.id == product?.quIDStock }) {
                                 Text(stockQU.name)
-                                    .tag(stockQU.id as Int?)
+                                    .tag(stockQU.id)
                             }
                             ForEach(
                                 quantityUnitConversions,
                                 id: \.id,
                                 content: { quConversion in
                                     Text(mdQuantityUnits.first(where: { $0.id == quConversion.fromQuID })?.name ?? String(quConversion.fromQuID))
-                                        .tag(quConversion.fromQuID as Int?)
+                                        .tag(quConversion.fromQuID)
                                 }
                             )
                         }

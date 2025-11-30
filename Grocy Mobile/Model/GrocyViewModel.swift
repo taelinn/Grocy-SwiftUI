@@ -539,7 +539,7 @@ class GrocyViewModel {
                     amount: amount ?? entry.amount,
                     shoppingListID: entry.shoppingListID,
                     done: reminder.isComplete ? 1 : 0,
-                    quID: entry.quID,
+                    quID: entry.quID ?? -1,
                     rowCreatedTimestamp: entry.rowCreatedTimestamp
                 )
                 if shoppingListEntryNew.note != entry.note, shoppingListEntryNew.amount != entry.amount, shoppingListEntryNew.done != entry.done {
