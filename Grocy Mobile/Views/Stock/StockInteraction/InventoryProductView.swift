@@ -281,7 +281,12 @@ struct InventoryProductView: View {
                         }
                     },
                     label: {
-                        Label("Perform inventory", systemImage: MySymbols.inventory)
+                        if !isProcessingAction {
+                            Label("Perform inventory", systemImage: MySymbols.inventory)
+                                .labelStyle(.titleAndIcon)
+                        } else {
+                            ProgressView().progressViewStyle(.circular)
+                        }
                     }
                 )
                 .labelStyle(.titleAndIcon)

@@ -168,10 +168,18 @@ struct ShoppingListEntryFormView: View {
                             Task {
                                 await saveShoppingListEntry()
                             }
+                        },
+                        label: {
+                            if !isProcessing {
+                                Label("Save", systemImage: MySymbols.save)
+                                    .labelStyle(.titleAndIcon)
+                            } else {
+                                ProgressView().progressViewStyle(.circular)
+                            }
                         }
                     )
                     .keyboardShortcut(.defaultAction)
-                    .disabled(!isFormValid)
+                    .disabled(!isFormValid || isProcessing)
                 }
             )
         }

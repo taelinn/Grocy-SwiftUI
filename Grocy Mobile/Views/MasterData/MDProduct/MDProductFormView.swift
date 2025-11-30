@@ -332,6 +332,14 @@ struct MDProductFormView: View {
                         Task {
                             await saveProduct()
                         }
+                    },
+                    label: {
+                        if !isProcessing {
+                            Label("Save", systemImage: MySymbols.save)
+                                .labelStyle(.titleAndIcon)
+                        } else {
+                            ProgressView().progressViewStyle(.circular)
+                        }
                     }
                 )
                 .disabled(!isFormValid)

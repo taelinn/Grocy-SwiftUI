@@ -125,10 +125,11 @@ struct MDProductGroupFormView: View {
                         }
                     },
                     label: {
-                        if isProcessing == false {
-                            Image(systemName: MySymbols.save)
+                        if !isProcessing {
+                            Label("Save", systemImage: MySymbols.save)
+                                .labelStyle(.titleAndIcon)
                         } else {
-                            ProgressView()
+                            ProgressView().progressViewStyle(.circular)
                         }
                     }
                 )

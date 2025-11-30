@@ -127,6 +127,14 @@ struct MDStoreFormView: View {
                         Task {
                             await saveStore()
                         }
+                    },
+                    label: {
+                        if !isProcessing {
+                            Label("Save", systemImage: MySymbols.save)
+                                .labelStyle(.titleAndIcon)
+                        } else {
+                            ProgressView().progressViewStyle(.circular)
+                        }
                     }
                 )
                 .disabled(!isNameCorrect || isProcessing)

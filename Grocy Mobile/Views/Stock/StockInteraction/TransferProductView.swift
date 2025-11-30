@@ -297,8 +297,12 @@ struct TransferProductView: View {
                         }
                     },
                     label: {
-                        Label("Transfer", systemImage: MySymbols.transfer)
-                            .labelStyle(.titleAndIcon)
+                        if !isProcessingAction {
+                            Label("Transfer", systemImage: MySymbols.transfer)
+                                .labelStyle(.titleAndIcon)
+                        } else {
+                            ProgressView().progressViewStyle(.circular)
+                        }
                     }
                 )
                 .disabled(!isFormValid || isProcessingAction)

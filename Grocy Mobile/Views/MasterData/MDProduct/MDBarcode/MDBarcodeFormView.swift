@@ -170,6 +170,14 @@ struct MDBarcodeFormView: View {
                         Task {
                             await saveBarcode()
                         }
+                    },
+                    label: {
+                        if !isProcessing {
+                            Label("Save", systemImage: MySymbols.save)
+                                .labelStyle(.titleAndIcon)
+                        } else {
+                            ProgressView().progressViewStyle(.circular)
+                        }
                     }
                 )
                 .disabled(!isBarcodeCorrect || isProcessing)

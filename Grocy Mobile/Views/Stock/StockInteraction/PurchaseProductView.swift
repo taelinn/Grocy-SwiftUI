@@ -284,6 +284,7 @@ struct PurchaseProductView: View {
             }
         }
         .navigationTitle("Purchase")
+        .disabled(autoPurchase)
         .formStyle(.grouped)
         .task {
             if firstAppear {
@@ -338,7 +339,12 @@ struct PurchaseProductView: View {
                         }
                     },
                     label: {
-                        Label("Purchase product", systemImage: MySymbols.purchase)
+                        if !isProcessingAction {
+                            Label("Purchase product", systemImage: MySymbols.purchase)
+                                .labelStyle(.titleAndIcon)
+                        } else {
+                            ProgressView().progressViewStyle(.circular)
+                        }
                     }
                 )
                 .disabled(!isFormValid || isProcessingAction)

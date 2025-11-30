@@ -221,7 +221,9 @@ struct ConsumeProductView: View {
                             errorMessage = error.localizedDescription
                         }
                     }
-                } else { shlActionSuccessful = true }
+                } else {
+                    shlActionSuccessful = true
+                }
                 isSuccessful = true && shlActionSuccessful
                 if quickScan || productToConsumeID != nil {
                     self.dismiss()
@@ -417,8 +419,12 @@ struct ConsumeProductView: View {
                             }
                         },
                         label: {
-                            Label("Mark as opened", systemImage: MySymbols.open)
-                                .labelStyle(.titleAndIcon)
+                            if !isProcessingAction {
+                                Label("Mark as opened", systemImage: MySymbols.open)
+                                    .labelStyle(.titleAndIcon)
+                            } else {
+                                ProgressView().progressViewStyle(.circular)
+                            }
                         }
                     )
                     .disabled(!isFormValid || isProcessingAction)
@@ -435,8 +441,12 @@ struct ConsumeProductView: View {
                             }
                         },
                         label: {
-                            Label("Consume product", systemImage: MySymbols.consume)
-                                .labelStyle(.titleAndIcon)
+                            if !isProcessingAction {
+                                Label("Consume product", systemImage: MySymbols.consume)
+                                    .labelStyle(.titleAndIcon)
+                            } else {
+                                ProgressView().progressViewStyle(.circular)
+                            }
                         }
                     )
                     .disabled(!isFormValid || isProcessingAction)

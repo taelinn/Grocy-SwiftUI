@@ -142,6 +142,14 @@ struct ShoppingListFormView: View {
                             Task {
                                 await saveShoppingList()
                             }
+                        },
+                        label: {
+                            if !isProcessing {
+                                Label("Save", systemImage: MySymbols.save)
+                                    .labelStyle(.titleAndIcon)
+                            } else {
+                                ProgressView().progressViewStyle(.circular)
+                            }
                         }
                     )
                     .keyboardShortcut(.defaultAction)

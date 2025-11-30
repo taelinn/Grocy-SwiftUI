@@ -219,6 +219,14 @@ struct MDQuantityUnitConversionFormView: View {
                         Task {
                             await saveQuantityUnitConversion()
                         }
+                    },
+                    label: {
+                        if !isProcessing {
+                            Label("Save", systemImage: MySymbols.save)
+                                .labelStyle(.titleAndIcon)
+                        } else {
+                            ProgressView().progressViewStyle(.circular)
+                        }
                     }
                 )
                 .disabled(!conversionCorrect || isProcessing)
