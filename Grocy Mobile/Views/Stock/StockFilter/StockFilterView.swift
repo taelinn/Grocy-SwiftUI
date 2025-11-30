@@ -19,6 +19,16 @@ struct StockFilterView: View {
     @Binding var filteredProductGroupID: Int?
     @Binding var filteredStatus: ProductStatus
 
+    private var rowBackground: Color? {
+        switch filteredStatus {
+        case .all: return nil
+        case .expired: return Color(.GrocyColors.grocyRedBackground)
+        case .expiringSoon: return Color(.GrocyColors.grocyYellowBackground)
+        case .overdue: return Color(.GrocyColors.grocyGrayBackground)
+        case .belowMinStock: return Color(.GrocyColors.grocyBlueBackground)
+        }
+    }
+
     var body: some View {
         List {
             Picker(
@@ -68,22 +78,8 @@ struct StockFilterView: View {
                 }
             )
             #if os(iOS)
-                .listRowBackground(
-                    Group {
-                        switch filteredStatus {
-                        case .expired:
-                            Color(.GrocyColors.grocyRedBackground)
-                        case .expiringSoon:
-                            Color(.GrocyColors.grocyYellowBackground)
-                        case .overdue:
-                            Color(.GrocyColors.grocyGrayBackground)
-                        case .belowMinStock:
-                            Color(.GrocyColors.grocyBlueBackground)
-                        case .all:
-                            colorScheme == .dark ? Color(.systemGray6) : Color(.systemBackground)
-                        }
-                    }
-                )
+                .id(filteredStatus)
+                .listRowBackground(rowBackground)
             #endif
         }
     }

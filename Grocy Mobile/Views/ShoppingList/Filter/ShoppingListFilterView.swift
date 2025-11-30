@@ -14,6 +14,15 @@ struct ShoppingListFilterView: View {
 
     @Binding var filteredStatus: ShoppingListStatus
 
+    private var rowBackground: Color? {
+        switch filteredStatus {
+        case .all: return nil
+        case .done: return Color(.GrocyColors.grocyGreen).opacity(0.3)
+        case .undone: return Color(.GrocyColors.grocyGrayBackground)
+        case .belowMinStock: return Color(.GrocyColors.grocyBlueBackground)
+        }
+    }
+
     var body: some View {
         List {
             Picker(
@@ -33,21 +42,9 @@ struct ShoppingListFilterView: View {
                 }
             )
             #if os(iOS)
-                .foregroundStyle(filteredStatus != .done ? .primary : Color.white)
-                .listRowBackground(
-                    Group {
-                        switch filteredStatus {
-                        case .all:
-                            colorScheme == .dark ? Color(.systemGray6) : Color(.systemBackground)
-                        case .done:
-                            Color(.GrocyColors.grocyGreen)
-                        case .undone:
-                            Color(.GrocyColors.grocyGrayBackground)
-                        case .belowMinStock:
-                            Color(.GrocyColors.grocyBlueBackground)
-                        }
-                    }
-                )
+                .id(filteredStatus)
+                .foregroundStyle(.primary)
+                .listRowBackground(rowBackground)
             #endif
         }
     }
