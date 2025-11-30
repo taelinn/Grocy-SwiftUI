@@ -40,7 +40,7 @@ struct ConsumeProductView: View {
     var productToConsumeID: Int? {
         return directProductToConsumeID ?? stockElement?.productID
     }
-    var directStockEntryID: Int? = nil
+    var directStockEntryID: String? = nil
 
     var barcode: MDProductBarcode? = nil
 
@@ -165,7 +165,7 @@ struct ConsumeProductView: View {
         locationID = actionPending ? product?.locationID ?? -1 : -1
         spoiled = false
         useSpecificStockEntry = actionPending ? directStockEntryID != nil : false
-        stockEntryID = actionPending ? directStockEntryID : nil
+        stockEntryID = actionPending ? directStockEntryID ?? nil : nil
         recipeID = nil
         searchProductTerm = ""
     }
