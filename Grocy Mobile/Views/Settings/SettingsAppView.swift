@@ -111,7 +111,7 @@ struct SettingsAppView: View {
             #endif
             MyToggle(isOn: $devMode, description: "DEV MODE", icon: MySymbols.devMode)
             #if os(iOS)
-                Section("QuickScan settings") {
+                Section("\(Text("Quick Scan")) \(Text("Settings"))") {
                     MyToggle(isOn: $quickScanActionAfterAdd, description: "Do selected action after assigning a barcode", icon: MySymbols.barcodeScan)
                 }
             #endif

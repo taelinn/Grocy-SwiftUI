@@ -19,7 +19,7 @@ struct Sidebar: View {
             Section {
                 #if os(iOS)
                     NavigationLink(value: NavigationItem.quickScan) {
-                        Label("Quick-Scan", systemImage: MySymbols.barcodeScan)
+                        Label("Quick Scan", systemImage: MySymbols.barcodeScan)
                     }
                 #endif
                 NavigationLink(value: NavigationItem.stockOverview) {

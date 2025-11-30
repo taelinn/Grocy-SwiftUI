@@ -166,7 +166,7 @@ struct QuickScanModeView: View {
         } else {
             ServerProblemView()
                 .padding()
-                .navigationTitle("Quick-Scan")
+                .navigationTitle("Quick Scan")
         }
     }
 
@@ -206,7 +206,7 @@ struct QuickScanModeView: View {
                     ToolbarItem(placement: .topBarLeading) {
                         Picker(
                             selection: $quickScanMode,
-                            label: Label("Quick-Scan Mode", systemImage: MySymbols.menuPick),
+                            label: Label("Quick Scan", systemImage: MySymbols.menuPick),
                             content: {
                                 Label("Consume", systemImage: MySymbols.consume)
                                     .labelStyle(.titleAndIcon)
