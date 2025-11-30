@@ -64,6 +64,10 @@ struct CodeResult: Hashable {
                 try? uiViewController.startScanning()
             }
         }
+        
+        static func dismantleUIViewController(_ uiViewController: DataScannerViewController, coordinator: Coordinator) {
+            uiViewController.stopScanning()
+        }
 
         func makeCoordinator() -> Coordinator {
             Coordinator(self)
