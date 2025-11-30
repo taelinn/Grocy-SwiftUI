@@ -35,16 +35,6 @@ struct ShoppingListRowView: View {
         }
     }
 
-    private var backgroundColor: Color {
-        if isBelowStock {
-            return Color(.GrocyColors.grocyBlueBackground)
-        } else if shoppingListItem.done == 1 {
-            return Color(.GrocyColors.grocyGreen).opacity(0.3)
-        } else {
-            return Color(.GrocyColors.grocyGrayBackground)
-        }
-    }
-
     var body: some View {
         VStack(alignment: .leading) {
             Text(product?.name ?? shoppingListItem.note)
@@ -58,7 +48,6 @@ struct ShoppingListRowView: View {
                 .strikethrough(shoppingListItem.done == 1)
         }
         .foregroundStyle(shoppingListItem.done == 1 ? Color.gray : Color.primary)
-        .listRowBackground(backgroundColor)
         .contextMenu(menuItems: {
             Button(
                 action: {

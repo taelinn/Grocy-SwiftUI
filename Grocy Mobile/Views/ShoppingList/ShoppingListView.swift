@@ -67,7 +67,7 @@ struct ShoppingListView: View {
     @State private var sortOrder: SortOrder = .forward
 
     @State private var showFilterSheet: Bool = false
-    
+
     @State private var shoppingListInteractionRouter = ShoppingListInteractionNavigationRouter()
 
     @State private var showSHLDeleteAlert: Bool = false
@@ -669,12 +669,14 @@ struct ShoppingListView: View {
 
     @ViewBuilder
     private func shoppingListRowWithNavigation(element: ShoppingListItemWrapped) -> some View {
+        let isBelowStock = checkBelowStock(item: element.shoppingListItem)
+
         NavigationLink(
             value: element.shoppingListItem,
             label: {
                 ShoppingListRowView(
                     shoppingListItem: element.shoppingListItem,
-                    isBelowStock: checkBelowStock(item: element.shoppingListItem),
+                    isBelowStock: isBelowStock,
                     product: element.product,
                     quantityUnit: mdQuantityUnits.first(where: { $0.id == element.product?.quIDPurchase }),
                     quantityUnitConversions: mdQuantityUnitConversions.filter { $0.toQuID == element.shoppingListItem.quID },
@@ -683,6 +685,9 @@ struct ShoppingListView: View {
                     onDelete: deleteItem
                 )
             }
+        )
+        .listRowBackground(
+            isBelowStock ? Color(.GrocyColors.grocyBlueBackground) : nil
         )
     }
 }
