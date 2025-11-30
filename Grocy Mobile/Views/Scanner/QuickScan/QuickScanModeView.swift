@@ -183,8 +183,24 @@ struct QuickScanModeView: View {
                     isFrontCamera: $isFrontCamera,
                     completion: self.handleScanLegacy
                 )
+                .onAppear { isScanPaused = false }
+                .onDisappear { isScanPaused = true }
+                .onReceive(NotificationCenter.default.publisher(for: UIApplication.willResignActiveNotification)) { _ in
+                    isScanPaused = true
+                }
+                .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
+                    isScanPaused = false
+                }
             } else {
                 CodeScannerView(isPaused: $isScanPaused, onCodeFound: handleScan)
+                    .onAppear { isScanPaused = false }
+                    .onDisappear { isScanPaused = true }
+                    .onReceive(NotificationCenter.default.publisher(for: UIApplication.willResignActiveNotification)) { _ in
+                        isScanPaused = true
+                    }
+                    .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
+                        isScanPaused = false
+                    }
             }
         }
     #endif
@@ -334,4 +350,3 @@ struct QuickScanModeView: View {
         QuickScanModeView()
     }
 }
-

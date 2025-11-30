@@ -31,6 +31,7 @@ struct ServerProfileFormView: View {
     @Environment(\.profileModelContext) private var profileModelContext
     @Environment(\.dismiss) private var dismiss
 
+    @State private var isScanPaused: Bool = true
     @State private var serverProfile: ServerProfile
     @AppStorage("selectedServerProfileID") private var selectedServerProfileID: UUID?
     #if os(iOS)
@@ -161,14 +162,31 @@ struct ServerProfileFormView: View {
                         isPresented: $isShowingGrocyScanner,
                         content: {
                             if !useLegacyScanner {
-                                CodeScannerView(onCodeFound: self.handleGrocyScan, symbologies: [.qr])
+                                CodeScannerView(isPaused: $isScanPaused, onCodeFound: self.handleGrocyScan, symbologies: [.qr])
+                                    .onAppear { isScanPaused = false }
+                                    .onDisappear { isScanPaused = true }
+                                    .onReceive(NotificationCenter.default.publisher(for: UIApplication.willResignActiveNotification)) { _ in
+                                        isScanPaused = true
+                                    }
+                                    .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
+                                        isScanPaused = false
+                                    }
                             } else {
                                 CodeScannerViewLegacy(
                                     codeTypes: [.qr],
                                     scanMode: .once,
                                     simulatedData: "http://192.168.178.40:8123/api/hassio_ingress/ckgy-GNrulcboPPwZyCnOn181YpRqOr6vIC8G2lijqU/api|tkYf677yotIwTibP0ko1lZxn8tj4cgoecWBMropiNc1MCjup8p",
+                                    isPaused: $isScanPaused,
                                     completion: self.handleGrocyScanLegacy
                                 )
+                                .onAppear { isScanPaused = false }
+                                .onDisappear { isScanPaused = true }
+                                .onReceive(NotificationCenter.default.publisher(for: UIApplication.willResignActiveNotification)) { _ in
+                                    isScanPaused = true
+                                }
+                                .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
+                                    isScanPaused = false
+                                }
                             }
                         }
                     )
@@ -203,14 +221,31 @@ struct ServerProfileFormView: View {
                                 isPresented: $isShowingTokenScanner,
                                 content: {
                                     if !useLegacyScanner {
-                                        CodeScannerView(onCodeFound: self.handleHassTokenScan, symbologies: [.qr])
+                                        CodeScannerView(isPaused: $isScanPaused, onCodeFound: self.handleHassTokenScan, symbologies: [.qr])
+                                            .onAppear { isScanPaused = false }
+                                            .onDisappear { isScanPaused = true }
+                                            .onReceive(NotificationCenter.default.publisher(for: UIApplication.willResignActiveNotification)) { _ in
+                                                isScanPaused = true
+                                            }
+                                            .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
+                                                isScanPaused = false
+                                            }
                                     } else {
                                         CodeScannerViewLegacy(
                                             codeTypes: [.qr],
                                             scanMode: .once,
                                             simulatedData: "670f7d46391db7b42d382ebc9ea667f3aac94eb90219b9e32c7cd71cd37d13833109113270b327fac08d77d9b038a9cb3ab6cfd8dc8d0e3890d16e6434d10b3d",
+                                            isPaused: $isScanPaused,
                                             completion: self.handleTokenScanLegacy
                                         )
+                                        .onAppear { isScanPaused = false }
+                                        .onDisappear { isScanPaused = true }
+                                        .onReceive(NotificationCenter.default.publisher(for: UIApplication.willResignActiveNotification)) { _ in
+                                            isScanPaused = true
+                                        }
+                                        .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
+                                            isScanPaused = false
+                                        }
                                     }
                                 }
                             )
@@ -301,6 +336,15 @@ struct ServerProfileFormView: View {
 
 #Preview("Edit", traits: .previewData) {
     NavigationStack {
-        ServerProfileFormView(serverProfile: ServerProfile(name: "My Server", grocyServerURL: "http://homeserver.local", grocyAPIKey: "API_KEY", useHassIngress: true, hassToken: "HASS_TOKEN", customHeaders: [LoginCustomHeader(headerName: "MY_HEADER", headerValue: "Header_VAL")]))
+        ServerProfileFormView(
+            serverProfile: ServerProfile(
+                name: "My Server",
+                grocyServerURL: "http://homeserver.local",
+                grocyAPIKey: "API_KEY",
+                useHassIngress: true,
+                hassToken: "HASS_TOKEN",
+                customHeaders: [LoginCustomHeader(headerName: "MY_HEADER", headerValue: "Header_VAL")]
+            )
+        )
     }
 }
