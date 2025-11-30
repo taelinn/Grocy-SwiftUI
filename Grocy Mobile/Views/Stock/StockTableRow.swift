@@ -32,7 +32,7 @@ struct StockTableRow: View {
         mdQuantityUnits.first(where: { $0.id == stockElement.product?.quIDStock })
     }
 
-    var backgroundColor: Color {
+    var backgroundColor: Color? {
         let productID = stockElement.productID
 
         if (volatileStock?.dueProducts ?? []).contains(where: { $0.productID == productID }) {
@@ -48,11 +48,7 @@ struct StockTableRow: View {
             return Color(.GrocyColors.grocyBlueBackground)
         }
 
-        #if os(iOS)
-            return colorScheme == .light ? Color.white : Color.black
-        #elseif os(macOS)
-            return colorScheme == .light ? Color.white : Color.gray.opacity(0.05)
-        #endif
+        return nil
     }
 
     var body: some View {

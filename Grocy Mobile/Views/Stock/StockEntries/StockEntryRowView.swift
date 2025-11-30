@@ -21,7 +21,7 @@ struct StockEntryRowView: View {
     var currency: String?
     var userSettings: GrocyUserSettings?
 
-    var backgroundColor: Color {
+    var backgroundColor: Color? {
         if (0..<(userSettings?.stockDueSoonDays ?? 5 + 1)) ~= getTimeDistanceFromNow(date: stockEntry.bestBeforeDate) ?? 100 {
             return Color(.GrocyColors.grocyYellowBackground)
         }
@@ -31,7 +31,7 @@ struct StockEntryRowView: View {
         if stockElement.dueType == 2 ? (getTimeDistanceFromNow(date: stockEntry.bestBeforeDate) ?? 100 < 0) : false {
             return Color(.GrocyColors.grocyRedBackground)
         }
-        return colorScheme == .light ? Color.white : Color.black
+        return nil
     }
 
     var body: some View {
