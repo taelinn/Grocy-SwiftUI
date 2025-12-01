@@ -9548,6 +9548,22 @@
         }
       }
     },
+    "Camera Access Required" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kamera-Zugriff benötigt"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accès à la caméra nécessaire"
+          }
+        }
+      }
+    },
     "Cancel" : {
       "localizations" : {
         "ca" : {
@@ -33301,6 +33317,22 @@
         }
       }
     },
+    "Open Settings" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Öffne Einstellungen"
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ouvrir les réglages"
+          }
+        }
+      }
+    },
     "Opened" : {
       "localizations" : {
         "cs" : {
@@ -34755,6 +34787,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "请参阅日志来确定错误原因。"
+          }
+        }
+      }
+    },
+    "Please enable camera access in Settings to scan barcodes." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bitte aktiviere den Kamera-Zugriff in den Einstellungen, um Barcodes zu scannen."
+          }
+        },
+        "fr-FR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Veuillez activer l'accès à la caméra dans les Réglages pour scanner les codes-barres."
           }
         }
       }

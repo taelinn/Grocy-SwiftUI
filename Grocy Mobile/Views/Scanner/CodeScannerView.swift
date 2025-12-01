@@ -8,22 +8,26 @@
 import SwiftUI
 import Vision
 import VisionKit
+import AVFoundation
 
 struct CodeResult: Hashable {
     var value: String
     var type: VNBarcodeSymbology
 }
 
+
 #if os(iOS)
     @MainActor
     struct CodeScannerView: UIViewControllerRepresentable {
         @Binding var isPaused: Bool
         var onCodeFound: ((CodeResult) -> Void)?
+        var onAuthorizationFailed: (() -> Void)?
         var symbologies: [VNBarcodeSymbology]
 
-        init(isPaused: Binding<Bool> = .constant(false), onCodeFound: ((CodeResult) -> Void)? = nil, symbologies: [VNBarcodeSymbology]? = nil) {
+        init(isPaused: Binding<Bool> = .constant(false), onCodeFound: ((CodeResult) -> Void)? = nil, onAuthorizationFailed: (() -> Void)? = nil, symbologies: [VNBarcodeSymbology]? = nil) {
             self._isPaused = isPaused
             self.onCodeFound = onCodeFound
+            self.onAuthorizationFailed = onAuthorizationFailed
             if let symbologies {
                 self.symbologies = symbologies
             } else {
@@ -44,8 +48,15 @@ struct CodeResult: Hashable {
 
             scannerViewController.delegate = context.coordinator
 
-            // Start scanning immediately after creation
-            try? scannerViewController.startScanning()
+            // Check authorization before starting
+            Task {
+                let authorized = await context.coordinator.checkCameraAuthorization()
+                if authorized {
+                    try? scannerViewController.startScanning()
+                } else {
+                    onAuthorizationFailed?()
+                }
+            }
 
             return scannerViewController
         }
@@ -80,6 +91,19 @@ struct CodeResult: Hashable {
 
             init(_ parent: CodeScannerView) {
                 self.parent = parent
+            }
+            
+            func checkCameraAuthorization() async -> Bool {
+                switch AVCaptureDevice.authorizationStatus(for: .video) {
+                case .authorized:
+                    return true
+                case .notDetermined:
+                    return await AVCaptureDevice.requestAccess(for: .video)
+                case .denied, .restricted:
+                    return false
+                @unknown default:
+                    return false
+                }
             }
 
             func dataScanner(

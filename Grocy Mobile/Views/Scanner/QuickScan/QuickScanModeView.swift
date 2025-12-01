@@ -24,6 +24,7 @@ enum QSActiveSheet: Identifiable {
 
 struct QuickScanModeView: View {
     @Environment(GrocyViewModel.self) private var grocyVM
+    @Environment(\.openURL) private var openURL
 
     @Query(sort: \MDProductBarcode.id, order: .forward) var mdProductBarcodes: MDProductBarcodes
     @Query(sort: \MDProduct.name, order: .forward) var mdProducts: MDProducts
@@ -48,6 +49,8 @@ struct QuickScanModeView: View {
     @State var newRecognizedBarcode: MDProductBarcode? = nil
     @State var recognizedGrocyCode: GrocyCode? = nil
     @State var notRecognizedBarcode: String? = nil
+
+    @State private var cameraUnauthorized: Bool = false
 
     //    @State private var lastConsumeLocationID: Int?
     //    @State private var lastPurchaseDueDate: Date = .init()
@@ -192,7 +195,7 @@ struct QuickScanModeView: View {
                     isScanPaused = false
                 }
             } else {
-                CodeScannerView(isPaused: $isScanPaused, onCodeFound: handleScan)
+                CodeScannerView(isPaused: $isScanPaused, onCodeFound: handleScan, onAuthorizationFailed: { cameraUnauthorized = true })
                     .onAppear { isScanPaused = false }
                     .onDisappear { isScanPaused = true }
                     .onReceive(NotificationCenter.default.publisher(for: UIApplication.willResignActiveNotification)) { _ in
@@ -217,6 +220,14 @@ struct QuickScanModeView: View {
                     Task {
                         await updateData()
                     }
+                }
+                .alert("Camera Access Required", isPresented: $cameraUnauthorized) {
+                    Button("Open Settings") {
+                        openURL(URL(string: UIApplication.openSettingsURLString)!)
+                    }
+                    Button("Cancel", role: .cancel) {}
+                } message: {
+                    Text("Please enable camera access in Settings to scan barcodes.")
                 }
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
