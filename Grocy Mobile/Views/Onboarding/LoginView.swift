@@ -52,9 +52,10 @@ struct LoginView: View {
                         .frame(maxWidth: .infinity)
                         .foregroundStyle(.white)
                         .padding()
-                        .glassEffect(.regular.tint(.orange).interactive())
                 }
             )
+            .glassEffect(.regular.tint(.orange).interactive())
+            .contentShape(Capsule())
             .accessibilityLabel("Use demo server")
 
             NavigationLink(
@@ -65,9 +66,10 @@ struct LoginView: View {
                         .frame(maxWidth: .infinity)
                         .foregroundStyle(.white)
                         .padding()
-                        .glassEffect(.regular.tint(.GrocyColors.grocyGreen).interactive())
                 }
             )
+            .glassEffect(.regular.tint(.GrocyColors.grocyGreen).interactive())
+            .contentShape(Capsule())
             .accessibilityLabel("Use your own server")
         }
         .background(Color(.GrocyColors.grocyBlueBackground))
@@ -99,93 +101,93 @@ struct LoginView: View {
                 }
             }
         )
-            .toolbar(content: {
-                #if os(iOS)
-                    ToolbarItem(
-                        placement: .topBarLeading,
-                        content: {
-                            Link(
-                                destination: URL(string: "https://github.com/supergeorg/Grocy-SwiftUI")!,
-                                label: {
-                                    Image(systemName: MySymbols.api)
+        .toolbar(content: {
+            #if os(iOS)
+                ToolbarItem(
+                    placement: .topBarLeading,
+                    content: {
+                        Link(
+                            destination: URL(string: "https://github.com/supergeorg/Grocy-SwiftUI")!,
+                            label: {
+                                Image(systemName: MySymbols.api)
+                            }
+                        )
+                    }
+                )
+                ToolbarItem(
+                    placement: .topBarLeading,
+                    content: {
+                        Link(
+                            destination: URL(string: "https://www.grocy.info")!,
+                            label: {
+                                Image(systemName: "network")
+                                    .glassEffect()
+                            }
+                        )
+                    }
+                )
+                ToolbarItem(
+                    placement: .topBarTrailing,
+                    content: {
+                        Image(systemName: MySymbols.info)
+                            .onTapGesture {
+                                showAbout.toggle()
+                            }
+                            .sheet(
+                                isPresented: $showAbout,
+                                content: {
+                                    NavigationStack {
+                                        AboutView()
+                                            .toolbar(content: {
+                                                ToolbarItem(
+                                                    placement: .cancellationAction,
+                                                    content: {
+                                                        Button(
+                                                            role: .cancel,
+                                                            action: {
+                                                                showAbout = false
+                                                            }
+                                                        )
+                                                    }
+                                                )
+                                            })
+                                    }
                                 }
                             )
-                        }
-                    )
-                    ToolbarItem(
-                        placement: .topBarLeading,
-                        content: {
-                            Link(
-                                destination: URL(string: "https://www.grocy.info")!,
-                                label: {
-                                    Image(systemName: "network")
-                                        .glassEffect()
+                    }
+                )
+                ToolbarItem(
+                    placement: .topBarTrailing,
+                    content: {
+                        Image(systemName: MySymbols.settings)
+                            .onTapGesture {
+                                showSettings.toggle()
+                            }
+                            .sheet(
+                                isPresented: $showSettings,
+                                content: {
+                                    NavigationStack {
+                                        SettingsView()
+                                            .toolbar(content: {
+                                                ToolbarItem(
+                                                    placement: .cancellationAction,
+                                                    content: {
+                                                        Button(
+                                                            role: .cancel,
+                                                            action: {
+                                                                showSettings = false
+                                                            }
+                                                        )
+                                                    }
+                                                )
+                                            })
+                                    }
                                 }
                             )
-                        }
-                    )
-                    ToolbarItem(
-                        placement: .topBarTrailing,
-                        content: {
-                            Image(systemName: MySymbols.info)
-                                .onTapGesture {
-                                    showAbout.toggle()
-                                }
-                                .sheet(
-                                    isPresented: $showAbout,
-                                    content: {
-                                        NavigationStack {
-                                            AboutView()
-                                                .toolbar(content: {
-                                                    ToolbarItem(
-                                                        placement: .cancellationAction,
-                                                        content: {
-                                                            Button(
-                                                                role: .cancel,
-                                                                action: {
-                                                                    showAbout = false
-                                                                }
-                                                            )
-                                                        }
-                                                    )
-                                                })
-                                        }
-                                    }
-                                )
-                        }
-                    )
-                    ToolbarItem(
-                        placement: .topBarTrailing,
-                        content: {
-                            Image(systemName: MySymbols.settings)
-                                .onTapGesture {
-                                    showSettings.toggle()
-                                }
-                                .sheet(
-                                    isPresented: $showSettings,
-                                    content: {
-                                        NavigationStack {
-                                            SettingsView()
-                                                .toolbar(content: {
-                                                    ToolbarItem(
-                                                        placement: .cancellationAction,
-                                                        content: {
-                                                            Button(
-                                                                role: .cancel,
-                                                                action: {
-                                                                    showSettings = false
-                                                                }
-                                                            )
-                                                        }
-                                                    )
-                                                })
-                                        }
-                                    }
-                                )
-                        }
-                    )
-                #endif
-            })
+                    }
+                )
+            #endif
+        })
     }
 }
 

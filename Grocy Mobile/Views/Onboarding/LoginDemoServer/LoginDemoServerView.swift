@@ -35,13 +35,14 @@ struct LoginDemoServerView: View {
                     value: LoginDestination(type: .demoServer),
                     label: {
                         Label("Login", systemImage: MySymbols.login)
+                            .font(.title2)
+                            .frame(maxWidth: .infinity)
+                            .foregroundStyle(.white)
+                            .padding()
                     }
                 )
-                .font(.title2)
-                .frame(maxWidth: .infinity)
-                .foregroundStyle(.white)
-                .padding()
                 .glassEffect(.regular.tint(.green).interactive())
+                .contentShape(Capsule())
             }
         )
     }

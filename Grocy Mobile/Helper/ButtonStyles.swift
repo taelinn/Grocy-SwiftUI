@@ -22,6 +22,7 @@ struct MyGlassButtonStyle: ButtonStyle {
         .padding()
         .foregroundStyle(.white)
         .glassEffect(.regular.tint(backgroundColor).interactive())
+        .contentShape(Capsule())
     }
 }
 
