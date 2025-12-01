@@ -9,24 +9,10 @@ import SwiftData
 import SwiftUI
 
 struct StockTableMenuEntriesView: View {
-    @Environment(GrocyViewModel.self) private var grocyVM
     @Environment(StockInteractionNavigationRouter.self) private var stockInteractionRouter
 
     var stockElement: StockElement
     var quantityUnit: MDQuantityUnit?
-
-    func consumeAsSpoiled() async {
-        do {
-            try await grocyVM.postStockObject(
-                id: stockElement.productID,
-                stockModePost: .consume,
-                content: ProductConsume(amount: stockElement.amount, transactionType: .consume, spoiled: true, stockEntryID: nil, recipeID: nil, locationID: nil, exactAmount: nil, allowSubproductSubstitution: nil)
-            )
-            await grocyVM.requestData(additionalObjects: [.stock])
-        } catch {
-            GrocyLogger.error("Consume all as spoiled failed. \(error)")
-        }
-    }
 
     var body: some View {
         Button(
@@ -79,14 +65,18 @@ struct StockTableMenuEntriesView: View {
         }
         Divider()
         Group {
-            //            Button(role: .destructive, action: {
-            //                Task {
-            //                    await consumeAsSpoiled()
+            //            Button(
+            //                role: .destructive,
+            //                action: {
+            //                    Task {
+            //                        await consumeAsSpoiled()
+            //                    }
+            //                },
+            //                label: {
+            //                    Label("Consume this stock entry as spoiled", systemImage: MySymbols.spoiled)
             //                }
-            //            }, label: {
-            //                Label("Consume \(stockElement.amount.formattedAmount) \(quString)", systemImage: MySymbols.clear)
-            //            })
-
+            //            )
+            //
             //                Button(action: {
             //                    print("recip")
             //                }, label: {
@@ -104,11 +94,11 @@ struct StockTableMenuEntriesView: View {
                         .labelStyle(.titleAndIcon)
                 }
             )
-            //            //                Button(action: {
-            //            //                    print("Stock entries are not accessed here")
-            //            //                }, label: {
-            //            //                    Text("Stock entries")
-            //            //                })
+            //                Button(action: {
+            //                    print("Stock entries are not accessed here")
+            //                }, label: {
+            //                    Text("Stock entries")
+            //                })
             Button(
                 action: {
                     stockInteractionRouter.present(.productJournal(stockElement: stockElement))
@@ -118,11 +108,11 @@ struct StockTableMenuEntriesView: View {
                         .labelStyle(.titleAndIcon)
                 }
             )
-            //            //                Button(action: {
-            //            //                    print("Stock Journal summary is not available yet")
-            //            //                }, label: {
-            //            //                    Text("Stock journal summary")
-            //            //                })
+            //                Button(action: {
+            //                    print("Stock Journal summary is not available yet")
+            //                }, label: {
+            //                    Text("Stock journal summary")
+            //                })
             //            Button(action: {
             //                selectedStockElement = stockElement
             //                activeSheet = .editProduct

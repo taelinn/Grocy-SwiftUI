@@ -17,14 +17,14 @@ struct StockTableRow: View {
         @Environment(\.horizontalSizeClass) var horizontalSizeClass: UserInterfaceSizeClass?
     #endif
 
+    var stockElement: StockElement
+
     // Pass data from parent to avoid duplicate queries
     let mdQuantityUnits: MDQuantityUnits
     let shoppingList: [ShoppingListItem]
     let mdProductGroups: MDProductGroups
     let volatileStock: VolatileStock?
     let userSettings: GrocyUserSettings?
-
-    var stockElement: StockElement
 
     @State private var showDetailView: Bool = false
 
@@ -58,30 +58,29 @@ struct StockTableRow: View {
                 content
             }
         )
-        .contextMenu(menuItems: {
+        .contextMenu {
             StockTableMenuEntriesView(stockElement: stockElement, quantityUnit: mdQuantityUnits.first(where: { $0.id == stockElement.product?.quIDStock }))
-        })
+        }
         .swipeActions(
             edge: .leading,
-            allowsFullSwipe: true,
-            content: {
-                if stockElement.amount > 0 {
-                    StockTableRowActionsView(stockElement: stockElement, shownActions: [.consumeQA], mdQuantityUnits: mdQuantityUnits)
-                }
-                if (stockElement.amount - stockElement.amountOpened) > 0 {
-                    StockTableRowActionsView(stockElement: stockElement, shownActions: [.openQA], mdQuantityUnits: mdQuantityUnits)
-                }
+            allowsFullSwipe: true
+        ) {
+            if stockElement.amount > 0 {
+                StockTableRowActionsView(stockElement: stockElement, shownActions: [.consumeQA], mdQuantityUnits: mdQuantityUnits)
             }
-        )
+            if (stockElement.amount - stockElement.amountOpened) > 0 {
+                StockTableRowActionsView(stockElement: stockElement, shownActions: [.openQA], mdQuantityUnits: mdQuantityUnits)
+            }
+        }
         .swipeActions(
             edge: .trailing,
-            allowsFullSwipe: true,
-            content: {
-                if stockElement.amount > 0 {
-                    StockTableRowActionsView(stockElement: stockElement, shownActions: [.consumeAll], mdQuantityUnits: mdQuantityUnits)
-                }
+            allowsFullSwipe: true
+        ) {
+            if stockElement.amount > 0 {
+                StockTableRowActionsView(stockElement: stockElement, shownActions: [.consumeAll], mdQuantityUnits: mdQuantityUnits)
             }
-        )
+        }
+
         #if os(macOS)
             .listRowBackground(backgroundColor.clipped().cornerRadius(5))
             .foregroundStyle(colorScheme == .light ? Color.black : Color.white)

@@ -122,11 +122,11 @@ struct StockView: View {
 
     private func updateMissingStock() {
         missingStockUpdateTask?.cancel()
-        
+
         // Build product lookup on main thread
         let productsByID = Dictionary(uniqueKeysWithValues: mdProducts.map { ($0.id, $0) })
         let missingProducts = volatileStock?.missingProducts ?? []
-        
+
         missingStockUpdateTask = Task {
             if !Task.isCancelled {
                 self.cachedMissingStock = missingProducts.filter { !$0.isPartlyInStock }.compactMap { missingProduct in
@@ -173,28 +173,31 @@ struct StockView: View {
             // Run computation on main thread to avoid Sendable/ModelContext issues
             var grouped: [AnyHashable: [StockElement]] = [:]
             var filtered: [StockElement] = []
-            
+
             let allStock = stock + missingStock
-            
+
             for element in allStock {
                 // Quick reject checks
                 guard !(element.product?.hideOnStockOverview ?? false) else { continue }
 
                 // Search filter
                 if !searchString.isEmpty,
-                   !(element.product?.name.localizedStandardContains(searchString) ?? false) {
+                    !(element.product?.name.localizedStandardContains(searchString) ?? false)
+                {
                     continue
                 }
 
                 // Product group filter
                 if let groupID = filteredProductGroupID,
-                   element.product?.productGroupID != groupID {
+                    element.product?.productGroupID != groupID
+                {
                     continue
                 }
 
                 // Location filter
                 if let filterLocationID = filteredLocationID,
-                   !(self.stockLocations.contains { $0.productID == element.productID && $0.locationID == filterLocationID }) {
+                    !(self.stockLocations.contains { $0.productID == element.productID && $0.locationID == filterLocationID })
+                {
                     continue
                 }
 
@@ -204,13 +207,14 @@ struct StockView: View {
                 let expiredProductIDs = Set(self.volatileStock?.expiredProducts.map { $0.productID } ?? [])
                 let overdueProductIDs = Set(self.volatileStock?.overdueProducts.map { $0.productID } ?? [])
                 let missingProductIDs = Set(self.volatileStock?.missingProducts.map { $0.productID } ?? [])
-                
-                let passesStatus = filteredStatus == .all
+
+                let passesStatus =
+                    filteredStatus == .all
                     || (filteredStatus == .belowMinStock && missingProductIDs.contains(productID))
                     || (filteredStatus == .expiringSoon && dueProductIDs.contains(productID))
                     || (filteredStatus == .overdue && overdueProductIDs.contains(productID) && !expiredProductIDs.contains(productID))
                     || (filteredStatus == .expired && expiredProductIDs.contains(productID))
-                
+
                 if !passesStatus { continue }
 
                 // Compute group key
@@ -248,9 +252,9 @@ struct StockView: View {
             for key in grouped.keys {
                 grouped[key]?.sort(using: sortSetting)
             }
-            
+
             filtered = grouped.values.flatMap { $0 }
-            
+
             if !Task.isCancelled {
                 self.cachedGroupedStock = grouped
                 self.cachedFilteredStock = filtered
@@ -289,12 +293,12 @@ struct StockView: View {
                         id: \.productID
                     ) { stockElement in
                         StockTableRow(
+                            stockElement: stockElement,
                             mdQuantityUnits: mdQuantityUnits,
                             shoppingList: shoppingList,
                             mdProductGroups: mdProductGroups,
                             volatileStock: volatileStock,
-                            userSettings: userSettings,
-                            stockElement: stockElement
+                            userSettings: userSettings
                         )
                     }
                 },
