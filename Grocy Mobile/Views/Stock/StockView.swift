@@ -113,12 +113,25 @@ struct StockView: View {
         volatileStock?.missingProducts.count
     }
 
+    @State private var cachedMissingStock: Stock = []
+    @State private var missingStockUpdateTask: Task<Void, Never>?
+
     var missingStock: Stock {
-        var missingStockList: Stock = []
-        for missingProduct in volatileStock?.missingProducts ?? [] {
-            if !(missingProduct.isPartlyInStock) {
-                if let foundProduct = mdProducts.first(where: { $0.id == missingProduct.productID }) {
-                    let missingStockElement = StockElement(
+        cachedMissingStock
+    }
+
+    private func updateMissingStock() {
+        missingStockUpdateTask?.cancel()
+        
+        // Build product lookup on main thread
+        let productsByID = Dictionary(uniqueKeysWithValues: mdProducts.map { ($0.id, $0) })
+        let missingProducts = volatileStock?.missingProducts ?? []
+        
+        missingStockUpdateTask = Task {
+            if !Task.isCancelled {
+                self.cachedMissingStock = missingProducts.filter { !$0.isPartlyInStock }.compactMap { missingProduct in
+                    guard let product = productsByID[missingProduct.productID] else { return nil }
+                    return StockElement(
                         amount: 0,
                         amountAggregated: 0,
                         value: 0.0,
@@ -126,15 +139,13 @@ struct StockView: View {
                         amountOpened: 0,
                         amountOpenedAggregated: 0,
                         isAggregatedAmount: false,
-                        dueType: foundProduct.dueType,
+                        dueType: product.dueType,
                         productID: missingProduct.productID,
-                        product: foundProduct
+                        product: product
                     )
-                    missingStockList.append(missingStockElement)
                 }
             }
         }
-        return missingStockList
     }
 
     var filteredAndSearchedStock: [StockElement] {
@@ -148,7 +159,7 @@ struct StockView: View {
     private func computeFilteredAndGroupedStock() {
         filterComputationTask?.cancel()
 
-        // Capture required values before detaching to avoid MainActor access issues
+        // Capture only Sendable primitives from SwiftData objects (on main thread)
         let searchString = self.searchString
         let filteredLocationID = self.filteredLocationID
         let filteredProductGroupID = self.filteredProductGroupID
@@ -157,182 +168,106 @@ struct StockView: View {
         let sortSetting = self.sortSetting
         let stock = self.stock
         let missingStock = self.missingStock
-        let stockLocations = self.stockLocations
-        let mdProducts = self.mdProducts
-        let mdProductGroups = self.mdProductGroups
-        let mdLocations = self.mdLocations
-        let volatileStock = self.volatileStock
-        let stockEntries = self.stockEntries
 
-        // Pre-convert stock element dates to avoid MainActor access in background task
-        let stockWithDates: [(element: StockElement, dueDate: Date?)] = stock.map { element in
-            (element, element.bestBeforeDate)
-        }
-        let missingStockWithDates: [(element: StockElement, dueDate: Date?)] = missingStock.map { element in
-            (element, element.bestBeforeDate)
-        }
+        filterComputationTask = Task {
+            // Run computation on main thread to avoid Sendable/ModelContext issues
+            var grouped: [AnyHashable: [StockElement]] = [:]
+            var filtered: [StockElement] = []
+            
+            let allStock = stock + missingStock
+            
+            for element in allStock {
+                // Quick reject checks
+                guard !(element.product?.hideOnStockOverview ?? false) else { continue }
 
-        // Pre-convert min stock amounts to strings to avoid MainActor access in background task
-        let minStockAmountMap = (stock + missingStock).reduce(into: [Int: String]()) { dict, element in
-            dict[element.productID] = element.product?.minStockAmount.formattedAmount ?? ""
-        }
+                // Search filter
+                if !searchString.isEmpty,
+                   !(element.product?.name.localizedStandardContains(searchString) ?? false) {
+                    continue
+                }
 
-        // Pre-convert last purchased dates to avoid MainActor access in background task
-        let lastPurchasedMap = stockEntries.reduce(into: [Int: Date?]()) { dict, item in
-            if let purchasedDate = item.purchasedDate {
-                if let existingDate = dict[item.productID], let existingDate = existingDate, purchasedDate > existingDate {
-                    dict[item.productID] = purchasedDate
-                } else if dict[item.productID] == nil {
-                    dict[item.productID] = purchasedDate
+                // Product group filter
+                if let groupID = filteredProductGroupID,
+                   element.product?.productGroupID != groupID {
+                    continue
+                }
+
+                // Location filter
+                if let filterLocationID = filteredLocationID,
+                   !(self.stockLocations.contains { $0.productID == element.productID && $0.locationID == filterLocationID }) {
+                    continue
+                }
+
+                // Status filter
+                let productID = element.productID
+                let dueProductIDs = Set(self.volatileStock?.dueProducts.map { $0.productID } ?? [])
+                let expiredProductIDs = Set(self.volatileStock?.expiredProducts.map { $0.productID } ?? [])
+                let overdueProductIDs = Set(self.volatileStock?.overdueProducts.map { $0.productID } ?? [])
+                let missingProductIDs = Set(self.volatileStock?.missingProducts.map { $0.productID } ?? [])
+                
+                let passesStatus = filteredStatus == .all
+                    || (filteredStatus == .belowMinStock && missingProductIDs.contains(productID))
+                    || (filteredStatus == .expiringSoon && dueProductIDs.contains(productID))
+                    || (filteredStatus == .overdue && overdueProductIDs.contains(productID) && !expiredProductIDs.contains(productID))
+                    || (filteredStatus == .expired && expiredProductIDs.contains(productID))
+                
+                if !passesStatus { continue }
+
+                // Compute group key
+                let groupKey: AnyHashable = {
+                    switch stockGrouping {
+                    case .none:
+                        return ""
+                    case .productGroup:
+                        return element.product?.productGroupID ?? 0
+                    case .nextDueDate:
+                        return element.bestBeforeDate as AnyHashable
+                    case .lastPurchased:
+                        let lastPurchased = self.stockEntries
+                            .filter { $0.productID == productID && $0.purchasedDate != nil }
+                            .max { ($0.purchasedDate ?? Date.distantPast) < ($1.purchasedDate ?? Date.distantPast) }?
+                            .purchasedDate
+                        return lastPurchased as AnyHashable
+                    case .minStockAmount:
+                        return element.product?.minStockAmount ?? 0
+                    case .parentProduct:
+                        return element.product?.parentProductID ?? 0
+                    case .defaultLocation:
+                        return element.product?.locationID ?? 0
+                    }
+                }()
+
+                if grouped[groupKey] != nil {
+                    grouped[groupKey]?.append(element)
+                } else {
+                    grouped[groupKey] = [element]
                 }
             }
-        }
 
-        // Pre-compute product group names to avoid MainActor access in background task
-        let productGroupNameMap = mdProductGroups.reduce(into: [Int: String]()) { dict, group in
-            dict[group.id] = group.name
-        }
-
-        // Pre-compute product names to avoid MainActor access in background task
-        _ = mdProducts.reduce(into: [Int: String]()) { dict, product in
-            dict[product.id] = product.name
-        }
-
-        // Pre-compute parent product names to avoid MainActor access in background task
-        let parentProductNameMap = mdProducts.reduce(into: [Int: String]()) { dict, product in
-            if let parentID = product.parentProductID {
-                dict[product.id] = mdProducts.first(where: { $0.id == parentID })?.name ?? ""
-            } else {
-                dict[product.id] = ""
+            // Sort each group
+            for key in grouped.keys {
+                grouped[key]?.sort(using: sortSetting)
             }
-        }
-
-        // Pre-compute location names to avoid MainActor access in background task
-        let locationNameMap = mdLocations.reduce(into: [Int: String]()) { dict, location in
-            dict[location.id] = location.name
-        }
-
-        filterComputationTask = Task.detached(priority: .userInitiated) {
-            // Cache frequently accessed data
-            let dueProductIDs = Set(volatileStock?.dueProducts.map { $0.productID } ?? [])
-            let expiredProductIDs = Set(volatileStock?.expiredProducts.map { $0.productID } ?? [])
-            let overdueProductIDs = Set(volatileStock?.overdueProducts.map { $0.productID } ?? [])
-            let missingProductIDs = Set(volatileStock?.missingProducts.map { $0.productID } ?? [])
-
-            // First use predicate for simple conditions
-            let simplePredicate = #Predicate<StockElement> { stockElement in
-                !(stockElement.product?.hideOnStockOverview ?? false)
-                    && (searchString.isEmpty || stockElement.product?.name.localizedStandardContains(searchString) ?? false)
-                    && (filteredProductGroupID == nil || stockElement.product?.productGroupID == filteredProductGroupID)
-            }
-
-            // Then apply complex filters using Swift
-            let stockForFiltering = stockWithDates.map { $0.element } + missingStockWithDates.map { $0.element }
-            let filtered =
-                stockForFiltering
-                .filter { (try? simplePredicate.evaluate($0)) ?? false }
-                .filter { stockElement in
-                    // Location filter
-                    filteredLocationID == nil || stockLocations.contains(where: { $0.productID == stockElement.productID && $0.locationID == filteredLocationID })
-                }
-                .filter { stockElement in
-                    // Status filters - using cached Sets for O(1) lookup
-                    let productID = stockElement.productID
-                    return filteredStatus == .all
-                        || (filteredStatus == .belowMinStock && missingProductIDs.contains(productID))
-                        || (filteredStatus == .expiringSoon && dueProductIDs.contains(productID))
-                        || (filteredStatus == .overdue && overdueProductIDs.contains(productID) && !expiredProductIDs.contains(productID))
-                        || (filteredStatus == .expired && expiredProductIDs.contains(productID))
-                }
-                .sorted(using: sortSetting)
-
-            // Create maps for grouping - use Date objects as keys for proper chronological sorting
-            let nextDueDateMap = (stockWithDates + missingStockWithDates).reduce(into: [UUID: Date?]()) { dict, item in
-                dict[item.element.id] = item.dueDate
-            }
-
-            let lastPurchasedDateMap = lastPurchasedMap
-
-            // Compute grouped stock using pre-captured lookup data to avoid MainActor access
-            let grouped: [AnyHashable: [StockElement]] = {
-                switch stockGrouping {
-                case .none:
-                    return Dictionary(
-                        grouping: filtered,
-                        by: { _ in
-                            "" as AnyHashable
-                        }
-                    )
-                case .productGroup:
-                    return Dictionary(
-                        grouping: filtered,
-                        by: { element in
-                            if let groupID = element.product?.productGroupID {
-                                return productGroupNameMap[groupID] as AnyHashable? ?? "" as AnyHashable
-                            }
-                            return "" as AnyHashable
-                        }
-                    )
-                case .nextDueDate:
-                    return Dictionary(
-                        grouping: filtered,
-                        by: { element in
-                            if let date = nextDueDateMap[element.id] {
-                                return date as AnyHashable? ?? NSNull() as AnyHashable
-                            } else {
-                                return NSNull() as AnyHashable
-                            }
-                        }
-                    )
-                case .lastPurchased:
-                    return Dictionary(
-                        grouping: filtered,
-                        by: { element in
-                            if let date = lastPurchasedDateMap[element.productID] {
-                                return date as AnyHashable? ?? NSNull() as AnyHashable
-                            } else {
-                                return NSNull() as AnyHashable
-                            }
-                        }
-                    )
-                case .minStockAmount:
-                    return Dictionary(
-                        grouping: filtered,
-                        by: { element in
-                            Double(minStockAmountMap[element.productID] ?? "") as AnyHashable? ?? 0 as AnyHashable
-                        }
-                    )
-                case .parentProduct:
-                    return Dictionary(
-                        grouping: filtered,
-                        by: { element in
-                            parentProductNameMap[element.productID] as AnyHashable? ?? "" as AnyHashable
-                        }
-                    )
-                case .defaultLocation:
-                    return Dictionary(
-                        grouping: filtered,
-                        by: { element in
-                            if let locationID = element.product?.locationID {
-                                return locationNameMap[locationID] as AnyHashable? ?? "" as AnyHashable
-                            }
-                            return "" as AnyHashable
-                        }
-                    )
-                }
-            }()
-
-            // Update UI on main thread
-            await MainActor.run {
-                self.cachedFilteredStock = filtered
+            
+            filtered = grouped.values.flatMap { $0 }
+            
+            if !Task.isCancelled {
                 self.cachedGroupedStock = grouped
+                self.cachedFilteredStock = filtered
             }
         }
     }
 
+    @State private var cachedSummedValue: Double = 0
+    @State private var lastStockChangeID: Int = 0
+
     var summedValue: Double {
-        let values = stock.map { $0.value }
-        return values.reduce(0, +)
+        let changeID = stock.count &+ (stock.first?.id.hashValue ?? 0)
+        if lastStockChangeID != changeID {
+            lastStockChangeID = changeID
+            cachedSummedValue = stock.reduce(0) { $0 + $1.value }
+        }
+        return cachedSummedValue
     }
 
     var summedValueStr: String {
@@ -350,7 +285,7 @@ struct StockView: View {
             Section(
                 content: {
                     ForEach(
-                        groupElements.sorted(using: sortSetting),
+                        groupElements,
                         id: \.productID
                     ) { stockElement in
                         StockTableRow(
@@ -418,7 +353,7 @@ struct StockView: View {
         }
         .task {
             await updateData()
-            // Compute initial filtered/grouped stock after data loads
+            updateMissingStock()
             computeFilteredAndGroupedStock()
         }
         .onChange(of: filteredLocationID) { _, _ in
@@ -443,6 +378,7 @@ struct StockView: View {
             computeFilteredAndGroupedStock()
         }
         .onChange(of: volatileStock) { _, _ in
+            updateMissingStock()
             computeFilteredAndGroupedStock()
         }
         .toolbar(content: {
