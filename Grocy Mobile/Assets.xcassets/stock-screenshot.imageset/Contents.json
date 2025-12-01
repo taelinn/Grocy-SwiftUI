@@ -1,7 +1,7 @@
 {
   "images" : [
     {
-      "filename" : "grocy-swiftui_iPhone.png",
+      "filename" : "grocy_iPhone_stock.png",
       "idiom" : "iphone",
       "scale" : "1x"
     },
@@ -12,7 +12,7 @@
           "value" : "dark"
         }
       ],
-      "filename" : "grocy-swiftui_iPhone_dark.png",
+      "filename" : "grocy_iPhone_stock_dark.png",
       "idiom" : "iphone",
       "scale" : "1x"
     },
@@ -45,7 +45,7 @@
       "scale" : "3x"
     },
     {
-      "filename" : "grocy-swiftui_iPad.png",
+      "filename" : "grocy_iPad_stock.png",
       "idiom" : "ipad",
       "scale" : "1x"
     },
@@ -56,7 +56,7 @@
           "value" : "dark"
         }
       ],
-      "filename" : "grocy-swiftui_iPad_dark.png",
+      "filename" : "grocy_iPad_stock_dark.png",
       "idiom" : "ipad",
       "scale" : "1x"
     },
