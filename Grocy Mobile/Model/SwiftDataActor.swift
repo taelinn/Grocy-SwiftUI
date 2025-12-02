@@ -15,8 +15,20 @@ actor SwiftDataActor {
         grocyApi: GrocyAPI
     ) async throws -> [T] {
         let incomingObjects: [T] = try await grocyApi.getObject(object: object)
+        let existingObjects: [T]
+
+        // Get existing objects
         let fetchDescriptor = FetchDescriptor<T>(sortBy: [SortDescriptor(\T.id)])
-        let existingObjects = try modelContext.fetch(fetchDescriptor)
+        do {
+            existingObjects = try modelContext.fetch(fetchDescriptor)
+        } catch {
+            // If fetch fails, just insert the new objects
+            for newObject in incomingObjects {
+                modelContext.insert(newObject)
+            }
+            try modelContext.save()
+            return incomingObjects
+        }
 
         // Process any pending changes before proceeding
         modelContext.processPendingChanges()
@@ -44,9 +56,14 @@ actor SwiftDataActor {
             }
         }
 
-        try modelContext.save()
+        // Save context (or rollback on error)
+        do {
+            try modelContext.save()
+        } catch {
+            modelContext.rollback()
+            throw error
+        }
 
-        // Return PersistentIdentifiers instead of objects
         return incomingObjects
     }
 }
