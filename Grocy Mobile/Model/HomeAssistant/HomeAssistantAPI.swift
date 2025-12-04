@@ -23,7 +23,7 @@ func getHomeAssistantPathFromIngress(ingressPath: String) -> String? {
     }
 }
 
-class WebSocket: NSObject, URLSessionWebSocketDelegate {
+final class WebSocket: NSObject, URLSessionWebSocketDelegate {
     func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didOpenWithProtocol protocol: String?) {
         print("Web Socket did connect")
     }

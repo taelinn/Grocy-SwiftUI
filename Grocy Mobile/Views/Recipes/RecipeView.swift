@@ -43,22 +43,8 @@ struct RecipeView: View {
     }
 }
 
-extension Recipe {
-    static let sampleRecipe = Recipe(
-        id: 1,
-        name: "Recipe",
-        recipeDescription: "This is a sample recipe.",
-        pictureFileName: nil,
-        baseServings: 4,
-        desiredServings: 4,
-        notCheckShoppinglist: 0,
-        type: RecipeType.normal,
-        productID: 1
-    )
-}
-
-#Preview {
-    NavigationStack {
-        RecipeView(recipe: Recipe.sampleRecipe)
-    }
-}
+//#Preview {
+//    NavigationStack {
+//        RecipeView(recipe: Recipe.sampleRecipe)
+//    }
+//}

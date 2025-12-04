@@ -363,7 +363,7 @@ struct MDProductFormView: View {
                 case .barcode:
                     barcodePropertiesView
                 case .productPicture:
-                    MDProductPictureFormViewNew(existingProduct: existingProduct, pictureFileName: $product.pictureFileName)
+                    MDProductPictureFormView(existingProduct: existingProduct, pictureFileName: $product.pictureFileName)
                 }
             }
         )

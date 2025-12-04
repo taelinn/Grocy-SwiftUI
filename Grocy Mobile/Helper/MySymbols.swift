@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct MySymbols {
+nonisolated struct MySymbols {
     static let purchase = "cart"
     static let consume = "fork.knife"
     static let open = "envelope.open"

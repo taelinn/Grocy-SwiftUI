@@ -159,9 +159,9 @@ struct ServerSettingsDoubleStepper: View {
 struct ServerSettingsObjectPicker: View {
     @Environment(GrocyViewModel.self) private var grocyVM
     
-    @Query(filter: #Predicate<MDLocation>{$0.active}, sort: \MDLocation.name, order: .forward) var mdLocations: MDLocations
-    @Query(filter: #Predicate<MDProductGroup>{$0.active}, sort: \MDProductGroup.id, order: .forward) var mdProductGroups: MDProductGroups
-    @Query(filter: #Predicate<MDQuantityUnit>{$0.active}, sort: \MDQuantityUnit.id, order: .forward) var mdQuantityUnits: MDQuantityUnits
+    @Query(sort: \MDLocation.name, order: .forward) var mdLocations: MDLocations
+    @Query(sort: \MDProductGroup.id, order: .forward) var mdProductGroups: MDProductGroups
+    @Query(sort: \MDQuantityUnit.id, order: .forward) var mdQuantityUnits: MDQuantityUnits
     @Query(sort: \ShoppingListDescription.id, order: .forward) var shoppingListDescriptions: ShoppingListDescriptions
     
     @State private var objectID: Int? = -1
@@ -204,15 +204,15 @@ struct ServerSettingsObjectPicker: View {
             Group {
                 switch objects {
                 case .location:
-                    ForEach(mdLocations, id: \.id) { location in
+                    ForEach(mdLocations.filter({ $0.active }), id: \.id) { location in
                         Text(location.name).tag(location.id as Int?)
                     }
                 case .productGroup:
-                    ForEach(mdProductGroups, id: \.id) { productGroup in
+                    ForEach(mdProductGroups.filter({ $0.active }), id: \.id) { productGroup in
                         Text(productGroup.name).tag(productGroup.id as Int?)
                     }
                 case .quantityUnit:
-                    ForEach(mdQuantityUnits, id: \.id) { quantityUnit in
+                    ForEach(mdQuantityUnits.filter({ $0.active }), id: \.id) { quantityUnit in
                         Text(quantityUnit.name).tag(quantityUnit.id as Int?)
                     }
                 case .shoppingLists:

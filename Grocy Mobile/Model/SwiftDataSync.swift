@@ -25,7 +25,7 @@ struct SwiftDataSynchronizer {
         let incomingObjects: [T] = try await grocyApi.getObject(object: object)
 
         // Fetch existing objects
-        let fetchDescriptor = FetchDescriptor<T>(sortBy: [SortDescriptor(\T.id)])
+        let fetchDescriptor = FetchDescriptor<T>()
         let existingObjects: [T]
 
         do {

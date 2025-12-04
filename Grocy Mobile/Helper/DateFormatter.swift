@@ -7,25 +7,19 @@
 
 import Foundation
 
-extension ISO8601DateFormatter {
-    convenience init(_ formatOptions: Options, timeZone: TimeZone = TimeZone(secondsFromGMT: 0)!) {
-        self.init()
-        self.formatOptions = formatOptions
-        self.timeZone = timeZone
-    }
-}
-
-extension Formatter {
-    static let iso8601withFractionalSeconds = ISO8601DateFormatter([.withInternetDateTime, .withFractionalSeconds])
-}
-
 extension Date {
-    var iso8601withFractionalSeconds: String { return Formatter.iso8601withFractionalSeconds.string(from: self) }
-    var asJSONDateString: String { return formatAsJSONDateString(date: self) }
-}
-
-extension String {
-    var iso8601withFractionalSeconds: Date? { return Formatter.iso8601withFractionalSeconds.date(from: self) }
+    var asJSONDateString: String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        return dateFormatter.string(from: self)
+    }
+    nonisolated var iso8601withFractionalSeconds: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ"
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = TimeZone(secondsFromGMT: 0)
+        return formatter.string(from: self)
+    }
 }
 
 func formatDateOutput(_ dateStrIN: String) -> String? {
@@ -71,7 +65,7 @@ func formatTimestampOutput(_ timeStamp: String, localizationKey: String? = nil) 
     return timeStampFormatted
 }
 
-func getDateFromString(_ dateString: String) -> Date? {
+nonisolated func getDateFromString(_ dateString: String) -> Date? {
     let strategy = Date.ISO8601FormatStyle()
         .year()
         .month()
@@ -104,7 +98,9 @@ func getTimeDistanceFromNow(date: Date) -> Int? {
 func getTimeDistanceFromString(_ dateStrIN: String) -> Int? {
     if let date = getDateFromString(dateStrIN) {
         return getTimeDistanceFromNow(date: date)
-    } else { return nil }
+    } else {
+        return nil
+    }
 }
 
 func formatDays(daysToFormat: Int?) -> String? {
@@ -154,10 +150,4 @@ func getNeverOverdueDate() -> Date {
     dateComponents.second = 0
     return Calendar(identifier: .gregorian)
         .date(from: dateComponents)!
-}
-
-func formatAsJSONDateString(date: Date) -> String {
-    let dateFormatter = DateFormatter()
-    dateFormatter.dateFormat = "yyyy-MM-dd"
-    return dateFormatter.string(from: date)
 }
