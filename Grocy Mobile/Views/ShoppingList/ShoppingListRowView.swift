@@ -40,7 +40,7 @@ struct ShoppingListRowView: View {
             Text(product?.name ?? shoppingListItem.note)
                 .font(.headline)
                 .strikethrough(shoppingListItem.done == 1)
-            if !shoppingListItem.note.isEmpty {
+            if !shoppingListItem.note.isEmpty && product != nil {
                 Text(shoppingListItem.note)
                     .font(.caption)
             }
