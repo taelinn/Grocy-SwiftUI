@@ -13,6 +13,11 @@ struct ShoppingListItemWrapped {
     let product: MDProduct?
 }
 
+enum SortOption: Hashable, Sendable {
+    case byName
+    case byAmount
+}
+
 enum ShoppingListInteraction: Hashable, Identifiable {
     case newShoppingList
     case newShoppingListEntry
@@ -63,7 +68,7 @@ struct ShoppingListView: View {
         }
     }
     @State private var shoppingListGrouping: ShoppingListGrouping = .productGroup
-    @State private var sortSetting = [KeyPathComparator(\ShoppingListItemWrapped.product?.name)]
+    @State private var sortOption: SortOption = .byName
     @State private var sortOrder: SortOrder = .forward
 
     @State private var showFilterSheet: Bool = false
@@ -131,6 +136,28 @@ struct ShoppingListView: View {
                 $0.id == selectedShoppingListID
             }
             .first
+    }
+
+    var sortComparator: (ShoppingListItemWrapped, ShoppingListItemWrapped) -> Bool {
+        switch sortOption {
+        case .byName:
+            return { a, b in
+                let aName = a.product?.name ?? a.shoppingListItem.note
+                let bName = b.product?.name ?? b.shoppingListItem.note
+                let comparison = aName.localizedCaseInsensitiveCompare(bName)
+                return self.sortOrder == .forward 
+                    ? comparison == .orderedAscending 
+                    : comparison == .orderedDescending
+            }
+        case .byAmount:
+            return { a, b in
+                let aAmount = a.shoppingListItem.amount
+                let bAmount = b.shoppingListItem.amount
+                return self.sortOrder == .forward 
+                    ? aAmount < bAmount 
+                    : aAmount > bAmount
+            }
+        }
     }
 
     var selectedShoppingListItems: [ShoppingListItem] {
@@ -274,7 +301,7 @@ struct ShoppingListView: View {
                         isExpanded: Binding.constant(true),
                         content: {
                             ForEach(
-                                groupElements.sorted(using: sortSetting),
+                                groupElements.sorted(by: sortComparator),
                                 id: \.shoppingListItem.id,
                                 content: { element in
                                     shoppingListRowWithNavigation(element: element)
@@ -295,7 +322,7 @@ struct ShoppingListView: View {
                     Section(
                         content: {
                             ForEach(
-                                groupElements.sorted(using: sortSetting),
+                                groupElements.sorted(by: sortComparator),
                                 id: \.shoppingListItem.id,
                                 content: { element in
                                     shoppingListRowWithNavigation(element: element)
@@ -612,23 +639,14 @@ struct ShoppingListView: View {
                 Picker(
                     "Sort category",
                     systemImage: MySymbols.sortCategory,
-                    selection: $sortSetting,
+                    selection: $sortOption,
                     content: {
-                        if sortOrder == .forward {
-                            Label("Name", systemImage: MySymbols.product)
-                                .labelStyle(.titleAndIcon)
-                                .tag([KeyPathComparator(\ShoppingListItemWrapped.product?.name, order: .forward)])
-                            Label("Amount", systemImage: MySymbols.amount)
-                                .labelStyle(.titleAndIcon)
-                                .tag([KeyPathComparator(\ShoppingListItemWrapped.shoppingListItem.amount, order: .forward)])
-                        } else {
-                            Label("Name", systemImage: MySymbols.product)
-                                .labelStyle(.titleAndIcon)
-                                .tag([KeyPathComparator(\ShoppingListItemWrapped.product?.name, order: .reverse)])
-                            Label("Amount", systemImage: MySymbols.amount)
-                                .labelStyle(.titleAndIcon)
-                                .tag([KeyPathComparator(\ShoppingListItemWrapped.shoppingListItem.amount, order: .reverse)])
-                        }
+                        Label("Name", systemImage: MySymbols.product)
+                            .labelStyle(.titleAndIcon)
+                            .tag(SortOption.byName)
+                        Label("Amount", systemImage: MySymbols.amount)
+                            .labelStyle(.titleAndIcon)
+                            .tag(SortOption.byAmount)
                     }
                 )
                 #if os(iOS)
@@ -654,12 +672,6 @@ struct ShoppingListView: View {
                 #else
                     .pickerStyle(.inline)
                 #endif
-                .onChange(of: sortOrder) {
-                    if var sortElement = sortSetting.first {
-                        sortElement.order = sortOrder
-                        sortSetting = [sortElement]
-                    }
-                }
             },
             label: {
                 Label("Sort", systemImage: MySymbols.sort)
