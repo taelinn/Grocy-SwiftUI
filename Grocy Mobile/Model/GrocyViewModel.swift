@@ -19,7 +19,7 @@ class GrocyViewModel {
 
     let modelContext: ModelContext
     let profileModelContext: ModelContext?
-    let actor: SwiftDataActor
+    private let swiftDataSync: SwiftDataSynchronizer
 
     @ObservationIgnored @AppStorage("isLoggedIn") var isLoggedIn: Bool = false
     @ObservationIgnored @AppStorage("isDemoModus") var isDemoModus: Bool = false
@@ -104,7 +104,7 @@ class GrocyViewModel {
         self.modelContext = modelContext
         self.modelContext.autosaveEnabled = false
         self.profileModelContext = profileModelContext
-        self.actor = SwiftDataActor(modelContainer: modelContext.container)
+        self.swiftDataSync = SwiftDataSynchronizer(modelContext: modelContext)
         jsonEncoder.dateEncodingStrategy = .custom({ (date, encoder) in
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "yyyy-MM-dd"
@@ -273,7 +273,7 @@ class GrocyViewModel {
 
     func getObjectAndSaveSwiftData<T: Codable & Equatable & Identifiable & PersistentModel>(object: ObjectEntities) async throws -> [T] {
         do {
-            return try await actor.getObjectAndSaveSwiftData(
+            return try await swiftDataSync.getObjectAndSaveSwiftData(
                 object: object,
                 grocyApi: grocyApi
             )
@@ -384,11 +384,11 @@ class GrocyViewModel {
 
         case .stock:
             self.stock = try await grocyApi.getStock()
-            try await actor.syncStockElements(self.stock)
+            try swiftDataSync.syncStockElements(self.stock)
 
         case .system_config:
             self.systemConfig = try await grocyApi.getSystemConfig()
-            try await actor.syncSingletonModel(SystemConfig.self, with: self.systemConfig)
+            try swiftDataSync.syncSingletonModel(SystemConfig.self, with: self.systemConfig)
 
         case .system_db_changed_time:
             self.systemDBChangedTime = try await grocyApi.getSystemDBChangedTime()
@@ -398,20 +398,20 @@ class GrocyViewModel {
 
         case .user_settings:
             self.userSettings = try await grocyApi.getUserSettings()
-            try await actor.syncSingletonModel(GrocyUserSettings.self, with: self.userSettings)
+            try swiftDataSync.syncSingletonModel(GrocyUserSettings.self, with: self.userSettings)
 
         case .recipeFulfillments:
             self.recipeFulfillments = try await grocyApi.getRecipeFulfillments()
 
         case .users:
             self.users = try await grocyApi.getUsers()
-            try await actor.syncArrayModel(GrocyUser.self, with: self.users)
+            try swiftDataSync.syncArrayModel(GrocyUser.self, with: self.users)
 
         case .volatileStock:
             let userSettingsFetch = FetchDescriptor<GrocyUserSettings>()
             let dueSoonDays = try modelContext.fetch(userSettingsFetch).first?.stockDueSoonDays ?? self.userSettings?.stockDueSoonDays ?? 5
             self.volatileStock = try await grocyApi.getVolatileStock(dueSoonDays: dueSoonDays)
-            try await actor.syncSingletonModel(VolatileStock.self, with: self.volatileStock)
+            try swiftDataSync.syncSingletonModel(VolatileStock.self, with: self.volatileStock)
         }
     }
 
@@ -652,12 +652,12 @@ class GrocyViewModel {
             case .locations:
                 let stockLocations: StockLocations = try await grocyApi.getStockProductInfo(stockModeGet: .locations, productID: productID, queries: queries)
                 self.stockProductLocations[productID] = stockLocations
-                try await actor.syncPersistentCollection(StockLocation.self, with: stockLocations)
+                try swiftDataSync.syncPersistentCollection(StockLocation.self, with: stockLocations)
 
             case .entries:
                 let stockEntries: StockEntries = try await grocyApi.getStockProductInfo(stockModeGet: .entries, productID: productID, queries: queries)
                 self.stockProductEntries[productID] = stockEntries
-                try await actor.syncPersistentCollection(StockEntry.self, with: stockEntries)
+                try swiftDataSync.syncPersistentCollection(StockEntry.self, with: stockEntries)
 
             case .priceHistory:
                 print("not implemented")

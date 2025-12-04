@@ -8,15 +8,23 @@
 import Foundation
 import SwiftData
 
-@ModelActor
-actor SwiftDataActor {
+/// Helper struct for synchronizing SwiftData operations within a MainActor context.
+/// This avoids the overhead and concurrency issues of a separate ModelActor
+/// while maintaining proper transaction semantics.
+struct SwiftDataSynchronizer {
+    private let modelContext: ModelContext
+
+    init(modelContext: ModelContext) {
+        self.modelContext = modelContext
+    }
+
     func getObjectAndSaveSwiftData<T: Codable & Equatable & Identifiable & PersistentModel>(
         object: ObjectEntities,
         grocyApi: GrocyAPI
     ) async throws -> [T] {
         let incomingObjects: [T] = try await grocyApi.getObject(object: object)
 
-        // Fetch existing objects within the isolated context
+        // Fetch existing objects
         let fetchDescriptor = FetchDescriptor<T>(sortBy: [SortDescriptor(\T.id)])
         let existingObjects: [T]
 
@@ -28,11 +36,8 @@ actor SwiftDataActor {
             return incomingObjects
         }
 
-        // Perform synchronization within a single transaction-like context
+        // Perform synchronization
         try synchronizeObjects(existing: existingObjects, incoming: incomingObjects)
-
-        // Ensure all changes are persisted before returning
-        try await Task.sleep(nanoseconds: 0)  // Yield to allow SwiftData to finalize changes
 
         return incomingObjects
     }
@@ -42,7 +47,7 @@ actor SwiftDataActor {
     func syncPersistentCollection<T: Identifiable & PersistentModel>(
         _ modelType: T.Type,
         with incoming: [T]
-    ) async throws {
+    ) throws {
         do {
             let fetchDescriptor = FetchDescriptor<T>()
             let existing = try modelContext.fetch(fetchDescriptor)
@@ -71,7 +76,7 @@ actor SwiftDataActor {
     func syncSingletonModel<T: PersistentModel>(
         _ modelType: T.Type,
         with value: T?
-    ) async throws {
+    ) throws {
         do {
             try modelContext.delete(model: modelType)
             if let value = value {
@@ -89,7 +94,7 @@ actor SwiftDataActor {
     func syncArrayModel<T: PersistentModel>(
         _ modelType: T.Type,
         with incoming: [T]
-    ) async throws {
+    ) throws {
         do {
             try modelContext.delete(model: modelType)
             for item in incoming {
@@ -106,7 +111,7 @@ actor SwiftDataActor {
     /// Fetches MDProducts from modelContext to establish relationships.
     func syncStockElements(
         _ stockElements: [StockElement]
-    ) async throws {
+    ) throws {
         do {
             let fetchDescriptor = FetchDescriptor<StockElement>()
             let existing = try modelContext.fetch(fetchDescriptor)
