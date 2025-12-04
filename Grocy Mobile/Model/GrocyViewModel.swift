@@ -288,41 +288,58 @@ class GrocyViewModel {
             for object in objects {
                 do {
                     if timeStamp != self.timeStampsObjects[object] {
-                        loadingObjectEntities.insert(object)
+                        self.loadingObjectEntities.insert(object)
+
                         switch object {
                         case .batteries:
-                            self.mdBatteries = try await grocyApi.getObject(object: object)
+                            let data: [MDBattery] = try await grocyApi.getObject(object: object)
+                            self.mdBatteries = data
                         case .locations:
-                            self.mdLocations = try await self.getObjectAndSaveSwiftData(object: object)
+                            let data: [MDLocation] = try await self.getObjectAndSaveSwiftData(object: object)
+                            self.mdLocations = data
                         case .product_barcodes:
-                            self.mdProductBarcodes = try await self.getObjectAndSaveSwiftData(object: object)
+                            let data: [MDProductBarcode] = try await self.getObjectAndSaveSwiftData(object: object)
+                            self.mdProductBarcodes = data
                         case .product_groups:
-                            self.mdProductGroups = try await self.getObjectAndSaveSwiftData(object: object)
+                            let data: [MDProductGroup] = try await self.getObjectAndSaveSwiftData(object: object)
+                            self.mdProductGroups = data
                         case .products:
-                            self.mdProducts = try await self.getObjectAndSaveSwiftData(object: object)
+                            let data: [MDProduct] = try await self.getObjectAndSaveSwiftData(object: object)
+                            self.mdProducts = data
                         case .quantity_unit_conversions:
-                            self.mdQuantityUnitConversions = try await self.getObjectAndSaveSwiftData(object: object)
+                            let data: [MDQuantityUnitConversion] = try await self.getObjectAndSaveSwiftData(object: object)
+                            self.mdQuantityUnitConversions = data
                         case .recipes:
-                            self.recipes = try await self.getObjectAndSaveSwiftData(object: object)
+                            let data: [Recipe] = try await self.getObjectAndSaveSwiftData(object: object)
+                            self.recipes = data
                         case .recipes_pos_resolved:
-                            self.recipePosResolved = try await self.getObjectAndSaveSwiftData(object: object)
+                            let data: [RecipePosResolvedElement] = try await self.getObjectAndSaveSwiftData(object: object)
+                            self.recipePosResolved = data
                         case .quantity_units:
-                            self.mdQuantityUnits = try await self.getObjectAndSaveSwiftData(object: object)
+                            let data: [MDQuantityUnit] = try await self.getObjectAndSaveSwiftData(object: object)
+                            self.mdQuantityUnits = data
                         case .shopping_list:
-                            self.shoppingList = try await self.getObjectAndSaveSwiftData(object: object)
+                            let data: [ShoppingListItem] = try await self.getObjectAndSaveSwiftData(object: object)
+                            self.shoppingList = data
                         case .shopping_lists:
-                            self.shoppingListDescriptions = try await self.getObjectAndSaveSwiftData(object: object)
+                            let data: [ShoppingListDescription] = try await self.getObjectAndSaveSwiftData(object: object)
+                            self.shoppingListDescriptions = data
                         case .shopping_locations:
-                            self.mdStores = try await self.getObjectAndSaveSwiftData(object: object)
+                            let data: [MDStore] = try await self.getObjectAndSaveSwiftData(object: object)
+                            self.mdStores = data
                         case .stock:
-                            self.stockEntries = try await self.getObjectAndSaveSwiftData(object: object)
+                            let data: [StockEntry] = try await self.getObjectAndSaveSwiftData(object: object)
+                            self.stockEntries = data
                         case .stock_log:
-                            self.stockJournal = try await self.getObjectAndSaveSwiftData(object: object)
+                            let data: [StockJournalEntry] = try await self.getObjectAndSaveSwiftData(object: object)
+                            self.stockJournal = data
                         case .stock_current_locations:
-                            self.stockCurrentLocations = try await self.getObjectAndSaveSwiftData(object: object)
+                            let data: [StockLocation] = try await self.getObjectAndSaveSwiftData(object: object)
+                            self.stockCurrentLocations = data
                         default:
                             GrocyLogger.error("Object not implemented")
                         }
+
                         self.timeStampsObjects[object] = timeStamp
                         self.loadingObjectEntities.remove(object)
                         self.failedToLoadObjects.remove(object)
@@ -331,76 +348,19 @@ class GrocyViewModel {
                     GrocyLogger.error("Data request failed for \(object). Message: \("\(error)")")
                     self.failedToLoadObjects.insert(object)
                     self.failedToLoadErrors.append(error)
+                    self.loadingObjectEntities.remove(object)
                 }
             }
         }
+
         if let additionalObjects = additionalObjects {
             for additionalObject in additionalObjects {
                 do {
                     if timeStamp != self.timeStampsAdditionalObjects[additionalObject] {
-                        loadingAdditionalEntities.insert(additionalObject)
-                        switch additionalObject {
-                        case .current_user:
-                            self.currentUser = try await grocyApi.getUser().first
-                        case .stock:
-                            self.stock = try await grocyApi.getStock()
-                            let fetchDescriptor = FetchDescriptor<StockElement>()
-                            let existingObjects = try modelContext.fetch(fetchDescriptor)
-                            for existingObject in existingObjects {
-                                if !self.stock.contains(existingObject) {
-                                    self.modelContext.delete(existingObject)
-                                }
-                            }
-                            for newObject in self.stock {
-                                if !existingObjects.contains(newObject) {
-                                    let productFetchDescriptor = FetchDescriptor<MDProduct>(
-                                        predicate: #Predicate { product in
-                                            product.id == newObject.productID
-                                        }
-                                    )
-                                    if let existingProduct = try modelContext.fetch(productFetchDescriptor).first {
-                                        newObject.product = existingProduct
-                                    }
-                                }
-                            }
-                            try self.modelContext.save()
-                        case .system_config:
-                            self.systemConfig = try await grocyApi.getSystemConfig()
-                            try self.modelContext.delete(model: SystemConfig.self)
-                            if let cfg = self.systemConfig {
-                                self.modelContext.insert(cfg)
-                            }
-                            try self.modelContext.save()
-                        case .system_db_changed_time:
-                            self.systemDBChangedTime = try await grocyApi.getSystemDBChangedTime()
-                        case .system_info:
-                            self.systemInfo = try await grocyApi.getSystemInfo()
-                        case .user_settings:
-                            self.userSettings = try await grocyApi.getUserSettings()
-                            try self.modelContext.delete(model: GrocyUserSettings.self)
-                            if let userSet = self.userSettings {
-                                self.modelContext.insert(userSet)
-                            }
-                            try self.modelContext.save()
-                        case .recipeFulfillments:
-                            self.recipeFulfillments = try await grocyApi.getRecipeFulfillments()
-                        case .users:
-                            self.users = try await grocyApi.getUsers()
-                            try self.modelContext.delete(model: GrocyUser.self)
-                            for user in self.users {
-                                self.modelContext.insert(user)
-                            }
-                            try self.modelContext.save()
-                        case .volatileStock:
-                            let userSettingsFetch = FetchDescriptor<GrocyUserSettings>()
-                            let dueSoonDays = try modelContext.fetch(userSettingsFetch).first?.stockDueSoonDays ?? self.userSettings?.stockDueSoonDays ?? 5
-                            self.volatileStock = try await grocyApi.getVolatileStock(dueSoonDays: dueSoonDays)
-                            try self.modelContext.delete(model: VolatileStock.self)
-                            if let volatileStock = self.volatileStock {
-                                self.modelContext.insert(volatileStock)
-                            }
-                            try self.modelContext.save()
-                        }
+                        self.loadingAdditionalEntities.insert(additionalObject)
+
+                        try await self.fetchAndSyncAdditionalObject(additionalObject)
+
                         self.timeStampsAdditionalObjects[additionalObject] = timeStamp
                         self.loadingAdditionalEntities.remove(additionalObject)
                         self.failedToLoadAdditionalObjects.remove(additionalObject)
@@ -409,8 +369,49 @@ class GrocyViewModel {
                     GrocyLogger.error("Data request failed for \(additionalObject). Message: \("\(error)")")
                     self.failedToLoadAdditionalObjects.insert(additionalObject)
                     self.failedToLoadErrors.append(error)
+                    self.loadingAdditionalEntities.remove(additionalObject)
                 }
             }
+        }
+    }
+
+    // MARK: - SwiftData Synchronization Helpers
+
+    private func fetchAndSyncAdditionalObject(_ additionalObject: AdditionalEntities) async throws {
+        switch additionalObject {
+        case .current_user:
+            self.currentUser = try await grocyApi.getUser().first
+
+        case .stock:
+            self.stock = try await grocyApi.getStock()
+            try await actor.syncStockElements(self.stock)
+
+        case .system_config:
+            self.systemConfig = try await grocyApi.getSystemConfig()
+            try await actor.syncSingletonModel(SystemConfig.self, with: self.systemConfig)
+
+        case .system_db_changed_time:
+            self.systemDBChangedTime = try await grocyApi.getSystemDBChangedTime()
+
+        case .system_info:
+            self.systemInfo = try await grocyApi.getSystemInfo()
+
+        case .user_settings:
+            self.userSettings = try await grocyApi.getUserSettings()
+            try await actor.syncSingletonModel(GrocyUserSettings.self, with: self.userSettings)
+
+        case .recipeFulfillments:
+            self.recipeFulfillments = try await grocyApi.getRecipeFulfillments()
+
+        case .users:
+            self.users = try await grocyApi.getUsers()
+            try await actor.syncArrayModel(GrocyUser.self, with: self.users)
+
+        case .volatileStock:
+            let userSettingsFetch = FetchDescriptor<GrocyUserSettings>()
+            let dueSoonDays = try modelContext.fetch(userSettingsFetch).first?.stockDueSoonDays ?? self.userSettings?.stockDueSoonDays ?? 5
+            self.volatileStock = try await grocyApi.getVolatileStock(dueSoonDays: dueSoonDays)
+            try await actor.syncSingletonModel(VolatileStock.self, with: self.volatileStock)
         }
     }
 
@@ -651,81 +652,13 @@ class GrocyViewModel {
             case .locations:
                 let stockLocations: StockLocations = try await grocyApi.getStockProductInfo(stockModeGet: .locations, productID: productID, queries: queries)
                 self.stockProductLocations[productID] = stockLocations
+                try await actor.syncPersistentCollection(StockLocation.self, with: stockLocations)
 
-                // Process any pending changes before proceeding
-                modelContext.processPendingChanges()
-
-                let fetchDescriptor = FetchDescriptor<StockLocation>(
-                    predicate: #Predicate { entry in
-                        entry.productID == productID
-                    }
-                )
-                let existingObjects = try modelContext.fetch(fetchDescriptor)
-
-                // Build lookup dictionaries
-                let existingById = Dictionary(uniqueKeysWithValues: existingObjects.map { ($0.id, $0) })
-                let incomingById = Dictionary(uniqueKeysWithValues: stockLocations.map { ($0.id, $0) })
-
-                // Delete removed objects
-                for (id, existingObject) in existingById {
-                    if incomingById[id] == nil {
-                        modelContext.delete(existingObject)
-                    }
-                }
-
-                // Insert new or updated objects
-                for (id, newObject) in incomingById {
-                    if let existing = existingById[id] {
-                        if existing != newObject {
-                            modelContext.delete(existing)
-                            modelContext.insert(newObject)
-                        }
-                        // else: identical, skip
-                    } else {
-                        modelContext.insert(newObject)
-                    }
-                }
-
-                try modelContext.save()
             case .entries:
                 let stockEntries: StockEntries = try await grocyApi.getStockProductInfo(stockModeGet: .entries, productID: productID, queries: queries)
                 self.stockProductEntries[productID] = stockEntries
+                try await actor.syncPersistentCollection(StockEntry.self, with: stockEntries)
 
-                // Process any pending changes before proceeding
-                modelContext.processPendingChanges()
-
-                let fetchDescriptor = FetchDescriptor<StockEntry>(
-                    predicate: #Predicate { entry in
-                        entry.productID == productID
-                    }
-                )
-                let existingObjects = try modelContext.fetch(fetchDescriptor)
-
-                // Build lookup dictionaries
-                let existingById = Dictionary(uniqueKeysWithValues: existingObjects.map { ($0.id, $0) })
-                let incomingById = Dictionary(uniqueKeysWithValues: stockEntries.map { ($0.id, $0) })
-
-                // Delete removed objects
-                for (id, existingObject) in existingById {
-                    if incomingById[id] == nil {
-                        modelContext.delete(existingObject)
-                    }
-                }
-
-                // Insert new or updated objects
-                for (id, newObject) in incomingById {
-                    if let existing = existingById[id] {
-                        if existing != newObject {
-                            modelContext.delete(existing)
-                            modelContext.insert(newObject)
-                        }
-                        // else: identical, skip
-                    } else {
-                        modelContext.insert(newObject)
-                    }
-                }
-
-                try modelContext.save()
             case .priceHistory:
                 print("not implemented")
             }
