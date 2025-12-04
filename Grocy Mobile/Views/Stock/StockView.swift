@@ -316,7 +316,7 @@ struct StockView: View {
                     } else if stockGrouping == .none {
                         EmptyView()
                     } else if stockGrouping == .minStockAmount, let numValue = groupKey as? Double {
-                        Text(String(format: "%.0f", numValue)).bold()
+                        Text(numValue.formatted(.number.precision(.fractionLength(0)))).bold()
                     } else if stockGrouping == .nextDueDate || stockGrouping == .lastPurchased {
                         if let date = groupKey as? Date {
                             Text(dateFormatter.string(from: date)).bold()
