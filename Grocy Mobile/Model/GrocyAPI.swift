@@ -7,33 +7,6 @@
 
 import Foundation
 
-public enum APIError: Error, Equatable {
-    var value: String? {
-        return String(describing: self).components(separatedBy: "(").first
-    }
-    var displayMessage: String {
-        if case let .errorString(description) = self {
-            return description
-        }
-        return self.localizedDescription
-    }
-    public static func == (lhs: APIError, rhs: APIError) -> Bool {
-        lhs.value == rhs.value
-    }
-    case internalError
-    case serverError(error: Error)
-    case serverError(errorMessage: String)
-    case encodingError
-    case invalidResponse
-    case unsuccessful(error: Error)
-    case errorString(description: String)
-    case timeout
-    case invalidEndpoint(endpoint: String)
-    case decodingError(error: Error)
-    case hassError(error: Error)
-    case notLoggedIn(error: Error)
-}
-
 public enum ObjectEntities: String, CaseIterable {
     case products, product_barcodes, chores, batteries, locations, quantity_units, quantity_unit_conversions, shopping_list, shopping_lists, shopping_locations, recipes, recipes_pos, recipes_pos_resolved, recipes_nestings, tasks,
         task_categories, product_groups, equipment, userfields, userentities, userobjects, meal_plan, stock_log, stock, stock_current_locations

@@ -6,7 +6,20 @@
 	objectVersion = 90;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		789BAF392EE444FB00C82475 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 789BAF1D2EE444AC00C82475 /* WidgetKit.framework */; };
+		789BAF3A2EE444FB00C82475 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 789BAF1F2EE444AC00C82475 /* SwiftUI.framework */; };
+		789BAF472EE444FB00C82475 /* Grocy WidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 789BAF382EE444FB00C82475 /* Grocy WidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
+		789BAF452EE444FB00C82475 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 78CB748E255E9EF600319108 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 789BAF372EE444FB00C82475;
+			remoteInfo = "Grocy WidgetExtension";
+		};
 		78B01C2E2DFF826F0080C814 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 78CB748E255E9EF600319108 /* Project object */;
@@ -23,15 +36,63 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		789BAF2E2EE444AC00C82475 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			dstPath = "";
+			dstSubfolder = PlugIns;
+			files = (
+				789BAF472EE444FB00C82475 /* Grocy WidgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		789BAF1D2EE444AC00C82475 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = /System/Library/Frameworks/WidgetKit.framework; sourceTree = "<absolute>"; };
+		789BAF1F2EE444AC00C82475 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = /System/Library/Frameworks/SwiftUI.framework; sourceTree = "<absolute>"; };
+		789BAF382EE444FB00C82475 /* Grocy WidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Grocy WidgetExtension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		78B01C1F2DFF826D0080C814 /* Grocy Mobile.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Grocy Mobile.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		78B01C2D2DFF826F0080C814 /* Grocy MobileTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Grocy MobileTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		78B01C372DFF826F0080C814 /* Grocy MobileUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Grocy MobileUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		789BAF482EE444FC00C82475 /* Exceptions for "Grocy Widget" folder in "Grocy WidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 789BAF372EE444FB00C82475 /* Grocy WidgetExtension */;
+		};
+		789BAF502EE447F900C82475 /* Exceptions for "Grocy Mobile" folder in "Grocy WidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Assets.xcassets,
+				Helper/DateFormatter.swift,
+				Helper/MySymbols.swift,
+				Model/APIError.swift,
+				Model/Stock/ProductStatus.swift,
+				Model/Stock/VolatileStockModel.swift,
+			);
+			target = 789BAF372EE444FB00C82475 /* Grocy WidgetExtension */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		789BAF3B2EE444FB00C82475 /* Grocy Widget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				789BAF482EE444FC00C82475 /* Exceptions for "Grocy Widget" folder in "Grocy WidgetExtension" target */,
+			);
+			path = "Grocy Widget";
+			sourceTree = "<group>";
+		};
 		789BE5692E00C31A002FF935 /* Grocy Mobile */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				789BAF502EE447F900C82475 /* Exceptions for "Grocy Mobile" folder in "Grocy WidgetExtension" target */,
+			);
 			path = "Grocy Mobile";
 			sourceTree = "<group>";
 		};
@@ -48,6 +109,13 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		789BAF352EE444FB00C82475 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
+				789BAF3A2EE444FB00C82475 /* SwiftUI.framework in Frameworks */,
+				789BAF392EE444FB00C82475 /* WidgetKit.framework in Frameworks */,
+			);
+		};
 		78B01C1C2DFF826D0080C814 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			files = (
@@ -69,6 +137,8 @@
 		78B868D22590B19B005A0CAF /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				789BAF1D2EE444AC00C82475 /* WidgetKit.framework */,
+				789BAF1F2EE444AC00C82475 /* SwiftUI.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -79,6 +149,7 @@
 				789BE5692E00C31A002FF935 /* Grocy Mobile */,
 				78B01C302DFF826F0080C814 /* Grocy MobileTests */,
 				78B01C3A2DFF826F0080C814 /* Grocy MobileUITests */,
+				789BAF3B2EE444FB00C82475 /* Grocy Widget */,
 				78CB749B255E9EF800319108 /* Products */,
 				78B868D22590B19B005A0CAF /* Frameworks */,
 			);
@@ -90,6 +161,7 @@
 				78B01C1F2DFF826D0080C814 /* Grocy Mobile.app */,
 				78B01C2D2DFF826F0080C814 /* Grocy MobileTests.xctest */,
 				78B01C372DFF826F0080C814 /* Grocy MobileUITests.xctest */,
+				789BAF382EE444FB00C82475 /* Grocy WidgetExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -97,6 +169,24 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		789BAF372EE444FB00C82475 /* Grocy WidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 789BAF492EE444FC00C82475 /* Build configuration list for PBXNativeTarget "Grocy WidgetExtension" */;
+			buildPhases = (
+				789BAF342EE444FB00C82475 /* Sources */,
+				789BAF352EE444FB00C82475 /* Frameworks */,
+				789BAF362EE444FB00C82475 /* Resources */,
+			);
+			buildRules = (
+			);
+			fileSystemSynchronizedGroups = (
+				789BAF3B2EE444FB00C82475 /* Grocy Widget */,
+			);
+			name = "Grocy WidgetExtension";
+			productName = "Grocy WidgetExtension";
+			productReference = 789BAF382EE444FB00C82475 /* Grocy WidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		78B01C1E2DFF826D0080C814 /* Grocy Mobile */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 78B01C3F2DFF826F0080C814 /* Build configuration list for PBXNativeTarget "Grocy Mobile" */;
@@ -104,8 +194,12 @@
 				78B01C1B2DFF826D0080C814 /* Sources */,
 				78B01C1C2DFF826D0080C814 /* Frameworks */,
 				78B01C1D2DFF826D0080C814 /* Resources */,
+				789BAF2E2EE444AC00C82475 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
+			);
+			dependencies = (
+				789BAF462EE444FB00C82475 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				789BE5692E00C31A002FF935 /* Grocy Mobile */,
@@ -164,9 +258,12 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastSwiftUpdateCheck = 2600;
+				LastSwiftUpdateCheck = 2610;
 				LastUpgradeCheck = 2610;
 				TargetAttributes = {
+					789BAF372EE444FB00C82475 = {
+						CreatedOnToolsVersion = 26.1.1;
+					};
 					78B01C1E2DFF826D0080C814 = {
 						CreatedOnToolsVersion = 26.0;
 					};
@@ -228,11 +325,17 @@
 				78B01C1E2DFF826D0080C814 /* Grocy Mobile */,
 				78B01C2C2DFF826F0080C814 /* Grocy MobileTests */,
 				78B01C362DFF826F0080C814 /* Grocy MobileUITests */,
+				789BAF372EE444FB00C82475 /* Grocy WidgetExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		789BAF362EE444FB00C82475 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			files = (
+			);
+		};
 		78B01C1D2DFF826D0080C814 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			files = (
@@ -251,6 +354,11 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		789BAF342EE444FB00C82475 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+			);
+		};
 		78B01C1B2DFF826D0080C814 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			files = (
@@ -269,6 +377,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		789BAF462EE444FB00C82475 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 789BAF372EE444FB00C82475 /* Grocy WidgetExtension */;
+			targetProxy = 789BAF452EE444FB00C82475 /* PBXContainerItemProxy */;
+		};
 		78B01C2F2DFF826F0080C814 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 78B01C1E2DFF826D0080C814 /* Grocy Mobile */;
@@ -282,6 +395,139 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		789BAF4A2EE444FC00C82475 /* Debug configuration for PBXNativeTarget "Grocy WidgetExtension" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_ENTITLEMENTS = "Grocy Widget/Grocy Widget.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 47;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Grocy Widget/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Grocy Widget";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 26.1;
+				MARKETING_VERSION = 3.0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = "georgappdev.Grocy.Grocy-Widget";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				XROS_DEPLOYMENT_TARGET = 26.1;
+			};
+			name = Debug;
+		};
+		789BAF4B2EE444FC00C82475 /* Test configuration for PBXNativeTarget "Grocy WidgetExtension" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_ENTITLEMENTS = "Grocy Widget/Grocy Widget.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 47;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Grocy Widget/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Grocy Widget";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 26.1;
+				MARKETING_VERSION = 3.0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = "georgappdev.Grocy.Grocy-Widget";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				XROS_DEPLOYMENT_TARGET = 26.1;
+			};
+			name = Test;
+		};
+		789BAF4C2EE444FC00C82475 /* Release configuration for PBXNativeTarget "Grocy WidgetExtension" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_ENTITLEMENTS = "Grocy Widget/Grocy Widget.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 47;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Grocy Widget/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Grocy Widget";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 26.1;
+				MARKETING_VERSION = 3.0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = "georgappdev.Grocy.Grocy-Widget";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				XROS_DEPLOYMENT_TARGET = 26.1;
+			};
+			name = Release;
+		};
 		78B01C402DFF826F0080C814 /* Debug configuration for PBXNativeTarget "Grocy Mobile" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -320,7 +566,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 3.0.0;
+				MARKETING_VERSION = 3.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = georgappdev.Grocy;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
@@ -383,7 +629,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 3.0.0;
+				MARKETING_VERSION = 3.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = georgappdev.Grocy;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
@@ -445,7 +691,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 3.0.0;
+				MARKETING_VERSION = 3.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = georgappdev.Grocy;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
@@ -875,6 +1121,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		789BAF492EE444FC00C82475 /* Build configuration list for PBXNativeTarget "Grocy WidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				789BAF4A2EE444FC00C82475 /* Debug configuration for PBXNativeTarget "Grocy WidgetExtension" */,
+				789BAF4B2EE444FC00C82475 /* Test configuration for PBXNativeTarget "Grocy WidgetExtension" */,
+				789BAF4C2EE444FC00C82475 /* Release configuration for PBXNativeTarget "Grocy WidgetExtension" */,
+			);
+			defaultConfigurationName = Release;
+		};
 		78B01C3F2DFF826F0080C814 /* Build configuration list for PBXNativeTarget "Grocy Mobile" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

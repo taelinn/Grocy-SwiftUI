@@ -15,6 +15,21 @@ enum ProductStatus: LocalizedStringKey {
     case expired = "Expired"
     case belowMinStock = "Below min. stock amount"
 
+    var caseName: String {
+        switch self {
+        case .all:
+            return "all"
+        case .expiringSoon:
+            return "expiringSoon"
+        case .overdue:
+            return "overdue"
+        case .expired:
+            return "expired"
+        case .belowMinStock:
+            return "belowMinStock"
+        }
+    }
+
     func getDescription(amount: Int, dueSoonDays: Int? = 5) -> LocalizedStringKey {
         switch self {
         case .all:
@@ -42,6 +57,24 @@ enum ProductStatus: LocalizedStringKey {
             return MySymbols.belowMinStock
         default:
             return "tag.fill"
+        }
+    }
+
+    /// Creates a ProductStatus from its case name
+    static func fromCaseName(_ name: String) -> ProductStatus? {
+        switch name {
+        case "all":
+            return .all
+        case "expiringSoon":
+            return .expiringSoon
+        case "overdue":
+            return .overdue
+        case "expired":
+            return .expired
+        case "belowMinStock":
+            return .belowMinStock
+        default:
+            return nil
         }
     }
 }

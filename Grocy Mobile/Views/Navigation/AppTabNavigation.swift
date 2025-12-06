@@ -34,6 +34,7 @@ struct AppTabNavigation: View {
     @Environment(\.horizontalSizeClass) var sizeClass
     @AppStorage("tabSelection") private var tabSelection: TabNavigationItem = .stockOverview
     @AppStorage("devMode") private var devMode: Bool = false
+    @Environment(DeepLinkManager.self) var deepLinkManager
 
     var body: some View {
         TabView(selection: $tabSelection) {
@@ -135,6 +136,16 @@ struct AppTabNavigation: View {
         #if os(iOS)
             .tabBarMinimizeBehavior(.onScrollDown)
         #endif
+        .onAppear {
+            if deepLinkManager.pendingStockFilter != nil {
+                tabSelection = .stockOverview
+            }
+        }
+        .onChange(of: deepLinkManager.pendingStockFilter) { _, newValue in
+            if newValue != nil {
+                tabSelection = .stockOverview
+            }
+        }
     }
 }
 

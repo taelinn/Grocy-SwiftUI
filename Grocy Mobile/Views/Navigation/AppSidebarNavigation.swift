@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct AppSidebarNavigation: View {
+    @Environment(DeepLinkManager.self) var deepLinkManager
+
     @State private var selection: NavigationItem? = .none
     @State private var path = NavigationPath()
 
@@ -22,6 +24,16 @@ struct AppSidebarNavigation: View {
                 }
             }
         )
+        .onAppear {
+            if deepLinkManager.pendingStockFilter != nil {
+                selection = .stockOverview
+            }
+        }
+        .onChange(of: deepLinkManager.pendingStockFilter) { _, newValue in
+            if newValue != nil {
+                selection = .stockOverview
+            }
+        }
     }
 }
 

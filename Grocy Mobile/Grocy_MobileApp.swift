@@ -8,9 +8,27 @@
 import SwiftData
 import SwiftUI
 
+// MARK: - Deep Link State
+
+@Observable
+class DeepLinkManager {
+    var pendingStockFilter: ProductStatus?
+    
+    func apply(deepLink: GrocyDeepLink) {
+        if case .stock(let filter) = deepLink {
+            pendingStockFilter = filter
+        }
+    }
+    
+    func consume() {
+        pendingStockFilter = nil
+    }
+}
+
 @main
 struct Grocy_MobileApp: App {
     @State private var grocyVM: GrocyViewModel
+    @State private var deepLinkManager = DeepLinkManager()
 
     @AppStorage("localizationKey") var localizationKey: String = "en"
     @AppStorage("onboardingNeeded") var onboardingNeeded: Bool = true
@@ -61,6 +79,7 @@ struct Grocy_MobileApp: App {
 
         let mainConfig = ModelConfiguration(
             schema: mainSchema,
+            groupContainer: .identifier("group.georgappdev.Grocy"),
             cloudKitDatabase: .none
         )
         let profileConfig = ModelConfiguration(
@@ -134,6 +153,12 @@ struct Grocy_MobileApp: App {
                     }
                 } else {
                     ContentView()
+                        .environment(deepLinkManager)
+                        .onOpenURL { url in
+                            if let deepLink = GrocyDeepLink(url: url) {
+                                deepLinkManager.apply(deepLink: deepLink)
+                            }
+                        }
                 }
             }
         }
@@ -165,7 +190,7 @@ struct Grocy_MobileApp: App {
 
 extension ModelContainer {
     static func resetStore() {
-        let storePath = URL.applicationSupportDirectory.appending(component: "default.store")
+        let storePath = sharedModelContainerURL()
         try? FileManager.default.removeItem(at: storePath)
     }
 
@@ -173,4 +198,12 @@ extension ModelContainer {
         let storePath = URL.applicationSupportDirectory.appending(component: "profiles.store")
         try? FileManager.default.removeItem(at: storePath)
     }
+}
+
+func sharedModelContainerURL() -> URL {
+    let appGroupID = "group.georgappdev.Grocy"
+    guard let sharedContainerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroupID) else {
+        fatalError("Could not access shared app group container")
+    }
+    return sharedContainerURL.appending(component: "default.store")
 }

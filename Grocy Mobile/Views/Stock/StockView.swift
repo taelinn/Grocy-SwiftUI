@@ -70,6 +70,8 @@ struct StockView: View {
         @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     #endif
 
+    @Environment(DeepLinkManager.self) var deepLinkManager
+
     private enum StockGrouping: Identifiable {
         case none, productGroup, nextDueDate, lastPurchased, minStockAmount, parentProduct, defaultLocation
         var id: Int {
@@ -359,6 +361,17 @@ struct StockView: View {
             await updateData()
             updateMissingStock()
             computeFilteredAndGroupedStock()
+
+            if let filter = deepLinkManager.pendingStockFilter {
+                filteredStatus = filter
+                deepLinkManager.consume()
+            }
+        }
+        .onChange(of: deepLinkManager.pendingStockFilter) { _, newValue in
+            if let filter = newValue {
+                filteredStatus = filter
+                deepLinkManager.consume()
+            }
         }
         .onChange(of: filteredLocationID) { _, _ in
             computeFilteredAndGroupedStock()
