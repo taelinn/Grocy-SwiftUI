@@ -8,8 +8,6 @@
 import SwiftUI
 
 struct StockFilterActionsView: View {
-    @Environment(\.colorScheme) var colorScheme
-
     @Binding var filteredStatus: ProductStatus
 
     var numExpiringSoon: Int?
@@ -27,7 +25,7 @@ struct StockFilterActionsView: View {
                     num: numBelowStock,
                     filteredStatus: $filteredStatus,
                     ownFilteredStatus: ProductStatus.belowMinStock,
-                    color: colorScheme == .dark ? Color.white : Color(.GrocyColors.grocyBlue),
+                    color: Color(.GrocyColors.grocyBlue),
                     backgroundColor: Color(.GrocyColors.grocyBlueBackground)
                 )
             }

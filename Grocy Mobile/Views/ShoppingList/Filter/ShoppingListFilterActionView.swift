@@ -47,8 +47,6 @@ private struct ShoppingListFilterItemView: View {
 }
 
 struct ShoppingListFilterActionView: View {
-    @Environment(\.colorScheme) var colorScheme
-
     @Binding var filteredStatus: ShoppingListStatus
 
     var numBelowStock: Int
@@ -74,7 +72,7 @@ struct ShoppingListFilterActionView: View {
                         num: numBelowStock,
                         filteredStatus: $filteredStatus,
                         ownFilteredStatus: ShoppingListStatus.belowMinStock,
-                        color: colorScheme == .dark ? Color(.GrocyColors.grocyGray) : Color(.GrocyColors.grocyBlue),
+                        color: Color(.GrocyColors.grocyBlue),
                         backgroundColor: Color(.GrocyColors.grocyBlueBackground)
                     )
                     .animation(.default, value: numBelowStock)
