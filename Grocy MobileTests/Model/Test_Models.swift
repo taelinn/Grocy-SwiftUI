@@ -69,6 +69,11 @@ final class ModelTests: XCTestCase {
         XCTAssertGreaterThan(fetched.count, 0)
     }
 
+    func testRecipe() throws {
+        let fetched = try context.fetch(FetchDescriptor<Recipe>())
+        XCTAssertGreaterThan(fetched.count, 0)
+    }
+
     func testStockElementModel() throws {
         let fetched = try context.fetch(FetchDescriptor<StockElement>())
         XCTAssertGreaterThan(fetched.count, 0)
@@ -81,6 +86,11 @@ final class ModelTests: XCTestCase {
 
     func testGrocyUserModel() throws {
         let fetched = try context.fetch(FetchDescriptor<GrocyUser>())
+        XCTAssertGreaterThan(fetched.count, 0)
+    }
+
+    func testRecipeFulfilment() throws {
+        let fetched = try context.fetch(FetchDescriptor<RecipeFulfilment>())
         XCTAssertGreaterThan(fetched.count, 0)
     }
 }

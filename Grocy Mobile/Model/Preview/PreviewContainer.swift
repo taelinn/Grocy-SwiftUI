@@ -29,9 +29,6 @@ extension PreviewTrait where T == Preview.ViewTraits {
 
 @MainActor
 struct PreviewContainer {
-    /// Default folder name for loading JSON data files
-    static let defaultDataFolder = "TestData"
-
     static let shared: ModelContainer = {
         do {
             let schema = Schema([
@@ -45,9 +42,11 @@ struct PreviewContainer {
                 MDStore.self,
                 StockElement.self,
                 StockJournalEntry.self,
+                Recipe.self,
                 StockElement.self,
                 VolatileStock.self,
                 GrocyUser.self,
+                RecipeFulfilment.self,
             ])
 
             let container = try ModelContainer(
@@ -77,11 +76,13 @@ struct PreviewContainer {
         loadAndInsert(modelType: MDStore.self, filename: "objects__shopping_locations.json", into: context)
         loadAndInsert(modelType: StockEntry.self, filename: "objects__stock.json", into: context)
         loadAndInsert(modelType: StockJournalEntry.self, filename: "objects__stock_log.json", into: context)
+        loadAndInsert(modelType: Recipe.self, filename: "objects__recipes.json", into: context)
         
         // Other
         loadAndInsert(modelType: StockElement.self, filename: "stock.json", into: context)
         loadAndInsert(modelType: VolatileStock.self, filename: "stock__volatile.json", into: context, singleElement: true)
         loadAndInsert(modelType: GrocyUser.self, filename: "users.json", into: context)
+        loadAndInsert(modelType: RecipeFulfilment.self, filename: "recipes__fulfillment.json", into: context)
 
         try? context.save()
     }
@@ -92,14 +93,8 @@ struct PreviewContainer {
         into context: ModelContext,
         singleElement: Bool = false
     ) where T: PersistentModel & Decodable {
-        let fileManager = FileManager.default
-        let currentFileURL = URL(fileURLWithPath: #file)
-        let currentDirectory = currentFileURL.deletingLastPathComponent()
-        let dataFolderURL = currentDirectory.appendingPathComponent(defaultDataFolder)
-        let fileURL = dataFolderURL.appendingPathComponent(filename)
-
-        guard fileManager.fileExists(atPath: fileURL.path) else {
-            print("⚠️ Could not find \(filename) in \(defaultDataFolder)/")
+        guard let fileURL = Bundle.main.url(forResource: filename.replacingOccurrences(of: ".json", with: ""), withExtension: "json") else {
+            print("⚠️ Could not find \(filename).")
             return
         }
 
