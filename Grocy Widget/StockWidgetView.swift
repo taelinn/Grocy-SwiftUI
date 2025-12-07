@@ -130,7 +130,7 @@ struct StockWidgetView: View {
                 }
                 Link(destination: URL(string: "grocy://stock/filter/\(ProductStatus.belowMinStock.caseName)")!) {
                     HStack {
-                        Image(systemName: MySymbols.expired)
+                        Image(systemName: MySymbols.belowMinStock)
                         Text("\(numBelowStock)")
                             .font(.title3)
                         Spacer()
