@@ -12,6 +12,7 @@ struct RecipesView: View {
     @Environment(GrocyViewModel.self) private var grocyVM
 
     @Query(sort: \Recipe.name, order: .forward) var recipes: Recipes
+    @Query var recipeFulfilments: RecipeFulfilments
 
     @State private var searchString: String = ""
     @State private var sortOrder = [KeyPathComparator(\Recipe.name)]
@@ -42,7 +43,7 @@ struct RecipesView: View {
                     NavigationLink(
                         value: recipe,
                         label: {
-                            RecipeRowView(recipe: recipe)
+                            RecipeRowView(recipe: recipe, fulfillment: recipeFulfilments.first(where: { $0.recipeID == recipe.id }))
                                 .foregroundStyle(.foreground)
                         }
                     )

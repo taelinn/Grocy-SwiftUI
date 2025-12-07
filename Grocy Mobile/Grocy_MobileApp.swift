@@ -69,6 +69,7 @@ struct Grocy_MobileApp: App {
             StockLocation.self,
             SystemConfig.self,
             RecipePosResolvedElement.self,
+            RecipeFulfilment.self,
         ])
 
         // Profile container schema (ServerProfile and LoginCustomHeader with iCloud sync)

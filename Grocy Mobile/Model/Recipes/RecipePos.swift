@@ -8,7 +8,9 @@
 import Foundation
 
 class RecipePos: Codable {
-    var id, recipeID, productID: Int
+    var id: Int
+    var recipeID: Int
+    var productID: Int
     var amount: Double
     var note: String?
     var quID, onlyCheckSingleUnitInStock: Int

@@ -402,6 +402,7 @@ class GrocyViewModel {
 
         case .recipeFulfillments:
             self.recipeFulfillments = try await grocyApi.getRecipeFulfillments()
+            try swiftDataSync.syncPersistentCollection(RecipeFulfilment.self, with: self.recipeFulfillments)
 
         case .users:
             self.users = try await grocyApi.getUsers()
