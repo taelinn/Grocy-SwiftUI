@@ -194,34 +194,42 @@ struct MDProductFormView: View {
                             if let foundExternalBarcode {
                                 DisclosureGroup(
                                     content: {
-                                        LabeledContent(
-                                            content: {
-                                                Text(mdLocations.first(where: { $0.id == foundExternalBarcode.locationID })?.name ?? String(foundExternalBarcode.locationID))
-                                            },
-                                            label: {
-                                                Label("Default location", systemImage: MySymbols.location)
-                                            }
-                                        )
-                                        .foregroundStyle(.primary)
-                                        LabeledContent(
-                                            content: {
-                                                Text(mdQuantityUnits.first(where: { $0.id == foundExternalBarcode.quIDStock })?.name ?? String(foundExternalBarcode.quIDStock))
-                                            },
-                                            label: {
-                                                Label("Quantity unit stock", systemImage: MySymbols.quantityUnit)
-                                            }
-                                        )
-                                        .foregroundStyle(.primary)
-                                        LabeledContent(
-                                            content: {
-                                                Text(mdQuantityUnits.first(where: { $0.id == foundExternalBarcode.quIDPurchase })?.name ?? String(foundExternalBarcode.quIDPurchase))
-                                            },
-                                            label: {
-                                                Label("Default quantity unit purchase", systemImage: MySymbols.quantityUnit)
-                                            }
-                                        )
-                                        .foregroundStyle(.primary)
-                                        AsyncImage(url: URL(string: foundExternalBarcode.imageURL))
+                                        if let locationID = foundExternalBarcode.locationID {
+                                            LabeledContent(
+                                                content: {
+                                                    Text(mdLocations.first(where: { $0.id == locationID })?.name ?? String(locationID))
+                                                },
+                                                label: {
+                                                    Label("Default location", systemImage: MySymbols.location)
+                                                }
+                                            )
+                                            .foregroundStyle(.primary)
+                                        }
+                                        if let quIDStock = foundExternalBarcode.quIDStock {
+                                            LabeledContent(
+                                                content: {
+                                                    Text(mdQuantityUnits.first(where: { $0.id == quIDStock })?.name ?? String(quIDStock))
+                                                },
+                                                label: {
+                                                    Label("Quantity unit stock", systemImage: MySymbols.quantityUnit)
+                                                }
+                                            )
+                                            .foregroundStyle(.primary)
+                                        }
+                                        if let quIDPurchase = foundExternalBarcode.quIDPurchase {
+                                            LabeledContent(
+                                                content: {
+                                                    Text(mdQuantityUnits.first(where: { $0.id == quIDPurchase })?.name ?? String(quIDPurchase))
+                                                },
+                                                label: {
+                                                    Label("Default quantity unit purchase", systemImage: MySymbols.quantityUnit)
+                                                }
+                                            )
+                                            .foregroundStyle(.primary)
+                                        }
+                                        if let imageURL = foundExternalBarcode.imageURL {
+                                            AsyncImage(url: URL(string: imageURL))
+                                        }
                                     },
                                     label: {
                                         Text(foundExternalBarcode.name)
@@ -231,11 +239,11 @@ struct MDProductFormView: View {
                                     action: {
                                         barcodeLookupApplied = true
                                         product.name = foundExternalBarcode.name
-                                        product.locationID = foundExternalBarcode.locationID
-                                        product.quIDPurchase = foundExternalBarcode.quIDPurchase
-                                        product.quIDStock = foundExternalBarcode.quIDStock
-                                        product.quIDPrice = foundExternalBarcode.quIDStock
-                                        product.quIDConsume = foundExternalBarcode.quIDStock
+                                        product.locationID = foundExternalBarcode.locationID ?? product.locationID
+                                        product.quIDPurchase = foundExternalBarcode.quIDPurchase ?? product.quIDPurchase
+                                        product.quIDStock = foundExternalBarcode.quIDStock ?? product.quIDStock
+                                        product.quIDPrice = foundExternalBarcode.quIDStock ?? product.quIDPrice
+                                        product.quIDConsume = foundExternalBarcode.quIDStock ?? product.quIDConsume
                                     },
                                     label: {
                                         Label("Apply", systemImage: MySymbols.save)
