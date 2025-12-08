@@ -9,35 +9,34 @@ import SwiftUI
 
 struct MDUserEntityFormView: View {
     @Environment(GrocyViewModel.self) private var grocyVM
-    
+
     @Environment(\.dismiss) var dismiss
-    
+
     @State private var firstAppear: Bool = true
     @State private var isProcessing: Bool = false
-    
+
     @State private var name: String = ""
     @State private var caption: String = ""
     @State private var mdUserEntityDescription: String = ""
     @State private var showInSidebarMenu: Bool = false
-    
+
     var isNewUserEntity: Bool
     var userEntity: MDUserEntity?
-    
+
     @Binding var showAddUserEntity: Bool
-    
-    
+
     @State private var isNameCorrect: Bool = true
     private func checkNameCorrect() -> Bool {
         //        let foundUserEntity = grocyVM.mdUserEntities.first(where: {$0.name == name})
         //        return isNewUserEntity ? !(name.isEmpty || foundUserEntity != nil) : !(name.isEmpty || (foundUserEntity != nil && foundUserEntity!.id != foundUserEntity!.id))
         return false
     }
-    
+
     @State private var isCaptionCorrect: Bool = true
     private func checkCaptionCorrect() -> Bool {
         return !caption.isEmpty
     }
-    
+
     private func resetForm() {
         name = userEntity?.name ?? ""
         caption = userEntity?.caption ?? ""
@@ -46,22 +45,22 @@ struct MDUserEntityFormView: View {
         isNameCorrect = checkNameCorrect()
         isCaptionCorrect = checkCaptionCorrect()
     }
-    
+
     private let dataToUpdate: [ObjectEntities] = [.userentities]
     private func updateData() async {
         await grocyVM.requestData(objects: dataToUpdate)
     }
-    
+
     private func finishForm() {
-#if os(iOS)
-        self.dismiss()
-#elseif os(macOS)
-        if isNewUserEntity {
-            showAddUserEntity = false
-        }
-#endif
+        #if os(iOS)
+            self.dismiss()
+        #elseif os(macOS)
+            if isNewUserEntity {
+                showAddUserEntity = false
+            }
+        #endif
     }
-    
+
     private func saveUserEntity() async {
         let id: Int = isNewUserEntity ? grocyVM.findNextID(.userentities) : userEntity!.id
         let timeStamp = isNewUserEntity ? Date().iso8601withFractionalSeconds : userEntity!.rowCreatedTimestamp
@@ -89,55 +88,66 @@ struct MDUserEntityFormView: View {
         }
         isProcessing = false
     }
-    
+
     var body: some View {
         content
             .navigationTitle(isNewUserEntity ? "Create userentity" : "Edit userentity")
             .toolbar(content: {
                 ToolbarItem(placement: .confirmationAction) {
-                    Button(role: .confirm, action: {
-                        Task {
-                            await saveUserEntity()
+                    Button(
+                        role: .confirm,
+                        action: {
+                            Task {
+                                await saveUserEntity()
+                            }
+                        },
+                        label: {
+                            Image(systemName: MySymbols.save)
                         }
-                    }, label: {
-                        Image(systemName: MySymbols.save)
-                    })
+                    )
                     .disabled(!isNameCorrect || isProcessing)
                     .keyboardShortcut(.defaultAction)
                 }
-#if os(iOS)
-                ToolbarItem(placement: .cancellationAction) {
-                    if isNewUserEntity {
-                        Button("Cancel") {
-                            finishForm()
+                #if os(iOS)
+                    ToolbarItem(placement: .cancellationAction) {
+                        if isNewUserEntity {
+                            Button("Cancel") {
+                                finishForm()
+                            }
                         }
                     }
-                }
-#endif
+                #endif
             })
     }
-    
+
     var content: some View {
         Form {
-#if os(macOS)
-            Text(isNewUserEntity ? "Create userentity" : "Edit userentity")
-                .font(.title)
-                .bold()
-                .padding(.bottom, 20.0)
-#endif
-            Section(header: Text("Name of the userentity")){
-                MyTextField(textToEdit: $name, description: "Name of the userentity", isCorrect: $isNameCorrect, leadingIcon: "tag", emptyMessage: "This is required and can only contain letters and numbers", errorMessage: "This is required and can only contain letters and numbers")
-                    .onChange(of: name) {
-                        isNameCorrect = checkNameCorrect()
-                    }
+            #if os(macOS)
+                Text(isNewUserEntity ? "Create userentity" : "Edit userentity")
+                    .font(.title)
+                    .bold()
+                    .padding(.bottom, 20.0)
+            #endif
+            Section(header: Text("Name of the userentity")) {
+                MyTextField(
+                    textToEdit: $name,
+                    description: "Name of the userentity",
+                    isCorrect: $isNameCorrect,
+                    leadingIcon: "tag",
+                    emptyMessage: "This is required and can only contain letters and numbers",
+                    errorMessage: "This is required and can only contain letters and numbers"
+                )
+                .onChange(of: name) {
+                    isNameCorrect = checkNameCorrect()
+                }
                 MyTextField(textToEdit: $caption, description: "Caption", isCorrect: $isCaptionCorrect, leadingIcon: "tag", emptyMessage: "A caption is required")
                     .onChange(of: caption) {
                         isCaptionCorrect = checkCaptionCorrect()
                     }
             }
-            
+
             MyTextField(textToEdit: $mdUserEntityDescription, description: "Description", isCorrect: Binding.constant(true), leadingIcon: MySymbols.description)
-            
+
             MyToggle(isOn: $showInSidebarMenu, description: "Show in sidebar menu", icon: "tablecells")
         }
         .task {
