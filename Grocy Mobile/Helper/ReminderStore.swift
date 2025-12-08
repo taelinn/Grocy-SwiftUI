@@ -1,5 +1,5 @@
 //
-//  RemindersSync.swift
+//  ReminderStore.swift
 //  Grocy Mobile
 //
 //  Created by Georg Meissner on 22.11.22.
@@ -15,11 +15,10 @@
 //
 //THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-
-import Foundation
 import EventKit
+import Foundation
+import Observation
 import SwiftUI
-internal import Combine
 
 enum TodayError: LocalizedError {
     case accessDenied
@@ -28,7 +27,7 @@ enum TodayError: LocalizedError {
     case failedReadingReminders
     case reminderHasNoDueDate
     case unknown
-    
+
     var errorDescription: String? {
         switch self {
         case .accessDenied:
@@ -44,22 +43,6 @@ enum TodayError: LocalizedError {
         case .unknown:
             return NSLocalizedString("An unknown error occurred.", comment: "unknown error description")
         }
-    }
-}
-
-extension EKEventStore {
-    func fetchReminders(matching predicate: NSPredicate) async throws -> [EKReminder] {
-        print("Not implemented")
-        return []
-//        try await withCheckedThrowingContinuation { continuation in
-//            fetchReminders(matching: predicate) { reminders in
-//                if let reminders = reminders {
-//                    continuation.resume(returning: reminders)
-//                } else {
-//                    continuation.resume(throwing: TodayError.failedReadingReminders)
-//                }
-//            }
-//        }
     }
 }
 
@@ -111,39 +94,34 @@ extension Array where Element == Reminder {
     }
 }
 
-
-class ReminderStore {
+@Observable
+final class ReminderStore {
     static let shared = ReminderStore()
-    
-    @AppStorage("calendarIdentifier") private var calendarIdentifier: String = ""
-    
+
+    @ObservationIgnored @AppStorage("calendarIdentifier") private var calendarIdentifier: String = ""
     private let ekStore = EKEventStore()
-    
+
     private var ekCalendar: EKCalendar? = nil
-    
-    @Published var isAvailable_: Bool = false
-    
+    private var isCalendarSelected: Bool = false
+
     var isAvailable: Bool {
         EKEventStore.authorizationStatus(for: .reminder) == .fullAccess && isCalendarSelected
     }
-    
-    private var isCalendarSelected: Bool = false
-    
+
     func requestAccess() async throws {
+        try await ekStore.requestFullAccessToReminders()
         let status = EKEventStore.authorizationStatus(for: .reminder)
-        
+
         switch status {
         case .authorized:
             return
         case .restricted:
             throw TodayError.accessRestricted
-        case .notDetermined:
+        case .notDetermined, .denied:
             let accessGranted = try await ekStore.requestFullAccessToReminders()
             guard accessGranted else {
                 throw TodayError.accessDenied
             }
-        case .denied:
-            throw TodayError.accessDenied
         case .fullAccess:
             return
         case .writeOnly:
@@ -152,28 +130,31 @@ class ReminderStore {
             throw TodayError.unknown
         }
     }
-    
-    func initCalendar() {
-        if let cal = ekStore.calendar(withIdentifier: calendarIdentifier) {
+
+    func findCalendar(calendarName: String) -> EKCalendar? {
+        return ekStore.calendars(for: .reminder).first { $0.title == calendarName }
+    }
+
+    func initCalendar(calendarName: String) {
+        if let cal = findCalendar(calendarName: calendarName) {
             ekCalendar = cal
             isCalendarSelected = true
-            isAvailable_ = true
         } else {
-            createCalendar()
+            createCalendar(calendarName: calendarName)
         }
     }
-    
+
     func bestPossibleEKSource() -> EKSource? {
         let defaultSource = ekStore.defaultCalendarForNewEvents?.source
         let iCloudSource = ekStore.sources.first(where: { $0.title == "iCloud" })
         let localSource = ekStore.sources.first(where: { $0.sourceType == .local })
-        
+
         return defaultSource ?? iCloudSource ?? localSource
     }
-    
-    private func createCalendar() {
+
+    private func createCalendar(calendarName: String) {
         let calendar = EKCalendar(for: .reminder, eventStore: ekStore)
-        calendar.title = "Grocy Mobile"
+        calendar.title = calendarName
         calendar.cgColor = Color(.GrocyColors.grocyBlue).cgColor
         guard let source = bestPossibleEKSource() else {
             return
@@ -184,36 +165,51 @@ class ReminderStore {
             calendarIdentifier = calendar.calendarIdentifier
             ekCalendar = calendar
             isCalendarSelected = true
-            isAvailable_ = true
         } catch {
-            print(error)
+            GrocyLogger.error("Error creating calendar. \(error)")
         }
     }
-    
+
     private func read(with id: Reminder.ID) throws -> EKReminder {
         guard let ekReminder = ekStore.calendarItem(withIdentifier: id) as? EKReminder else {
             throw TodayError.failedReadingCalendarItem
         }
         return ekReminder
     }
-    
+
+    func loadReminders(store: EKEventStore, completion: @escaping ([EKReminder]) -> Void) {
+        let predicate = store.predicateForReminders(in: nil)
+        store.fetchReminders(matching: predicate) { reminders in
+            completion(reminders ?? [])
+        }
+    }
+
     func readAll() async throws -> [Reminder] {
         guard isAvailable else {
             throw TodayError.accessDenied
         }
-        
-        let predicate = ekStore.predicateForReminders(in: nil)
-        let ekReminders = try await ekStore.fetchReminders(matching: predicate)
-        let reminders: [Reminder] = try ekReminders.compactMap { ekReminder in
-            do {
-                return try Reminder(with: ekReminder)
-            } catch TodayError.reminderHasNoDueDate {
-                return nil
+        guard let ekCalendar = ekCalendar else {
+            throw TodayError.failedReadingReminders
+        }
+
+        let predicate = ekStore.predicateForReminders(in: [ekCalendar])
+
+        return await withCheckedContinuation { continuation in
+            ekStore.fetchReminders(matching: predicate) { ekReminders in
+                var reminders: [Reminder] = []
+                for ekReminder in (ekReminders ?? []) {
+                    do {
+                        let reminder = try Reminder(with: ekReminder)
+                        reminders.append(reminder)
+                    } catch {
+                        continue
+                    }
+                }
+                continuation.resume(returning: reminders)
             }
         }
-        return reminders
     }
-    
+
     func remove(with id: Reminder.ID) throws {
         guard isAvailable else {
             throw TodayError.accessDenied
@@ -221,7 +217,7 @@ class ReminderStore {
         let ekReminder = try read(with: id)
         try ekStore.remove(ekReminder, commit: true)
     }
-    
+
     @discardableResult
     func save(_ reminder: Reminder) throws -> Reminder.ID {
         guard isAvailable else {
@@ -235,6 +231,7 @@ class ReminderStore {
         }
         ekReminder.update(using: reminder, in: ekStore)
         ekReminder.calendar = ekCalendar
+        ekReminder.isCompleted = reminder.isComplete
         try ekStore.save(ekReminder, commit: true)
         return ekReminder.calendarItemIdentifier
     }

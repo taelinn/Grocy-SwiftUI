@@ -27,6 +27,22 @@ enum ShoppingListInteraction: Hashable, Identifiable {
     var id: Self { self }
 }
 
+enum AlertType: Identifiable {
+    case deleteItem, deleteShoppingList, clearShoppingList, clearAllDone, exportToReminders
+
+    var id: Self { self }
+
+    var title: LocalizedStringKey {
+        switch self {
+        case .deleteItem: return "Do you really want to delete this item?"
+        case .deleteShoppingList: return "Do you really want to delete this shopping list?"
+        case .clearShoppingList: return "Do your really want to clear this shopping list?"
+        case .clearAllDone: return "Do you really want to clear all done items?"
+        case .exportToReminders: return "Export shopping list to Reminders"
+        }
+    }
+}
+
 @Observable
 class ShoppingListInteractionNavigationRouter {
     var presentedInteraction: ShoppingListInteraction?
@@ -75,11 +91,8 @@ struct ShoppingListView: View {
 
     @State private var shoppingListInteractionRouter = ShoppingListInteractionNavigationRouter()
 
-    @State private var showSHLDeleteAlert: Bool = false
-    @State private var showClearListAlert: Bool = false
-    @State private var showClearDoneAlert: Bool = false
     @State private var shlItemToDelete: ShoppingListItem? = nil
-    @State private var showEntryDeleteAlert: Bool = false
+    @State private var activeAlert: AlertType?
 
     private let dataToUpdate: [ObjectEntities] = [
         .products,
@@ -116,7 +129,7 @@ struct ShoppingListView: View {
 
     private func deleteItem(itemToDelete: ShoppingListItem) {
         shlItemToDelete = itemToDelete
-        showEntryDeleteAlert.toggle()
+        activeAlert = .deleteItem
     }
 
     private func deleteSHLItem(item: ShoppingListItem) async {
@@ -145,16 +158,16 @@ struct ShoppingListView: View {
                 let aName = a.product?.name ?? a.shoppingListItem.note
                 let bName = b.product?.name ?? b.shoppingListItem.note
                 let comparison = aName.localizedCaseInsensitiveCompare(bName)
-                return self.sortOrder == .forward 
-                    ? comparison == .orderedAscending 
+                return self.sortOrder == .forward
+                    ? comparison == .orderedAscending
                     : comparison == .orderedDescending
             }
         case .byAmount:
             return { a, b in
                 let aAmount = a.shoppingListItem.amount
                 let bAmount = b.shoppingListItem.amount
-                return self.sortOrder == .forward 
-                    ? aAmount < bAmount 
+                return self.sortOrder == .forward
+                    ? aAmount < bAmount
                     : aAmount > bAmount
             }
         }
@@ -277,6 +290,25 @@ struct ShoppingListView: View {
         }
     }
 
+    private func exportShoppingListToReminders() async {
+        do {
+            if !ReminderStore.shared.isAvailable {
+                try await ReminderStore.shared.requestAccess()
+                ReminderStore.shared.initCalendar(calendarName: "\(selectedShoppingList?.name ?? "") (Grocy Mobile)")
+            }
+            let allReminders = try await ReminderStore.shared.readAll()
+            for reminder in allReminders {
+                try ReminderStore.shared.remove(with: reminder.id)
+            }
+            for shoppingListItem in selectedShoppingListItems {
+                let title = "\(shoppingListItem.amount.formattedAmount)x \(mdProducts.first(where: { $0.id == shoppingListItem.productID })?.name ?? shoppingListItem.note)"
+                try ReminderStore.shared.save(Reminder(title: title, isComplete: shoppingListItem.done == 1))
+            }
+        } catch {
+            GrocyLogger.error("Exporting the shopping list to Reminders failed. \(error)")
+        }
+    }
+
     var body: some View {
         List {
             if grocyVM.failedToLoadObjects.filter({ dataToUpdate.contains($0) }).count > 0 {
@@ -358,6 +390,8 @@ struct ShoppingListView: View {
                 shoppingListActionContent
                 Divider()
                 shoppingListItemActionContent
+                Divider()
+                shoppingListReminderSyncContent
             }
             ToolbarItem(
                 placement: .primaryAction,
@@ -456,62 +490,67 @@ struct ShoppingListView: View {
             }
         }
         .alert(
-            "Do you really want to delete this item?",
-            isPresented: $showEntryDeleteAlert,
+            activeAlert?.title ?? "",
+            isPresented: Binding(
+                get: { activeAlert != nil },
+                set: { if !$0 { activeAlert = nil } }
+            ),
             actions: {
                 Button("Cancel", role: .cancel) {}
-                Button("Delete", role: .destructive) {
-                    if let item = shlItemToDelete {
-                        Task {
-                            await deleteSHLItem(item: item)
+                switch activeAlert {
+                case .deleteItem:
+                    Button("Delete", role: .destructive) {
+                        if let item = shlItemToDelete {
+                            Task {
+                                await deleteSHLItem(item: item)
+                            }
                         }
                     }
+                case .deleteShoppingList:
+                    Button("Delete", role: .destructive) {
+                        Task {
+                            await deleteShoppingList()
+                        }
+                    }
+                case .clearShoppingList:
+                    Button("Confirm", role: .destructive) {
+                        Task {
+                            await slAction(.clear)
+                        }
+                    }
+                case .clearAllDone:
+                    Button("Confirm", role: .destructive) {
+                        Task {
+                            await slAction(.clearDone)
+                        }
+                    }
+                case .exportToReminders:
+                    Button("Confirm", role: .confirm) {
+                        Task {
+                            await exportShoppingListToReminders()
+                        }
+                    }
+                default:
+                    Button("") {}
                 }
             },
             message: {
-                if let item = shlItemToDelete {
-                    Text(mdProducts.first(where: { $0.id == item.productID })?.name ?? "Name not found")
+                switch activeAlert {
+                case .deleteItem:
+                    if let item = shlItemToDelete {
+                        Text(mdProducts.first(where: { $0.id == item.productID })?.name ?? "Name not found")
+                    }
+                case .deleteShoppingList:
+                    Text(shoppingListDescriptions.first(where: { $0.id == selectedShoppingListID })?.name ?? "Name not found")
+                case .clearShoppingList:
+                    Text(shoppingListDescriptions.first(where: { $0.id == selectedShoppingListID })?.name ?? "Name not found")
+                case .clearAllDone:
+                    Text(shoppingListDescriptions.first(where: { $0.id == selectedShoppingListID })?.name ?? "Name not found")
+                case .exportToReminders:
+                    Text("Do you want to export this shopping list to Reminders? This may overwrite changes in the list.")
+                case nil: Text("")
                 }
             }
-        )
-        .alert(
-            "Do you really want to delete this shopping list?",
-            isPresented: $showSHLDeleteAlert,
-            actions: {
-                Button("Cancel", role: .cancel) {}
-                Button("Delete", role: .destructive) {
-                    Task {
-                        await deleteShoppingList()
-                    }
-                }
-            },
-            message: { Text(shoppingListDescriptions.first(where: { $0.id == selectedShoppingListID })?.name ?? "Name not found") }
-        )
-        .alert(
-            "Do your really want to clear this shopping list?",
-            isPresented: $showClearListAlert,
-            actions: {
-                Button("Cancel", role: .cancel) {}
-                Button("Confirm", role: .destructive) {
-                    Task {
-                        await slAction(.clear)
-                    }
-                }
-            },
-            message: { Text(shoppingListDescriptions.first(where: { $0.id == selectedShoppingListID })?.name ?? "Name not found") }
-        )
-        .alert(
-            "Do you really want to clear all done items?",
-            isPresented: $showClearDoneAlert,
-            actions: {
-                Button("Cancel", role: .cancel) {}
-                Button("Confirm", role: .destructive) {
-                    Task {
-                        await slAction(.clearDone)
-                    }
-                }
-            },
-            message: { Text(shoppingListDescriptions.first(where: { $0.id == selectedShoppingListID })?.name ?? "Name not found") }
         )
     }
 
@@ -547,7 +586,7 @@ struct ShoppingListView: View {
             Button(
                 role: .destructive,
                 action: {
-                    showSHLDeleteAlert.toggle()
+                    activeAlert = .deleteShoppingList
                 },
                 label: {
                     Label("Delete shopping list", systemImage: MySymbols.delete)
@@ -562,7 +601,7 @@ struct ShoppingListView: View {
             Button(
                 role: .destructive,
                 action: {
-                    showClearListAlert.toggle()
+                    activeAlert = .clearShoppingList
                 },
                 label: {
                     Label("Clear list", systemImage: MySymbols.clear)
@@ -579,7 +618,7 @@ struct ShoppingListView: View {
             Button(
                 role: .destructive,
                 action: {
-                    showClearDoneAlert.toggle()
+                    activeAlert = .clearAllDone
                 },
                 label: {
                     Label("Clear done items", systemImage: MySymbols.done)
@@ -610,6 +649,17 @@ struct ShoppingListView: View {
             )
             .help("Add overdue/expired products")
         }
+    }
+
+    var shoppingListReminderSyncContent: some View {
+        Button(
+            action: {
+                activeAlert = .exportToReminders
+            },
+            label: {
+                Label("Export shopping list to Reminders", systemImage: "checklist")
+            }
+        )
     }
 
     var sortGroupMenu: some View {

@@ -22,8 +22,14 @@ struct SettingsShoppingListView: View {
     @State private var useAutoAddBelowMinStockAmount: Bool = false
 
     @State private var isFirst: Bool = true
+    @State var foundReminders: [Reminder] = []
+    @State private var showFoundReminders: Bool = false
 
     private let dataToUpdate: [ObjectEntities] = [.shopping_lists]
+
+    var selectedShoppingListItems: [ShoppingListItem] {
+        shoppingList.filter({ $0.shoppingListID == shoppingListToSyncID })
+    }
 
     var body: some View {
         Form {
@@ -53,64 +59,66 @@ struct SettingsShoppingListView: View {
             if devMode {
                 Section(header: Text("REMINDER SYNC").font(.title)) {
                     MyToggle(isOn: $syncShoppingListToReminders, description: "SYNC SHOPPING LIST TO REMINDERS")
-                    Picker(
-                        "SHOPPING LIST",
-                        selection: $shoppingListToSyncID,
-                        content: {
-                            Text("").tag(0)
-                            ForEach(shoppingListDescriptions, id: \.id) { shoppingListDescription in
-                                Text(shoppingListDescription.name).tag(shoppingListDescription.id)
+                    if syncShoppingListToReminders {
+                        Picker(
+                            "SHOPPING LIST",
+                            selection: $shoppingListToSyncID,
+                            content: {
+                                Text("").tag(0)
+                                ForEach(shoppingListDescriptions, id: \.id) { shoppingListDescription in
+                                    Text(shoppingListDescription.name).tag(shoppingListDescription.id)
+                                }
                             }
-                        }
-                    )
-                    .disabled(!syncShoppingListToReminders)
-                    Button(
-                        action: {
-                            Task {
+                        )
+                        Button(
+                            action: {
+                                Task {
+                                    do {
+                                        try await ReminderStore.shared.requestAccess()
+                                        ReminderStore.shared.initCalendar(calendarName: "Grocy Mobile")
+                                    } catch {
+                                        print(error)
+                                    }
+                                }
+                            },
+                            label: {
+                                Text("INIT CALENDAR")
+                            }
+                        )
+                        Button(
+                            action: {
                                 do {
-                                    try await ReminderStore.shared.requestAccess()
-                                    ReminderStore.shared.initCalendar()
+                                    for shoppingListItem in selectedShoppingListItems {
+                                        let title = "\(shoppingListItem.amount.formattedAmount) \(mdProducts.first(where: { $0.id == shoppingListItem.productID })?.name ?? shoppingListItem.note)"
+                                        try ReminderStore.shared.save(Reminder(title: title, isComplete: shoppingListItem.done == 1))
+                                    }
                                 } catch {
                                     print(error)
                                 }
+                            },
+                            label: {
+                                Text("ADD TO CALENDAR")
                             }
-                        },
-                        label: {
-                            Text("INIT CALENDAR")
-                        }
-                    )
-                    Button(
-                        action: {
-                            do {
-                                for shoppingListItem in shoppingList {
-                                    let title = "\(shoppingListItem.amount.formattedAmount) \(mdProducts.first(where: { $0.id == shoppingListItem.productID })?.name ?? "\(shoppingListItem.productID ?? 0)")"
-                                    try ReminderStore.shared.save(Reminder(title: title, isComplete: shoppingListItem.done == 1))
+                        )
+                        .disabled(!ReminderStore.shared.isAvailable)
+                        Button(
+                            action: {
+                                Task {
+                                    do {
+                                        let allReminders = try await ReminderStore.shared.readAll()
+                                        foundReminders = allReminders
+                                        showFoundReminders = true
+                                    } catch {
+                                        print(error)
+                                    }
                                 }
-                            } catch {
-                                print(error)
+                            },
+                            label: {
+                                Text("READ ALL")
                             }
-                        },
-                        label: {
-                            Text("ADD TO CALENDAR")
-                        }
-                    )
-                    .disabled(!ReminderStore.shared.isAvailable_)
-                    Button(
-                        action: {
-                            Task {
-                                do {
-                                    let allReminders = try await ReminderStore.shared.readAll()
-                                    await grocyVM.updateShoppingListFromReminders(reminders: allReminders)
-                                } catch {
-                                    print(error)
-                                }
-                            }
-                        },
-                        label: {
-                            Text("READ ALL")
-                        }
-                    )
-                    .disabled(!ReminderStore.shared.isAvailable_)
+                        )
+                        .disabled(!ReminderStore.shared.isAvailable)
+                    }
                 }
             }
         }
@@ -125,6 +133,11 @@ struct SettingsShoppingListView: View {
         .onDisappear(perform: {
             Task {
                 await grocyVM.requestData(additionalObjects: [.user_settings])
+            }
+        })
+        .sheet(isPresented: $showFoundReminders, content: {
+            NavigationStack{
+                ShoppingListReminderReadView(reminders: foundReminders)
             }
         })
     }

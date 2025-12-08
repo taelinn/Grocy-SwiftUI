@@ -526,42 +526,6 @@ class GrocyViewModel {
         }.value
     }
 
-    func updateShoppingListFromReminders(reminders: [Reminder]) async {
-        for reminder in reminders {
-            var nameComponents = reminder.title.components(separatedBy: " ")
-            let amount = Double(nameComponents.removeFirst())
-            let name = nameComponents.joined(separator: " ")
-            if let product = self.mdProducts.first(where: { $0.name == name }),
-                let entry = self.shoppingList.first(where: { $0.productID == product.id })
-            {
-                let shoppingListEntryNew = ShoppingListItem(
-                    id: entry.id,
-                    productID: entry.productID ?? -1,
-                    note: reminder.notes ?? "",
-                    amount: amount ?? entry.amount,
-                    shoppingListID: entry.shoppingListID,
-                    done: reminder.isComplete ? 1 : 0,
-                    quID: entry.quID ?? -1,
-                    rowCreatedTimestamp: entry.rowCreatedTimestamp
-                )
-                if shoppingListEntryNew.note != entry.note, shoppingListEntryNew.amount != entry.amount, shoppingListEntryNew.done != entry.done {
-                    do {
-                        try await self.putMDObjectWithID(
-                            object: .shopping_list,
-                            id: entry.id,
-                            content: shoppingListEntryNew
-                        )
-                        GrocyLogger.info("Shopping entry edited successfully.")
-                    } catch {
-                        GrocyLogger.error("Shopping entry edit failed. \(error)")
-                    }
-                }
-            } else {
-                GrocyLogger.info("Found no matching product for the shopping list entry \(name).")
-            }
-        }
-    }
-
     func getAttributedStringFromHTML(htmlString: String) async -> AttributedString {
         do {
             let attributedString = try await NSAttributedString.fromHTML(htmlString)
