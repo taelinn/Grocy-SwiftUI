@@ -65,7 +65,6 @@ struct ShoppingListView: View {
     @Query(sort: \MDProductGroup.id, order: .forward) var mdProductGroups: MDProductGroups
     @Query(sort: \MDStore.id, order: .forward) var mdStores: MDStores
     @Query(sort: \MDQuantityUnit.id, order: .forward) var mdQuantityUnits: MDQuantityUnits
-    @Query(sort: \MDQuantityUnitConversion.id, order: .forward) var mdQuantityUnitConversions: MDQuantityUnitConversions
     @Query var userSettingsList: GrocyUserSettingsList
     var userSettings: GrocyUserSettings? {
         userSettingsList.first
@@ -740,8 +739,7 @@ struct ShoppingListView: View {
                     shoppingListItem: element.shoppingListItem,
                     isBelowStock: isBelowStock,
                     product: element.product,
-                    quantityUnit: mdQuantityUnits.first(where: { $0.id == element.product?.quIDPurchase }),
-                    quantityUnitConversions: mdQuantityUnitConversions.filter { $0.toQuID == element.shoppingListItem.quID },
+                    quantityUnit: mdQuantityUnits.first(where: { $0.id == element.shoppingListItem.quID }),
                     userSettings: userSettings,
                     onToggleDone: changeDoneStatus,
                     onDelete: deleteItem

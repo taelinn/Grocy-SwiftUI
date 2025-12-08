@@ -40,7 +40,7 @@ struct AmountSelectionView: View {
         }
     }
     private var factoredAmount: Double {
-        return amount * (quantityUnitConversions.first(where: { $0.fromQuID == quantityUnitID })?.factor ?? 1)
+        return amount * (quantityUnitConversions.first(where: { $0.fromQuID == quantityUnitID && $0.toQuID == product?.quIDStock })?.factor ?? 1)
     }
     private var stockQuantityUnit: MDQuantityUnit? {
         mdQuantityUnits.first(where: { $0.id == product?.quIDStock })

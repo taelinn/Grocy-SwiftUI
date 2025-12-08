@@ -16,22 +16,17 @@ struct ShoppingListRowView: View {
     var isBelowStock: Bool
     var product: MDProduct? = nil
     var quantityUnit: MDQuantityUnit? = nil
-    var quantityUnitConversions: MDQuantityUnitConversions = []
     var userSettings: GrocyUserSettings? = nil
 
     // Callbacks for interactions
     var onToggleDone: (ShoppingListItem) async -> Void = { _ in }
     var onDelete: (ShoppingListItem) -> Void = { _ in }
 
-    private var factoredAmount: Double {
-        shoppingListItem.amount * (quantityUnitConversions.first(where: { $0.fromQuID == shoppingListItem.quID })?.factor ?? 1)
-    }
-
     var amountString: String {
         if let quantityUnit = quantityUnit {
-            return "\(factoredAmount.formattedAmount) \(quantityUnit.getName(amount: factoredAmount))"
+            return "\(shoppingListItem.amount.formattedAmount) \(quantityUnit.getName(amount: shoppingListItem.amount))"
         } else {
-            return "\(factoredAmount.formattedAmount)"
+            return "\(shoppingListItem.amount.formattedAmount)"
         }
     }
 
