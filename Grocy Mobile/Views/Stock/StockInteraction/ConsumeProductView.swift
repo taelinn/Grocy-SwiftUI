@@ -105,10 +105,10 @@ struct ConsumeProductView: View {
     }
 
     private var filteredLocations: MDLocations {
-        if let productID = productID {
+        if useSpecificStockEntry, let productID = productID {
             return mdLocations.filter { location in
                 stockProductEntries.contains(where: {
-                    $0.productID == productID && $0.locationID == location.id
+                    $0.productID == productID && $0.locationID == locationID
                 })
             }
         } else {
