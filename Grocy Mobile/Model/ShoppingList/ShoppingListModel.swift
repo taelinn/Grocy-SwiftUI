@@ -59,7 +59,7 @@ class ShoppingListItem: Codable, Equatable {
     
     init(
         id: Int = -1,
-        productID: Int = -1,
+        productID: Int? = nil,
         note: String = "",
         amount: Double = 1.0,
         shoppingListID: Int = -1,

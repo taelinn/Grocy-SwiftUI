@@ -150,7 +150,7 @@ struct ProductField: View {
                             )
                         }
                     }
-                    Text("").tag(-1)
+                    Text("").tag(nil as Int?)
                     ForEach(filteredProducts, id: \.id) { productElement in
                         Text(productElement.name).tag(productElement.id)
                     }
@@ -163,7 +163,7 @@ struct ProductField: View {
                 selection: $productID,
                 label: Label(description, systemImage: MySymbols.product),
                 content: {
-                    Text("").tag(-1)
+                    Text("").tag(nil as Int?)
                     ForEach(filteredProducts, id: \.id) { productElement in
                         Text(productElement.name).tag(productElement.id)
                     }
