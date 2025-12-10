@@ -21,11 +21,11 @@ struct MyToggle: View {
                 if let icon = icon {
                     Label(description, systemImage: icon)
                         .foregroundStyle(.primary)
-                    if let descriptionInfo = descriptionInfo {
-                        FieldDescription(description: descriptionInfo)
-                    }
                 } else {
                     Text(description)
+                }
+                if let descriptionInfo = descriptionInfo {
+                    FieldDescription(description: descriptionInfo)
                 }
             }
         })
