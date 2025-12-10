@@ -51,6 +51,7 @@ class GrocyViewModel {
     var recipes: Recipes = []
     var recipeFulfillments: RecipeFulfilments = []
     var recipePosResolved: [RecipePosResolvedElement] = []
+    var choresInfo: ChoresInfo = []
 
     var mdProducts: MDProducts = []
     var mdProductBarcodes: MDProductBarcodes = []
@@ -63,6 +64,7 @@ class GrocyViewModel {
     var mdTaskCategories: MDTaskCategories = []
     var mdUserFields: MDUserFields = []
     var mdUserEntities: MDUserEntities = []
+    var mdChores: MDChores = []
 
     var stockProductDetails: [Int: StockProductDetails] = [:]
     var stockProductLocations: [Int: StockLocations] = [:]
@@ -230,6 +232,8 @@ class GrocyViewModel {
     func findNextID(_ object: ObjectEntities) -> Int {
         var ints: [Int] = []
         switch object {
+        case .chores:
+            ints = self.mdChores.map { $0.id }
         case .products:
             ints = self.mdProducts.map { $0.id }
         case .locations:
@@ -294,6 +298,9 @@ class GrocyViewModel {
                         case .batteries:
                             let data: [MDBattery] = try await grocyApi.getObject(object: object)
                             self.mdBatteries = data
+                        case .chores:
+                            let data: [MDChore] = try await self.getObjectAndSaveSwiftData(object: object)
+                            self.mdChores = data
                         case .locations:
                             let data: [MDLocation] = try await self.getObjectAndSaveSwiftData(object: object)
                             self.mdLocations = data
@@ -381,6 +388,10 @@ class GrocyViewModel {
         switch additionalObject {
         case .current_user:
             self.currentUser = try await grocyApi.getUser().first
+        
+        case .chores:
+            self.choresInfo = try await grocyApi.getChores()
+            try swiftDataSync.syncPersistentCollection(ChoreInfoElement.self, with: self.choresInfo)
 
         case .stock:
             self.stock = try await grocyApi.getStock()
@@ -443,6 +454,8 @@ class GrocyViewModel {
         self.recipes = []
         self.recipeFulfillments = []
         self.recipePosResolved = []
+        self.mdChores = []
+        self.choresInfo = []
 
         self.mdProducts = []
         self.mdProductBarcodes = []
@@ -497,6 +510,8 @@ class GrocyViewModel {
             try self.modelContext.delete(model: RecipePosResolvedElement.self)
             try self.modelContext.delete(model: StockLocation.self)
             try self.modelContext.delete(model: SystemConfig.self)
+            try self.modelContext.delete(model: MDChore.self)
+            try self.modelContext.delete(model: ChoreInfoElement.self)
         } catch {
             GrocyLogger.error("\(error)")
         }

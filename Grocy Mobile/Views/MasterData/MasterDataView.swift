@@ -44,12 +44,12 @@ struct MasterDataView: View {
             NavigationLink(value: MasterDataItem.productGroups) {
                 MDCategoryRowView(categoryName: "Product groups", iconName: MySymbols.productGroup, mdType: MDProductGroup.self)
             }
+            
+            NavigationLink(value: MasterDataItem.chores) {
+                MDCategoryRowView(categoryName: "Chores", iconName: MySymbols.chores, mdType: MDChore.self)
+            }
 
             if devMode {
-                NavigationLink(value: MasterDataItem.chores) {
-                    Label("Chores", systemImage: MySymbols.chores)
-                }
-
                 NavigationLink(value: MasterDataItem.batteries) {
                     Label("Batteries", systemImage: MySymbols.batteries)
                 }

@@ -13,7 +13,7 @@ public enum ObjectEntities: String, CaseIterable {
 }
 
 public enum AdditionalEntities: String, CaseIterable {
-    case system_info, system_db_changed_time, system_config, stock, volatileStock, users, current_user, user_settings, recipeFulfillments
+    case system_info, system_db_changed_time, system_config, stock, volatileStock, users, current_user, user_settings, recipeFulfillments, chores
 }
 
 public enum StockProductPost: String {
@@ -56,6 +56,8 @@ protocol GrocyAPI {
     func deleteUserWithID(id: Int) async throws
     // MARK: - Recipes
     func getRecipeFulfillments() async throws -> RecipeFulfilments
+    // MARK: - Chores
+    func getChores() async throws -> ChoresInfo
     // MARK: - Current user
     func getUser() async throws -> GrocyUsers
     func getUserSettings() async throws -> GrocyUserSettings
@@ -535,6 +537,11 @@ extension GrocyApi {
     // MARK: - Recipes
     func getRecipeFulfillments() async throws -> RecipeFulfilments {
         return try await call(.recipesFulfillment, method: .GET)
+    }
+    
+    // MARK: - Chores
+    func getChores() async throws -> ChoresInfo {
+        return try await call(.chores, method: .GET)
     }
 
     // MARK: - Current user

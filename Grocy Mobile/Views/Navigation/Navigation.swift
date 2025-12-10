@@ -66,6 +66,8 @@ struct Navigation: View {
             TransferProductView()
         case .inventory:
             InventoryProductView()
+        case .mdChores:
+            MDChoresView()
         case .mdProducts:
             MDProductsView()
         case .mdLocations:

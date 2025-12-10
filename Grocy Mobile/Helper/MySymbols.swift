@@ -18,7 +18,7 @@ nonisolated struct MySymbols {
     static let shoppingList = "cart.fill"
     static let masterData = "folder"
     static let settings = "gear"
-    static let chores = "house"
+    static let chores = "list.bullet.clipboard"
     static let batteries = "battery.25percent"
     static let tasks = "point.fill.topleft.down.curvedto.point.fill.bottomright.up"
 
@@ -103,4 +103,12 @@ nonisolated struct MySymbols {
     static let overdue = "exclamationmark.triangle.fill"
     static let expired = "trash.fill"
     static let belowMinStock = "chart.bar.fill"
+    
+    static let choreRescheduled = "clock.fill"
+    static let choreTrackNext = "play.fill"
+    static let choreSkipNext = "forward.fill"
+    static let chorePeriodType = "repeat"
+    static let choreDayOfMonth = "31.calendar"
+    static let choreAssignmentType = "person.crop.circle.fill.badge.checkmark"
+    static let choreRollover = "clock.arrow.trianglehead.counterclockwise.rotate.90"
 }

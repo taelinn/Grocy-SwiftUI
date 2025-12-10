@@ -65,7 +65,8 @@ func formatTimestampOutput(_ timeStamp: String, localizationKey: String? = nil) 
     return timeStampFormatted
 }
 
-nonisolated func getDateFromString(_ dateString: String) -> Date? {
+nonisolated func getDateFromString(_ dateString: String?) -> Date? {
+    guard let dateString else { return nil }
     let strategy = Date.ISO8601FormatStyle()
         .year()
         .month()

@@ -110,6 +110,9 @@ struct Sidebar: View {
                     NavigationLink(value: NavigationItem.mdProductGroups) {
                         MDCategoryRowView(categoryName: "Product groups", iconName: MySymbols.productGroup, mdType: MDProductGroup.self)
                     }
+                    NavigationLink(value: NavigationItem.mdChores) {
+                        MDCategoryRowView(categoryName: "Chores", iconName: MySymbols.chores, mdType: MDChore.self)
+                    }
                 },
                 header: {
                     Label("Master data", systemImage: MySymbols.masterData)
