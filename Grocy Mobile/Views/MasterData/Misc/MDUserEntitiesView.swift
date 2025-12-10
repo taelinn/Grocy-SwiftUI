@@ -139,7 +139,7 @@ struct MDUserEntitiesView: View {
         }
         //        .animation(.default, value: filteredUserEntities.count)
         .alert(
-            "Do you really want to delete this user entity?",
+            "Are you sure you want to delete userentity \"\(userEntityToDelete?.name ?? "")\"?",
             isPresented: $showDeleteConfirmation,
             actions: {
                 Button("Cancel", role: .cancel) {}
@@ -150,8 +150,7 @@ struct MDUserEntitiesView: View {
                         }
                     }
                 }
-            },
-            message: { Text(userEntityToDelete?.name ?? "Name not found") }
+            }
         )
     }
 }

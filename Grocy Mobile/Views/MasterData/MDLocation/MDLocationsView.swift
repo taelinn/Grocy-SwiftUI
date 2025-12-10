@@ -129,7 +129,7 @@ struct MDLocationsView: View {
             value: mdLocations.count
         )
         .alert(
-            "Do you really want to delete this location?",
+            "Are you sure you want to delete location \"\(locationToDelete?.name ?? "")\"?",
             isPresented: $showDeleteConfirmation,
             actions: {
                 Button("Cancel", role: .cancel) {}
@@ -140,9 +140,6 @@ struct MDLocationsView: View {
                         }
                     }
                 }
-            },
-            message: {
-                Text(locationToDelete?.name ?? "")
             }
         )
         .toolbar(content: {

@@ -144,7 +144,7 @@ struct MDProductGroupsView: View {
             }
         }
         .alert(
-            "Do you really want to delete this product group?",
+            "Are you sure you want to delete product group \"\(productGroupToDelete?.name ?? "")\"?",
             isPresented: $showDeleteConfirmation,
             actions: {
                 Button("Cancel", role: .cancel) {}
@@ -155,8 +155,7 @@ struct MDProductGroupsView: View {
                         }
                     }
                 }
-            },
-            message: { Text(productGroupToDelete?.name ?? "Name not found") }
+            }
         )
     }
 }

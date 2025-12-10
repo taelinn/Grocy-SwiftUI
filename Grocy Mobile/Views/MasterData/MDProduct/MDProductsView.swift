@@ -113,7 +113,7 @@ struct MDProductsView: View {
             value: mdProducts.count
         )
         .alert(
-            "Do you really want to delete this product?",
+            "Are you sure you want to delete product \"\(productToDelete?.name ?? "")\"?",
             isPresented: $showDeleteConfirmation,
             actions: {
                 Button("Cancel", role: .cancel) {}
@@ -124,8 +124,7 @@ struct MDProductsView: View {
                         }
                     }
                 }
-            },
-            message: { Text(productToDelete?.name ?? "Name not found") }
+            }
         )
         .toolbar(content: {
             ToolbarItemGroup(

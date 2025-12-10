@@ -124,7 +124,7 @@ struct MDStoresView: View {
             value: mdStores.count
         )
         .alert(
-            "Do you really want to delete this store?",
+            "Are you sure you want to delete store \"\(storeToDelete?.name ?? "")\"?",
             isPresented: $showDeleteConfirmation,
             actions: {
                 Button("Cancel", role: .cancel) {}
@@ -135,8 +135,7 @@ struct MDStoresView: View {
                         }
                     }
                 }
-            },
-            message: { Text(storeToDelete?.name ?? "") }
+            }
         )
         .toolbar(content: {
             ToolbarItemGroup(

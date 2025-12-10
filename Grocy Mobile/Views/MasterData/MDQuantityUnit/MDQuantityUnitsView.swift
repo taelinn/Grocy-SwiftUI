@@ -139,7 +139,7 @@ struct MDQuantityUnitsView: View {
             value: mdQuantityUnits.count
         )
         .alert(
-            "Do you really want to delete this quantity unit?",
+            "Are you sure you want to delete quantity unit \"\(quantityUnitToDelete?.name ?? "")\"?",
             isPresented: $showDeleteConfirmation,
             actions: {
                 Button("Cancel", role: .cancel) {}
@@ -150,8 +150,7 @@ struct MDQuantityUnitsView: View {
                         }
                     }
                 }
-            },
-            message: { Text(quantityUnitToDelete?.name ?? "Name not found") }
+            }
         )
     }
 }

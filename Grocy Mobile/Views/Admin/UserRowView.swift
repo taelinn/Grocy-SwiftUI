@@ -45,7 +45,7 @@ struct UserRowActionsView: View {
                     showDeleteAction.toggle()
                 }
                 .alert(isPresented:$showDeleteAction) {
-                    Alert(title: Text("Do you really want to delete this user?"), message: Text(""), primaryButton: .destructive(Text("Delete")) {
+                    Alert(title: Text("Are you sure you want to delete user \"\(user.displayName)\"?"), message: Text(""), primaryButton: .destructive(Text("Delete")) {
                         Task {
                             await deleteUser()
                         }

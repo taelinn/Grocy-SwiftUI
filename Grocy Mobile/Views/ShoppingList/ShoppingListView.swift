@@ -27,18 +27,27 @@ enum ShoppingListInteraction: Hashable, Identifiable {
     var id: Self { self }
 }
 
-enum AlertType: Identifiable {
-    case deleteItem, deleteShoppingList, clearShoppingList, clearAllDone, exportToReminders
+enum AlertType: Hashable, Identifiable {
+    case deleteItem(shoppingListItem: ShoppingListItem)
+    case deleteShoppingList(alertSHL: ShoppingListDescription)
+    case clearShoppingList(alertSHL: ShoppingListDescription)
+    case clearAllDone(alertSHL: ShoppingListDescription)
+    case exportToReminders(alertSHL: ShoppingListDescription)
 
     var id: Self { self }
 
     var title: LocalizedStringKey {
         switch self {
-        case .deleteItem: return "Do you really want to delete this item?"
-        case .deleteShoppingList: return "Do you really want to delete this shopping list?"
-        case .clearShoppingList: return "Do your really want to clear this shopping list?"
-        case .clearAllDone: return "Do you really want to clear all done items?"
-        case .exportToReminders: return "Export shopping list to Reminders"
+        case .deleteItem:
+            return "Do you really want to delete this item?"
+        case .deleteShoppingList(let alertSHL):
+            return "Are you sure you want to delete shopping list \"\(alertSHL.name)\"?"
+        case .clearShoppingList(let alertSHL):
+            return "Are you sure you want to empty shopping list \"\(alertSHL.name)\"?"
+        case .clearAllDone:
+            return "Do you really want to clear all done items?"
+        case .exportToReminders:
+            return "Export shopping list to Reminders"
         }
     }
 }
@@ -127,8 +136,7 @@ struct ShoppingListView: View {
     }
 
     private func deleteItem(itemToDelete: ShoppingListItem) {
-        shlItemToDelete = itemToDelete
-        activeAlert = .deleteItem
+        activeAlert = .deleteItem(shoppingListItem: itemToDelete)
     }
 
     private func deleteSHLItem(item: ShoppingListItem) async {
@@ -263,9 +271,9 @@ struct ShoppingListView: View {
             .count
     }
 
-    func deleteShoppingList() async {
+    func deleteShoppingList(alertSHL: ShoppingListDescription) async {
         do {
-            try await grocyVM.deleteMDObject(object: .shopping_lists, id: selectedShoppingListID)
+            try await grocyVM.deleteMDObject(object: .shopping_lists, id: alertSHL.id)
             GrocyLogger.info("Deleting shopping list was successful.")
             await grocyVM.requestData(objects: [.shopping_lists])
         } catch {
@@ -273,14 +281,14 @@ struct ShoppingListView: View {
         }
     }
 
-    private func slAction(_ actionType: ShoppingListActionType) async {
+    private func slAction(_ actionType: ShoppingListActionType, actionSHL: ShoppingListDescription) async {
         do {
             if actionType == .clearDone {
                 // this is not clean, but was the fastest way to work around the different data types
-                let jsonContent = try! JSONEncoder().encode(ShoppingListClearAction(listID: selectedShoppingListID, doneOnly: true))
+                let jsonContent = try! JSONEncoder().encode(ShoppingListClearAction(listID: actionSHL.id, doneOnly: true))
                 try await grocyVM.grocyApi.shoppingListAction(content: jsonContent, actionType: actionType)
             } else {
-                try await grocyVM.shoppingListAction(content: ShoppingListAction(listID: selectedShoppingListID), actionType: actionType)
+                try await grocyVM.shoppingListAction(content: ShoppingListAction(listID: actionSHL.id), actionType: actionType)
             }
             GrocyLogger.info("SHLAction \(actionType) successful.")
             await grocyVM.requestData(objects: [.shopping_list])
@@ -289,17 +297,18 @@ struct ShoppingListView: View {
         }
     }
 
-    private func exportShoppingListToReminders() async {
+    private func exportShoppingListToReminders(alertSHL: ShoppingListDescription) async {
         do {
             if !ReminderStore.shared.isAvailable {
                 try await ReminderStore.shared.requestAccess()
-                ReminderStore.shared.initCalendar(calendarName: "\(selectedShoppingList?.name ?? "") (Grocy Mobile)")
+                ReminderStore.shared.initCalendar(calendarName: "\(alertSHL.name) (Grocy Mobile)")
             }
             let allReminders = try await ReminderStore.shared.readAll()
             for reminder in allReminders {
                 try ReminderStore.shared.remove(with: reminder.id)
             }
-            for shoppingListItem in selectedShoppingListItems {
+            let filteredItems = shoppingList.filter { $0.shoppingListID == alertSHL.id }
+            for shoppingListItem in filteredItems {
                 let title = "\(shoppingListItem.amount.formattedAmount)x \(mdProducts.first(where: { $0.id == shoppingListItem.productID })?.name ?? shoppingListItem.note)"
                 try ReminderStore.shared.save(Reminder(title: title, isComplete: shoppingListItem.done == 1))
             }
@@ -497,36 +506,34 @@ struct ShoppingListView: View {
             actions: {
                 Button("Cancel", role: .cancel) {}
                 switch activeAlert {
-                case .deleteItem:
-                    Button("Delete", role: .destructive) {
-                        if let item = shlItemToDelete {
-                            Task {
-                                await deleteSHLItem(item: item)
-                            }
-                        }
-                    }
-                case .deleteShoppingList:
+                case .deleteItem(let shoppingListItem):
                     Button("Delete", role: .destructive) {
                         Task {
-                            await deleteShoppingList()
+                            await deleteSHLItem(item: shoppingListItem)
                         }
                     }
-                case .clearShoppingList:
+                case .deleteShoppingList(let alertSHL):
+                    Button("Delete", role: .destructive) {
+                        Task {
+                            await deleteShoppingList(alertSHL: alertSHL)
+                        }
+                    }
+                case .clearShoppingList(let alertSHL):
                     Button("Confirm", role: .destructive) {
                         Task {
-                            await slAction(.clear)
+                            await slAction(.clear, actionSHL: alertSHL)
                         }
                     }
-                case .clearAllDone:
+                case .clearAllDone(let alertSHL):
                     Button("Confirm", role: .destructive) {
                         Task {
-                            await slAction(.clearDone)
+                            await slAction(.clearDone, actionSHL: alertSHL)
                         }
                     }
-                case .exportToReminders:
+                case .exportToReminders(let alertSHL):
                     Button("Confirm", role: .confirm) {
                         Task {
-                            await exportShoppingListToReminders()
+                            await exportShoppingListToReminders(alertSHL: alertSHL)
                         }
                     }
                 default:
@@ -535,19 +542,11 @@ struct ShoppingListView: View {
             },
             message: {
                 switch activeAlert {
-                case .deleteItem:
-                    if let item = shlItemToDelete {
-                        Text(mdProducts.first(where: { $0.id == item.productID })?.name ?? "Name not found")
-                    }
-                case .deleteShoppingList:
-                    Text(shoppingListDescriptions.first(where: { $0.id == selectedShoppingListID })?.name ?? "Name not found")
-                case .clearShoppingList:
-                    Text(shoppingListDescriptions.first(where: { $0.id == selectedShoppingListID })?.name ?? "Name not found")
-                case .clearAllDone:
-                    Text(shoppingListDescriptions.first(where: { $0.id == selectedShoppingListID })?.name ?? "Name not found")
+                case .deleteItem(let shoppingListItem):
+                    Text(mdProducts.first(where: { $0.id == shoppingListItem.productID })?.name ?? "Name not found")
                 case .exportToReminders:
                     Text("Do you want to export this shopping list to Reminders? This may overwrite changes in the list.")
-                case nil: Text("")
+                case _: Text("")
                 }
             }
         )
@@ -585,7 +584,9 @@ struct ShoppingListView: View {
             Button(
                 role: .destructive,
                 action: {
-                    activeAlert = .deleteShoppingList
+                    if let selectedShoppingList {
+                        activeAlert = .deleteShoppingList(alertSHL: selectedShoppingList)
+                    }
                 },
                 label: {
                     Label("Delete shopping list", systemImage: MySymbols.delete)
@@ -600,7 +601,9 @@ struct ShoppingListView: View {
             Button(
                 role: .destructive,
                 action: {
-                    activeAlert = .clearShoppingList
+                    if let selectedShoppingList {
+                        activeAlert = .clearShoppingList(alertSHL: selectedShoppingList)
+                    }
                 },
                 label: {
                     Label("Clear list", systemImage: MySymbols.clear)
@@ -617,7 +620,9 @@ struct ShoppingListView: View {
             Button(
                 role: .destructive,
                 action: {
-                    activeAlert = .clearAllDone
+                    if let selectedShoppingList {
+                        activeAlert = .clearAllDone(alertSHL: selectedShoppingList)
+                    }
                 },
                 label: {
                     Label("Clear done items", systemImage: MySymbols.done)
@@ -627,7 +632,9 @@ struct ShoppingListView: View {
             Button(
                 action: {
                     Task {
-                        await slAction(.addMissing)
+                        if let selectedShoppingList {
+                            await slAction(.addMissing, actionSHL: selectedShoppingList)
+                        }
                     }
                 },
                 label: {
@@ -638,8 +645,10 @@ struct ShoppingListView: View {
             Button(
                 action: {
                     Task {
-                        await slAction(.addExpired)
-                        await slAction(.addOverdue)
+                        if let selectedShoppingList {
+                            await slAction(.addExpired, actionSHL: selectedShoppingList)
+                            await slAction(.addOverdue, actionSHL: selectedShoppingList)
+                        }
                     }
                 },
                 label: {
@@ -653,7 +662,9 @@ struct ShoppingListView: View {
     var shoppingListReminderSyncContent: some View {
         Button(
             action: {
-                activeAlert = .exportToReminders
+                if let selectedShoppingList {
+                    activeAlert = .exportToReminders(alertSHL: selectedShoppingList)
+                }
             },
             label: {
                 Label("Export shopping list to Reminders", systemImage: "checklist")
