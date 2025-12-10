@@ -21,15 +21,18 @@ What works or doesn't?
 - [x] Shopping list
 - [x] Onboarding and configuration
 - [x] Quick-Scan mode with barcode (only on iOS)
-- [ ] Recipes, Meal plan, chores etc.
+- [x] Offline shopping List (saved with CoreData)
+- [ ] Recipes
+- [ ] Meal plan
+- [ ] Chores
+- [?] Widgets for iOS and macOS
 
 What features are planned?
-- [ ] Integration of OpenFoodFacts for adding new products
-- [ ] Widgets for iOS and macOS
 - [ ] Siri-Support
-- [ ] Offline shopping List (saved with CoreData)
 - [ ] own icons (not everything is possible with SF Symbols)
 - [ ] additional comfort features
+
+Do you want to help translating the App? Head to the [Translation Guide](Guides/Translation/TRANSLATION.md).
 
 #### Deutsch
 Diese App ist eine Begleiter-App für [Grocy](https://grocy.info/). Sie ist nicht alleine lauffähig, daher musst du Zugriff auf eine laufende Grocy-Instanz haben, welche am besten die neueste Version benutzt.
@@ -46,12 +49,15 @@ Was Funktioniert bzw. was funktioniert nicht?
 - [x] Einkaufsliste
 - [x] Onboarding und Konfiguration
 - [x] Barcode-Scan (nur auf iOS)
-- [ ] Rezepte, Speiseplan, Hausarbeit etc.
+- [x] Offline Einkaufsliste (mit CoreData gespeichert)
+- [ ] Rezepte
+- [ ] Speiseplan
+- [ ] Hausarbeiten
+- [?] Widgets für iOS und macOS
 
 Welche Features sind geplant?
-- [ ] Integration von OpenFoodFacts für neue Produkte
-- [ ] Widgets für iOS und macOS
 - [ ] Siri-Unterstützung
-- [ ] Offline Einkaufsliste (mit CoreData gespeichert)
 - [ ] eigene Icons (noch nicht alles machbar mit SF Symbols)
 - [ ] zusätzliche Komfortfunktionen (wie bei öffnen an anderen Ort transferieren)
+
+Du möchtest helfen, die App zu übersetzen? Dann schaue dir den [Übersetzungs-Guide](Guides/Translation/TRANSLATION.md) an.
