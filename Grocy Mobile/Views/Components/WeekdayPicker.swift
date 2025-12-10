@@ -88,7 +88,7 @@ struct WeekdaySelectButton: View {
             .foregroundStyle(isSelected ? .white : .primary)
             .padding(.horizontal, 16)
             .padding(.vertical, 10)
-            .glassEffect(.regular.tint(isSelected ? .blue : .gray).interactive())
+            .glassEffect(.regular.tint(isSelected ? .accentColor : .secondary).interactive())
             .onTapGesture(perform: action)
     }
 }

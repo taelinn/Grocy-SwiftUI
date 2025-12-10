@@ -25,6 +25,7 @@ struct MDCategoryRowView<T: PersistentModel>: View {
     var body: some View {
         HStack {
             Label(categoryName, systemImage: iconName)
+                .foregroundStyle(.primary)
             if itemCount > 0 {
                 Spacer()
                 Text("\(itemCount)")
