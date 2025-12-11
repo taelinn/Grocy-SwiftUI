@@ -11,7 +11,7 @@ struct MDChoreFormView: View {
     @Environment(GrocyViewModel.self) private var grocyVM
 
     @Query(sort: \MDChore.name, order: .forward) var mdChores: MDChores
-    @Query var choreInfo: ChoresInfo
+    @Query var choreInfo: Chores
     @Query(sort: \GrocyUser.displayName, order: .forward) var grocyUsers: GrocyUsers
 
     @Environment(\.dismiss) var dismiss
@@ -28,7 +28,7 @@ struct MDChoreFormView: View {
         self.chore = existingChore ?? MDChore()
     }
 
-    private var foundChoreInfo: ChoreInfoElement? {
+    private var foundChoreInfo: Chore? {
         choreInfo.first(where: { $0.choreID == chore.id })
     }
     private var choreWasTracked: Bool {

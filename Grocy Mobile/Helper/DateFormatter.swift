@@ -152,3 +152,12 @@ func getNeverOverdueDate() -> Date {
     return Calendar(identifier: .gregorian)
         .date(from: dateComponents)!
 }
+
+func daysDifference(for date: Date?) -> Int? {
+    guard let nextTime = date else { return nil }
+    return Calendar.current.dateComponents(
+        [.day],
+        from: Calendar.current.startOfDay(for: .now),
+        to: Calendar.current.startOfDay(for: nextTime)
+    ).day
+}

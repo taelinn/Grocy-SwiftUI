@@ -9,7 +9,7 @@ import Foundation
 import SwiftData
 
 @Model
-class ChoreInfoElement: Codable, Equatable, Identifiable {
+class Chore: Codable, Equatable, Identifiable {
     @Attribute(.unique) var id: Int
     var choreID: Int
     var choreName: String
@@ -51,6 +51,28 @@ class ChoreInfoElement: Codable, Equatable, Identifiable {
         }
     }
 
+    init(
+        id: Int = -1,
+        choreID: Int = 0,
+        choreName: String = "",
+        lastTrackedTime: Date? = nil,
+        nextEstimatedExecutionTime: Date? = nil,
+        trackDateOnly: Bool = false,
+        nextExecutionAssignedToUserID: Int? = nil,
+        isRescheduled: Bool = false,
+        isReassigned: Bool = false
+    ) {
+        self.id = id
+        self.choreID = choreID
+        self.choreName = choreName
+        self.lastTrackedTime = lastTrackedTime
+        self.nextEstimatedExecutionTime = nextEstimatedExecutionTime
+        self.trackDateOnly = trackDateOnly
+        self.nextExecutionAssignedToUserID = nextExecutionAssignedToUserID
+        self.isRescheduled = isRescheduled
+        self.isReassigned = isReassigned
+    }
+
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(id, forKey: .id)
@@ -64,7 +86,6 @@ class ChoreInfoElement: Codable, Equatable, Identifiable {
         try container.encode(isReassigned, forKey: .isReassigned)
         try container.encode(nextExecutionAssignedUser, forKey: .nextExecutionAssignedUser)
     }
-
 }
 
-typealias ChoresInfo = [ChoreInfoElement]
+typealias Chores = [Chore]

@@ -103,6 +103,9 @@ nonisolated struct MySymbols {
     static let overdue = "exclamationmark.triangle.fill"
     static let expired = "trash.fill"
     static let belowMinStock = "chart.bar.fill"
+    static let soon = "clock.badge.exclamationmark.fill"
+    static let today = "calendar.circle.fill"
+    static let me = "person.fill"
     
     static let choreRescheduled = "clock.fill"
     static let choreTrackNext = "play.fill"

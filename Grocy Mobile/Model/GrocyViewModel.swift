@@ -51,7 +51,7 @@ class GrocyViewModel {
     var recipes: Recipes = []
     var recipeFulfillments: RecipeFulfilments = []
     var recipePosResolved: [RecipePosResolvedElement] = []
-    var choresInfo: ChoresInfo = []
+    var choresInfo: Chores = []
 
     var mdProducts: MDProducts = []
     var mdProductBarcodes: MDProductBarcodes = []
@@ -391,7 +391,7 @@ class GrocyViewModel {
         
         case .chores:
             self.choresInfo = try await grocyApi.getChores()
-            try swiftDataSync.syncPersistentCollection(ChoreInfoElement.self, with: self.choresInfo)
+            try swiftDataSync.syncPersistentCollection(Chore.self, with: self.choresInfo)
 
         case .stock:
             self.stock = try await grocyApi.getStock()
@@ -511,7 +511,7 @@ class GrocyViewModel {
             try self.modelContext.delete(model: StockLocation.self)
             try self.modelContext.delete(model: SystemConfig.self)
             try self.modelContext.delete(model: MDChore.self)
-            try self.modelContext.delete(model: ChoreInfoElement.self)
+            try self.modelContext.delete(model: Chore.self)
         } catch {
             GrocyLogger.error("\(error)")
         }

@@ -33,12 +33,12 @@ class GrocyUserSettings: Codable {
     var showIconOnStockOverviewPageWhenProductIsOnShoppingList: Bool?
     var showPurchasedDateOnPurchase: Bool?
     var showWarningOnPurchaseWhenDueDateIsEarlierThanNext: Bool?
-    var shoppingListShowCalendar: Bool
-    var shoppingListAutoAddBelowMinStockAmount: Bool
+    var shoppingListShowCalendar: Bool?
+    var shoppingListAutoAddBelowMinStockAmount: Bool?
     var shoppingListAutoAddBelowMinStockAmountListID: Int?
-    var shoppingListToStockWorkflowAutoSubmitWhenPrefilled: Bool
+    var shoppingListToStockWorkflowAutoSubmitWhenPrefilled: Bool?
     //    var recipeIngredientsGroupByProductGroup: Bool
-    //    var choresDueSoonDays: Int
+    var choresDueSoonDays: Int?
     //    var batteriesDueSoonDays: Int
     //    var tasksDueSoonDays: Int
     //    var showClockInHeader: Bool
@@ -51,8 +51,9 @@ class GrocyUserSettings: Codable {
     //    var datatablesStateProductgroupsTable, datatablesStateProductsTable, datatablesStateQuConversionsTable, datatablesStateQuConversionsTableProducts: String
     //    var datatablesStateQuantityunitsTable, datatablesStateShoppingListPrintShadowTable, datatablesStateShoppinglistTable, datatablesStateStoresTable: String
     //    var datatablesStateStockJournalTable, datatablesStateStockOverviewTable, datatablesStateStockentriesTable, datatablesStateTaskcategoriesTable: String
-    //    var datatablesStateUserentitiesTable, datatablesStateUserfieldsTable, datatablesStateUsersTable, locale: String
-    
+    //    var datatablesStateUserentitiesTable, datatablesStateUserfieldsTable, datatablesStateUsersTable
+    var locale: String?
+
     enum CodingKeys: String, CodingKey {
         //        case autoReloadOnDBChange = "auto_reload_on_db_change"
         //        case nightModeEnabled = "night_mode_enabled"
@@ -87,7 +88,7 @@ class GrocyUserSettings: Codable {
         case shoppingListAutoAddBelowMinStockAmountListID = "shopping_list_auto_add_below_min_stock_amount_list_id"
         case shoppingListToStockWorkflowAutoSubmitWhenPrefilled = "shopping_list_to_stock_workflow_auto_submit_when_prefilled"
         //        case recipeIngredientsGroupByProductGroup = "recipe_ingredients_group_by_product_group"
-        //        case choresDueSoonDays = "chores_due_soon_days"
+        case choresDueSoonDays = "chores_due_soon_days"
         //        case batteriesDueSoonDays = "batteries_due_soon_days"
         //        case tasksDueSoonDays = "tasks_due_soon_days"
         //        case showClockInHeader = "show_clock_in_header"
@@ -115,131 +116,40 @@ class GrocyUserSettings: Codable {
         //        case datatablesStateUserentitiesTable = "datatables_state_userentities-table"
         //        case datatablesStateUserfieldsTable = "datatables_state_userfields-table"
         //        case datatablesStateUsersTable = "datatables_state_users-table"
-        //        case locale
+        case locale
     }
-    
+
     required init(from decoder: Decoder) throws {
         do {
             let container = try decoder.container(keyedBy: CodingKeys.self)
-            
-            do { self.productPresetsLocationID = try container.decodeIfPresent(Int.self, forKey: .productPresetsLocationID) } catch { self.productPresetsLocationID = try Int(container.decodeIfPresent(String.self, forKey: .productPresetsLocationID) ?? "") }
-            
-            do { self.productPresetsProductGroupID = try container.decodeIfPresent(Int.self, forKey: .productPresetsProductGroupID) } catch { self.productPresetsProductGroupID = try Int(container.decodeIfPresent(String.self, forKey: .productPresetsProductGroupID) ?? "") }
-            
-            do { self.stockDueSoonDays = try container.decodeIfPresent(Int.self, forKey: .stockDueSoonDays) } catch { self.stockDueSoonDays = try Int(container.decodeIfPresent(String.self, forKey: .stockDueSoonDays) ?? "") }
-            
-            do { self.productPresetsQuID = try container.decodeIfPresent(Int.self, forKey: .productPresetsQuID) } catch { self.productPresetsQuID = try Int(container.decodeIfPresent(String.self, forKey: .productPresetsQuID) ?? "") }
-            
-            do { self.productPresetsDefaultDueDays = try container.decodeIfPresent(Int.self, forKey: .productPresetsDefaultDueDays) } catch { self.productPresetsDefaultDueDays = try Int(container.decodeIfPresent(String.self, forKey: .productPresetsDefaultDueDays) ?? "") }
-            
-            do {
-                self.productPresetsTreatOpenedAsOutOfStock = try container.decode(Bool.self, forKey: .productPresetsTreatOpenedAsOutOfStock)
-            } catch {
-                do {
-                    self.productPresetsTreatOpenedAsOutOfStock = try container.decodeIfPresent(Int.self, forKey: .productPresetsTreatOpenedAsOutOfStock) == 1
-                } catch {
-                    self.productPresetsTreatOpenedAsOutOfStock = ["1", "true"].contains(try container.decodeIfPresent(String.self, forKey: .productPresetsTreatOpenedAsOutOfStock))
-                }
-            }
-            
-            do { self.stockDecimalPlacesAmounts = try container.decodeIfPresent(Int.self, forKey: .stockDecimalPlacesAmounts) } catch { self.stockDecimalPlacesAmounts = try Int(container.decodeIfPresent(String.self, forKey: .stockDecimalPlacesAmounts) ?? "") }
-            
-            do { self.stockDecimalPlacesPrices = try container.decodeIfPresent(Int.self, forKey: .stockDecimalPlacesPrices) } catch { self.stockDecimalPlacesPrices = try Int(container.decodeIfPresent(String.self, forKey: .stockDecimalPlacesPrices) ?? "") }
-            
-            do { self.stockDecimalPlacesPricesInput = try container.decodeIfPresent(Int.self, forKey: .stockDecimalPlacesPricesInput) } catch { self.stockDecimalPlacesPricesInput = try Int(container.decodeIfPresent(String.self, forKey: .stockDecimalPlacesPricesInput) ?? "") }
-            
-            do { self.stockDecimalPlacesPricesDisplay = try container.decodeIfPresent(Int.self, forKey: .stockDecimalPlacesPricesDisplay) } catch { self.stockDecimalPlacesPricesDisplay = try Int(container.decodeIfPresent(String.self, forKey: .stockDecimalPlacesPricesDisplay) ?? "") }
-            
-            do {
-                self.stockAutoDecimalSeparatorPrices = try container.decode(Bool.self, forKey: .stockAutoDecimalSeparatorPrices)
-            } catch {
-                do {
-                    self.stockAutoDecimalSeparatorPrices = try container.decodeIfPresent(Int.self, forKey: .stockAutoDecimalSeparatorPrices) == 1
-                } catch {
-                    self.stockAutoDecimalSeparatorPrices = ["1", "true"].contains(try container.decodeIfPresent(String.self, forKey: .stockAutoDecimalSeparatorPrices))
-                }
-            }
-            
-            do { self.stockDefaultPurchaseAmount = try container.decodeIfPresent(Double.self, forKey: .stockDefaultPurchaseAmount) } catch { self.stockDefaultPurchaseAmount = try Double(container.decodeIfPresent(String.self, forKey: .stockDefaultPurchaseAmount) ?? "") }
-            
-            do { self.stockDefaultConsumeAmount = try container.decodeIfPresent(Double.self, forKey: .stockDefaultConsumeAmount) } catch { self.stockDefaultConsumeAmount = try Double(container.decodeIfPresent(String.self, forKey: .stockDefaultConsumeAmount) ?? "") }
-            
-            do {
-                self.stockDefaultConsumeAmountUseQuickConsumeAmount = try container.decode(Bool.self, forKey: .stockDefaultConsumeAmountUseQuickConsumeAmount)
-            } catch {
-                do {
-                    self.stockDefaultConsumeAmountUseQuickConsumeAmount = try container.decodeIfPresent(Int.self, forKey: .stockDefaultConsumeAmountUseQuickConsumeAmount) == 1
-                } catch {
-                    self.stockDefaultConsumeAmountUseQuickConsumeAmount = ["1", "true"].contains(try container.decodeIfPresent(String.self, forKey: .stockDefaultConsumeAmountUseQuickConsumeAmount))
-                }
-            }
-            
-            do {
-                self.showIconOnStockOverviewPageWhenProductIsOnShoppingList = try container.decode(Bool.self, forKey: .showIconOnStockOverviewPageWhenProductIsOnShoppingList)
-            } catch {
-                do {
-                    self.showIconOnStockOverviewPageWhenProductIsOnShoppingList = try container.decodeIfPresent(Int.self, forKey: .showIconOnStockOverviewPageWhenProductIsOnShoppingList) == 1
-                } catch {
-                    self.showIconOnStockOverviewPageWhenProductIsOnShoppingList = ["1", "true"].contains(try container.decodeIfPresent(String.self, forKey: .showIconOnStockOverviewPageWhenProductIsOnShoppingList))
-                }
-            }
-            
-            do {
-                self.showPurchasedDateOnPurchase = try container.decode(Bool.self, forKey: .showPurchasedDateOnPurchase)
-            } catch {
-                do {
-                    self.showPurchasedDateOnPurchase = try container.decodeIfPresent(Int.self, forKey: .showPurchasedDateOnPurchase) == 1
-                } catch {
-                    self.showPurchasedDateOnPurchase = ["1", "true"].contains(try container.decodeIfPresent(String.self, forKey: .showPurchasedDateOnPurchase))
-                }
-            }
-            
-            do {
-                self.showWarningOnPurchaseWhenDueDateIsEarlierThanNext = try container.decode(Bool.self, forKey: .showWarningOnPurchaseWhenDueDateIsEarlierThanNext)
-            } catch {
-                do {
-                    self.showWarningOnPurchaseWhenDueDateIsEarlierThanNext = try container.decodeIfPresent(Int.self, forKey: .showPurchasedDateOnPurchase) == 1
-                } catch {
-                    self.showWarningOnPurchaseWhenDueDateIsEarlierThanNext = ["1", "true"].contains(try container.decodeIfPresent(String.self, forKey: .showWarningOnPurchaseWhenDueDateIsEarlierThanNext))
-                }
-            }
-            
-            do {
-                self.shoppingListShowCalendar = try container.decode(Bool.self, forKey: .shoppingListShowCalendar)
-            } catch {
-                do {
-                    self.shoppingListShowCalendar = try container.decodeIfPresent(Int.self, forKey: .shoppingListShowCalendar) == 1
-                } catch {
-                    self.shoppingListShowCalendar = ["1", "true"].contains(try container.decodeIfPresent(String.self, forKey: .shoppingListShowCalendar))
-                }
-            }
-            
-            do {
-                self.shoppingListAutoAddBelowMinStockAmount = try container.decode(Bool.self, forKey: .shoppingListAutoAddBelowMinStockAmount)
-            } catch {
-                do {
-                    self.shoppingListAutoAddBelowMinStockAmount = try container.decodeIfPresent(Int.self, forKey: .shoppingListAutoAddBelowMinStockAmount) == 1
-                } catch {
-                    self.shoppingListAutoAddBelowMinStockAmount = ["1", "true"].contains(try container.decodeIfPresent(String.self, forKey: .shoppingListAutoAddBelowMinStockAmount))
-                }
-            }
-            
-            do { self.shoppingListAutoAddBelowMinStockAmountListID = try container.decodeIfPresent(Int.self, forKey: .shoppingListAutoAddBelowMinStockAmountListID) } catch { self.shoppingListAutoAddBelowMinStockAmountListID = try Int(container.decodeIfPresent(String.self, forKey: .shoppingListAutoAddBelowMinStockAmountListID) ?? "") }
-            
-            do {
-                self.shoppingListToStockWorkflowAutoSubmitWhenPrefilled = try container.decode(Bool.self, forKey: .shoppingListToStockWorkflowAutoSubmitWhenPrefilled)
-            } catch {
-                do {
-                    self.shoppingListToStockWorkflowAutoSubmitWhenPrefilled = try container.decodeIfPresent(Int.self, forKey: .shoppingListToStockWorkflowAutoSubmitWhenPrefilled) == 1
-                } catch {
-                    self.shoppingListToStockWorkflowAutoSubmitWhenPrefilled = ["1", "true"].contains(try container.decodeIfPresent(String.self, forKey: .shoppingListToStockWorkflowAutoSubmitWhenPrefilled))
-                }
-            }
+
+            self.productPresetsLocationID = try container.decodeFlexibleIntIfPresent(forKey: .productPresetsLocationID)
+            self.productPresetsProductGroupID = try container.decodeFlexibleIntIfPresent(forKey: .productPresetsProductGroupID)
+            self.stockDueSoonDays = try container.decodeFlexibleIntIfPresent(forKey: .stockDueSoonDays)
+            self.productPresetsQuID = try container.decodeFlexibleIntIfPresent(forKey: .productPresetsQuID)
+            self.productPresetsDefaultDueDays = try container.decodeFlexibleIntIfPresent(forKey: .productPresetsDefaultDueDays)
+            self.productPresetsTreatOpenedAsOutOfStock = try container.decodeFlexibleBoolIfPresent(forKey: .productPresetsTreatOpenedAsOutOfStock)
+            self.stockDecimalPlacesAmounts = try container.decodeFlexibleIntIfPresent(forKey: .stockDecimalPlacesAmounts)
+            self.stockDecimalPlacesPrices = try container.decodeFlexibleIntIfPresent(forKey: .stockDecimalPlacesPrices)
+            self.stockDecimalPlacesPricesInput = try container.decodeFlexibleIntIfPresent(forKey: .stockDecimalPlacesPricesInput)
+            self.stockDecimalPlacesPricesDisplay = try container.decodeFlexibleIntIfPresent(forKey: .stockDecimalPlacesPricesDisplay)
+            self.stockAutoDecimalSeparatorPrices = try container.decodeFlexibleBoolIfPresent(forKey: .stockAutoDecimalSeparatorPrices)
+            self.stockDefaultPurchaseAmount = try container.decodeFlexibleDoubleIfPresent(forKey: .stockDefaultPurchaseAmount)
+            self.stockDefaultConsumeAmount = try container.decodeFlexibleDoubleIfPresent(forKey: .stockDefaultConsumeAmount)
+            self.stockDefaultConsumeAmountUseQuickConsumeAmount = try container.decodeFlexibleBoolIfPresent(forKey: .stockDefaultConsumeAmountUseQuickConsumeAmount)
+            self.showIconOnStockOverviewPageWhenProductIsOnShoppingList = try container.decodeFlexibleBoolIfPresent(forKey: .showIconOnStockOverviewPageWhenProductIsOnShoppingList)
+            self.showPurchasedDateOnPurchase = try container.decodeFlexibleBoolIfPresent(forKey: .showPurchasedDateOnPurchase)
+            self.showWarningOnPurchaseWhenDueDateIsEarlierThanNext = try container.decodeFlexibleBoolIfPresent(forKey: .showWarningOnPurchaseWhenDueDateIsEarlierThanNext)
+            self.shoppingListShowCalendar = try container.decodeFlexibleBoolIfPresent(forKey: .shoppingListShowCalendar)
+            self.shoppingListAutoAddBelowMinStockAmount = try container.decodeFlexibleBoolIfPresent(forKey: .shoppingListAutoAddBelowMinStockAmount)
+            self.shoppingListAutoAddBelowMinStockAmountListID = try container.decodeFlexibleIntIfPresent(forKey: .shoppingListAutoAddBelowMinStockAmountListID)
+            self.shoppingListToStockWorkflowAutoSubmitWhenPrefilled = try container.decodeFlexibleBoolIfPresent(forKey: .shoppingListToStockWorkflowAutoSubmitWhenPrefilled)
+            self.locale = try container.decodeIfPresent(String.self, forKey: .locale)
         } catch {
             throw APIError.decodingError(error: error)
         }
     }
-    
+
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(productPresetsLocationID, forKey: .productPresetsLocationID)
@@ -263,6 +173,7 @@ class GrocyUserSettings: Codable {
         try container.encode(shoppingListAutoAddBelowMinStockAmount, forKey: .shoppingListAutoAddBelowMinStockAmount)
         try container.encode(shoppingListAutoAddBelowMinStockAmountListID, forKey: .shoppingListAutoAddBelowMinStockAmountListID)
         try container.encode(shoppingListToStockWorkflowAutoSubmitWhenPrefilled, forKey: .shoppingListToStockWorkflowAutoSubmitWhenPrefilled)
+        try container.encode(locale, forKey: .locale)
     }
 }
 
@@ -270,7 +181,7 @@ typealias GrocyUserSettingsList = [GrocyUserSettings]
 
 class GrocyUserSettingsString: Codable {
     var value: String?
-    
+
     required init(value: String) {
         self.value = value
     }
@@ -278,17 +189,17 @@ class GrocyUserSettingsString: Codable {
 
 class GrocyUserSettingsInt: Codable {
     var value: Int?
-    
+
     required init(from decoder: Decoder) throws {
         do {
             let container = try decoder.container(keyedBy: CodingKeys.self)
-            
+
             do { self.value = try container.decodeIfPresent(Int.self, forKey: .value) } catch { self.value = try Int(container.decodeIfPresent(String.self, forKey: .value) ?? "") }
         } catch {
             throw APIError.decodingError(error: error)
         }
     }
-    
+
     init(value: Int?) {
         self.value = value
     }
@@ -296,17 +207,17 @@ class GrocyUserSettingsInt: Codable {
 
 class GrocyUserSettingsDouble: Codable {
     var value: Double?
-    
+
     required init(from decoder: Decoder) throws {
         do {
             let container = try decoder.container(keyedBy: CodingKeys.self)
-            
+
             do { self.value = try container.decodeIfPresent(Double.self, forKey: .value) } catch { self.value = try Double(container.decodeIfPresent(String.self, forKey: .value) ?? "") }
         } catch {
             throw APIError.decodingError(error: error)
         }
     }
-    
+
     init(value: Double?) {
         self.value = value
     }
@@ -314,11 +225,11 @@ class GrocyUserSettingsDouble: Codable {
 
 class GrocyUserSettingsBool: Codable {
     var value: Bool
-    
+
     required init(from decoder: Decoder) throws {
         do {
             let container = try decoder.container(keyedBy: CodingKeys.self)
-            
+
             do {
                 self.value = try container.decode(Bool.self, forKey: .value)
             } catch {
@@ -332,7 +243,7 @@ class GrocyUserSettingsBool: Codable {
             throw APIError.decodingError(error: error)
         }
     }
-    
+
     init(value: Bool) {
         self.value = value
     }

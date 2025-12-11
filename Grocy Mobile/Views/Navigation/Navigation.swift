@@ -58,6 +58,8 @@ struct Navigation: View {
             ShoppingListView()
         case .recipes:
             RecipesView()
+        case .choresOverview:
+            ChoresView()
         case .purchase:
             PurchaseProductView()
         case .consume:

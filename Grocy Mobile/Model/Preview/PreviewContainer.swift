@@ -46,7 +46,7 @@ struct PreviewContainer {
         VolatileStock.self,
         GrocyUser.self,
         RecipeFulfilment.self,
-        ChoreInfoElement.self,
+        Chore.self,
     ]
 
     static let shared: ModelContainer = {
@@ -93,7 +93,7 @@ struct PreviewContainer {
         loadAndInsert(modelType: VolatileStock.self, filename: "stock__volatile.json", into: context, singleElement: true)
         loadAndInsert(modelType: GrocyUser.self, filename: "users.json", into: context)
         loadAndInsert(modelType: RecipeFulfilment.self, filename: "recipes__fulfillment.json", into: context)
-        loadAndInsert(modelType: ChoreInfoElement.self, filename: "chores.json", into: context)
+        loadAndInsert(modelType: Chore.self, filename: "chores.json", into: context)
 
         try? context.save()
     }

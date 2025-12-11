@@ -18,6 +18,7 @@ private enum TabNavigationItem: String, Codable {
     case settings = "settings"
     case openFoodFacts = "openFoodFacts"
     case recipes = "recipes"
+    case chores = "chores"
     case stockInteraction = "stockInteraction"
     case purchaseProduct = "purchaseProduct"
     case consumeProduct = "consumeProduct"
@@ -65,6 +66,12 @@ struct AppTabNavigation: View {
                 Tab("Recipes", systemImage: MySymbols.recipe, value: TabNavigationItem.recipes) {
                     NavigationStack {
                         RecipesView()
+                    }
+                }
+                
+                Tab("Chores overview", systemImage: MySymbols.chores, value: TabNavigationItem.chores) {
+                    NavigationStack {
+                        ChoresView()
                     }
                 }
             }

@@ -13,7 +13,7 @@ struct ShoppingListItemWrapped {
     let product: MDProduct?
 }
 
-enum SortOption: Hashable, Sendable {
+enum ShoppingListSortOption: Hashable, Sendable {
     case byName
     case byAmount
 }
@@ -92,7 +92,7 @@ struct ShoppingListView: View {
         }
     }
     @State private var shoppingListGrouping: ShoppingListGrouping = .productGroup
-    @State private var sortOption: SortOption = .byName
+    @State private var sortOption: ShoppingListSortOption = .byName
     @State private var sortOrder: SortOrder = .forward
 
     @State private var showFilterSheet: Bool = false
@@ -703,10 +703,10 @@ struct ShoppingListView: View {
                     content: {
                         Label("Name", systemImage: MySymbols.product)
                             .labelStyle(.titleAndIcon)
-                            .tag(SortOption.byName)
+                            .tag(ShoppingListSortOption.byName)
                         Label("Amount", systemImage: MySymbols.amount)
                             .labelStyle(.titleAndIcon)
-                            .tag(SortOption.byAmount)
+                            .tag(ShoppingListSortOption.byAmount)
                     }
                 )
                 #if os(iOS)
