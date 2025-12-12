@@ -21,6 +21,7 @@ struct ChoresView: View {
 
     @State private var searchString: String = ""
     @State private var showingFilterSheet = false
+    @State private var showChoreLog = false
     @State private var filteredStatus: ChoreStatus = .all
     @State private var filteredUserID: Int? = nil
     @State private var sortOption: ChoresSortOption = .byName
@@ -111,7 +112,7 @@ struct ChoresView: View {
             return nil
         }
     }
-    
+
     var sortComparator: (Chore, Chore) -> Bool {
         switch sortOption {
         case .byName:
@@ -196,6 +197,16 @@ struct ChoresView: View {
                 }
                 sortGroupMenu
             }
+            ToolbarItem(placement: .automatic) {
+                Button(
+                    action: {
+                        showChoreLog.toggle()
+                    },
+                    label: {
+                        Label("Chores journal", systemImage: MySymbols.stockJournal)
+                    }
+                )
+            }
         }
         .sheet(isPresented: $showingFilterSheet) {
             NavigationStack {
@@ -230,7 +241,11 @@ struct ChoresView: View {
                     }
             }
             .presentationDetents([.medium])
-
+        }
+        .sheet(isPresented: $showChoreLog) {
+            NavigationStack {
+                ChoreLogView(isPopup: true)
+            }
         }
     }
 

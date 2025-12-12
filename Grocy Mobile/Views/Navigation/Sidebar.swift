@@ -44,11 +44,11 @@ struct Sidebar: View {
                 }
             }
 
-            if devMode {
-                Section {
-                    NavigationLink(value: NavigationItem.choresOverview) {
-                        Label("Chores overview", systemImage: MySymbols.chores)
-                    }
+            Section {
+                NavigationLink(value: NavigationItem.choresOverview) {
+                    Label("Chores overview", systemImage: MySymbols.chores)
+                }
+                if devMode {
                     NavigationLink(value: NavigationItem.tasks) {
                         Label("Tasks", systemImage: MySymbols.tasks)
                     }
@@ -82,10 +82,10 @@ struct Sidebar: View {
                 NavigationLink(value: NavigationItem.inventory) {
                     Label("Inventory", systemImage: MySymbols.inventory)
                 }
+                NavigationLink(value: NavigationItem.choreTracking) {
+                    Label("Chore tracking", systemImage: MySymbols.chores)
+                }
                 if devMode {
-                    NavigationLink(value: NavigationItem.choreTracking) {
-                        Label("Chore tracking", systemImage: MySymbols.chores)
-                    }
                     NavigationLink(value: NavigationItem.batteryTracking) {
                         Label("Battery tracking", systemImage: MySymbols.batteries)
                     }

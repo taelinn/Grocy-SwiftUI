@@ -60,6 +60,8 @@ struct Navigation: View {
             RecipesView()
         case .choresOverview:
             ChoresView()
+        case .choreTracking:
+            ChoreTrackingView()
         case .purchase:
             PurchaseProductView()
         case .consume:

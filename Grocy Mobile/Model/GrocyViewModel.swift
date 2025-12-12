@@ -51,7 +51,8 @@ class GrocyViewModel {
     var recipes: Recipes = []
     var recipeFulfillments: RecipeFulfilments = []
     var recipePosResolved: [RecipePosResolvedElement] = []
-    var choresInfo: Chores = []
+    var chores: Chores = []
+    var choreLog: ChoreLog = []
 
     var mdProducts: MDProducts = []
     var mdProductBarcodes: MDProductBarcodes = []
@@ -301,6 +302,9 @@ class GrocyViewModel {
                         case .chores:
                             let data: [MDChore] = try await self.getObjectAndSaveSwiftData(object: object)
                             self.mdChores = data
+                        case .chores_log:
+                            let data: [ChoreLogEntry] = try await self.getObjectAndSaveSwiftData(object: object)
+                            self.choreLog = data
                         case .locations:
                             let data: [MDLocation] = try await self.getObjectAndSaveSwiftData(object: object)
                             self.mdLocations = data
@@ -343,6 +347,9 @@ class GrocyViewModel {
                         case .stock_current_locations:
                             let data: [StockLocation] = try await self.getObjectAndSaveSwiftData(object: object)
                             self.stockCurrentLocations = data
+                        case .task_categories:
+                            let data: [MDTaskCategory] = try await self.getObjectAndSaveSwiftData(object: object)
+                            self.mdTaskCategories = data
                         default:
                             GrocyLogger.error("Object not implemented")
                         }
@@ -388,10 +395,10 @@ class GrocyViewModel {
         switch additionalObject {
         case .current_user:
             self.currentUser = try await grocyApi.getUser().first
-        
+
         case .chores:
-            self.choresInfo = try await grocyApi.getChores()
-            try swiftDataSync.syncPersistentCollection(Chore.self, with: self.choresInfo)
+            self.chores = try await grocyApi.getChores()
+            try swiftDataSync.syncPersistentCollection(Chore.self, with: self.chores)
 
         case .stock:
             self.stock = try await grocyApi.getStock()
@@ -455,7 +462,8 @@ class GrocyViewModel {
         self.recipeFulfillments = []
         self.recipePosResolved = []
         self.mdChores = []
-        self.choresInfo = []
+        self.chores = []
+        self.choreLog = []
 
         self.mdProducts = []
         self.mdProductBarcodes = []
@@ -733,5 +741,11 @@ class GrocyViewModel {
     func putMDObjectWithID<T: Codable>(object: ObjectEntities, id: Int, content: T) async throws {
         let jsonContent = try! jsonEncoder.encode(content)
         try await grocyApi.putObjectWithID(object: object, id: id, content: jsonContent)
+    }
+
+    // MARK: - Chores
+    func executeChore(id: Int, content: ChoreExecuteModel) async throws -> ChoreLogEntry {
+        let jsonContent = try! jsonEncoder.encode(content)
+        return try await grocyApi.choreExecute(id: id, content: jsonContent)
     }
 }

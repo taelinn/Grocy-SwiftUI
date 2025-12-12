@@ -17,7 +17,7 @@ struct MDChoresView: View {
     @State private var choreToDelete: MDChore? = nil
     @State private var showDeleteConfirmation: Bool = false
 
-    var chores: MDChores {
+    var mdChores: MDChores {
         let sortDescriptor = SortDescriptor<MDChore>(\.name)
         let predicate = #Predicate<MDChore> { chore in
             searchString.isEmpty || chore.name.localizedStandardContains(searchString)
@@ -74,10 +74,10 @@ struct MDChoresView: View {
                 ServerProblemView()
             } else if choresCount == 0 {
                 ContentUnavailableView("No chore defined. Please create one.", systemImage: MySymbols.chores)
-            } else if chores.isEmpty {
+            } else if mdChores.isEmpty {
                 ContentUnavailableView.search
             }
-            ForEach(chores, id: \.id) { chore in
+            ForEach(mdChores, id: \.id) { chore in
                 NavigationLink(value: chore) {
                     MDChoreRowView(chore: chore)
                 }

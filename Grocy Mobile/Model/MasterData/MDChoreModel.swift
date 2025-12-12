@@ -57,7 +57,7 @@ class MDChore: Codable, Equatable, Identifiable {
     required init(from decoder: Decoder) throws {
         do {
             let container = try decoder.container(keyedBy: CodingKeys.self)
-            do { self.id = try container.decode(Int.self, forKey: .id) } catch { self.id = try Int(container.decode(String.self, forKey: .id))! }
+            self.id = try container.decodeFlexibleInt(forKey: .id)
             self.name = try container.decode(String.self, forKey: .name)
             self.mdChoreDescription = try container.decodeIfPresent(String.self, forKey: .choreDescription) ?? ""
             self.periodType = ChorePeriodType(rawValue: try container.decode(String.self, forKey: .periodType))!

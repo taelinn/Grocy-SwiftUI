@@ -8,8 +8,32 @@
 import Foundation
 
 public enum ObjectEntities: String, CaseIterable {
-    case products, product_barcodes, chores, batteries, locations, quantity_units, quantity_unit_conversions, shopping_list, shopping_lists, shopping_locations, recipes, recipes_pos, recipes_pos_resolved, recipes_nestings, tasks,
-        task_categories, product_groups, equipment, userfields, userentities, userobjects, meal_plan, stock_log, stock, stock_current_locations
+    case products
+    case product_barcodes
+    case chores
+    case chores_log
+    case batteries
+    case locations
+    case quantity_units
+    case quantity_unit_conversions
+    case shopping_list
+    case shopping_lists
+    case shopping_locations
+    case recipes
+    case recipes_pos
+    case recipes_pos_resolved
+    case recipes_nestings
+    case tasks
+    case task_categories
+    case product_groups
+    case equipment
+    case userfields
+    case userentities
+    case userobjects
+    case meal_plan
+    case stock_log
+    case stock
+    case stock_current_locations
 }
 
 public enum AdditionalEntities: String, CaseIterable {
@@ -58,6 +82,7 @@ protocol GrocyAPI {
     func getRecipeFulfillments() async throws -> RecipeFulfilments
     // MARK: - Chores
     func getChores() async throws -> Chores
+    func choreExecute(id: Int, content: Data) async throws -> ChoreLogEntry
     // MARK: - Current user
     func getUser() async throws -> GrocyUsers
     func getUserSettings() async throws -> GrocyUserSettings
@@ -538,10 +563,14 @@ extension GrocyApi {
     func getRecipeFulfillments() async throws -> RecipeFulfilments {
         return try await call(.recipesFulfillment, method: .GET)
     }
-    
+
     // MARK: - Chores
     func getChores() async throws -> Chores {
         return try await call(.chores, method: .GET)
+    }
+
+    func choreExecute(id: Int, content: Data) async throws -> ChoreLogEntry {
+        return try await call(.choreWithIDExecute, method: .POST, id: String(id), content: content)
     }
 
     // MARK: - Current user
@@ -611,7 +640,7 @@ extension GrocyApi {
             return filepath
         }
     }
-    
+
     func externalBarcodeLookup(barcode: String) async throws -> ExternalBarcodeLookup? {
         return try await call(.stockBarcodeExternalLookup, method: .GET, id: barcode)
     }

@@ -58,6 +58,7 @@ struct Grocy_MobileApp: App {
             MDProductGroup.self,
             MDProduct.self,
             MDProductBarcode.self,
+            MDTaskCategory.self,
             StockJournalEntry.self,
             GrocyUser.self,
             StockEntry.self,
@@ -72,6 +73,7 @@ struct Grocy_MobileApp: App {
             RecipeFulfilment.self,
             MDChore.self,
             Chore.self,
+            ChoreLogEntry.self,
         ])
 
         // Profile container schema (ServerProfile and LoginCustomHeader with iCloud sync)
