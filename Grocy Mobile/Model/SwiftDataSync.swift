@@ -18,12 +18,11 @@ struct SwiftDataSynchronizer {
         self.modelContext = modelContext
     }
 
-    func getObjectAndSaveSwiftData<T: Codable & Equatable & Identifiable & PersistentModel>(
-        object: ObjectEntities,
-        grocyApi: GrocyAPI
-    ) async throws -> [T] {
-        let incomingObjects: [T] = try await grocyApi.getObject(object: object)
-
+    /// Generic sync for collection models with identity-based deduplication.
+    /// Works with any Identifiable, PersistentModel collection.
+    func syncPersistentCollection<T: Codable & Equatable & Identifiable & PersistentModel>(
+        _ incomingObjects: [T]
+    ) throws {
         // Fetch existing objects
         let fetchDescriptor = FetchDescriptor<T>()
         let existingObjects: [T]
@@ -33,42 +32,13 @@ struct SwiftDataSynchronizer {
         } catch {
             // If fetch fails, clear and insert the new objects in a clean state
             try clearAndInsertObjects(incomingObjects)
-            return incomingObjects
+            return
         }
 
         // Perform synchronization
         try synchronizeObjects(existing: existingObjects, incoming: incomingObjects)
 
-        return incomingObjects
-    }
-
-    /// Generic sync for collection models with identity-based deduplication.
-    /// Works with any Identifiable, PersistentModel collection.
-    func syncPersistentCollection<T: Identifiable & PersistentModel>(
-        _ modelType: T.Type,
-        with incoming: [T]
-    ) throws {
-        do {
-            let fetchDescriptor = FetchDescriptor<T>()
-            let existing = try modelContext.fetch(fetchDescriptor)
-
-            // Delete removed items
-            let incomingIds = Set(incoming.map { $0.id })
-            for item in existing where !incomingIds.contains(item.id) {
-                modelContext.delete(item)
-            }
-
-            // Insert new items (skip existing)
-            let existingIds = Set(existing.map { $0.id })
-            for item in incoming where !existingIds.contains(item.id) {
-                modelContext.insert(item)
-            }
-
-            try modelContext.save()
-        } catch {
-            modelContext.rollback()
-            throw error
-        }
+        return
     }
 
     /// Generic sync for singleton models (one instance exists).

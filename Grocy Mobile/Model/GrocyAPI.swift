@@ -83,6 +83,7 @@ protocol GrocyAPI {
     // MARK: - Chores
     func getChores() async throws -> Chores
     func choreExecute(id: Int, content: Data) async throws -> ChoreLogEntry
+    func undoChoreWithID(id: Int) async throws
     // MARK: - Current user
     func getUser() async throws -> GrocyUsers
     func getUserSettings() async throws -> GrocyUserSettings
@@ -571,6 +572,10 @@ extension GrocyApi {
 
     func choreExecute(id: Int, content: Data) async throws -> ChoreLogEntry {
         return try await call(.choreWithIDExecute, method: .POST, id: String(id), content: content)
+    }
+    
+    func undoChoreWithID(id: Int) async throws {
+        return try await callEmptyResponse(.choreExecutionWithIDUndo, method: .POST, id: String(id))
     }
 
     // MARK: - Current user

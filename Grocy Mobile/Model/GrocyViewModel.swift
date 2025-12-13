@@ -276,18 +276,6 @@ class GrocyViewModel {
         }
     }
 
-    func getObjectAndSaveSwiftData<T: Codable & Equatable & Identifiable & PersistentModel>(object: ObjectEntities) async throws -> [T] {
-        do {
-            return try await swiftDataSync.getObjectAndSaveSwiftData(
-                object: object,
-                grocyApi: grocyApi
-            )
-        } catch {
-            GrocyLogger.error("Failed to save data: \(error)")
-            throw error
-        }
-    }
-
     func requestDataWithTimeStamp(objects: [ObjectEntities]? = nil, additionalObjects: [AdditionalEntities]? = nil, timeStamp: SystemDBChangedTime) async {
         if let objects = objects {
             for object in objects {
@@ -297,59 +285,58 @@ class GrocyViewModel {
 
                         switch object {
                         case .batteries:
-                            let data: [MDBattery] = try await grocyApi.getObject(object: object)
-                            self.mdBatteries = data
+                            self.mdBatteries = try await grocyApi.getObject(object: object)
                         case .chores:
-                            let data: [MDChore] = try await self.getObjectAndSaveSwiftData(object: object)
-                            self.mdChores = data
+                            self.mdChores = try await grocyApi.getObject(object: object)
+                            try swiftDataSync.syncPersistentCollection(self.mdChores)
                         case .chores_log:
-                            let data: [ChoreLogEntry] = try await self.getObjectAndSaveSwiftData(object: object)
-                            self.choreLog = data
+                            self.choreLog = try await grocyApi.getObject(object: object)
+                            try swiftDataSync.syncPersistentCollection(self.choreLog)
                         case .locations:
-                            let data: [MDLocation] = try await self.getObjectAndSaveSwiftData(object: object)
-                            self.mdLocations = data
+                            self.mdLocations = try await grocyApi.getObject(object: object)
+                            try swiftDataSync.syncPersistentCollection(self.mdLocations)
                         case .product_barcodes:
-                            let data: [MDProductBarcode] = try await self.getObjectAndSaveSwiftData(object: object)
-                            self.mdProductBarcodes = data
+                            self.mdProductBarcodes = try await grocyApi.getObject(object: object)
+                            try swiftDataSync.syncPersistentCollection(self.mdProductBarcodes)
                         case .product_groups:
-                            let data: [MDProductGroup] = try await self.getObjectAndSaveSwiftData(object: object)
-                            self.mdProductGroups = data
+                            self.mdProductGroups = try await grocyApi.getObject(object: object)
+                            try swiftDataSync.syncPersistentCollection(self.mdProductGroups)
                         case .products:
-                            let data: [MDProduct] = try await self.getObjectAndSaveSwiftData(object: object)
-                            self.mdProducts = data
+                            self.mdProducts = try await grocyApi.getObject(object: object)
+                            try swiftDataSync.syncPersistentCollection(self.mdProducts)
                         case .quantity_unit_conversions:
-                            let data: [MDQuantityUnitConversion] = try await self.getObjectAndSaveSwiftData(object: object)
-                            self.mdQuantityUnitConversions = data
+                            self.mdQuantityUnitConversions = try await grocyApi.getObject(object: object)
+                            try swiftDataSync.syncPersistentCollection(self.mdQuantityUnitConversions)
                         case .recipes:
-                            let data: [Recipe] = try await self.getObjectAndSaveSwiftData(object: object)
-                            self.recipes = data
+                            self.recipes = try await grocyApi.getObject(object: object)
+                            try swiftDataSync.syncPersistentCollection(self.recipes)
                         case .recipes_pos_resolved:
-                            let data: [RecipePosResolvedElement] = try await self.getObjectAndSaveSwiftData(object: object)
-                            self.recipePosResolved = data
+                            self.recipePosResolved = try await grocyApi.getObject(object: object)
+                            try swiftDataSync.syncPersistentCollection(self.recipePosResolved)
                         case .quantity_units:
-                            let data: [MDQuantityUnit] = try await self.getObjectAndSaveSwiftData(object: object)
-                            self.mdQuantityUnits = data
+                            self.mdQuantityUnits = try await grocyApi.getObject(object: object)
+                            try swiftDataSync.syncPersistentCollection(self.mdQuantityUnits)
                         case .shopping_list:
-                            let data: [ShoppingListItem] = try await self.getObjectAndSaveSwiftData(object: object)
-                            self.shoppingList = data
+                            self.shoppingList = try await grocyApi.getObject(object: object)
+                            try swiftDataSync.syncPersistentCollection(self.shoppingList)
                         case .shopping_lists:
-                            let data: [ShoppingListDescription] = try await self.getObjectAndSaveSwiftData(object: object)
-                            self.shoppingListDescriptions = data
+                            self.shoppingListDescriptions = try await grocyApi.getObject(object: object)
+                            try swiftDataSync.syncPersistentCollection(self.shoppingListDescriptions)
                         case .shopping_locations:
-                            let data: [MDStore] = try await self.getObjectAndSaveSwiftData(object: object)
-                            self.mdStores = data
+                            self.mdStores = try await grocyApi.getObject(object: object)
+                            try swiftDataSync.syncPersistentCollection(self.mdStores)
                         case .stock:
-                            let data: [StockEntry] = try await self.getObjectAndSaveSwiftData(object: object)
-                            self.stockEntries = data
+                            self.stockEntries = try await grocyApi.getObject(object: object)
+                            try swiftDataSync.syncPersistentCollection(self.stockEntries)
                         case .stock_log:
-                            let data: [StockJournalEntry] = try await self.getObjectAndSaveSwiftData(object: object)
-                            self.stockJournal = data
+                            self.stockJournal = try await grocyApi.getObject(object: object)
+                            try swiftDataSync.syncPersistentCollection(self.stockJournal)
                         case .stock_current_locations:
-                            let data: [StockLocation] = try await self.getObjectAndSaveSwiftData(object: object)
-                            self.stockCurrentLocations = data
+                            self.stockCurrentLocations = try await grocyApi.getObject(object: object)
+                            try swiftDataSync.syncPersistentCollection(self.stockCurrentLocations)
                         case .task_categories:
-                            let data: [MDTaskCategory] = try await self.getObjectAndSaveSwiftData(object: object)
-                            self.mdTaskCategories = data
+                            self.mdTaskCategories = try await grocyApi.getObject(object: object)
+                            try swiftDataSync.syncPersistentCollection(self.mdTaskCategories)
                         default:
                             GrocyLogger.error("Object not implemented")
                         }
@@ -398,7 +385,7 @@ class GrocyViewModel {
 
         case .chores:
             self.chores = try await grocyApi.getChores()
-            try swiftDataSync.syncPersistentCollection(Chore.self, with: self.chores)
+            try swiftDataSync.syncPersistentCollection(self.chores)
 
         case .stock:
             self.stock = try await grocyApi.getStock()
@@ -420,7 +407,7 @@ class GrocyViewModel {
 
         case .recipeFulfillments:
             self.recipeFulfillments = try await grocyApi.getRecipeFulfillments()
-            try swiftDataSync.syncPersistentCollection(RecipeFulfilment.self, with: self.recipeFulfillments)
+            try swiftDataSync.syncPersistentCollection(self.recipeFulfillments)
 
         case .users:
             self.users = try await grocyApi.getUsers()
@@ -640,12 +627,12 @@ class GrocyViewModel {
             case .locations:
                 let stockLocations: StockLocations = try await grocyApi.getStockProductInfo(stockModeGet: .locations, productID: productID, queries: queries)
                 self.stockProductLocations[productID] = stockLocations
-                try swiftDataSync.syncPersistentCollection(StockLocation.self, with: stockLocations)
+                try swiftDataSync.syncPersistentCollection(stockLocations)
 
             case .entries:
                 let stockEntries: StockEntries = try await grocyApi.getStockProductInfo(stockModeGet: .entries, productID: productID, queries: queries)
                 self.stockProductEntries[productID] = stockEntries
-                try swiftDataSync.syncPersistentCollection(StockEntry.self, with: stockEntries)
+                try swiftDataSync.syncPersistentCollection(stockEntries)
 
             case .priceHistory:
                 print("not implemented")
@@ -747,5 +734,9 @@ class GrocyViewModel {
     func executeChore(id: Int, content: ChoreExecuteModel) async throws -> ChoreLogEntry {
         let jsonContent = try! jsonEncoder.encode(content)
         return try await grocyApi.choreExecute(id: id, content: jsonContent)
+    }
+    
+    func undoChoreWithID(id: Int) async throws {
+        return try await grocyApi.undoChoreWithID(id: id)
     }
 }
