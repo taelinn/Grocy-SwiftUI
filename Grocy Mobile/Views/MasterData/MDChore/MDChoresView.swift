@@ -99,7 +99,7 @@ struct MDChoresView: View {
                 isPresented: $showAddChore,
                 content: {
                     NavigationStack {
-                        MDChoreFormView()
+                        MDChoreFormView(isPopup: true)
                     }
                 }
             )

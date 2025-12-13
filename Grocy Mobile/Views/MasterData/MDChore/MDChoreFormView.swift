@@ -20,12 +20,15 @@ struct MDChoreFormView: View {
     @State private var isSuccessful: Bool? = nil
     @State private var errorMessage: String? = nil
 
-    var existingChore: MDChore?
+    var existingChore: MDChore? = nil
+    var isPopup: Bool
+
     @State var chore: MDChore
 
-    init(existingChore: MDChore? = nil) {
+    init(existingChore: MDChore? = nil, isPopup: Bool = false) {
         self.existingChore = existingChore
         self.chore = existingChore ?? MDChore()
+        self.isPopup = isPopup
     }
 
     private var foundChoreInfo: Chore? {
@@ -265,7 +268,7 @@ struct MDChoreFormView: View {
         }
         .navigationTitle(existingChore == nil ? "Create chore" : "Edit chore")
         .toolbar(content: {
-            if existingChore == nil {
+            if isPopup {
                 ToolbarItem(
                     placement: .cancellationAction,
                     content: {
