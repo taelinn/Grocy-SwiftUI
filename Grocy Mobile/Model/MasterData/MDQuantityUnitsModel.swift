@@ -29,18 +29,10 @@ class MDQuantityUnit: Codable, Equatable, Identifiable {
     required init(from decoder: Decoder) throws {
         do {
             let container = try decoder.container(keyedBy: CodingKeys.self)
-            do { self.id = try container.decode(Int.self, forKey: .id) } catch { self.id = Int(try container.decode(String.self, forKey: .id))! }
+            self.id = try container.decodeFlexibleInt(forKey: .id)
             self.name = try container.decode(String.self, forKey: .name)
             self.namePlural = (try? container.decodeIfPresent(String.self, forKey: .namePlural)) ?? ""
-            do {
-                self.active = try container.decode(Bool.self, forKey: .active)
-            } catch {
-                do {
-                    self.active = try container.decode(Int.self, forKey: .active) == 1
-                } catch {
-                    self.active = ["1", "true"].contains(try? container.decode(String.self, forKey: .active))
-                }
-            }
+            self.active = try container.decodeFlexibleBool(forKey: .active)
             self.mdQuantityUnitDescription = (try? container.decodeIfPresent(String.self, forKey: .mdQuantityUnitDescription)) ?? ""
             self.rowCreatedTimestamp = try container.decode(String.self, forKey: .rowCreatedTimestamp)
         } catch {

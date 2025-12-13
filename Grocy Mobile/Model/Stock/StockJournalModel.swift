@@ -20,11 +20,11 @@ class StockJournalEntry: Codable, Equatable {
     var bestBeforeDate: String?
     var purchasedDate: String?
     var usedDate: String?
-    var spoiled: Int
+    var spoiled: Bool
     var stockID: String
     @Attribute var transactionTypeRaw: String
     var price: Double?
-    var undone: Int
+    var undone: Bool
     var undoneTimestamp: String?
     var openedDate: String?
     var locationID: Int
@@ -65,27 +65,27 @@ class StockJournalEntry: Codable, Equatable {
     required init(from decoder: Decoder) throws {
         do {
             let container = try decoder.container(keyedBy: CodingKeys.self)
-            do { self.id = try container.decode(Int.self, forKey: .id) } catch { self.id = Int(try container.decode(String.self, forKey: .id))! }
-            do { self.productID = try container.decode(Int.self, forKey: .productID) } catch { self.productID = try Int(container.decode(String.self, forKey: .productID))! }
-            do { self.amount = try container.decode(Double.self, forKey: .amount) } catch { self.amount = try Double(container.decode(String.self, forKey: .amount))! }
+            self.id = try container.decodeFlexibleInt(forKey: .id)
+            self.productID = try container.decodeFlexibleInt(forKey: .productID)
+            self.amount = try container.decodeFlexibleDouble(forKey: .amount)
             self.bestBeforeDate = try? container.decode(String.self, forKey: .bestBeforeDate)
             self.purchasedDate = try? container.decodeIfPresent(String.self, forKey: .purchasedDate) ?? nil
             self.usedDate = try? container.decodeIfPresent(String.self, forKey: .usedDate) ?? nil
-            do { self.spoiled = try container.decode(Int.self, forKey: .spoiled) } catch { self.spoiled = try Int(container.decode(String.self, forKey: .spoiled))! }
-            do { self.stockID = try container.decode(String.self, forKey: .stockID) } catch { self.stockID = try String(container.decode(Int.self, forKey: .stockID)) }
+            self.spoiled = try container.decodeFlexibleBool(forKey: .spoiled)
+            self.stockID = try container.decodeFlexibleString(forKey: .stockID)
             self.transactionTypeRaw = try container.decode(String.self, forKey: .transactionTypeRaw)
-            do { self.price = try container.decodeIfPresent(Double.self, forKey: .price) } catch { self.price = try? Double(container.decodeIfPresent(String.self, forKey: .price) ?? "") }
-            do { self.undone = try container.decode(Int.self, forKey: .undone) } catch { self.undone = try Int(container.decode(String.self, forKey: .undone))! }
+            self.price = try container.decodeFlexibleDoubleIfPresent(forKey: .price)
+            self.undone = try container.decodeFlexibleBool(forKey: .undone)
             self.undoneTimestamp = try? container.decodeIfPresent(String.self, forKey: .undoneTimestamp) ?? nil
             self.openedDate = try? container.decodeIfPresent(String.self, forKey: .openedDate) ?? nil
             self.rowCreatedTimestamp = try container.decode(String.self, forKey: .rowCreatedTimestamp)
-            do { self.locationID = try container.decode(Int.self, forKey: .locationID) } catch { self.locationID = try Int(container.decode(String.self, forKey: .locationID))! }
-            do { self.recipeID = try container.decodeIfPresent(Int.self, forKey: .recipeID) } catch { self.recipeID = try? Int(container.decodeIfPresent(String.self, forKey: .recipeID) ?? "") }
-            do { self.correlationID = try container.decodeIfPresent(Int.self, forKey: .correlationID) } catch { self.correlationID = try? Int(container.decodeIfPresent(String.self, forKey: .correlationID) ?? "") }
-            do { self.transactionID = try container.decode(String.self, forKey: .transactionID) } catch { self.transactionID = try String(container.decode(Int.self, forKey: .transactionID)) }
-            do { self.stockRowID = try container.decodeIfPresent(Int.self, forKey: .stockRowID) } catch { self.stockRowID = try? Int(container.decodeIfPresent(String.self, forKey: .stockRowID) ?? "") }
-            do { self.storeID = try container.decodeIfPresent(Int.self, forKey: .storeID) } catch { self.storeID = try? Int(container.decodeIfPresent(String.self, forKey: .storeID) ?? "") }
-            do { self.userID = try container.decode(Int.self, forKey: .userID) } catch { self.userID = try Int(container.decode(String.self, forKey: .userID))! }
+            self.locationID = try container.decodeFlexibleInt(forKey: .locationID)
+            self.recipeID = try container.decodeFlexibleIntIfPresent(forKey: .recipeID)
+            self.correlationID = try container.decodeFlexibleIntIfPresent(forKey: .correlationID)
+            self.transactionID = try container.decodeFlexibleString(forKey: .transactionID)
+            self.stockRowID = try container.decodeFlexibleIntIfPresent(forKey: .stockRowID)
+            self.storeID = try container.decodeFlexibleIntIfPresent(forKey: .storeID)
+            self.userID = try container.decodeFlexibleInt(forKey: .userID)
             self.note = try? container.decodeIfPresent(String.self, forKey: .note)
         } catch {
             throw APIError.decodingError(error: error)

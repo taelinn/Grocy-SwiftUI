@@ -21,8 +21,8 @@ struct StockJournalRowView: View {
         VStack(alignment: .leading) {
             Text(product?.name ?? "Name Error")
                 .font(.title)
-                .strikethrough(journalEntry.undone == 1, color: .primary)
-            if journalEntry.undone == 1 {
+                .strikethrough(journalEntry.undone, color: .primary)
+            if journalEntry.undone {
                 if let date = getDateFromTimestamp(journalEntry.undoneTimestamp ?? "") {
                     HStack(alignment: .bottom) {
                         Text("\(Text("Undone on")) \(formatDateAsString(date, showTime: true, localizationKey: localizationKey) ?? "")")
@@ -31,7 +31,7 @@ struct StockJournalRowView: View {
                             .font(.caption)
                             .italic()
                     }
-                    .foregroundStyle(journalEntry.undone == 1 ? Color.gray : Color.primary)
+                    .foregroundStyle(journalEntry.undone ? Color.gray : Color.primary)
                 }
             }
             Group {
@@ -45,7 +45,7 @@ struct StockJournalRowView: View {
                     Text("\(Text("Note")): \(note)")
                 }
             }
-            .foregroundStyle(journalEntry.undone == 1 ? Color.gray : Color.primary)
+            .foregroundStyle(journalEntry.undone ? Color.gray : Color.primary)
             .font(.caption)
         }
     }

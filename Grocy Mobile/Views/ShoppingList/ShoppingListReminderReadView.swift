@@ -29,7 +29,7 @@ struct ShoppingListReminderReadView: View {
                     note: reminder.notes ?? "",
                     amount: amount ?? entry.amount,
                     shoppingListID: shoppingListID,
-                    done: reminder.isComplete ? 1 : 0,
+                    done: reminder.isComplete,
                     quID: entry.quID ?? -1,
                     rowCreatedTimestamp: entry.rowCreatedTimestamp
                 )

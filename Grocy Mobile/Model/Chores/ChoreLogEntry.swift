@@ -35,7 +35,7 @@ class ChoreLogEntry: Codable {
     required init(from decoder: Decoder) throws {
         do {
             let container = try decoder.container(keyedBy: CodingKeys.self)
-            do { self.id = try container.decode(Int.self, forKey: .id) } catch { self.id = try Int(container.decode(String.self, forKey: .id))! }
+            self.id = try container.decodeFlexibleInt(forKey: .id)
             self.choreID = try container.decodeFlexibleInt(forKey: .choreID)
             self.trackedTime = getDateFromString(try container.decodeIfPresent(String.self, forKey: .trackedTime))
             self.doneByUserID = try container.decodeFlexibleInt(forKey: .doneByUserID)

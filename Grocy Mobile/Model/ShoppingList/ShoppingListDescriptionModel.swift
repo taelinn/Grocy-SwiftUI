@@ -22,11 +22,8 @@ class ShoppingListDescription: Codable, Equatable {
     required init(from decoder: Decoder) throws {
         do {
             let container = try decoder.container(keyedBy: CodingKeys.self)
-            do {
-                self.id = try container.decode(Int.self, forKey: .id)
-            } catch {
-                self.id = Int(try container.decode(String.self, forKey: .id))!
-            }
+            
+            self.id = try container.decodeFlexibleInt(forKey: .id)
             self.name = try container.decode(String.self, forKey: .name)
             self.rowCreatedTimestamp = try container.decode(String.self, forKey: .rowCreatedTimestamp)
         } catch {

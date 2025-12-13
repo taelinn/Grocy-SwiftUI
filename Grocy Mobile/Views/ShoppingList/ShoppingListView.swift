@@ -124,7 +124,7 @@ struct ShoppingListView: View {
     }
 
     private func changeDoneStatus(shoppingListItem: ShoppingListItem) async {
-        shoppingListItem.done = shoppingListItem.done == 1 ? 0 : 1
+        shoppingListItem.done = !shoppingListItem.done
         do {
             try shoppingListItem.modelContext?.save()
             try await grocyVM.putMDObjectWithID(object: .shopping_list, id: shoppingListItem.id, content: shoppingListItem)
@@ -196,9 +196,9 @@ struct ShoppingListView: View {
                 case .belowMinStock:
                     return checkBelowStock(item: shLItem)
                 case .done:
-                    return shLItem.done == 1
+                    return shLItem.done
                 case .undone:
-                    return shLItem.done == 0
+                    return !shLItem.done
                 }
             }
             .filter { shLItem in
@@ -258,7 +258,7 @@ struct ShoppingListView: View {
     var numUndone: Int {
         selectedShoppingListItems
             .filter { shLItem in
-                shLItem.done == 0
+                !shLItem.done
             }
             .count
     }
@@ -266,7 +266,7 @@ struct ShoppingListView: View {
     var numDone: Int {
         selectedShoppingListItems
             .filter { shLItem in
-                shLItem.done == 1
+                shLItem.done
             }
             .count
     }
@@ -310,7 +310,7 @@ struct ShoppingListView: View {
             let filteredItems = shoppingList.filter { $0.shoppingListID == alertSHL.id }
             for shoppingListItem in filteredItems {
                 let title = "\(shoppingListItem.amount.formattedAmount)x \(mdProducts.first(where: { $0.id == shoppingListItem.productID })?.name ?? shoppingListItem.note)"
-                try ReminderStore.shared.save(Reminder(title: title, isComplete: shoppingListItem.done == 1))
+                try ReminderStore.shared.save(Reminder(title: title, isComplete: shoppingListItem.done))
             }
         } catch {
             GrocyLogger.error("Exporting the shopping list to Reminders failed. \(error)")

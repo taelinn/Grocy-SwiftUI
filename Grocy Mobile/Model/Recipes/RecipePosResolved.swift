@@ -14,20 +14,20 @@ final class RecipePosResolvedElement: Codable {
     var productID: Int
     var recipeAmount: Double
     var stockAmount: Double
-    var needFulfilled: Int
+    var needFulfilled: Bool
     var missingAmount: Int
     var amountOnShoppingList: Int
-    var needFulfilledWithShoppingList: Int
+    var needFulfilledWithShoppingList: Bool
     var quID: Int
     var costs: Double
-    var isNestedRecipePos: Int
+    var isNestedRecipePos: Bool
     var ingredientGroup: String?
     var productGroup: MDProductGroup
     var recipeType: RecipeType
     var childRecipeID: Int
     var note: String?
     var recipeVariableAmount: Int?
-    var onlyCheckSingleUnitInStock: Int
+    var onlyCheckSingleUnitInStock: Bool
     var calories: Double
     var productActive: Int
     var dueScore: Int
@@ -61,43 +61,64 @@ final class RecipePosResolvedElement: Codable {
         case productIDEffective = "product_id_effective"
         case productName = "product_name"
     }
-    
+
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        id = try container.decode(Int.self, forKey: .id)
-        recipeID = try container.decode(Int.self, forKey: .recipeID)
-        recipePosID = try container.decode(Int.self, forKey: .recipePosID)
-        productID = try container.decode(Int.self, forKey: .productID)
-        recipeAmount = try container.decode(Double.self, forKey: .recipeAmount)
-        stockAmount = try container.decode(Double.self, forKey: .stockAmount)
-        needFulfilled = try container.decode(Int.self, forKey: .needFulfilled)
-        missingAmount = try container.decode(Int.self, forKey: .missingAmount)
-        amountOnShoppingList = try container.decode(Int.self, forKey: .amountOnShoppingList)
-        needFulfilledWithShoppingList = try container.decode(Int.self, forKey: .needFulfilledWithShoppingList)
-        quID = try container.decode(Int.self, forKey: .quID)
-        costs = try container.decode(Double.self, forKey: .costs)
-        isNestedRecipePos = try container.decode(Int.self, forKey: .isNestedRecipePos)
+
+        id = try container.decodeFlexibleInt(forKey: .id)
+        recipeID = try container.decodeFlexibleInt(forKey: .recipeID)
+        recipePosID = try container.decodeFlexibleInt(forKey: .recipePosID)
+        productID = try container.decodeFlexibleInt(forKey: .productID)
+        recipeAmount = try container.decodeFlexibleDouble(forKey: .recipeAmount)
+        stockAmount = try container.decodeFlexibleDouble(forKey: .stockAmount)
+        needFulfilled = try container.decodeFlexibleBool(forKey: .needFulfilled)
+        missingAmount = try container.decodeFlexibleInt(forKey: .missingAmount)
+        amountOnShoppingList = try container.decodeFlexibleInt(forKey: .amountOnShoppingList)
+        needFulfilledWithShoppingList = try container.decodeFlexibleBool(forKey: .needFulfilledWithShoppingList)
+        quID = try container.decodeFlexibleInt(forKey: .quID)
+        costs = try container.decodeFlexibleDouble(forKey: .costs)
+        isNestedRecipePos = try container.decodeFlexibleBool(forKey: .isNestedRecipePos)
         ingredientGroup = try container.decodeIfPresent(String.self, forKey: .ingredientGroup)
         productGroup = try container.decode(MDProductGroup.self, forKey: .productGroup)
         recipeType = try container.decode(RecipeType.self, forKey: .recipeType)
-        childRecipeID = try container.decode(Int.self, forKey: .childRecipeID)
+        childRecipeID = try container.decodeFlexibleInt(forKey: .childRecipeID)
         note = try container.decodeIfPresent(String.self, forKey: .note)
-        recipeVariableAmount = try container.decodeIfPresent(Int.self, forKey: .recipeVariableAmount)
-        onlyCheckSingleUnitInStock = try container.decode(Int.self, forKey: .onlyCheckSingleUnitInStock)
-        calories = try container.decode(Double.self, forKey: .calories)
-        productActive = try container.decode(Int.self, forKey: .productActive)
-        dueScore = try container.decode(Int.self, forKey: .dueScore)
-        productIDEffective = try container.decode(Int.self, forKey: .productIDEffective)
+        recipeVariableAmount = try container.decodeFlexibleIntIfPresent(forKey: .recipeVariableAmount)
+        onlyCheckSingleUnitInStock = try container.decodeFlexibleBool(forKey: .onlyCheckSingleUnitInStock)
+        calories = try container.decodeFlexibleDouble(forKey: .calories)
+        productActive = try container.decodeFlexibleInt(forKey: .productActive)
+        dueScore = try container.decodeFlexibleInt(forKey: .dueScore)
+        productIDEffective = try container.decodeFlexibleInt(forKey: .productIDEffective)
         productName = try container.decode(String.self, forKey: .productName)
     }
-    
-    init(id: Int, recipeID: Int, recipePosID: Int, productID: Int, recipeAmount: Double, 
-         stockAmount: Double, needFulfilled: Int, missingAmount: Int, amountOnShoppingList: Int,
-         needFulfilledWithShoppingList: Int, quID: Int, costs: Double, isNestedRecipePos: Int,
-         ingredientGroup: String?, productGroup: MDProductGroup, recipeType: RecipeType,
-         childRecipeID: Int, note: String?, recipeVariableAmount: Int?,
-         onlyCheckSingleUnitInStock: Int, calories: Double, productActive: Int,
-         dueScore: Int, productIDEffective: Int, productName: String) {
+
+    init(
+        id: Int,
+        recipeID: Int,
+        recipePosID: Int,
+        productID: Int,
+        recipeAmount: Double,
+        stockAmount: Double,
+        needFulfilled: Bool,
+        missingAmount: Int,
+        amountOnShoppingList: Int,
+        needFulfilledWithShoppingList: Bool,
+        quID: Int,
+        costs: Double,
+        isNestedRecipePos: Bool,
+        ingredientGroup: String?,
+        productGroup: MDProductGroup,
+        recipeType: RecipeType,
+        childRecipeID: Int,
+        note: String?,
+        recipeVariableAmount: Int?,
+        onlyCheckSingleUnitInStock: Bool,
+        calories: Double,
+        productActive: Int,
+        dueScore: Int,
+        productIDEffective: Int,
+        productName: String
+    ) {
         self.id = id
         self.recipeID = recipeID
         self.recipePosID = recipePosID
@@ -124,7 +145,7 @@ final class RecipePosResolvedElement: Codable {
         self.productIDEffective = productIDEffective
         self.productName = productName
     }
-    
+
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(id, forKey: .id)

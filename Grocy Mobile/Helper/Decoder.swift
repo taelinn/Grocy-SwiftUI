@@ -22,7 +22,7 @@ extension KeyedDecodingContainer {
         // Fallback to standard decoding error
         return try decode(Bool.self, forKey: key)
     }
-    
+
     nonisolated func decodeFlexibleBoolIfPresent(forKey key: Key) throws -> Bool? {
         // Try Bool directly
         if let bool = try? decodeIfPresent(Bool.self, forKey: key) {
@@ -38,7 +38,7 @@ extension KeyedDecodingContainer {
         }
         return nil
     }
-    
+
     nonisolated func decodeFlexibleInt(forKey key: Key) throws -> Int {
         // Try Int directly
         if let int = try? decode(Int.self, forKey: key) {
@@ -55,7 +55,7 @@ extension KeyedDecodingContainer {
         // Fallback to standard decoding error
         return try decode(Int.self, forKey: key)
     }
-    
+
     nonisolated func decodeFlexibleIntIfPresent(forKey key: Key) throws -> Int? {
         // Try Int directly
         if let int = try? decodeIfPresent(Int.self, forKey: key) {
@@ -71,7 +71,7 @@ extension KeyedDecodingContainer {
         }
         return nil
     }
-    
+
     nonisolated func decodeFlexibleDouble(forKey key: Key) throws -> Double {
         // Try Double directly
         if let double = try? decode(Double.self, forKey: key) {
@@ -88,7 +88,7 @@ extension KeyedDecodingContainer {
         // Fallback to standard decoding error
         return try decode(Double.self, forKey: key)
     }
-    
+
     nonisolated func decodeFlexibleDoubleIfPresent(forKey key: Key) throws -> Double? {
         // Try Double directly
         if let double = try? decodeIfPresent(Double.self, forKey: key) {
@@ -104,13 +104,31 @@ extension KeyedDecodingContainer {
         }
         return nil
     }
-    
+
+    nonisolated func decodeFlexibleString(forKey key: Key) throws -> String {
+        // Try String directly
+        if let str = try? decode(String.self, forKey: key) {
+            return str
+        }
+        // Try Int convertible to String
+        if let int = try? decode(Int.self, forKey: key) {
+            return String(int)
+        }
+        // Try Double convertible to String
+        if let double = try? decode(Double.self, forKey: key) {
+            return String(double)
+        }
+        // Fallback to standard decoding error
+        return try decode(String.self, forKey: key)
+    }
+
     nonisolated func decodeFlexibleEnum<T: RawRepresentable>(
         forKey key: Key,
         default defaultValue: T
     ) throws -> T where T.RawValue: Decodable {
         if let rawValue = try? decode(T.RawValue.self, forKey: key),
-           let enumValue = T(rawValue: rawValue) {
+            let enumValue = T(rawValue: rawValue)
+        {
             return enumValue
         }
         return defaultValue

@@ -87,25 +87,13 @@ class StockProductDetails: Codable {
             self.productID = product.id
             let productBarcodes = try container.decode([MDProductBarcode].self, forKey: .productBarcodes)
             self.productBarcodesIDs = productBarcodes.map({ $0.id })
-            if let lastPurchasedTS = try? container.decodeIfPresent(String.self, forKey: .lastPurchased) {
-                self.lastPurchased = getDateFromString(lastPurchasedTS)
-            } else {
-                self.lastPurchased = nil
-            }
-            if let lastUsedTS = try? container.decodeIfPresent(String.self, forKey: .lastUsed) {
-                self.lastUsed = getDateFromString(lastUsedTS)
-            } else {
-                self.lastUsed = nil
-            }
-            do { self.stockAmount = try container.decode(Double.self, forKey: .stockAmount) } catch { self.stockAmount = try Double(container.decode(String.self, forKey: .stockAmount))! }
-            do { self.stockValue = try container.decodeIfPresent(Double.self, forKey: .stockValue) } catch { self.stockValue = try? Double(container.decodeIfPresent(String.self, forKey: .stockValue) ?? "") }
-            do { self.stockAmountOpened = try container.decodeIfPresent(Double.self, forKey: .stockAmountOpened) } catch { self.stockAmountOpened = try? Double(container.decodeIfPresent(String.self, forKey: .stockAmountOpened) ?? "") }
-            do { self.stockAmountAggregated = try container.decodeIfPresent(Double.self, forKey: .stockAmountAggregated) } catch {
-                self.stockAmountAggregated = try? Double(container.decodeIfPresent(String.self, forKey: .stockAmountAggregated) ?? "")
-            }
-            do { self.stockAmountOpenedAggregated = try container.decodeIfPresent(Double.self, forKey: .stockAmountOpenedAggregated) } catch {
-                self.stockAmountOpenedAggregated = try? Double(container.decodeIfPresent(String.self, forKey: .stockAmountOpenedAggregated) ?? "")
-            }
+            self.lastPurchased = getDateFromString(try? container.decodeIfPresent(String.self, forKey: .lastPurchased))
+            self.lastUsed = getDateFromString(try? container.decodeIfPresent(String.self, forKey: .lastUsed))
+            self.stockAmount = try container.decodeFlexibleDouble(forKey: .stockAmount)
+            self.stockValue = try container.decodeFlexibleDoubleIfPresent(forKey: .stockValue)
+            self.stockAmountOpened = try container.decodeFlexibleDoubleIfPresent(forKey: .stockAmountOpened)
+            self.stockAmountAggregated = try container.decodeFlexibleDoubleIfPresent(forKey: .stockAmountAggregated)
+            self.stockAmountOpenedAggregated = try container.decodeFlexibleDoubleIfPresent(forKey: .stockAmountOpenedAggregated)
             let quantityUnitStock = try container.decode(MDQuantityUnit.self, forKey: .quantityUnitStock)
             self.quantityUnitStockID = quantityUnitStock.id
             let defaultQuantityUnitPurchase = try container.decode(MDQuantityUnit.self, forKey: .defaultQuantityUnitPurchase)
@@ -114,46 +102,23 @@ class StockProductDetails: Codable {
             self.defaultQuantityUnitConsumeID = defaultQuantityUnitConsume.id
             let quantityUnitPrice = try container.decode(MDQuantityUnit.self, forKey: .quantityUnitPrice)
             self.quantityUnitPriceID = quantityUnitPrice.id
-
-            do { self.lastPrice = try container.decodeIfPresent(Double.self, forKey: .lastPrice) } catch { self.lastPrice = try? Double(container.decodeIfPresent(String.self, forKey: .lastPrice) ?? "") }
-            do { self.avgPrice = try container.decodeIfPresent(Double.self, forKey: .avgPrice) } catch { self.avgPrice = try? Double(container.decodeIfPresent(String.self, forKey: .avgPrice) ?? "") }
-            do { self.oldestPrice = try container.decodeIfPresent(Double.self, forKey: .oldestPrice) } catch { self.oldestPrice = try? Double(container.decodeIfPresent(String.self, forKey: .oldestPrice) ?? "") }
-            do { self.currentPrice = try container.decodeIfPresent(Double.self, forKey: .currentPrice) } catch { self.currentPrice = try? Double(container.decodeIfPresent(String.self, forKey: .currentPrice) ?? "") }
-            do { self.lastStoreID = try container.decodeIfPresent(Int.self, forKey: .lastStoreID) } catch { self.lastStoreID = try? Int(container.decodeIfPresent(String.self, forKey: .lastStoreID) ?? "") }
-            do { self.defaultStoreID = try container.decodeIfPresent(Int.self, forKey: .defaultStoreID) } catch { self.defaultStoreID = try? Int(container.decodeIfPresent(String.self, forKey: .defaultStoreID) ?? "") }
+            self.lastPrice = try container.decodeFlexibleDoubleIfPresent(forKey: .lastPrice)
+            self.avgPrice = try container.decodeFlexibleDoubleIfPresent(forKey: .avgPrice)
+            self.oldestPrice = try container.decodeFlexibleDoubleIfPresent(forKey: .oldestPrice)
+            self.currentPrice = try container.decodeFlexibleDoubleIfPresent(forKey: .currentPrice)
+            self.lastStoreID = try container.decodeFlexibleIntIfPresent(forKey: .lastStoreID)
+            self.defaultStoreID = try container.decodeFlexibleIntIfPresent(forKey: .defaultStoreID)
             self.nextDueDate = try container.decode(String.self, forKey: .nextDueDate)
             let location = try container.decode(MDLocation.self, forKey: .location)
             self.locationID = location.id
-            do { self.averageShelfLifeDays = try container.decodeIfPresent(Int.self, forKey: .averageShelfLifeDays) } catch {
-                self.averageShelfLifeDays = try? Int(container.decodeIfPresent(String.self, forKey: .averageShelfLifeDays) ?? "")
-            }
-            do { self.spoilRatePercent = try container.decode(Double.self, forKey: .spoilRatePercent) } catch { self.spoilRatePercent = try Double(container.decode(String.self, forKey: .spoilRatePercent))! }
-            do {
-                self.isAggregatedAmount = try container.decode(Bool.self, forKey: .isAggregatedAmount)
-            } catch {
-                do {
-                    self.isAggregatedAmount = try container.decodeIfPresent(Int.self, forKey: .isAggregatedAmount) == 1
-                } catch {
-                    self.isAggregatedAmount = ["1", "true"].contains(try container.decodeIfPresent(String.self, forKey: .isAggregatedAmount))
-                }
-            }
-            do {
-                self.hasChilds = try container.decode(Bool.self, forKey: .hasChilds)
-            } catch {
-                do {
-                    self.hasChilds = try container.decode(Int.self, forKey: .hasChilds) == 1
-                } catch {
-                    self.hasChilds = ["1", "true"].contains(try container.decode(String.self, forKey: .hasChilds))
-                }
-            }
+            self.averageShelfLifeDays = try container.decodeFlexibleIntIfPresent(forKey: .averageShelfLifeDays)
+            self.spoilRatePercent = try container.decodeFlexibleDouble(forKey: .spoilRatePercent)
+            self.isAggregatedAmount = try container.decodeFlexibleBool(forKey: .isAggregatedAmount)
+            self.hasChilds = try container.decodeFlexibleBool(forKey: .hasChilds)
             let defaultConsumeLocation = try container.decodeIfPresent(MDLocation.self, forKey: .defaultConsumeLocation)
             self.defaultConsumeLocationID = defaultConsumeLocation?.id
-            do { self.quConversionFactorPurchaseToStock = try container.decode(Double.self, forKey: .quConversionFactorPurchaseToStock) } catch {
-                self.quConversionFactorPurchaseToStock = try Double(container.decode(String.self, forKey: .quConversionFactorPurchaseToStock))!
-            }
-            do { self.quConversionFactorPriceToStock = try container.decode(Double.self, forKey: .quConversionFactorPriceToStock) } catch {
-                self.quConversionFactorPriceToStock = try Double(container.decode(String.self, forKey: .quConversionFactorPriceToStock))!
-            }
+            self.quConversionFactorPurchaseToStock = try container.decodeFlexibleDouble(forKey: .quConversionFactorPurchaseToStock)
+            self.quConversionFactorPriceToStock = try container.decodeFlexibleDouble(forKey: .quConversionFactorPriceToStock)
         } catch {
             throw APIError.decodingError(error: error)
         }

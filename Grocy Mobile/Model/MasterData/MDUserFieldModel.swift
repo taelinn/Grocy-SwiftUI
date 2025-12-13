@@ -15,7 +15,7 @@ struct MDUserField: Codable {
     let entity: String
     let caption: String
     let type: String
-    let showAsColumnInTables: Int
+    let showAsColumnInTables: Bool
     let config: String?
     let sortNumber: Int?
     let rowCreatedTimestamp: String
@@ -35,14 +35,14 @@ struct MDUserField: Codable {
     init(from decoder: Decoder) throws {
         do {
             let container = try decoder.container(keyedBy: CodingKeys.self)
-            do { self.id = try container.decode(Int.self, forKey: .id) } catch { self.id = Int(try container.decode(String.self, forKey: .id))! }
+            self.id = try container.decodeFlexibleInt(forKey: .id)
             self.name = try container.decode(String.self, forKey: .name)
             self.entity = try container.decode(String.self, forKey: .entity)
             self.caption = try container.decode(String.self, forKey: .caption)
             self.type = try container.decode(String.self, forKey: .type)
-            do { self.showAsColumnInTables = try container.decode(Int.self, forKey: .showAsColumnInTables) } catch { self.showAsColumnInTables = try Int(container.decode(String.self, forKey: .showAsColumnInTables)) ?? 0 }
+            self.showAsColumnInTables = try container.decodeFlexibleBool(forKey: .showAsColumnInTables)
             self.config = try? container.decodeIfPresent(String.self, forKey: .config) ?? nil
-            do { self.sortNumber = try container.decodeIfPresent(Int.self, forKey: .sortNumber) ?? nil } catch { self.sortNumber = try Int(container.decodeIfPresent(String.self, forKey: .sortNumber) ?? "") }
+            self.sortNumber = try container.decodeFlexibleIntIfPresent(forKey: .sortNumber)
             self.rowCreatedTimestamp = try container.decode(String.self, forKey: .rowCreatedTimestamp)
         } catch {
             throw APIError.decodingError(error: error)
@@ -55,7 +55,7 @@ struct MDUserField: Codable {
         entity: String,
         caption: String,
         type: String,
-        showAsColumnInTables: Int,
+        showAsColumnInTables: Bool,
         config: String? = nil,
         sortNumber: Int? = nil,
         rowCreatedTimestamp: String? = nil

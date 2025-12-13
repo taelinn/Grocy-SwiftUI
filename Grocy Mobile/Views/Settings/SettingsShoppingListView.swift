@@ -90,7 +90,7 @@ struct SettingsShoppingListView: View {
                                 do {
                                     for shoppingListItem in selectedShoppingListItems {
                                         let title = "\(shoppingListItem.amount.formattedAmount) \(mdProducts.first(where: { $0.id == shoppingListItem.productID })?.name ?? shoppingListItem.note)"
-                                        try ReminderStore.shared.save(Reminder(title: title, isComplete: shoppingListItem.done == 1))
+                                        try ReminderStore.shared.save(Reminder(title: title, isComplete: shoppingListItem.done))
                                     }
                                 } catch {
                                     print(error)

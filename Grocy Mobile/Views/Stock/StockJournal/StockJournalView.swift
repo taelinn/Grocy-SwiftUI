@@ -25,6 +25,7 @@ struct StockJournalView: View {
     @State private var filteredTransactionType: TransactionType?
     @State private var filteredUserID: Int?
     @State private var showingFilterSheet = false
+    @State private var isFirstShown: Bool = true
 
     var stockElement: StockElement? = nil
     var isPopup: Bool = false
@@ -162,7 +163,7 @@ struct StockJournalView: View {
                                 Label("Undo transaction", systemImage: MySymbols.undo)
                             }
                         )
-                        .disabled(journalEntry.undone == 1)
+                        .disabled(journalEntry.undone)
                     }
                 )
             }
@@ -243,13 +244,12 @@ struct StockJournalView: View {
         .refreshable {
             await updateData()
         }
-        .animation(
-            .default,
-            value: stockJournal.count
-        )
         .task {
             await updateData()
-            filteredProductID = stockElement?.productID
+            if isFirstShown {
+                filteredProductID = stockElement?.productID
+                isFirstShown = false
+            }
         }
     }
 }

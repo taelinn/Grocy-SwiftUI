@@ -43,29 +43,19 @@ class StockEntry: Codable, Equatable, Identifiable {
     required init(from decoder: Decoder) throws {
         do {
             let container = try decoder.container(keyedBy: CodingKeys.self)
-            do { self.id = try container.decode(Int.self, forKey: .id) } catch { self.id = Int(try container.decode(String.self, forKey: .id))! }
-            do { self.productID = try container.decode(Int.self, forKey: .productID) } catch { self.productID = try Int(container.decode(String.self, forKey: .productID))! }
-            do { self.amount = try container.decode(Double.self, forKey: .amount) } catch { self.amount = try Double(container.decode(String.self, forKey: .amount))! }
-            self.bestBeforeDate = getDateFromString(try container.decode(String.self, forKey: .bestBeforeDate))!
 
-            let purchasedDateString = try? container.decodeIfPresent(String.self, forKey: .purchasedDate)
-            self.purchasedDate = getDateFromString(purchasedDateString ?? "")
-            do { self.stockID = try container.decode(String.self, forKey: .stockID) } catch { self.stockID = try String(container.decode(Int.self, forKey: .stockID)) }
-            do { self.price = try container.decodeIfPresent(Double.self, forKey: .price) } catch { self.price = try? Double(container.decodeIfPresent(String.self, forKey: .price) ?? "") }
-            do {
-                self.stockEntryOpen = try container.decode(Bool.self, forKey: .stockEntryOpen)
-            } catch {
-                do {
-                    self.stockEntryOpen = try (container.decode(String.self, forKey: .stockEntryOpen)) == "1"
-                } catch {
-                    self.stockEntryOpen = try (container.decode(Int.self, forKey: .stockEntryOpen)) == 1
-                }
-            }
-            let openedDateString = try? container.decodeIfPresent(String.self, forKey: .openedDate)
-            self.openedDate = getDateFromString(openedDateString ?? "")
+            self.id = try container.decodeFlexibleInt(forKey: .id)
+            self.productID = try container.decodeFlexibleInt(forKey: .productID)
+            self.amount = try container.decodeFlexibleDouble(forKey: .amount)
+            self.bestBeforeDate = getDateFromString(try container.decode(String.self, forKey: .bestBeforeDate))!
+            self.purchasedDate = getDateFromString(try? container.decodeIfPresent(String.self, forKey: .purchasedDate))
+            self.stockID = try container.decodeFlexibleString(forKey: .stockID)
+            self.price = try container.decodeFlexibleDoubleIfPresent(forKey: .price)
+            self.stockEntryOpen = try container.decodeFlexibleBool(forKey: .stockEntryOpen)
+            self.openedDate = getDateFromString(try? container.decodeIfPresent(String.self, forKey: .openedDate))
             self.rowCreatedTimestamp = try container.decode(String.self, forKey: .rowCreatedTimestamp)
-            do { self.locationID = try container.decodeIfPresent(Int.self, forKey: .locationID) } catch { self.locationID = try? Int(container.decodeIfPresent(String.self, forKey: .locationID) ?? "") }
-            do { self.storeID = try container.decodeIfPresent(Int.self, forKey: .storeID) } catch { self.storeID = try? Int(container.decodeIfPresent(String.self, forKey: .storeID) ?? "") }
+            self.locationID = try container.decodeFlexibleIntIfPresent(forKey: .locationID)
+            self.storeID = try container.decodeFlexibleIntIfPresent(forKey: .storeID)
             self.note = try container.decodeIfPresent(String.self, forKey: .note)
         } catch {
             throw APIError.decodingError(error: error)

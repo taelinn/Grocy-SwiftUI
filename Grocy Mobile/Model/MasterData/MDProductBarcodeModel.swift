@@ -49,15 +49,15 @@ class MDProductBarcode: Codable, Equatable, Identifiable, CustomStringConvertibl
     required init(from decoder: Decoder) throws {
         do {
             let container = try decoder.container(keyedBy: CodingKeys.self)
-            do { self.id = try container.decode(Int.self, forKey: .id) } catch { self.id = Int(try container.decode(String.self, forKey: .id))! }
-            do { self.productID = try container.decode(Int.self, forKey: .productID) } catch { self.productID = try Int(container.decode(String.self, forKey: .productID))! }
-            do { self.barcode = try container.decode(String.self, forKey: .barcode) } catch { self.barcode = try String(container.decodeIfPresent(Int.self, forKey: .barcode)!) }
-            do { self.quID = try container.decodeIfPresent(Int.self, forKey: .quID) ?? nil } catch { self.quID = try? Int(container.decodeIfPresent(String.self, forKey: .quID) ?? "") }
-            do { self.amount = try container.decodeIfPresent(Double.self, forKey: .amount) } catch { self.amount = try Double(container.decodeIfPresent(String.self, forKey: .amount) ?? "") }
-            do { self.storeID = try container.decodeIfPresent(Int.self, forKey: .storeID) } catch { self.storeID = try? Int(container.decodeIfPresent(String.self, forKey: .storeID) ?? "") }
-            do { self.lastPrice = try container.decodeIfPresent(Double.self, forKey: .lastPrice) } catch { self.lastPrice = try? Double(container.decodeIfPresent(String.self, forKey: .lastPrice) ?? "") }
-            self.rowCreatedTimestamp = try container.decode(String.self, forKey: .rowCreatedTimestamp)
+            self.id = try container.decodeFlexibleInt(forKey: .id)
+            self.productID = try container.decodeFlexibleInt(forKey: .productID)
+            self.barcode = try container.decodeFlexibleString(forKey: .barcode)
+            self.quID = try container.decodeFlexibleIntIfPresent(forKey: .quID)
+            self.amount = try container.decodeFlexibleDoubleIfPresent(forKey: .amount)
+            self.storeID = try container.decodeFlexibleIntIfPresent(forKey: .storeID)
+            self.lastPrice = try container.decodeFlexibleDoubleIfPresent(forKey: .lastPrice)
             self.note = (try? container.decodeIfPresent(String.self, forKey: .note)) ?? ""
+            self.rowCreatedTimestamp = try container.decode(String.self, forKey: .rowCreatedTimestamp)
         } catch {
             throw APIError.decodingError(error: error)
         }

@@ -194,7 +194,7 @@ class GrocyUserSettingsInt: Codable {
         do {
             let container = try decoder.container(keyedBy: CodingKeys.self)
 
-            do { self.value = try container.decodeIfPresent(Int.self, forKey: .value) } catch { self.value = try Int(container.decodeIfPresent(String.self, forKey: .value) ?? "") }
+            self.value = try container.decodeFlexibleIntIfPresent(forKey: .value)
         } catch {
             throw APIError.decodingError(error: error)
         }
@@ -212,7 +212,7 @@ class GrocyUserSettingsDouble: Codable {
         do {
             let container = try decoder.container(keyedBy: CodingKeys.self)
 
-            do { self.value = try container.decodeIfPresent(Double.self, forKey: .value) } catch { self.value = try Double(container.decodeIfPresent(String.self, forKey: .value) ?? "") }
+            self.value = try container.decodeFlexibleDoubleIfPresent(forKey: .value)
         } catch {
             throw APIError.decodingError(error: error)
         }
@@ -230,15 +230,7 @@ class GrocyUserSettingsBool: Codable {
         do {
             let container = try decoder.container(keyedBy: CodingKeys.self)
 
-            do {
-                self.value = try container.decode(Bool.self, forKey: .value)
-            } catch {
-                do {
-                    self.value = try container.decodeIfPresent(Int.self, forKey: .value) == 1
-                } catch {
-                    self.value = ["1", "true"].contains(try container.decodeIfPresent(String.self, forKey: .value))
-                }
-            }
+            self.value = try container.decodeFlexibleBool(forKey: .value)
         } catch {
             throw APIError.decodingError(error: error)
         }

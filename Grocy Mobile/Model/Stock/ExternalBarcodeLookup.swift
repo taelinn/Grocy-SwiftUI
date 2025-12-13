@@ -13,7 +13,7 @@ class ExternalBarcodeLookup: Codable {
     var locationID: Int?
     var quIDPurchase: Int?
     var quIDStock: Int?
-    var quFactorPurchaseToStock: Int?
+    var quFactorPurchaseToStock: Double?
     var barcode: String
     var imageURL: String?
 
@@ -31,10 +31,10 @@ class ExternalBarcodeLookup: Codable {
         do {
             let container = try decoder.container(keyedBy: CodingKeys.self)
             self.name = try container.decode(String.self, forKey: .name)
-            do { self.locationID = try container.decode(Int.self, forKey: .locationID) } catch { self.locationID = try Int(container.decode(String.self, forKey: .locationID)) }
-            do { self.quIDPurchase = try container.decode(Int.self, forKey: .quIDPurchase) } catch { self.quIDPurchase = try Int(container.decode(String.self, forKey: .quIDPurchase)) }
-            do { self.quIDStock = try container.decode(Int.self, forKey: .quIDStock) } catch { self.quIDStock = try Int(container.decode(String.self, forKey: .quIDStock)) }
-            do { self.quFactorPurchaseToStock = try container.decode(Int.self, forKey: .quFactorPurchaseToStock) } catch { self.quFactorPurchaseToStock = try Int(container.decode(String.self, forKey: .quFactorPurchaseToStock)) }
+            self.locationID = try container.decodeFlexibleInt(forKey: .locationID)
+            self.quIDPurchase = try container.decodeFlexibleInt(forKey: .quIDPurchase)
+            self.quIDStock = try container.decodeFlexibleInt(forKey: .quIDStock)
+            self.quFactorPurchaseToStock = try container.decodeFlexibleDouble(forKey: .quFactorPurchaseToStock)
             self.barcode = try container.decode(String.self, forKey: .barcode)
             self.imageURL = (try? container.decodeIfPresent(String.self, forKey: .imageURL))
         } catch {

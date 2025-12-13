@@ -19,15 +19,16 @@ struct ErrorMessage: Codable {
 // MARK: - SuccessfulCreationMessage
 struct SuccessfulCreationMessage: Codable {
     let createdObjectID: Int
-    
+
     enum CodingKeys: String, CodingKey {
         case createdObjectID = "created_object_id"
     }
-    
+
     init(from decoder: Decoder) throws {
         do {
             let container = try decoder.container(keyedBy: CodingKeys.self)
-            do { self.createdObjectID = try container.decode(Int.self, forKey: .createdObjectID) } catch { self.createdObjectID = Int(try container.decode(String.self, forKey: .createdObjectID))! }
+
+            self.createdObjectID = try container.decodeFlexibleInt(forKey: .createdObjectID)
         } catch {
             throw APIError.decodingError(error: error)
         }
@@ -59,7 +60,8 @@ struct DeleteMessage: Codable {
     init(from decoder: Decoder) throws {
         do {
             let container = try decoder.container(keyedBy: CodingKeys.self)
-            do { self.deletedObjectID = try container.decode(Int.self, forKey: .deletedObjectID) } catch { self.deletedObjectID = Int(try container.decode(String.self, forKey: .deletedObjectID))! }
+            
+            self.deletedObjectID = try container.decodeFlexibleInt(forKey: .deletedObjectID)
         } catch {
             throw APIError.decodingError(error: error)
         }
@@ -69,4 +71,3 @@ struct DeleteMessage: Codable {
         self.deletedObjectID = deletedObjectID
     }
 }
-

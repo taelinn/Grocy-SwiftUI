@@ -15,7 +15,7 @@ class ShoppingListItem: Codable, Equatable {
     var note: String
     var amount: Double
     var shoppingListID: Int
-    var done: Int
+    var done: Bool
     var quID: Int?
     var rowCreatedTimestamp: String?
     
@@ -32,13 +32,13 @@ class ShoppingListItem: Codable, Equatable {
     required init(from decoder: Decoder) throws {
         do {
             let container = try decoder.container(keyedBy: CodingKeys.self)
-            do { self.id = try container.decode(Int.self, forKey: .id) } catch { self.id = Int(try container.decode(String.self, forKey: .id))! }
-            do { self.productID = try container.decodeIfPresent(Int.self, forKey: .productID) } catch { self.productID = try? Int(container.decodeIfPresent(String.self, forKey: .productID) ?? "") }
+            self.id = try container.decodeFlexibleInt(forKey: .id)
+            self.productID = try container.decodeFlexibleIntIfPresent(forKey: .productID)
             self.note = try container.decodeIfPresent(String.self, forKey: .note) ?? ""
-            do { self.amount = try container.decode(Double.self, forKey: .amount) } catch { self.amount = try Double(container.decode(String.self, forKey: .amount))! }
-            do { self.shoppingListID = try container.decode(Int.self, forKey: .shoppingListID) } catch { self.shoppingListID = try Int(container.decode(String.self, forKey: .shoppingListID))! }
-            do { self.done = try container.decode(Int.self, forKey: .done) } catch { self.done = try Int(container.decode(String.self, forKey: .done))! }
-            do { self.quID = try container.decodeIfPresent(Int.self, forKey: .quID) } catch { self.quID = try? Int(container.decodeIfPresent(String.self, forKey: .quID) ?? "") }
+            self.amount = try container.decodeFlexibleDouble(forKey: .amount)
+            self.shoppingListID = try container.decodeFlexibleInt(forKey: .shoppingListID)
+            self.done = try container.decodeFlexibleBool(forKey: .done)
+            self.quID = try container.decodeFlexibleIntIfPresent(forKey: .quID)
             self.rowCreatedTimestamp = try? container.decode(String.self, forKey: .rowCreatedTimestamp)
         } catch {
             throw APIError.decodingError(error: error)
@@ -63,7 +63,7 @@ class ShoppingListItem: Codable, Equatable {
         note: String = "",
         amount: Double = 1.0,
         shoppingListID: Int = -1,
-        done: Int = 0,
+        done: Bool = false,
         quID: Int = -1,
         rowCreatedTimestamp: String? = nil
     ) {

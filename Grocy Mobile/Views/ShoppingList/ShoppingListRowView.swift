@@ -34,27 +34,27 @@ struct ShoppingListRowView: View {
         VStack(alignment: .leading) {
             Text(product?.name ?? shoppingListItem.note)
                 .font(.headline)
-                .strikethrough(shoppingListItem.done == 1)
+                .strikethrough(shoppingListItem.done)
             if !shoppingListItem.note.isEmpty && product != nil {
                 Text(shoppingListItem.note)
                     .font(.caption)
             }
             Text("\(Text("Amount")): \(amountString)")
-                .strikethrough(shoppingListItem.done == 1)
+                .strikethrough(shoppingListItem.done)
         }
-        .foregroundStyle(shoppingListItem.done == 1 ? Color.gray : Color.primary)
+        .foregroundStyle(shoppingListItem.done ? Color.gray : Color.primary)
         .contextMenu(menuItems: {
             Button(
                 action: {
                     Task {
-                        if shoppingListItem.done == 0 && userSettings?.shoppingListToStockWorkflowAutoSubmitWhenPrefilled ?? false {
+                        if !shoppingListItem.done && userSettings?.shoppingListToStockWorkflowAutoSubmitWhenPrefilled ?? false {
                             shoppingListInteractionRouter.present(.autoPurchase(item: shoppingListItem))
                         }
                         await onToggleDone(shoppingListItem)
                     }
                 },
                 label: {
-                    if shoppingListItem.done == 0 {
+                    if !shoppingListItem.done {
                         Label("Mark this item as done", systemImage: MySymbols.done)
                     } else {
                         Label("Mark this item as undone", systemImage: MySymbols.undone)
@@ -95,13 +95,13 @@ struct ShoppingListRowView: View {
         )
         .swipeActions(
             edge: .leading,
-            allowsFullSwipe: shoppingListItem.done != 1,
+            allowsFullSwipe: !shoppingListItem.done,
             content: {
                 Group {
                     Button(
                         action: {
                             Task {
-                                if shoppingListItem.done == 0 && userSettings?.shoppingListToStockWorkflowAutoSubmitWhenPrefilled ?? false {
+                                if !shoppingListItem.done && userSettings?.shoppingListToStockWorkflowAutoSubmitWhenPrefilled ?? false {
                                     shoppingListInteractionRouter.present(.autoPurchase(item: shoppingListItem))
                                 }
                                 await onToggleDone(shoppingListItem)
@@ -110,7 +110,7 @@ struct ShoppingListRowView: View {
                         label: { Label("Done", systemImage: MySymbols.done) }
                     )
                     .tint(.green)
-                    .accessibilityHint(shoppingListItem.done == 0 ? "Mark this item as done" : "Mark this item as undone")
+                    .accessibilityHint(!shoppingListItem.done ? "Mark this item as done" : "Mark this item as undone")
                     if shoppingListItem.productID != nil {
                         Button(
                             action: {
@@ -129,11 +129,11 @@ struct ShoppingListRowView: View {
 #Preview {
     List {
         ShoppingListRowView(
-            shoppingListItem: ShoppingListItem(id: 1, productID: 1, note: "note", amount: 2, shoppingListID: 1, done: 1, quID: 1, rowCreatedTimestamp: "ts"),
+            shoppingListItem: ShoppingListItem(id: 1, productID: 1, note: "note", amount: 2, shoppingListID: 1, done: true, quID: 1, rowCreatedTimestamp: "ts"),
             isBelowStock: false
         )
         ShoppingListRowView(
-            shoppingListItem: ShoppingListItem(id: 2, productID: 1, note: "note", amount: 2, shoppingListID: 1, done: 0, quID: 1, rowCreatedTimestamp: "ts"),
+            shoppingListItem: ShoppingListItem(id: 2, productID: 1, note: "note", amount: 2, shoppingListID: 1, done: false, quID: 1, rowCreatedTimestamp: "ts"),
             isBelowStock: true
         )
     }

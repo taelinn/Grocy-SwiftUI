@@ -38,20 +38,17 @@ class RecipeFulfilment: Codable, Identifiable {
     required init(from decoder: Decoder) throws {
         do {
             let container = try decoder.container(keyedBy: CodingKeys.self)
+            
             self.id = UUID()
-            do { self.equalID = try container.decode(Int.self, forKey: .equalID) } catch { self.equalID = Int(try container.decode(String.self, forKey: .equalID))! }
-            do { self.recipeID = try container.decode(Int.self, forKey: .recipeID) } catch { self.recipeID = Int(try container.decode(String.self, forKey: .recipeID))! }
-            do { self.needFulfilled = try container.decodeIfPresent(Int.self, forKey: .needFulfilled) } catch { self.needFulfilled = try? Int(container.decodeIfPresent(String.self, forKey: .needFulfilled) ?? "") }
-            do { self.needFulfilledWithShoppingList = try container.decodeIfPresent(Int.self, forKey: .needFulfilledWithShoppingList) } catch {
-                self.needFulfilledWithShoppingList = try? Int(container.decodeIfPresent(String.self, forKey: .needFulfilledWithShoppingList) ?? "")
-            }
-            do { self.missingProductsCount = try container.decodeIfPresent(Int.self, forKey: .missingProductsCount) } catch {
-                self.missingProductsCount = try? Int(container.decodeIfPresent(String.self, forKey: .missingProductsCount) ?? "")
-            }
-            do { self.costs = try container.decodeIfPresent(Double.self, forKey: .costs) } catch { self.costs = try? Double(container.decodeIfPresent(String.self, forKey: .costs) ?? "") }
-            do { self.costsPerServing = try container.decodeIfPresent(Double.self, forKey: .costsPerServing) } catch { self.costsPerServing = try? Double(container.decodeIfPresent(String.self, forKey: .costsPerServing) ?? "") }
-            do { self.calories = try container.decodeIfPresent(Double.self, forKey: .calories) } catch { self.calories = try? Double(container.decodeIfPresent(String.self, forKey: .calories) ?? "") }
-            do { self.dueScore = try container.decodeIfPresent(Int.self, forKey: .dueScore) } catch { self.dueScore = try? Int(container.decodeIfPresent(String.self, forKey: .dueScore) ?? "") }
+            self.equalID = try container.decodeFlexibleInt(forKey: .equalID)
+            self.recipeID = try container.decodeFlexibleInt(forKey: .recipeID)
+            self.needFulfilled = try container.decodeFlexibleIntIfPresent(forKey: .needFulfilled)
+            self.needFulfilledWithShoppingList = try container.decodeFlexibleIntIfPresent(forKey: .needFulfilledWithShoppingList)
+            self.missingProductsCount = try container.decodeFlexibleIntIfPresent(forKey: .missingProductsCount)
+            self.costs = try container.decodeFlexibleDoubleIfPresent(forKey: .costs)
+            self.costsPerServing = try container.decodeFlexibleDoubleIfPresent(forKey: .costsPerServing)
+            self.calories = try container.decodeFlexibleDoubleIfPresent(forKey: .calories)
+            self.dueScore = try container.decodeFlexibleIntIfPresent(forKey: .dueScore)
             self.productNamesCommaSeparated = try? container.decodeIfPresent(String.self, forKey: .productNamesCommaSeparated) ?? nil
         } catch {
             throw APIError.decodingError(error: error)

@@ -21,7 +21,7 @@ class StockElement: Codable, Equatable {
     var dueType: Int
     var productID: Int
     @Relationship(deleteRule: .nullify) var product: MDProduct?
-    
+
     enum CodingKeys: String, CodingKey {
         case amount
         case amountAggregated = "amount_aggregated"
@@ -34,34 +34,25 @@ class StockElement: Codable, Equatable {
         case productID = "product_id"
         case product
     }
-    
+
     required init(from decoder: Decoder) throws {
         do {
             let container = try decoder.container(keyedBy: CodingKeys.self)
-            do { self.amount = try container.decode(Double.self, forKey: .amount) } catch { self.amount = try Double(container.decode(String.self, forKey: .amount))! }
-            do { self.amountAggregated = try container.decode(Double.self, forKey: .amountAggregated) } catch { self.amountAggregated = try Double(container.decode(String.self, forKey: .amountAggregated))! }
-            do { self.value = try container.decode(Double.self, forKey: .value) } catch { self.value = try Double(container.decode(String.self, forKey: .value))! }
-            let bestBeforeDateStr = try container.decodeIfPresent(String.self, forKey: .bestBeforeDate)
-            self.bestBeforeDate = getDateFromString(bestBeforeDateStr ?? "")
-            do { self.amountOpened = try container.decode(Double.self, forKey: .amountOpened) } catch { self.amountOpened = try Double(container.decode(String.self, forKey: .amountOpened))! }
-            do { self.amountOpenedAggregated = try container.decode(Double.self, forKey: .amountOpenedAggregated) } catch { self.amountOpenedAggregated = try Double(container.decode(String.self, forKey: .amountOpenedAggregated))! }
-            do {
-                self.isAggregatedAmount = try container.decode(Bool.self, forKey: .isAggregatedAmount)
-            } catch {
-                do {
-                    self.isAggregatedAmount = try container.decode(Int.self, forKey: .isAggregatedAmount) == 1
-                } catch {
-                    self.isAggregatedAmount = ["1", "true"].contains(try? container.decode(String.self, forKey: .isAggregatedAmount))
-                }
-            }
-            do { self.dueType = try container.decode(Int.self, forKey: .dueType) } catch { self.dueType = try Int(container.decode(String.self, forKey: .dueType))! }
-            do { self.productID = try container.decode(Int.self, forKey: .productID) } catch { self.productID = try Int(container.decode(String.self, forKey: .productID))! }
+            self.amount = try container.decodeFlexibleDouble(forKey: .amount)
+            self.amountAggregated = try container.decodeFlexibleDouble(forKey: .amountAggregated)
+            self.value = try container.decodeFlexibleDouble(forKey: .value)
+            self.bestBeforeDate = getDateFromString(try container.decodeIfPresent(String.self, forKey: .bestBeforeDate))
+            self.amountOpened = try container.decodeFlexibleDouble(forKey: .amountOpened)
+            self.amountOpenedAggregated = try container.decodeFlexibleDouble(forKey: .amountAggregated)
+            self.isAggregatedAmount = try container.decodeFlexibleBool(forKey: .isAggregatedAmount)
+            self.dueType = try container.decodeFlexibleInt(forKey: .dueType)
+            self.productID = try container.decodeFlexibleInt(forKey: .productID)
             self.product = nil
         } catch {
             throw APIError.decodingError(error: error)
         }
     }
-    
+
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(amount, forKey: .amount)
@@ -75,7 +66,7 @@ class StockElement: Codable, Equatable {
         try container.encode(productID, forKey: .productID)
         try container.encode(product, forKey: .product)
     }
-    
+
     init(
         amount: Double = 0.0,
         amountAggregated: Double = 0.0,
@@ -99,19 +90,12 @@ class StockElement: Codable, Equatable {
         self.productID = productID
         self.product = product
     }
-    
+
     static func == (lhs: StockElement, rhs: StockElement) -> Bool {
-        lhs.amount == rhs.amount &&
-        lhs.amountAggregated == rhs.amountAggregated &&
-        lhs.value == rhs.value &&
-        lhs.bestBeforeDate == rhs.bestBeforeDate &&
-        lhs.amountOpened == rhs.amountOpened &&
-        lhs.amountOpenedAggregated == rhs.amountOpenedAggregated &&
-        lhs.isAggregatedAmount == rhs.isAggregatedAmount &&
-        lhs.dueType == rhs.dueType &&
-        lhs.productID == rhs.productID
+        lhs.amount == rhs.amount && lhs.amountAggregated == rhs.amountAggregated && lhs.value == rhs.value && lhs.bestBeforeDate == rhs.bestBeforeDate && lhs.amountOpened == rhs.amountOpened
+            && lhs.amountOpenedAggregated == rhs.amountOpenedAggregated && lhs.isAggregatedAmount == rhs.isAggregatedAmount && lhs.dueType == rhs.dueType && lhs.productID == rhs.productID
     }
-    
+
     func hash(into hasher: inout Hasher) {
         hasher.combine(amount)
         hasher.combine(productID)

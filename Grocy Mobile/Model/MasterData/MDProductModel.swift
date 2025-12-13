@@ -87,128 +87,40 @@ class MDProduct: Codable, Equatable, Identifiable {
     required init(from decoder: Decoder) throws {
         do {
             let container = try decoder.container(keyedBy: CodingKeys.self)
-            do { self.id = try container.decode(Int.self, forKey: .id) } catch { self.id = Int(try container.decode(String.self, forKey: .id))! }
+            self.id = try container.decodeFlexibleInt(forKey: .id)
             self.name = (try? container.decodeIfPresent(String.self, forKey: .name)) ?? ""
             self.mdProductDescription = (try? container.decodeIfPresent(String.self, forKey: .mdProductDescription)) ?? ""
-            do { self.productGroupID = try container.decodeIfPresent(Int.self, forKey: .productGroupID) } catch { self.productGroupID = try Int(container.decodeIfPresent(String.self, forKey: .productGroupID) ?? "") }
-            do {
-                self.active = try container.decode(Bool.self, forKey: .active)
-            } catch {
-                do {
-                    self.active = try container.decode(Int.self, forKey: .active) == 1
-                } catch {
-                    self.active = ["1", "true"].contains(try? container.decode(String.self, forKey: .active))
-                }
-            }
-            do { self.locationID = try container.decode(Int.self, forKey: .locationID) } catch { self.locationID = try Int(container.decode(String.self, forKey: .locationID))! }
-            do { self.storeID = try container.decodeIfPresent(Int.self, forKey: .storeID) } catch { self.storeID = try? Int(container.decodeIfPresent(String.self, forKey: .storeID) ?? "") }
-            do { self.quIDPurchase = try container.decode(Int.self, forKey: .quIDPurchase) } catch { self.quIDPurchase = try Int(container.decode(String.self, forKey: .quIDPurchase))! }
-            do { self.quIDStock = try container.decode(Int.self, forKey: .quIDStock) } catch { self.quIDStock = try Int(container.decode(String.self, forKey: .quIDStock))! }
-            do { self.minStockAmount = try container.decode(Double.self, forKey: .minStockAmount) } catch { self.minStockAmount = try Double(container.decode(String.self, forKey: .minStockAmount))! }
-            do { self.defaultDueDays = try container.decode(Int.self, forKey: .defaultDueDays) } catch { self.defaultDueDays = try Int(container.decode(String.self, forKey: .defaultDueDays))! }
-            do { self.defaultDueDaysAfterOpen = try container.decode(Int.self, forKey: .defaultDueDaysAfterOpen) } catch { self.defaultDueDaysAfterOpen = try Int(container.decode(String.self, forKey: .defaultDueDaysAfterOpen))! }
-            do { self.defaultDueDaysAfterFreezing = try container.decode(Int.self, forKey: .defaultDueDaysAfterFreezing) } catch {
-                self.defaultDueDaysAfterFreezing = try Int(container.decode(String.self, forKey: .defaultDueDaysAfterFreezing))!
-            }
-            do { self.defaultDueDaysAfterThawing = try container.decode(Int.self, forKey: .defaultDueDaysAfterThawing) } catch {
-                self.defaultDueDaysAfterThawing = try Int(container.decode(String.self, forKey: .defaultDueDaysAfterThawing))!
-            }
+            self.productGroupID = try container.decodeFlexibleIntIfPresent(forKey: .productGroupID)
+            self.active = try container.decodeFlexibleBool(forKey: .active)
+            self.locationID = try container.decodeFlexibleInt(forKey: .locationID)
+            self.storeID = try container.decodeFlexibleIntIfPresent(forKey: .storeID)
+            self.quIDPurchase = try container.decodeFlexibleInt(forKey: .quIDPurchase)
+            self.quIDStock = try container.decodeFlexibleInt(forKey: .quIDStock)
+            self.minStockAmount = try container.decodeFlexibleDouble(forKey: .minStockAmount)
+            self.defaultDueDays = try container.decodeFlexibleInt(forKey: .defaultDueDays)
+            self.defaultDueDaysAfterOpen = try container.decodeFlexibleInt(forKey: .defaultDueDaysAfterOpen)
+            self.defaultDueDaysAfterFreezing = try container.decodeFlexibleInt(forKey: .defaultDueDaysAfterFreezing)
+            self.defaultDueDaysAfterThawing = try container.decodeFlexibleInt(forKey: .defaultDueDaysAfterThawing)
             self.pictureFileName = try? container.decodeIfPresent(String.self, forKey: .pictureFileName) ?? nil
-            do {
-                self.enableTareWeightHandling = try container.decode(Bool.self, forKey: .enableTareWeightHandling)
-            } catch {
-                do {
-                    self.enableTareWeightHandling = try container.decode(Int.self, forKey: .enableTareWeightHandling) == 1
-                } catch {
-                    self.enableTareWeightHandling = ["1", "true"].contains(try? container.decode(String.self, forKey: .enableTareWeightHandling))
-                }
-            }
-            do { self.tareWeight = try container.decode(Double.self, forKey: .tareWeight) } catch { self.tareWeight = try? Double(container.decodeIfPresent(String.self, forKey: .tareWeight) ?? "") }
-            do {
-                self.notCheckStockFulfillmentForRecipes = try container.decode(Bool.self, forKey: .notCheckStockFulfillmentForRecipes)
-            } catch {
-                do {
-                    self.notCheckStockFulfillmentForRecipes = try container.decode(Int.self, forKey: .notCheckStockFulfillmentForRecipes) == 1
-                } catch {
-                    self.notCheckStockFulfillmentForRecipes = ["1", "true"].contains(try? container.decode(String.self, forKey: .notCheckStockFulfillmentForRecipes))
-                }
-            }
-            do { self.parentProductID = try container.decode(Int.self, forKey: .parentProductID) } catch { self.parentProductID = try? Int(container.decodeIfPresent(String.self, forKey: .parentProductID) ?? "") }
-            do { self.calories = try container.decodeIfPresent(Double.self, forKey: .calories) } catch { self.calories = try? Double(container.decodeIfPresent(String.self, forKey: .calories) ?? "") }
-            do {
-                self.cumulateMinStockAmountOfSubProducts = try container.decode(Bool.self, forKey: .cumulateMinStockAmountOfSubProducts)
-            } catch {
-                do {
-                    self.cumulateMinStockAmountOfSubProducts = try container.decode(Int.self, forKey: .cumulateMinStockAmountOfSubProducts) == 1
-                } catch {
-                    self.cumulateMinStockAmountOfSubProducts = ["1", "true"].contains(try? container.decode(String.self, forKey: .cumulateMinStockAmountOfSubProducts))
-                }
-            }
-            do { self.dueType = try container.decode(Int.self, forKey: .dueType) } catch { self.dueType = try Int(container.decode(String.self, forKey: .dueType))! }
-            do { self.quickConsumeAmount = try container.decodeIfPresent(Double.self, forKey: .quickConsumeAmount) } catch { self.quickConsumeAmount = try? Double(container.decodeIfPresent(String.self, forKey: .quickConsumeAmount) ?? "") }
-            do { self.quickOpenAmount = try container.decodeIfPresent(Double.self, forKey: .quickOpenAmount) } catch { self.quickOpenAmount = try? Double(container.decodeIfPresent(String.self, forKey: .quickOpenAmount) ?? "") }
-            do {
-                self.hideOnStockOverview = try container.decode(Bool.self, forKey: .hideOnStockOverview)
-            } catch {
-                do {
-                    self.hideOnStockOverview = try container.decode(Int.self, forKey: .hideOnStockOverview) == 1
-                } catch {
-                    self.hideOnStockOverview = ["1", "true"].contains(try? container.decode(String.self, forKey: .hideOnStockOverview))
-                }
-            }
-            do { self.defaultStockLabelType = try container.decodeIfPresent(Int.self, forKey: .defaultStockLabelType) } catch {
-                self.defaultStockLabelType = try? Int(container.decodeIfPresent(String.self, forKey: .defaultStockLabelType) ?? "")
-            }
-            do {
-                self.shouldNotBeFrozen = try container.decode(Bool.self, forKey: .shouldNotBeFrozen)
-            } catch {
-                do {
-                    self.shouldNotBeFrozen = try container.decode(Int.self, forKey: .shouldNotBeFrozen) == 1
-                } catch {
-                    self.shouldNotBeFrozen = ["1", "true"].contains(try? container.decode(String.self, forKey: .shouldNotBeFrozen))
-                }
-            }
-            do {
-                self.treatOpenedAsOutOfStock = try container.decode(Bool.self, forKey: .treatOpenedAsOutOfStock)
-            } catch {
-                do {
-                    self.treatOpenedAsOutOfStock = try container.decode(Int.self, forKey: .treatOpenedAsOutOfStock) == 1
-                } catch {
-                    self.treatOpenedAsOutOfStock = ["1", "true"].contains(try? container.decode(String.self, forKey: .treatOpenedAsOutOfStock))
-                }
-            }
-            do {
-                self.noOwnStock = try container.decode(Bool.self, forKey: .noOwnStock)
-            } catch {
-                do {
-                    self.noOwnStock = try container.decode(Int.self, forKey: .noOwnStock) == 1
-                } catch {
-                    self.noOwnStock = ["1", "true"].contains(try? container.decode(String.self, forKey: .noOwnStock))
-                }
-            }
-            do { self.defaultConsumeLocationID = try container.decodeIfPresent(Int.self, forKey: .defaultConsumeLocationID) } catch {
-                self.defaultConsumeLocationID = try? Int(container.decodeIfPresent(String.self, forKey: .defaultConsumeLocationID) ?? "")
-            }
-            do {
-                self.moveOnOpen = try container.decode(Bool.self, forKey: .moveOnOpen)
-            } catch {
-                do {
-                    self.moveOnOpen = try container.decode(Int.self, forKey: .moveOnOpen) == 1
-                } catch {
-                    self.moveOnOpen = ["1", "true"].contains(try? container.decode(String.self, forKey: .moveOnOpen))
-                }
-            }
-            do { self.quIDConsume = try container.decode(Int.self, forKey: .quIDConsume) } catch { self.quIDConsume = try Int(container.decode(String.self, forKey: .quIDConsume))! }
-            do {
-                self.autoReprintStockLabel = try container.decode(Bool.self, forKey: .autoReprintStockLabel)
-            } catch {
-                do {
-                    self.autoReprintStockLabel = try container.decode(Int.self, forKey: .autoReprintStockLabel) == 1
-                } catch {
-                    self.autoReprintStockLabel = ["1", "true"].contains(try? container.decode(String.self, forKey: .autoReprintStockLabel))
-                }
-            }
-            do { self.quIDPrice = try container.decode(Int.self, forKey: .quIDPrice) } catch { self.quIDPrice = try Int(container.decode(String.self, forKey: .quIDPrice))! }
+            self.enableTareWeightHandling = try container.decodeFlexibleBool(forKey: .enableTareWeightHandling)
+            self.tareWeight = try container.decodeFlexibleDoubleIfPresent(forKey: .tareWeight)
+            self.notCheckStockFulfillmentForRecipes = try container.decodeFlexibleBool(forKey: .notCheckStockFulfillmentForRecipes)
+            self.parentProductID = try container.decodeFlexibleIntIfPresent(forKey: .parentProductID)
+            self.calories = try container.decodeFlexibleDoubleIfPresent(forKey: .calories)
+            self.cumulateMinStockAmountOfSubProducts = try container.decodeFlexibleBool(forKey: .cumulateMinStockAmountOfSubProducts)
+            self.dueType = try container.decodeFlexibleInt(forKey: .dueType)
+            self.quickConsumeAmount = try container.decodeFlexibleDoubleIfPresent(forKey: .quickConsumeAmount)
+            self.quickOpenAmount = try container.decodeFlexibleDoubleIfPresent(forKey: .quickOpenAmount)
+            self.hideOnStockOverview = try container.decodeFlexibleBool(forKey: .hideOnStockOverview)
+            self.defaultStockLabelType = try container.decodeFlexibleIntIfPresent(forKey: .defaultStockLabelType)
+            self.shouldNotBeFrozen = try container.decodeFlexibleBool(forKey: .shouldNotBeFrozen)
+            self.treatOpenedAsOutOfStock = try container.decodeFlexibleBool(forKey: .treatOpenedAsOutOfStock)
+            self.noOwnStock = try container.decodeFlexibleBool(forKey: .noOwnStock)
+            self.defaultConsumeLocationID = try container.decodeFlexibleIntIfPresent(forKey: .defaultConsumeLocationID)
+            self.moveOnOpen = try container.decodeFlexibleBool(forKey: .moveOnOpen)
+            self.quIDConsume = try container.decodeFlexibleInt(forKey: .quIDConsume)
+            self.autoReprintStockLabel = try container.decodeFlexibleBool(forKey: .autoReprintStockLabel)
+            self.quIDPrice = try container.decodeFlexibleInt(forKey: .quIDPrice)
             self.rowCreatedTimestamp = try container.decode(String.self, forKey: .rowCreatedTimestamp)
         } catch {
             throw APIError.decodingError(error: error)
