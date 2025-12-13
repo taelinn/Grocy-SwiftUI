@@ -27,7 +27,7 @@ struct ChoresFilterCapsuleView: View {
             }
         }) {
             HStack(spacing: 6) {
-                Image(systemName: ownFilteredStatus.getIconName())
+                Image(systemName: ownFilteredStatus.icon)
                     .foregroundColor(color)
                 if filteredStatus == ownFilteredStatus {
                     // Show full text

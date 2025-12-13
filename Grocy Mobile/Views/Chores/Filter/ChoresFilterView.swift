@@ -32,7 +32,7 @@ struct ChoresFilterView: View {
                 selection: $filteredStatus,
                 content: {
                     ForEach(ChoreStatus.allCases, id: \.caseName) { status in
-                        Text(status.rawValue)
+                        Text(status.title)
                             .tag(status)
                     }
                 },

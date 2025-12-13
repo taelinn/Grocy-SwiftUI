@@ -322,6 +322,8 @@ struct ChoresView: View {
                 Button(action: { showingFilterSheet = true }) {
                     Label("Filter", systemImage: MySymbols.filter)
                 }
+                //                .badge((filteredStatus != .all || filteredUserID != nil)  ? "" : nil)
+                //                .badgeProminence(.decreased)
                 sortGroupMenu
             }
             ToolbarItem(placement: .automatic) {

@@ -7,25 +7,22 @@
 
 import SwiftUI
 
-enum ChoreStatus: LocalizedStringKey, CaseIterable {
-    case all = "All"
-    case overdue = "Overdue"
-    case dueToday = "Due today"
-    case dueSoon = "Due soon"
-    case assignedToMe = "Assigned to me"
+enum ChoreStatus: Identifiable, CaseIterable {
+    case all
+    case overdue
+    case dueToday
+    case dueSoon
+    case assignedToMe
 
-    var caseName: String {
+    var id: Self { self }
+
+    var title: LocalizedStringKey {
         switch self {
-        case .all:
-            return "all"
-        case .overdue:
-            return "overdue"
-        case .dueToday:
-            return "dueToday"
-        case .dueSoon:
-            return "dueSoon"
-        case .assignedToMe:
-            return "assignedToMe"
+        case .all: return "All"
+        case .overdue: return "Overdue"
+        case .dueToday: return "Due today"
+        case .dueSoon: return "Due soon"
+        case .assignedToMe: return "Assigned to me"
         }
     }
 
@@ -44,7 +41,7 @@ enum ChoreStatus: LocalizedStringKey, CaseIterable {
         }
     }
 
-    func getIconName() -> String {
+    var icon: String {
         switch self {
         case .overdue:
             return MySymbols.overdue
@@ -56,6 +53,21 @@ enum ChoreStatus: LocalizedStringKey, CaseIterable {
             return MySymbols.me
         default:
             return "tag.fill"
+        }
+    }
+
+    var caseName: String {
+        switch self {
+        case .all:
+            return "all"
+        case .overdue:
+            return "overdue"
+        case .dueToday:
+            return "dueToday"
+        case .dueSoon:
+            return "dueSoon"
+        case .assignedToMe:
+            return "assignedToMe"
         }
     }
 
