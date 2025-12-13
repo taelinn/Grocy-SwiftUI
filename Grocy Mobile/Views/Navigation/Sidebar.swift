@@ -25,9 +25,6 @@ struct Sidebar: View {
                 NavigationLink(value: NavigationItem.stockOverview) {
                     Label("Stock overview", systemImage: MySymbols.stockOverview)
                 }
-                NavigationLink(value: NavigationItem.stockJournal) {
-                    Label("Stock journal", systemImage: MySymbols.stockJournal)
-                }
                 NavigationLink(value: NavigationItem.shoppingList) {
                     Label("Shopping list", systemImage: MySymbols.shoppingList)
                 }
@@ -112,6 +109,14 @@ struct Sidebar: View {
                     }
                     NavigationLink(value: NavigationItem.mdChores) {
                         MDCategoryRowView(categoryName: "Chores", iconName: MySymbols.chores, mdType: MDChore.self)
+                    }
+                    if devMode {
+                        NavigationLink(value: NavigationItem.mdBatteries) {
+                            MDCategoryRowView(categoryName: "Batteries", iconName: MySymbols.batteries, mdType: MDBattery.self)
+                        }
+                    }
+                    NavigationLink(value: NavigationItem.mdTaskCategories) {
+                        MDCategoryRowView(categoryName: "Task categories", iconName: MySymbols.tasks, mdType: MDTaskCategory.self)
                     }
                 },
                 header: {

@@ -10,7 +10,6 @@ import SwiftUI
 enum NavigationItem: Hashable {
     case quickScan
     case stockOverview
-    case stockJournal
     case shoppingList
     case recipes
     case mealPlan
@@ -52,16 +51,14 @@ struct Navigation: View {
         #endif
         case .stockOverview:
             StockView()
-        case .stockJournal:
-            StockJournalView()
         case .shoppingList:
             ShoppingListView()
         case .recipes:
             RecipesView()
+        case .mealPlan:
+            EmptyView()
         case .choresOverview:
             ChoresView()
-        case .choreTracking:
-            ChoreTrackingView()
         case .purchase:
             PurchaseProductView()
         case .consume:
@@ -70,8 +67,8 @@ struct Navigation: View {
             TransferProductView()
         case .inventory:
             InventoryProductView()
-        case .mdChores:
-            MDChoresView()
+        case .choreTracking:
+            ChoreTrackingView()
         case .mdProducts:
             MDProductsView()
         case .mdLocations:
@@ -82,6 +79,12 @@ struct Navigation: View {
             MDQuantityUnitsView()
         case .mdProductGroups:
             MDProductGroupsView()
+        case .mdChores:
+            MDChoresView()
+        case .mdBatteries:
+            MDBatteriesView()
+        case .mdTaskCategories:
+            MDTaskCategoriesView()
         case .settings:
             SettingsView()
         case .userManagement:

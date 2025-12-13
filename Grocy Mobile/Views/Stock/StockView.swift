@@ -407,19 +407,17 @@ struct StockView: View {
                     sortMenu
                 }
                 ToolbarSpacer(.fixed)
-                if horizontalSizeClass == .compact && iPhoneTabNavigation {
-                    ToolbarItem(placement: .automatic) {
-                        Button(
-                            action: {
-                                stockInteractionRouter.present(.stockJournal)
-                            },
-                            label: {
-                                Label("Stock journal", systemImage: MySymbols.stockJournal)
-                            }
-                        )
-                    }
-                    ToolbarSpacer(.fixed)
+                ToolbarItem(placement: .automatic) {
+                    Button(
+                        action: {
+                            stockInteractionRouter.present(.stockJournal)
+                        },
+                        label: {
+                            Label("Stock journal", systemImage: MySymbols.stockJournal)
+                        }
+                    )
                 }
+                ToolbarSpacer(.fixed)
                 ToolbarItemGroup(placement: horizontalSizeClass == .compact ? .secondaryAction : .primaryAction) {
                     Button(
                         action: {

@@ -53,11 +53,13 @@ struct MasterDataView: View {
                 NavigationLink(value: MasterDataItem.batteries) {
                     Label("Batteries", systemImage: MySymbols.batteries)
                 }
+            }
 
-                NavigationLink(value: MasterDataItem.taskCategories) {
-                    Label("Task categories", systemImage: MySymbols.tasks)
-                }
+            NavigationLink(value: MasterDataItem.taskCategories) {
+                MDCategoryRowView(categoryName: "Task categories", iconName: MySymbols.tasks, mdType: MDTaskCategory.self)
+            }
 
+            if devMode {
                 NavigationLink(value: MasterDataItem.userFields) {
                     Label("Userfields", systemImage: "questionmark")
                 }
