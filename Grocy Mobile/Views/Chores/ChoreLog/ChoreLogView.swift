@@ -21,8 +21,9 @@ struct ChoreLogView: View {
     @State private var filteredChoreID: Int?
     @State private var filteredUserID: Int?
     @State private var showingFilterSheet = false
+    @State private var isFirstShown: Bool = true
 
-    var stockElement: StockElement? = nil
+    var choreID: Int? = nil
     var isPopup: Bool = false
 
     // Fetch the data with a dynamic predicate
@@ -42,7 +43,7 @@ struct ChoreLogView: View {
             let matchingChores = try? modelContext.fetch(choreDescriptor)
             return matchingChores?.map(\.id) ?? []
         }
-        
+
         // Chore search predicate
         if !searchString.isEmpty, let matchingChoreIDs {
             let searchPredicate = #Predicate<ChoreLogEntry> { entry in
@@ -102,15 +103,15 @@ struct ChoreLogView: View {
         await grocyVM.requestData(objects: dataToUpdate, additionalObjects: additionalDataToUpdate)
     }
 
-    //    private func undoTransaction(stockJournalEntry: StockJournalEntry) async {
-    //        do {
-    //            try await grocyVM.undoBookingWithID(id: stockJournalEntry.id)
-    //            GrocyLogger.info("Undo transaction \(stockJournalEntry.id) successful.")
-    //            await grocyVM.requestData(objects: [.stock_log])
-    //        } catch {
-    //            GrocyLogger.error("Undo transaction failed. \(error)")
-    //        }
-    //    }
+    private func undoExecution(choreLogEntry: ChoreLogEntry) async {
+        do {
+            try await grocyVM.undoChoreWithID(id: choreLogEntry.id)
+            GrocyLogger.info("Undo chore execution \(choreLogEntry.id) successful.")
+            await grocyVM.requestData(objects: [.chores_log])
+        } catch {
+            GrocyLogger.error("Undo chore execution failed. \(error)")
+        }
+    }
 
     var body: some View {
         List {
@@ -123,23 +124,23 @@ struct ChoreLogView: View {
             }
             ForEach(choreLog, id: \.id) { (choreLogEntry: ChoreLogEntry) in
                 ChoreLogRowView(choreLogEntry: choreLogEntry, chore: chores.first(where: { $0.id == choreLogEntry.choreID }), user: users.first(where: { $0.id == choreLogEntry.doneByUserID }))
-                //                .swipeActions(
-                //                    edge: .leading,
-                //                    allowsFullSwipe: true,
-                //                    content: {
-                //                        Button(
-                //                            action: {
-                //                                Task {
-                //                                    await undoTransaction(stockJournalEntry: journalEntry)
-                //                                }
-                //                            },
-                //                            label: {
-                //                                Label("Undo transaction", systemImage: MySymbols.undo)
-                //                            }
-                //                        )
-                //                        .disabled(journalEntry.undone == 1)
-                //                    }
-                //                )
+                    .swipeActions(
+                        edge: .leading,
+                        allowsFullSwipe: true,
+                        content: {
+                            Button(
+                                action: {
+                                    Task {
+                                        await undoExecution(choreLogEntry: choreLogEntry)
+                                    }
+                                },
+                                label: {
+                                    Label("Undo chore execution", systemImage: MySymbols.undo)
+                                }
+                            )
+                            .disabled(choreLogEntry.undone)
+                        }
+                    )
             }
         }
         .navigationTitle("Stock journal")
@@ -216,6 +217,10 @@ struct ChoreLogView: View {
         }
         .task {
             await updateData()
+            if isFirstShown {
+                filteredChoreID = choreID
+                isFirstShown = false
+            }
         }
     }
 }

@@ -166,7 +166,7 @@ struct ChoreTrackingView: View {
                     },
                     label: {
                         if !isProcessingAction {
-                            Label("OK", systemImage: MySymbols.choreTrackNext)
+                            Label("Track next chore schedule", systemImage: MySymbols.choreTrackNext)
                         } else {
                             ProgressView().progressViewStyle(.circular)
                         }
@@ -184,7 +184,7 @@ struct ChoreTrackingView: View {
                     },
                     label: {
                         if !isProcessingAction {
-                            Label("Skip", systemImage: MySymbols.choreSkipNext)
+                            Label("Skip next chore schedule", systemImage: MySymbols.choreSkipNext)
                         } else {
                             ProgressView().progressViewStyle(.circular)
                         }

@@ -15,18 +15,41 @@ enum ChoresSortOption: Hashable, Sendable {
     case byUser
 }
 
+enum ChoreInteraction: Hashable, Identifiable {
+    case choreLog(choreID: Int?)
+    case choreOverview(mdChore: MDChore)
+    case editChore(mdChore: MDChore)
+
+    var id: Self { self }
+}
+
+@Observable
+class ChoreInteractionNavigationRouter {
+    var presentedInteraction: ChoreInteraction?
+
+    func present(_ interaction: ChoreInteraction) {
+        presentedInteraction = interaction
+    }
+
+    func dismiss() {
+        presentedInteraction = nil
+    }
+}
+
 struct ChoresView: View {
     @Environment(GrocyViewModel.self) private var grocyVM
     @Environment(\.modelContext) private var modelContext
 
     @State private var searchString: String = ""
     @State private var showingFilterSheet = false
-    @State private var showChoreLog = false
     @State private var filteredStatus: ChoreStatus = .all
     @State private var filteredUserID: Int? = nil
     @State private var sortOption: ChoresSortOption = .byName
     @State private var sortOrder: SortOrder = .forward
 
+    @State private var choreInteractionRouter = ChoreInteractionNavigationRouter()
+
+    @Query var mdChores: MDChores
     @Query var grocyUsers: GrocyUsers
     @Query var userSettingsList: GrocyUserSettingsList
     var userSettings: GrocyUserSettings? {
@@ -56,14 +79,14 @@ struct ChoresView: View {
         return (try? modelContext.fetchCount(descriptor)) ?? 0
     }
 
-    private let dataToUpdate: [ObjectEntities] = []
+    private let dataToUpdate: [ObjectEntities] = [.chores]
     private let additionalDataToUpdate: [AdditionalEntities] = [.chores, .current_user, .users]
     private func updateData() async {
         await grocyVM.requestData(objects: dataToUpdate, additionalObjects: additionalDataToUpdate)
     }
 
     var filteredChores: [Chore] {
-        chores
+        grocyVM.chores
             .filter { filteredUserID == nil || $0.nextExecutionAssignedToUserID == filteredUserID }
             .filter { matchesFilter($0) }
     }
@@ -151,6 +174,17 @@ struct ChoresView: View {
         }
     }
 
+    private func trackChore(choreID: Int, skipped: Bool = false) async {
+        let executeInfo = ChoreExecuteModel(trackedTime: Date().iso8601withFractionalSeconds, doneBy: nil, skipped: skipped)
+        do {
+            _ = try await grocyVM.executeChore(id: choreID, content: executeInfo)
+            GrocyLogger.info("Tracking chore successful.")
+            await self.updateData()
+        } catch {
+            GrocyLogger.error("Tracking chore failed: \(error)")
+        }
+    }
+
     var body: some View {
         List {
             Section {
@@ -177,6 +211,86 @@ struct ChoresView: View {
                     user: grocyUsers.first(where: { $0.id == chore.nextExecutionAssignedToUserID }),
                 )
                 .listRowBackground(backgroundColorForChore(chore))
+                .contextMenu(menuItems: {
+                    Button(
+                        action: {
+                            Task {
+                                await trackChore(choreID: chore.id)
+                            }
+                        },
+                        label: {
+                            Label("Track chore execution now", systemImage: MySymbols.choreTrackNext)
+                        }
+                    )
+                    Button(
+                        action: {
+                            Task {
+                                await trackChore(choreID: chore.id, skipped: true)
+                            }
+                        },
+                        label: {
+                            Label("Reschedule next execution", systemImage: MySymbols.choreSkipNext)
+                        }
+                    )
+                    Button(
+                        action: {
+                            if let mdChore = mdChores.first(where: { $0.id == chore.choreID }) {
+                                choreInteractionRouter.present(.choreOverview(mdChore: mdChore))
+                            }
+                        },
+                        label: {
+                            Label("Chore overview", systemImage: MySymbols.info)
+                        }
+                    )
+                    Button(
+                        action: {
+                            choreInteractionRouter.present(.choreLog(choreID: chore.choreID))
+                        },
+                        label: {
+                            Label("Chore journal", systemImage: MySymbols.stockJournal)
+                        }
+                    )
+                    Button(
+                        action: {
+                            if let mdChore = mdChores.first(where: { $0.id == chore.choreID }) {
+                                choreInteractionRouter.present(.editChore(mdChore: mdChore))
+                            }
+                        },
+                        label: {
+                            Label("Edit chore", systemImage: MySymbols.edit)
+                        }
+                    )
+                })
+                .swipeActions(
+                    edge: .trailing,
+                    allowsFullSwipe: true
+                ) {
+                    Button(
+                        action: {
+                            Task {
+                                await trackChore(choreID: chore.id, skipped: true)
+                            }
+                        },
+                        label: { Label("Skip", systemImage: MySymbols.choreSkipNext) }
+                    )
+                    .tint(.gray)
+                    .accessibilityHint("Skip next chore schedule")
+                }
+                .swipeActions(
+                    edge: .leading,
+                    allowsFullSwipe: true
+                ) {
+                    Button(
+                        action: {
+                            Task {
+                                await trackChore(choreID: chore.id)
+                            }
+                        },
+                        label: { Label("OK", systemImage: MySymbols.done) }
+                    )
+                    .tint(.green)
+                    .accessibilityHint("Track next chore schedule")
+                }
             }
         }
         .task {
@@ -190,6 +304,19 @@ struct ChoresView: View {
             prompt: "Search"
         )
         .navigationTitle("Chores overview")
+        .environment(choreInteractionRouter)
+        .sheet(item: $choreInteractionRouter.presentedInteraction) { interaction in
+            NavigationStack {
+                switch interaction {
+                case .choreLog(let choreID):
+                    ChoreLogView(choreID: choreID, isPopup: true)
+                case .choreOverview(let mdChore):
+                    EmptyView()
+                case .editChore(let mdChore):
+                    MDChoreFormView(existingChore: mdChore, isPopup: true)
+                }
+            }
+        }
         .toolbar {
             ToolbarItemGroup(placement: .automatic) {
                 Button(action: { showingFilterSheet = true }) {
@@ -200,7 +327,7 @@ struct ChoresView: View {
             ToolbarItem(placement: .automatic) {
                 Button(
                     action: {
-                        showChoreLog.toggle()
+                        choreInteractionRouter.present(.choreLog(choreID: nil))
                     },
                     label: {
                         Label("Chores journal", systemImage: MySymbols.stockJournal)
@@ -241,11 +368,6 @@ struct ChoresView: View {
                     }
             }
             .presentationDetents([.medium])
-        }
-        .sheet(isPresented: $showChoreLog) {
-            NavigationStack {
-                ChoreLogView(isPopup: true)
-            }
         }
     }
 
