@@ -71,6 +71,7 @@ class GrocyViewModel {
     var stockProductLocations: [Int: StockLocations] = [:]
     var stockProductEntries: [Int: StockEntries] = [:]
     var stockProductPriceHistories: [Int: ProductPriceHistories] = [:]
+    var choreDetails: [Int: ChoreDetails] = [:]
 
     var lastStockActions: StockJournal = []
 
@@ -468,6 +469,7 @@ class GrocyViewModel {
         self.stockProductLocations = [:]
         self.stockProductEntries = [:]
         self.stockProductPriceHistories = [:]
+        self.choreDetails = [:]
 
         self.lastStockActions = []
 
@@ -507,6 +509,7 @@ class GrocyViewModel {
             try self.modelContext.delete(model: SystemConfig.self)
             try self.modelContext.delete(model: MDChore.self)
             try self.modelContext.delete(model: Chore.self)
+            try self.modelContext.delete(model: ChoreDetails.self)
         } catch {
             GrocyLogger.error("\(error)")
         }
@@ -731,6 +734,26 @@ class GrocyViewModel {
     }
 
     // MARK: - Chores
+    func getChoreDetails(id: Int) async {
+        do {
+            let choreDetails = try await grocyApi.getChoreDetails(id: id)
+            
+            self.choreDetails[id] = choreDetails
+            let fetchDescriptor = FetchDescriptor<ChoreDetails>(
+                predicate: #Predicate { details in
+                    details.choreID == id
+                }
+            )
+            if let existingObject = try modelContext.fetch(fetchDescriptor).first {
+                self.modelContext.delete(existingObject)
+            }
+            self.modelContext.insert(choreDetails)
+            try self.modelContext.save()
+        } catch {
+            GrocyLogger.error("Failed to get chore details. \(error)")
+        }
+    }
+    
     func executeChore(id: Int, content: ChoreExecuteModel) async throws -> ChoreLogEntry {
         let jsonContent = try! jsonEncoder.encode(content)
         return try await grocyApi.choreExecute(id: id, content: jsonContent)

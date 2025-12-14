@@ -19,6 +19,7 @@ struct ChoreLogView: View {
     @State private var searchString: String = ""
 
     @State private var filteredChoreID: Int?
+    @State private var filteredDateRangeMonths: Int?
     @State private var filteredUserID: Int?
     @State private var showingFilterSheet = false
     @State private var isFirstShown: Bool = true
@@ -31,6 +32,23 @@ struct ChoreLogView: View {
         let sortDescriptor = SortDescriptor<ChoreLogEntry>(\.rowCreatedTimestamp, order: .reverse)
         var predicates: [Predicate<ChoreLogEntry>] = []
 
+        // Date range predicate
+        if let filteredDateRangeMonths = filteredDateRangeMonths {
+            let cutoffDate = Calendar.current.date(
+                byAdding: .month,
+                value: -filteredDateRangeMonths,
+                to: Date.now
+            )!
+            let choreLogPredicate = #Predicate<ChoreLogEntry> { entry in
+                if let trackedTime = entry.trackedTime {
+                    return trackedTime >= cutoffDate
+                } else {
+                    return false
+                }
+            }
+            predicates.append(choreLogPredicate)
+        }
+        
         // Find matching product IDs for search string
         var matchingChoreIDs: [Int]? {
             let chorePredicate =
@@ -51,19 +69,19 @@ struct ChoreLogView: View {
             }
             predicates.append(searchPredicate)
         }
+        
+        // Filtered chore predicate
+        if let filteredChoreID = filteredChoreID {
+            let choreLogPredicate = #Predicate<ChoreLogEntry> { entry in
+                entry.choreID == filteredChoreID
+            }
+            predicates.append(choreLogPredicate)
+        }
 
         // Filtered user predicate
         if let filteredUserID = filteredUserID {
             let choreLogPredicate = #Predicate<ChoreLogEntry> { entry in
                 entry.doneByUserID == filteredUserID
-            }
-            predicates.append(choreLogPredicate)
-        }
-
-        // Filtered chore predicate
-        if let filteredChoreID = filteredChoreID {
-            let choreLogPredicate = #Predicate<ChoreLogEntry> { entry in
-                entry.choreID == filteredChoreID
             }
             predicates.append(choreLogPredicate)
         }
@@ -118,7 +136,7 @@ struct ChoreLogView: View {
             if grocyVM.failedToLoadObjects.filter({ dataToUpdate.contains($0) }).count > 0 {
                 ServerProblemView()
             } else if choreLogCount == 0 {
-                ContentUnavailableView("No chore entries found.", systemImage: MySymbols.chores)
+                ContentUnavailableView("No chore log entries found.", systemImage: MySymbols.chores)
             } else if choreLog.isEmpty {
                 ContentUnavailableView.search
             }
@@ -143,7 +161,7 @@ struct ChoreLogView: View {
                     )
             }
         }
-        .navigationTitle("Stock journal")
+        .navigationTitle("Chores journal")
         .toolbar {
             if isPopup {
                 ToolbarItem(
@@ -177,6 +195,7 @@ struct ChoreLogView: View {
             NavigationStack {
                 ChoreLogFilterView(
                     filteredChoreID: $filteredChoreID,
+                    filteredDateRangeMonths: $filteredDateRangeMonths,
                     filteredUserID: $filteredUserID,
                 )
                 .navigationTitle("Filter")

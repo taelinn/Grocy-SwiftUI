@@ -18,6 +18,19 @@ struct ChoreLogRowView: View {
         VStack(alignment: .leading) {
             Text(chore?.choreName ?? "")
                 .font(.title)
+                .italic(choreLogEntry.skipped)
+                .foregroundStyle(!choreLogEntry.undone ? .primary : .secondary)
+                .strikethrough(choreLogEntry.undone, color: .secondary)
+            if choreLogEntry.undone {
+                HStack {
+                    Text("\(Text("Undone on")):")
+                    Spacer()
+                    Text(formatDateAsString(choreLogEntry.undoneTimestamp, showTime: false, localizationKey: localizationKey) ?? "")
+                    Text(getRelativeDateAsText(choreLogEntry.undoneTimestamp, localizationKey: localizationKey) ?? "")
+                        .font(.caption)
+                        .italic()
+                }
+            }
             if let trackedTime = choreLogEntry.trackedTime {
                 HStack {
                     Text("\(Text("Tracked time")):")
@@ -26,6 +39,10 @@ struct ChoreLogRowView: View {
                     Text(getRelativeDateAsText(trackedTime, localizationKey: localizationKey) ?? "")
                         .font(.caption)
                         .italic()
+                    if choreLogEntry.skipped {
+                        Text("Skipped")
+                            .italic()
+                    }
                 }
             }
             if let scheduledExecutionTime = choreLogEntry.scheduledExecutionTime {

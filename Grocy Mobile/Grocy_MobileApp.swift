@@ -74,6 +74,7 @@ struct Grocy_MobileApp: App {
             MDChore.self,
             Chore.self,
             ChoreLogEntry.self,
+            ChoreDetails.self,
         ])
 
         // Profile container schema (ServerProfile and LoginCustomHeader with iCloud sync)

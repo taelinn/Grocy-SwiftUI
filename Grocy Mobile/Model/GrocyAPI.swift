@@ -82,6 +82,7 @@ protocol GrocyAPI {
     func getRecipeFulfillments() async throws -> RecipeFulfilments
     // MARK: - Chores
     func getChores() async throws -> Chores
+    func getChoreDetails(id: Int) async throws -> ChoreDetails
     func choreExecute(id: Int, content: Data) async throws -> ChoreLogEntry
     func undoChoreWithID(id: Int) async throws
     // MARK: - Current user
@@ -568,6 +569,10 @@ extension GrocyApi {
     // MARK: - Chores
     func getChores() async throws -> Chores {
         return try await call(.chores, method: .GET)
+    }
+    
+    func getChoreDetails(id: Int) async throws -> ChoreDetails {
+        return try await call(.choreWithID, method: .GET, id: String(id))
     }
 
     func choreExecute(id: Int, content: Data) async throws -> ChoreLogEntry {

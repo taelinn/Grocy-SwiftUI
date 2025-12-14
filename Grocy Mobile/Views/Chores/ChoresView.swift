@@ -17,7 +17,7 @@ enum ChoresSortOption: Hashable, Sendable {
 
 enum ChoreInteraction: Hashable, Identifiable {
     case choreLog(choreID: Int?)
-    case choreOverview(mdChore: MDChore)
+    case choreOverview(choreID: Int)
     case editChore(mdChore: MDChore)
 
     var id: Self { self }
@@ -234,9 +234,7 @@ struct ChoresView: View {
                     )
                     Button(
                         action: {
-                            if let mdChore = mdChores.first(where: { $0.id == chore.choreID }) {
-                                choreInteractionRouter.present(.choreOverview(mdChore: mdChore))
-                            }
+                            choreInteractionRouter.present(.choreOverview(choreID: chore.choreID))
                         },
                         label: {
                             Label("Chore overview", systemImage: MySymbols.info)
@@ -304,14 +302,13 @@ struct ChoresView: View {
             prompt: "Search"
         )
         .navigationTitle("Chores overview")
-        .environment(choreInteractionRouter)
         .sheet(item: $choreInteractionRouter.presentedInteraction) { interaction in
             NavigationStack {
                 switch interaction {
                 case .choreLog(let choreID):
                     ChoreLogView(choreID: choreID, isPopup: true)
-                case .choreOverview(let mdChore):
-                    EmptyView()
+                case .choreOverview(let choreID):
+                    ChoreDetailsView(choreID: choreID, isPopup: true)
                 case .editChore(let mdChore):
                     MDChoreFormView(existingChore: mdChore, isPopup: true)
                 }
@@ -371,6 +368,7 @@ struct ChoresView: View {
             }
             .presentationDetents([.medium])
         }
+        .environment(choreInteractionRouter)
     }
 
     var sortGroupMenu: some View {

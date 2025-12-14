@@ -132,12 +132,47 @@ func getRelativeDateAsText(_ date: Date?, localizationKey: String? = nil) -> Str
                 dateFormatter.locale = .current
             }
             dateFormatter.dateTimeStyle = .named
-            let startOfToday = Calendar.current.startOfDay(for: Date())
-            return dateFormatter.localizedString(for: date, relativeTo: startOfToday)
+            return dateFormatter.localizedString(for: date, relativeTo: Date())
         }
     } else {
         return nil
     }
+}
+
+func formatDuration(value: Int, unit: Calendar.Component, localizationKey: String? = nil) -> String? {
+    var components = DateComponents()
+
+    switch unit {
+    case .year:
+        components.year = value
+    case .month:
+        components.month = value
+    case .weekOfMonth:
+        components.weekOfMonth = value
+    case .day:
+        components.day = value
+    case .hour:
+        components.hour = value
+    case .minute:
+        components.minute = value
+    case .second:
+        components.second = value
+    default:
+        return nil
+    }
+
+    let formatter = DateComponentsFormatter()
+    formatter.unitsStyle = .full
+    formatter.allowedUnits = [.year, .month, .weekOfMonth, .day, .hour, .minute, .second]
+
+    // Set calendar with locale
+    var calendar = Calendar.current
+    if let localizationKey = localizationKey {
+        calendar.locale = Locale(identifier: localizationKey)
+    }
+    formatter.calendar = calendar
+
+    return formatter.string(from: components)
 }
 
 func getNeverOverdueDate() -> Date {

@@ -15,6 +15,7 @@ struct ChoreLogFilterView: View {
     @Query(sort: \GrocyUser.id, order: .forward) var grocyUsers: GrocyUsers
 
     @Binding var filteredChoreID: Int?
+    @Binding var filteredDateRangeMonths: Int?
     @Binding var filteredUserID: Int?
 
     var body: some View {
@@ -28,7 +29,25 @@ struct ChoreLogFilterView: View {
                     }
                 },
                 label: {
-                    Label("Chore", systemImage: MySymbols.filter)
+                    Label("Chore", systemImage: MySymbols.chores)
+                        .foregroundStyle(.primary)
+                }
+            )
+            Picker(
+                selection: $filteredDateRangeMonths,
+                content: {
+                    Text(formatDuration(value: 1, unit: .month)!)
+                        .tag(1)
+                    Text(formatDuration(value: 6, unit: .month)!)
+                        .tag(6)
+                    Text(formatDuration(value: 1, unit: .year)!)
+                        .tag(12)
+                    Text(formatDuration(value: 2, unit: .year)!)
+                        .tag(24)
+                    Text("All").tag(nil as Int?)
+                },
+                label: {
+                    Label("Date range", systemImage: MySymbols.date)
                         .foregroundStyle(.primary)
                 }
             )
@@ -41,7 +60,7 @@ struct ChoreLogFilterView: View {
                     }
                 },
                 label: {
-                    Label("User", systemImage: MySymbols.filter)
+                    Label("User", systemImage: MySymbols.user)
                         .foregroundStyle(.primary)
                 }
             )
@@ -51,9 +70,10 @@ struct ChoreLogFilterView: View {
 
 #Preview(traits: .previewData) {
     @Previewable @State var filteredChoreID: Int? = nil
+    @Previewable @State var filteredDateRangeMonths: Int? = nil
     @Previewable @State var filteredUserID: Int? = nil
 
     NavigationStack {
-        ChoreLogFilterView(filteredChoreID: $filteredChoreID, filteredUserID: $filteredUserID)
+        ChoreLogFilterView(filteredChoreID: $filteredChoreID, filteredDateRangeMonths: $filteredDateRangeMonths, filteredUserID: $filteredUserID)
     }
 }
