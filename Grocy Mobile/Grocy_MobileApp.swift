@@ -25,6 +25,28 @@ class DeepLinkManager {
     }
 }
 
+extension ModelContainer {
+    static func deleteStore(at url: URL) throws {
+        let fileManager = FileManager.default
+        
+        // Delete main store file
+        if fileManager.fileExists(atPath: url.path) {
+            try fileManager.removeItem(at: url)
+        }
+        
+        // Delete SQLite WAL and SHM files
+        let walURL = url.deletingPathExtension().appendingPathExtension("store-wal")
+        let shmURL = url.deletingPathExtension().appendingPathExtension("store-shm")
+        
+        if fileManager.fileExists(atPath: walURL.path) {
+            try fileManager.removeItem(at: walURL)
+        }
+        if fileManager.fileExists(atPath: shmURL.path) {
+            try fileManager.removeItem(at: shmURL)
+        }
+    }
+}
+
 @main
 struct Grocy_MobileApp: App {
     @State private var grocyVM: GrocyViewModel
@@ -118,7 +140,9 @@ struct Grocy_MobileApp: App {
             _grocyVM = State(initialValue: GrocyViewModel(modelContext: modelContext, profileModelContext: ModelContext(profileModelContainer)))
         } catch {
             // Reset store if there's a migration error
-            ModelContainer.resetStore()
+//            ModelContainer.resetStore()
+            let storeURL = mainConfig.url // Get your configuration's URL
+            try? ModelContainer.deleteStore(at: storeURL)
 
             // Try creating the container again
             do {
