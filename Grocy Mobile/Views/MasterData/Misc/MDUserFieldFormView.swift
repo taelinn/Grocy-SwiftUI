@@ -46,7 +46,7 @@ struct MDUserFieldFormView: View {
         caption = userField?.caption ?? ""
         sortNumber = userField?.sortNumber ?? -1
         type = UserFieldType(rawValue: userField?.type ?? "") ?? UserFieldType.none
-        showAsColumnInTables = userField?.showAsColumnInTables == 1
+        showAsColumnInTables = userField?.showAsColumnInTables == true
         isNameCorrect = checkNameCorrect()
         isCaptionCorrect = checkCaptionCorrect()
     }
@@ -70,7 +70,7 @@ struct MDUserFieldFormView: View {
         if let entity = entity {
             let id = isNewUserField ? grocyVM.findNextID(.userfields) : userField!.id
             let timeStamp = isNewUserField ? Date().iso8601withFractionalSeconds : userField!.rowCreatedTimestamp
-            let userFieldPOST = MDUserField(id: id, name: name, entity: entity.rawValue, caption: caption, type: type.rawValue, showAsColumnInTables: showAsColumnInTables ? 1 : 0, config: nil, sortNumber: sortNumber, rowCreatedTimestamp: timeStamp)
+            let userFieldPOST = MDUserField(id: id, name: name, entity: entity.rawValue, caption: caption, type: type.rawValue, showAsColumnInTables: showAsColumnInTables, config: nil, sortNumber: sortNumber, rowCreatedTimestamp: timeStamp)
             isProcessing = true
             if isNewUserField {
                 do {

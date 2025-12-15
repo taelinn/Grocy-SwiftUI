@@ -10,7 +10,6 @@ import SwiftUI
 
 struct StockFilterView: View {
     @Environment(\.modelContext) private var modelContext
-    @Environment(\.colorScheme) var colorScheme
 
     @Query(filter: #Predicate<MDLocation> { $0.active }, sort: \MDLocation.name, order: .forward) var mdLocations: MDLocations
     @Query(filter: #Predicate<MDProductGroup> { $0.active }, sort: \MDProductGroup.id, order: .forward) var mdProductGroups: MDProductGroups

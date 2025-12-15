@@ -716,7 +716,7 @@ struct ShoppingListView: View {
                 #endif
                 Picker(
                     "Sort order",
-                    systemImage: MySymbols.sortCategory,
+                    systemImage: MySymbols.sortOrder,
                     selection: $sortOrder,
                     content: {
                         Label("Ascending", systemImage: MySymbols.sortForward)

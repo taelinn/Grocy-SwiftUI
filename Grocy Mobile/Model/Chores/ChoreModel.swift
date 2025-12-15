@@ -1,5 +1,5 @@
 //
-//  ChoreElementModel.swift
+//  ChoreModel.swift
 //  Grocy Mobile
 //
 //  Created by Georg Meißner on 09.12.25.
