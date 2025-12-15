@@ -8,6 +8,15 @@
 import SwiftData
 import SwiftUI
 
+enum StockJournalSortOption: Hashable, Sendable {
+    case byProductName
+    case byAmount
+    case byTransactionTime
+    case byTransactionType
+    case byLocationName
+    case byUserName
+}
+
 struct StockJournalView: View {
     @Environment(GrocyViewModel.self) private var grocyVM
     @Environment(\.modelContext) private var modelContext
@@ -24,8 +33,11 @@ struct StockJournalView: View {
     @State private var filteredLocationID: Int?
     @State private var filteredTransactionType: TransactionType?
     @State private var filteredUserID: Int?
+    @State private var filteredDateRangeMonths: Int? = 12
     @State private var showingFilterSheet = false
     @State private var isFirstShown: Bool = true
+    @State private var sortOption: StockJournalSortOption = .byTransactionTime
+    @State private var sortOrder: SortOrder = .reverse
 
     var stockElement: StockElement? = nil
     var isPopup: Bool = false
@@ -33,6 +45,22 @@ struct StockJournalView: View {
     // Fetch the data with a dynamic predicate
     var stockJournal: StockJournal {
         let sortDescriptor = SortDescriptor<StockJournalEntry>(\.rowCreatedTimestamp, order: .reverse)
+
+        var predicates: [Predicate<StockJournalEntry>] = []
+
+        // Date range predicate
+        if let filteredDateRangeMonths = filteredDateRangeMonths {
+            let cutoffDate = Calendar.current.date(
+                byAdding: .month,
+                value: -filteredDateRangeMonths,
+                to: Date.now
+            )!
+            let stockJournalPredicate = #Predicate<StockJournalEntry> { entry in
+                return entry.rowCreatedTimestamp >= cutoffDate
+            }
+            predicates.append(stockJournalPredicate)
+        }
+
         // Find matching product IDs for search string
         var matchingProductIDs: [Int]? {
             let productPredicate =
@@ -45,7 +73,6 @@ struct StockJournalView: View {
             let matchingProducts = try? modelContext.fetch(productDescriptor)
             return matchingProducts?.map(\.id) ?? []
         }
-        var predicates: [Predicate<StockJournalEntry>] = []
 
         // Product search predicate
         if !searchString.isEmpty, let productIDs = matchingProductIDs {
@@ -115,6 +142,47 @@ struct StockJournalView: View {
         return (try? modelContext.fetchCount(descriptor)) ?? 0
     }
 
+    var stockJournalSorted: StockJournal {
+        switch sortOption {
+        case .byProductName:
+            return stockJournal.sorted { fir, sec in
+                let firstName = mdProducts.first(where: { $0.id == fir.productID })?.name ?? ""
+                let secName = mdProducts.first(where: { $0.id == sec.productID })?.name ?? ""
+                return sortOrder == .forward
+                    ? firstName < secName
+                    : firstName > secName
+            }
+        case .byAmount:
+            return stockJournal.sorted {
+                sortOrder == .forward ? $0.amount < $1.amount : $0.amount > $1.amount
+            }
+        case .byTransactionTime:
+            return stockJournal.sorted {
+                sortOrder == .forward ? $0.rowCreatedTimestamp < $1.rowCreatedTimestamp : $0.rowCreatedTimestamp > $1.rowCreatedTimestamp
+            }
+        case .byTransactionType:
+            return stockJournal.sorted {
+                sortOrder == .forward ? $0.transactionTypeRaw < $1.transactionTypeRaw : $0.transactionTypeRaw > $1.transactionTypeRaw
+            }
+        case .byLocationName:
+            return stockJournal.sorted { fir, sec in
+                let firstName = mdLocations.first(where: { $0.id == fir.locationID })?.name ?? ""
+                let secName = mdLocations.first(where: { $0.id == sec.locationID })?.name ?? ""
+                return sortOrder == .forward
+                    ? firstName < secName
+                    : firstName > secName
+            }
+        case .byUserName:
+            return stockJournal.sorted { fir, sec in
+                let firstName = grocyUsers.first(where: { $0.id == fir.userID })?.displayName ?? ""
+                let secName = grocyUsers.first(where: { $0.id == sec.userID })?.displayName ?? ""
+                return sortOrder == .forward
+                    ? firstName < secName
+                    : firstName > secName
+            }
+        }
+    }
+
     private let dataToUpdate: [ObjectEntities] = [.stock_log, .products, .locations]
     private let additionalDataToUpdate: [AdditionalEntities] = [.users]
 
@@ -141,7 +209,7 @@ struct StockJournalView: View {
             } else if stockJournal.isEmpty {
                 ContentUnavailableView.search
             }
-            ForEach(stockJournal, id: \.id) { (journalEntry: StockJournalEntry) in
+            ForEach(stockJournalSorted, id: \.id) { (journalEntry: StockJournalEntry) in
                 StockJournalRowView(
                     journalEntry: journalEntry,
                     product: mdProducts.first(where: { $0.id == journalEntry.productID }),
@@ -184,7 +252,8 @@ struct StockJournalView: View {
                     }
                 )
             }
-            ToolbarItem(placement: .automatic) {
+            ToolbarItemGroup(placement: .automatic) {
+                sortGroupMenu
                 Button(action: { showingFilterSheet = true }) {
                     Label("Filter", systemImage: MySymbols.filter)
                 }
@@ -204,7 +273,8 @@ struct StockJournalView: View {
                     filteredProductID: $filteredProductID,
                     filteredTransactionType: $filteredTransactionType,
                     filteredLocationID: $filteredLocationID,
-                    filteredUserID: $filteredUserID
+                    filteredUserID: $filteredUserID,
+                    filteredDateRangeMonths: $filteredDateRangeMonths,
                 )
                 .navigationTitle("Filter")
                 #if os(iOS)
@@ -251,6 +321,70 @@ struct StockJournalView: View {
                 isFirstShown = false
             }
         }
+    }
+
+    var sortGroupMenu: some View {
+        Menu(
+            content: {
+                Picker(
+                    "Sort category",
+                    systemImage: MySymbols.sortCategory,
+                    selection: $sortOption,
+                    content: {
+                        Label("Product", systemImage: MySymbols.product)
+                            .labelStyle(.titleAndIcon)
+                            .tag(StockJournalSortOption.byProductName)
+
+                        Label("Amount", systemImage: MySymbols.amount)
+                            .labelStyle(.titleAndIcon)
+                            .tag(StockJournalSortOption.byAmount)
+
+                        Label("Transaction time", systemImage: MySymbols.date)
+                            .labelStyle(.titleAndIcon)
+                            .tag(StockJournalSortOption.byTransactionTime)
+
+                        Label("Transaction type", systemImage: MySymbols.consume)
+                            .labelStyle(.titleAndIcon)
+                            .tag(StockJournalSortOption.byTransactionType)
+
+                        Label("Location", systemImage: MySymbols.location)
+                            .labelStyle(.titleAndIcon)
+                            .tag(StockJournalSortOption.byLocationName)
+
+                        Label("Done by", systemImage: MySymbols.user)
+                            .labelStyle(.titleAndIcon)
+                            .tag(StockJournalSortOption.byUserName)
+                    }
+                )
+                #if os(iOS)
+                    .pickerStyle(.menu)
+                #else
+                    .pickerStyle(.inline)
+                #endif
+                Picker(
+                    "Sort order",
+                    systemImage: MySymbols.sortOrder,
+                    selection: $sortOrder,
+                    content: {
+                        Label("Ascending", systemImage: MySymbols.sortForward)
+                            .labelStyle(.titleAndIcon)
+                            .tag(SortOrder.forward)
+
+                        Label("Descending", systemImage: MySymbols.sortReverse)
+                            .labelStyle(.titleAndIcon)
+                            .tag(SortOrder.reverse)
+                    }
+                )
+                #if os(iOS)
+                    .pickerStyle(.menu)
+                #else
+                    .pickerStyle(.inline)
+                #endif
+            },
+            label: {
+                Label("Sort", systemImage: MySymbols.sort)
+            }
+        )
     }
 }
 

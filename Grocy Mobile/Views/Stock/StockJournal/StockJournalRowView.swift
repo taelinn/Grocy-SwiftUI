@@ -24,30 +24,50 @@ struct StockJournalRowView: View {
                 .strikethrough(journalEntry.undone, color: .primary)
             if journalEntry.undone {
                 if let date = getDateFromTimestamp(journalEntry.undoneTimestamp ?? "") {
-                    HStack(alignment: .bottom) {
-                        Text("\(Text("Undone on")) \(formatDateAsString(date, showTime: true, localizationKey: localizationKey) ?? "")")
-                            .font(.caption)
+                    HStack(spacing: 4) {
+                        Text("\(Text("Undone on")):")
+                        Text(formatDateAsString(date, showTime: true, localizationKey: localizationKey) ?? "")
                         Text(getRelativeDateAsText(date, localizationKey: localizationKey) ?? "")
-                            .font(.caption)
                             .italic()
                     }
-                    .foregroundStyle(journalEntry.undone ? Color.gray : Color.primary)
+                    .font(.caption)
                 }
             }
             Group {
-                Text("\(Text("Amount")): \(journalEntry.amount.formattedAmount) \(quantityUnit?.getName(amount: journalEntry.amount) ?? "")")
-                Text("\(Text("Transaction time")): \(formatTimestampOutput(journalEntry.rowCreatedTimestamp, localizationKey: localizationKey) ?? "")")
-                Text("\(Text("Transaction type")): \(Text(journalEntry.transactionType.localizedName))")
-                    .font(.caption)
-                Text("\(Text("Location")): \(location?.name ?? "Location Error")")
-                Text("\(Text("Done by")): \(grocyUser?.displayName ?? "Username Error")")
+                HStack(spacing: 4) {
+                    Text("\(Text("Amount")):")
+                    Text("\(journalEntry.amount.formattedAmount) \(quantityUnit?.getName(amount: journalEntry.amount) ?? "")")
+                }
+                HStack(spacing: 4) {
+                    Text("\(Text("Transaction time")):")
+                    Text(formatDateAsString(journalEntry.rowCreatedTimestamp, showTime: true, localizationKey: localizationKey) ?? "")
+                    Text(getRelativeDateAsText(journalEntry.rowCreatedTimestamp, localizationKey: localizationKey) ?? "")
+                        .italic()
+                }
+                HStack(spacing: 4) {
+                    Text("\(Text("Transaction type")):")
+                    Text(journalEntry.transactionType.localizedName)
+                }
+                if let locationName = location?.name {
+                    HStack(spacing: 4) {
+                        Text("\(Text("Location")):")
+                        Text(locationName)
+                    }
+                }
+                HStack(spacing: 4) {
+                    Text("\(Text("Done by")):")
+                    Text(grocyUser?.displayName ?? "Username Error")
+                }
                 if let note = journalEntry.note {
-                    Text("\(Text("Note")): \(note)")
+                    HStack(spacing: 4) {
+                        Text("\(Text("Note")): ")
+                        Text(note)
+                    }
                 }
             }
-            .foregroundStyle(journalEntry.undone ? Color.gray : Color.primary)
             .font(.caption)
         }
+        .foregroundStyle(journalEntry.undone ? Color.gray : Color.primary)
     }
 }
 

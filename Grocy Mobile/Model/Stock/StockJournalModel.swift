@@ -17,16 +17,16 @@ class StockJournalEntry: Codable, Equatable {
     @Attribute(.unique) var id: Int
     var productID: Int
     var amount: Double
-    var bestBeforeDate: String?
-    var purchasedDate: String?
-    var usedDate: String?
+    var bestBeforeDate: Date?
+    var purchasedDate: Date?
+    var usedDate: Date?
     var spoiled: Bool
     var stockID: String
     @Attribute var transactionTypeRaw: String
     var price: Double?
     var undone: Bool
     var undoneTimestamp: String?
-    var openedDate: String?
+    var openedDate: Date?
     var locationID: Int
     var recipeID: Int?
     var correlationID: Int?
@@ -35,7 +35,7 @@ class StockJournalEntry: Codable, Equatable {
     var storeID: Int?
     var userID: Int
     var note: String?
-    var rowCreatedTimestamp: String
+    var rowCreatedTimestamp: Date
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -68,17 +68,16 @@ class StockJournalEntry: Codable, Equatable {
             self.id = try container.decodeFlexibleInt(forKey: .id)
             self.productID = try container.decodeFlexibleInt(forKey: .productID)
             self.amount = try container.decodeFlexibleDouble(forKey: .amount)
-            self.bestBeforeDate = try? container.decode(String.self, forKey: .bestBeforeDate)
-            self.purchasedDate = try? container.decodeIfPresent(String.self, forKey: .purchasedDate) ?? nil
-            self.usedDate = try? container.decodeIfPresent(String.self, forKey: .usedDate) ?? nil
+            self.bestBeforeDate =  getDateFromString(try? container.decode(String.self, forKey: .bestBeforeDate))
+            self.purchasedDate = getDateFromString(try? container.decodeIfPresent(String.self, forKey: .purchasedDate))
+            self.usedDate = getDateFromString(try? container.decodeIfPresent(String.self, forKey: .usedDate))
             self.spoiled = try container.decodeFlexibleBool(forKey: .spoiled)
             self.stockID = try container.decodeFlexibleString(forKey: .stockID)
             self.transactionTypeRaw = try container.decode(String.self, forKey: .transactionTypeRaw)
             self.price = try container.decodeFlexibleDoubleIfPresent(forKey: .price)
             self.undone = try container.decodeFlexibleBool(forKey: .undone)
             self.undoneTimestamp = try? container.decodeIfPresent(String.self, forKey: .undoneTimestamp) ?? nil
-            self.openedDate = try? container.decodeIfPresent(String.self, forKey: .openedDate) ?? nil
-            self.rowCreatedTimestamp = try container.decode(String.self, forKey: .rowCreatedTimestamp)
+            self.openedDate = getDateFromString(try? container.decodeIfPresent(String.self, forKey: .openedDate))
             self.locationID = try container.decodeFlexibleInt(forKey: .locationID)
             self.recipeID = try container.decodeFlexibleIntIfPresent(forKey: .recipeID)
             self.correlationID = try container.decodeFlexibleIntIfPresent(forKey: .correlationID)
@@ -87,6 +86,7 @@ class StockJournalEntry: Codable, Equatable {
             self.storeID = try container.decodeFlexibleIntIfPresent(forKey: .storeID)
             self.userID = try container.decodeFlexibleInt(forKey: .userID)
             self.note = try? container.decodeIfPresent(String.self, forKey: .note)
+            self.rowCreatedTimestamp = getDateFromString(try container.decode(String.self, forKey: .rowCreatedTimestamp))!
         } catch {
             throw APIError.decodingError(error: error)
         }

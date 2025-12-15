@@ -11,6 +11,8 @@ import SwiftData
 struct StockJournalFilterView: View {
     @Environment(GrocyViewModel.self) private var grocyVM
     
+    @AppStorage("localizationKey") var localizationKey: String = "en"
+    
     @Query(filter: #Predicate<MDProduct>{$0.active}, sort: \MDProduct.name, order: .forward) var mdProducts: MDProducts
     @Query(filter: #Predicate<MDLocation>{$0.active}, sort: \MDLocation.name, order: .forward) var mdLocations: MDLocations
     @Query(sort: \GrocyUser.id, order: .forward) var grocyUsers: GrocyUsers
@@ -19,6 +21,7 @@ struct StockJournalFilterView: View {
     @Binding var filteredTransactionType: TransactionType?
     @Binding var filteredLocationID: Int?
     @Binding var filteredUserID: Int?
+    @Binding var filteredDateRangeMonths: Int?
     
     var body: some View {
         List {
@@ -62,6 +65,24 @@ struct StockJournalFilterView: View {
                 Label("User", systemImage: MySymbols.filter)
                     .foregroundStyle(.primary)
             })
+            Picker(
+                selection: $filteredDateRangeMonths,
+                content: {
+                    Text(formatDuration(value: 1, unit: .month, localizationKey: localizationKey)!)
+                        .tag(1)
+                    Text(formatDuration(value: 6, unit: .month, localizationKey: localizationKey)!)
+                        .tag(6)
+                    Text(formatDuration(value: 1, unit: .year, localizationKey: localizationKey)!)
+                        .tag(12)
+                    Text(formatDuration(value: 2, unit: .year, localizationKey: localizationKey)!)
+                        .tag(24)
+                    Text("All").tag(nil as Int?)
+                },
+                label: {
+                    Label("Date range", systemImage: MySymbols.date)
+                        .foregroundStyle(.primary)
+                }
+            )
         }
     }
 }
@@ -71,8 +92,9 @@ struct StockJournalFilterView: View {
     @Previewable @State var filteredTransactionType: TransactionType? = nil
     @Previewable @State var filteredLocationID: Int? = nil
     @Previewable @State var filteredUserID: Int? = nil
+    @Previewable @State var filteredDateRangeMonths: Int? = 12
     
     NavigationStack {
-        StockJournalFilterView(filteredProductID: $filteredProductID, filteredTransactionType: $filteredTransactionType, filteredLocationID: $filteredLocationID, filteredUserID: $filteredUserID)
+        StockJournalFilterView(filteredProductID: $filteredProductID, filteredTransactionType: $filteredTransactionType, filteredLocationID: $filteredLocationID, filteredUserID: $filteredUserID, filteredDateRangeMonths: $filteredDateRangeMonths)
     }
 }
