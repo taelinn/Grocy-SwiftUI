@@ -62,6 +62,10 @@ struct QuickScanModeView: View {
         isScanPaused = (qsActiveSheet != nil)
     }
 
+    // For realizing keyboard entry (e.g. external Barcode Scanner)
+    @State private var scannedCode = ""
+    @FocusState private var isFocused: Bool
+
     private let dataToUpdate: [ObjectEntities] = [
         .product_barcodes,
         .products,
@@ -146,6 +150,16 @@ struct QuickScanModeView: View {
             } else {
                 notRecognizedBarcode = result.value
                 qsActiveSheet = .selectProduct
+            }
+        }
+
+        func handleKeyPress(characters: String) {
+            if characters == "\n" || characters == "\r" {
+                // Barcode scanners typically send Enter/Return after the code
+                handleScan(result: CodeResult(value: scannedCode, type: .qr))
+                scannedCode = ""
+            } else {
+                scannedCode += characters
             }
         }
     #endif
@@ -305,6 +319,18 @@ struct QuickScanModeView: View {
                         }
                     }
                 )
+                .focusable()
+                .focused($isFocused)
+                .onKeyPress { press in
+                    handleKeyPress(characters: press.characters)
+                    return .handled
+                }
+                .onAppear {
+                    isFocused = true
+                }
+                .onDisappear {
+                    isFocused = false
+                }
         #else
             Text("Not available on this platform.")
         #endif
