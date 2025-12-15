@@ -63,6 +63,7 @@ struct ChoreLogRowView: View {
                 }
             }
         }
+        .listRowBackground((choreLogEntry.trackedTime ?? Date() > choreLogEntry.scheduledExecutionTime ?? Date()) ? Color(.GrocyColors.grocyRedBackground) : nil)
     }
 }
 

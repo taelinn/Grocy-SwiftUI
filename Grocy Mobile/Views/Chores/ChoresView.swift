@@ -284,7 +284,7 @@ struct ChoresView: View {
                                 await trackChore(choreID: chore.id)
                             }
                         },
-                        label: { Label("OK", systemImage: MySymbols.done) }
+                        label: { Label("OK", systemImage: MySymbols.choreTrackNext) }
                     )
                     .tint(.green)
                     .accessibilityHint("Track next chore schedule")
@@ -315,15 +315,18 @@ struct ChoresView: View {
             }
         }
         .toolbar {
-            ToolbarItemGroup(placement: .automatic) {
-                Button(action: { showingFilterSheet = true }) {
-                    Label("Filter", systemImage: MySymbols.filter)
-                }
+            ToolbarItemGroup(placement: .navigation) {
+                Button(
+                    action: { showingFilterSheet = true },
+                    label: {
+                        Label("Filter", systemImage: MySymbols.filter)
+                    }
+                )
                 //                .badge((filteredStatus != .all || filteredUserID != nil)  ? "" : nil)
                 //                .badgeProminence(.decreased)
                 sortGroupMenu
             }
-            ToolbarItem(placement: .automatic) {
+            ToolbarItem(placement: .primaryAction) {
                 Button(
                     action: {
                         choreInteractionRouter.present(.choreLog(choreID: nil))
@@ -379,7 +382,7 @@ struct ChoresView: View {
                     systemImage: MySymbols.sortCategory,
                     selection: $sortOption,
                     content: {
-                        Label("Name", systemImage: MySymbols.product)
+                        Label("Name", systemImage: MySymbols.name)
                             .labelStyle(.titleAndIcon)
                             .tag(ChoresSortOption.byName)
                         Label("Next estimated tracking", systemImage: MySymbols.date)
@@ -400,7 +403,7 @@ struct ChoresView: View {
                 #endif
                 Picker(
                     "Sort order",
-                    systemImage: MySymbols.sortCategory,
+                    systemImage: MySymbols.sortOrder,
                     selection: $sortOrder,
                     content: {
                         Label("Ascending", systemImage: MySymbols.sortForward)

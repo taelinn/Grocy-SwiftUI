@@ -10,6 +10,8 @@ import SwiftUI
 
 struct ChoreLogFilterView: View {
     @Environment(GrocyViewModel.self) private var grocyVM
+    
+    @AppStorage("localizationKey") var localizationKey: String = "en"
 
     @Query(sort: \Chore.choreName, order: .forward) var chores: Chores
     @Query(sort: \GrocyUser.id, order: .forward) var grocyUsers: GrocyUsers
@@ -36,13 +38,13 @@ struct ChoreLogFilterView: View {
             Picker(
                 selection: $filteredDateRangeMonths,
                 content: {
-                    Text(formatDuration(value: 1, unit: .month)!)
+                    Text(formatDuration(value: 1, unit: .month, localizationKey: localizationKey)!)
                         .tag(1)
-                    Text(formatDuration(value: 6, unit: .month)!)
+                    Text(formatDuration(value: 6, unit: .month, localizationKey: localizationKey)!)
                         .tag(6)
-                    Text(formatDuration(value: 1, unit: .year)!)
+                    Text(formatDuration(value: 1, unit: .year, localizationKey: localizationKey)!)
                         .tag(12)
-                    Text(formatDuration(value: 2, unit: .year)!)
+                    Text(formatDuration(value: 2, unit: .year, localizationKey: localizationKey)!)
                         .tag(24)
                     Text("All").tag(nil as Int?)
                 },

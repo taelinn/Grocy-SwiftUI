@@ -8,6 +8,13 @@
 import SwiftData
 import SwiftUI
 
+enum ChoreLogSortOption: Hashable, Sendable {
+    case byChore
+    case byTrackedTime
+    case byScheduledTrackingTime
+    case byUser
+}
+
 struct ChoreLogView: View {
     @Environment(GrocyViewModel.self) private var grocyVM
     @Environment(\.modelContext) private var modelContext
@@ -19,17 +26,32 @@ struct ChoreLogView: View {
     @State private var searchString: String = ""
 
     @State private var filteredChoreID: Int?
-    @State private var filteredDateRangeMonths: Int?
+    @State private var filteredDateRangeMonths: Int? = 12
     @State private var filteredUserID: Int?
     @State private var showingFilterSheet = false
     @State private var isFirstShown: Bool = true
+    @State private var sortOption: ChoreLogSortOption = .byTrackedTime
+    @State private var sortOrder: SortOrder = .reverse
 
     var choreID: Int? = nil
     var isPopup: Bool = false
 
+    var sortDescriptor: SortDescriptor<ChoreLogEntry>? {
+        switch sortOption {
+        case .byChore:
+            return nil
+        case .byTrackedTime:
+            return SortDescriptor(\.trackedTime, order: sortOrder)
+        case .byScheduledTrackingTime:
+            return SortDescriptor(\.scheduledExecutionTime, order: sortOrder)
+        case .byUser:
+            return nil
+
+        }
+    }
+
     // Fetch the data with a dynamic predicate
     var choreLog: ChoreLog {
-        let sortDescriptor = SortDescriptor<ChoreLogEntry>(\.rowCreatedTimestamp, order: .reverse)
         var predicates: [Predicate<ChoreLogEntry>] = []
 
         // Date range predicate
@@ -48,7 +70,7 @@ struct ChoreLogView: View {
             }
             predicates.append(choreLogPredicate)
         }
-        
+
         // Find matching product IDs for search string
         var matchingChoreIDs: [Int]? {
             let chorePredicate =
@@ -69,7 +91,7 @@ struct ChoreLogView: View {
             }
             predicates.append(searchPredicate)
         }
-        
+
         // Filtered chore predicate
         if let filteredChoreID = filteredChoreID {
             let choreLogPredicate = #Predicate<ChoreLogEntry> { entry in
@@ -98,10 +120,46 @@ struct ChoreLogView: View {
 
         let descriptor = FetchDescriptor<ChoreLogEntry>(
             predicate: finalPredicate,
-            sortBy: [sortDescriptor]
+            sortBy: sortDescriptor != nil ? [sortDescriptor!] : []
         )
 
-        return (try? modelContext.fetch(descriptor)) ?? []
+        let fetchedResults = (try? modelContext.fetch(descriptor)) ?? []
+
+        // Apply user name sorting in-memory
+        if sortOption == .byChore {
+            // Fetch all users once
+            let choreDescriptor = FetchDescriptor<MDChore>()
+            let chores = (try? modelContext.fetch(choreDescriptor)) ?? []
+            let choreDict = Dictionary(uniqueKeysWithValues: chores.map { ($0.id, $0.name) })
+
+            return fetchedResults.sorted { a, b in
+                let aName = choreDict[a.choreID] ?? ""
+                let bName = choreDict[b.choreID] ?? ""
+                let comparison = aName.localizedCaseInsensitiveCompare(bName)
+                return sortOrder == .forward
+                    ? comparison == .orderedAscending
+                    : comparison == .orderedDescending
+            }
+        }
+
+        // Apply user name sorting in-memory
+        if sortOption == .byUser {
+            // Fetch all users once
+            let userDescriptor = FetchDescriptor<GrocyUser>()
+            let users = (try? modelContext.fetch(userDescriptor)) ?? []
+            let userDict = Dictionary(uniqueKeysWithValues: users.map { ($0.id, $0.displayName) })
+
+            return fetchedResults.sorted { a, b in
+                let aName = userDict[a.doneByUserID ?? 0] ?? ""
+                let bName = userDict[b.doneByUserID ?? 0] ?? ""
+                let comparison = aName.localizedCaseInsensitiveCompare(bName)
+                return sortOrder == .forward
+                    ? comparison == .orderedAscending
+                    : comparison == .orderedDescending
+            }
+        }
+
+        return fetchedResults
     }
 
     // Get the unfiltered count without fetching any data
@@ -146,17 +204,18 @@ struct ChoreLogView: View {
                         edge: .leading,
                         allowsFullSwipe: true,
                         content: {
-                            Button(
-                                action: {
-                                    Task {
-                                        await undoExecution(choreLogEntry: choreLogEntry)
+                            if !choreLogEntry.undone {
+                                Button(
+                                    action: {
+                                        Task {
+                                            await undoExecution(choreLogEntry: choreLogEntry)
+                                        }
+                                    },
+                                    label: {
+                                        Label("Undo chore execution", systemImage: MySymbols.undo)
                                     }
-                                },
-                                label: {
-                                    Label("Undo chore execution", systemImage: MySymbols.undo)
-                                }
-                            )
-                            .disabled(choreLogEntry.undone)
+                                )
+                            }
                         }
                     )
             }
@@ -177,7 +236,8 @@ struct ChoreLogView: View {
                     }
                 )
             }
-            ToolbarItem(placement: .automatic) {
+            ToolbarItemGroup(placement: .automatic) {
+                sortGroupMenu
                 Button(action: { showingFilterSheet = true }) {
                     Label("Filter", systemImage: MySymbols.filter)
                 }
@@ -241,6 +301,62 @@ struct ChoreLogView: View {
                 isFirstShown = false
             }
         }
+    }
+
+    var sortGroupMenu: some View {
+        Menu(
+            content: {
+                Picker(
+                    "Sort category",
+                    systemImage: MySymbols.sortCategory,
+                    selection: $sortOption,
+                    content: {
+                        Label("Chore", systemImage: MySymbols.chores)
+                            .labelStyle(.titleAndIcon)
+                            .tag(ChoreLogSortOption.byChore)
+
+                        Label("Tracked time", systemImage: MySymbols.date)
+                            .labelStyle(.titleAndIcon)
+                            .tag(ChoreLogSortOption.byTrackedTime)
+
+                        Label("Scheduled tracking time", systemImage: MySymbols.date)
+                            .labelStyle(.titleAndIcon)
+                            .tag(ChoreLogSortOption.byScheduledTrackingTime)
+
+                        Label("Done by", systemImage: MySymbols.user)
+                            .labelStyle(.titleAndIcon)
+                            .tag(ChoreLogSortOption.byUser)
+                    }
+                )
+                #if os(iOS)
+                    .pickerStyle(.menu)
+                #else
+                    .pickerStyle(.inline)
+                #endif
+                Picker(
+                    "Sort order",
+                    systemImage: MySymbols.sortOrder,
+                    selection: $sortOrder,
+                    content: {
+                        Label("Ascending", systemImage: MySymbols.sortForward)
+                            .labelStyle(.titleAndIcon)
+                            .tag(SortOrder.forward)
+
+                        Label("Descending", systemImage: MySymbols.sortReverse)
+                            .labelStyle(.titleAndIcon)
+                            .tag(SortOrder.reverse)
+                    }
+                )
+                #if os(iOS)
+                    .pickerStyle(.menu)
+                #else
+                    .pickerStyle(.inline)
+                #endif
+            },
+            label: {
+                Label("Sort", systemImage: MySymbols.sort)
+            }
+        )
     }
 }
 
