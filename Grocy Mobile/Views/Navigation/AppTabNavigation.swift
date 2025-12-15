@@ -12,7 +12,6 @@ private enum TabNavigationItem: String, Codable {
     case stockOverview = "stockOverview"
     case stockJournal = "stockJournal"
     case shoppingList = "shoppingList"
-    case more = "more"
     case masterData = "masterData"
     case activities = "activities"
     case settings = "settings"
@@ -29,11 +28,14 @@ private enum TabNavigationItem: String, Codable {
     case mdStores = "mdStores"
     case mdQuantityUnits = "mdQuantityUnits"
     case mdProductGroups = "mdProductGroups"
+    case mdChores = "mdChores"
+    case mdTaskCategories = "mdTaskCategories"
 }
 
 struct AppTabNavigation: View {
-    @Environment(\.horizontalSizeClass) var sizeClass
+    @Environment(\.horizontalSizeClass) var horizontalSizeClass
     @AppStorage("tabSelection") private var tabSelection: TabNavigationItem = .stockOverview
+    @AppStorage("appTabCustomization") private var appTabCustomization: TabViewCustomization
     @AppStorage("devMode") private var devMode: Bool = false
     @Environment(DeepLinkManager.self) var deepLinkManager
 
@@ -44,23 +46,21 @@ struct AppTabNavigation: View {
                     QuickScanModeView()
                 }
             }
+            .customizationID("georgappdev.Grocy.quickScanMode")
 
             Tab("Stock overview", systemImage: MySymbols.stockOverview, value: TabNavigationItem.stockOverview) {
                 NavigationStack {
                     StockView()
                 }
             }
-
-            Tab("Stock journal", systemImage: MySymbols.stockJournal, value: TabNavigationItem.stockJournal) {
-                StockJournalView()
-            }
-            .hidden(sizeClass == .compact)
+            .customizationID("georgappdev.Grocy.stockOverview")
 
             Tab("Shopping list", systemImage: MySymbols.shoppingList, value: TabNavigationItem.shoppingList) {
                 NavigationStack {
                     ShoppingListView()
                 }
             }
+            .customizationID("georgappdev.Grocy.shoppingList")
 
             if devMode {
                 Tab("Recipes", systemImage: MySymbols.recipe, value: TabNavigationItem.recipes) {
@@ -68,78 +68,136 @@ struct AppTabNavigation: View {
                         RecipesView()
                     }
                 }
-                
-                Tab("Chores overview", systemImage: MySymbols.chores, value: TabNavigationItem.chores) {
-                    NavigationStack {
-                        ChoresView()
-                    }
-                }
+                .customizationID("georgappdev.Grocy.recipes")
             }
 
-            TabSection(
-                "Stock interaction",
-                content: {
-                    Tab("Purchase", systemImage: MySymbols.purchase, value: TabNavigationItem.purchaseProduct) {
-                        PurchaseProductView()
-                    }
-                    Tab("Consume", systemImage: MySymbols.consume, value: TabNavigationItem.consumeProduct) {
-                        ConsumeProductView()
-                    }
-                    Tab("Transfer", systemImage: MySymbols.transfer, value: TabNavigationItem.transferProduct) {
-                        TransferProductView()
-                    }
-                    Tab("Inventory", systemImage: MySymbols.inventory, value: TabNavigationItem.inventoryProduct) {
-                        InventoryProductView()
-                    }
+            Tab("Chores overview", systemImage: MySymbols.chores, value: TabNavigationItem.chores) {
+                NavigationStack {
+                    ChoresView()
                 }
-            )
-            .hidden(sizeClass == .compact)
+            }
+            .customizationID("georgappdev.Grocy.chores")
 
-            TabSection(
-                "Master data",
-                content: {
-                    Tab("Products", systemImage: MySymbols.product, value: TabNavigationItem.mdProducts) {
-                        MDProductsView()
+            if horizontalSizeClass != .compact {
+                TabSection(
+                    "Stock interaction",
+                    content: {
+                        Tab("Purchase", systemImage: MySymbols.purchase, value: TabNavigationItem.purchaseProduct) {
+                            NavigationStack {
+                                PurchaseProductView()
+                            }
+                        }
+                        .customizationID("georgappdev.Grocy.purchaseProduct")
+                        
+                        Tab("Consume", systemImage: MySymbols.consume, value: TabNavigationItem.consumeProduct) {
+                            NavigationStack {
+                                ConsumeProductView()
+                            }
+                        }
+                        .customizationID("georgappdev.Grocy.consumeProduct")
+                        
+                        Tab("Transfer", systemImage: MySymbols.transfer, value: TabNavigationItem.transferProduct) {
+                            NavigationStack {
+                                TransferProductView()
+                            }
+                        }
+                        .customizationID("georgappdev.Grocy.transferProduct")
+                        
+                        Tab("Inventory", systemImage: MySymbols.inventory, value: TabNavigationItem.inventoryProduct) {
+                            NavigationStack {
+                                InventoryProductView()
+                            }
+                        }
+                        .customizationID("georgappdev.Grocy.inventoryProduct")
                     }
-                    Tab("Locations", systemImage: MySymbols.location, value: TabNavigationItem.mdLocations) {
-                        MDLocationsView()
+                )
+                .tabPlacement(.sidebarOnly)
+                .customizationID("georgappdev.Grocy.stockInteraction")
+            }
+
+            if horizontalSizeClass != .compact {
+                TabSection(
+                    "Master data",
+                    content: {
+                        Tab("Products", systemImage: MySymbols.product, value: TabNavigationItem.mdProducts) {
+                            NavigationStack {
+                                MDProductsView()
+                            }
+                        }
+                        .customizationID("georgappdev.Grocy.mdProducts")
+                        //                    .badge(5)
+                        
+                        Tab("Locations", systemImage: MySymbols.location, value: TabNavigationItem.mdLocations) {
+                            NavigationStack {
+                                MDLocationsView()
+                            }
+                        }
+                        .customizationID("georgappdev.Grocy.mdLocations")
+                        
+                        Tab("Stores", systemImage: MySymbols.store, value: TabNavigationItem.mdStores) {
+                            NavigationStack {
+                                MDStoresView()
+                            }
+                        }
+                        .customizationID("georgappdev.Grocy.mdStores")
+                        
+                        Tab("Quantity units", systemImage: MySymbols.quantityUnit, value: TabNavigationItem.mdQuantityUnits) {
+                            NavigationStack {
+                                MDQuantityUnitsView()
+                            }
+                        }
+                        .customizationID("georgappdev.Grocy.mdQuantityUnits")
+                        
+                        Tab("Product groups", systemImage: MySymbols.productGroup, value: TabNavigationItem.mdProductGroups) {
+                            NavigationStack {
+                                MDProductGroupsView()
+                            }
+                        }
+                        .customizationID("georgappdev.Grocy.mdProductGroups")
+                        
+                        Tab("Chores", systemImage: MySymbols.chores, value: TabNavigationItem.mdChores) {
+                            NavigationStack {
+                                MDChoresView()
+                            }
+                        }
+                        .customizationID("georgappdev.Grocy.mdChores")
+                        
+                        Tab("Task categories", systemImage: MySymbols.tasks, value: TabNavigationItem.mdTaskCategories) {
+                            NavigationStack {
+                                MDTaskCategoriesView()
+                            }
+                        }
+                        .customizationID("georgappdev.Grocy.mdTaskCategories")
                     }
-                    Tab("Stores", systemImage: MySymbols.store, value: TabNavigationItem.mdStores) {
-                        MDStoresView()
-                    }
-                    Tab("Quantity units", systemImage: MySymbols.quantityUnit, value: TabNavigationItem.mdQuantityUnits) {
-                        MDQuantityUnitsView()
-                    }
-                    Tab("Product groups", systemImage: MySymbols.productGroup, value: TabNavigationItem.mdProductGroups) {
-                        MDProductGroupsView()
-                    }
-                }
-            )
-            .hidden(sizeClass == .compact)
+                )
+                .tabPlacement(.sidebarOnly)
+                .customizationID("georgappdev.Grocy.masterDataSection")
+            }
 
             Tab("Master data", systemImage: MySymbols.masterData, value: TabNavigationItem.masterData) {
                 NavigationStack {
                     MasterDataView()
                 }
             }
-            .hidden(sizeClass != .compact)
+            .defaultVisibility(.hidden, for: .sidebar)
+            .customizationID("georgappdev.Grocy.masterData")
+
             #if os(iOS)
                 Tab("Settings", systemImage: MySymbols.settings, value: TabNavigationItem.settings) {
                     NavigationStack {
                         SettingsView()
                     }
                 }
+                .customizationID("georgappdev.Grocy.settings")
             #endif
         }
         .tabViewStyle(.sidebarAdaptable)
-        .toolbar {
-            ToolbarItem(placement: .navigation) {
-                Image("grocy-logo")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(height: 32)
-            }
-        }
+        .tabViewCustomization($appTabCustomization)
+        .tabViewSidebarHeader(content: {
+            Image("grocy-logo")
+                .resizable()
+                .scaledToFit()
+        })
         #if os(iOS)
             .tabBarMinimizeBehavior(.onScrollDown)
         #endif
