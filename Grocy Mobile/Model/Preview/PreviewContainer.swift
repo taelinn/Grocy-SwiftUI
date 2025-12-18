@@ -42,30 +42,33 @@ struct PreviewContainer {
         StockJournalEntry.self,
         Recipe.self,
         MDChore.self,
+        MDTaskCategory.self,
         StockElement.self,
         VolatileStock.self,
         GrocyUser.self,
         RecipeFulfilment.self,
         Chore.self,
+        ChoreLogEntry.self,
     ]
 
     static let shared: ModelContainer = {
-        do {
-            let schema = Schema(modelTypes)
+        #if DEBUG
+            do {
+                let schema = Schema(modelTypes)
 
-            let container = try ModelContainer(
-                for: schema,
-                configurations: .init(isStoredInMemoryOnly: true, cloudKitDatabase: .none),
-            )
-
-            #if DEBUG
+                let container = try ModelContainer(
+                    for: schema,
+                    configurations: .init(isStoredInMemoryOnly: true, cloudKitDatabase: .none),
+                )
                 seedData(container: container)
-            #endif
 
-            return container
-        } catch {
-            fatalError("Failed to create preview container: \(error)")
-        }
+                return container
+            } catch {
+                fatalError("Failed to create preview container: \(error)")
+            }
+        #else
+            fatalError("Failed to create preview container.")
+        #endif
     }()
 
     private static func seedData(container: ModelContainer) {
@@ -87,6 +90,8 @@ struct PreviewContainer {
         loadAndInsert(modelType: StockJournalEntry.self, filename: "objects__stock_log.json", into: context)
         loadAndInsert(modelType: Recipe.self, filename: "objects__recipes.json", into: context)
         loadAndInsert(modelType: MDChore.self, filename: "objects__chores.json", into: context)
+        loadAndInsert(modelType: MDTaskCategory.self, filename: "objects__task_categories.json", into: context)
+        loadAndInsert(modelType: ChoreLogEntry.self, filename: "objects__chores_log.json", into: context)
 
         // Other
         loadAndInsert(modelType: StockElement.self, filename: "stock.json", into: context)
