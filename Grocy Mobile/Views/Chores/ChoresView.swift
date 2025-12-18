@@ -341,7 +341,9 @@ struct ChoresView: View {
             NavigationStack {
                 ChoresFilterView(filteredStatus: $filteredStatus, filteredUserID: $filteredUserID)
                     .navigationTitle("Filter")
-                    .navigationBarTitleDisplayMode(.inline)
+                    #if os(iOS)
+                        .navigationBarTitleDisplayMode(.inline)
+                    #endif
                     .toolbar {
                         ToolbarItem(
                             placement: .confirmationAction,

@@ -196,7 +196,9 @@ struct AppTabNavigation: View {
                     MasterDataView()
                 }
             }
+            #if os(iOS)
             .defaultVisibility(.hidden, for: .sidebar)
+            #endif
             .customizationID("georgappdev.Grocy.masterData")
 
             #if os(iOS)
