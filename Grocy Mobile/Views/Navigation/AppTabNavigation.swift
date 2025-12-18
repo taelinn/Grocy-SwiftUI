@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 private enum TabNavigationItem: String, Codable {
     case quickScanMode = "quickScanMode"
@@ -33,11 +34,18 @@ private enum TabNavigationItem: String, Codable {
 }
 
 struct AppTabNavigation: View {
+    @Environment(GrocyViewModel.self) private var grocyVM
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
+    
     @AppStorage("tabSelection") private var tabSelection: TabNavigationItem = .stockOverview
     @AppStorage("appTabCustomization") private var appTabCustomization: TabViewCustomization
     @AppStorage("devMode") private var devMode: Bool = false
     @Environment(DeepLinkManager.self) var deepLinkManager
+    
+    @Query var systemConfigList: [SystemConfig]
+    var systemConfig: SystemConfig? {
+        systemConfigList.first
+    }
 
     var body: some View {
         TabView(selection: $tabSelection) {
@@ -54,6 +62,7 @@ struct AppTabNavigation: View {
                 }
             }
             .customizationID("georgappdev.Grocy.stockOverview")
+            .hidden(systemConfig?.featureFlagStock == false)
 
             Tab("Shopping list", systemImage: MySymbols.shoppingList, value: TabNavigationItem.shoppingList) {
                 NavigationStack {
@@ -61,6 +70,7 @@ struct AppTabNavigation: View {
                 }
             }
             .customizationID("georgappdev.Grocy.shoppingList")
+            .hidden(systemConfig?.featureFlagShoppinglist == false)
 
             if devMode {
                 Tab("Recipes", systemImage: MySymbols.recipe, value: TabNavigationItem.recipes) {
@@ -69,6 +79,7 @@ struct AppTabNavigation: View {
                     }
                 }
                 .customizationID("georgappdev.Grocy.recipes")
+                .hidden(systemConfig?.featureFlagRecipes == false)
             }
 
             Tab("Chores overview", systemImage: MySymbols.chores, value: TabNavigationItem.chores) {
@@ -77,6 +88,7 @@ struct AppTabNavigation: View {
                 }
             }
             .customizationID("georgappdev.Grocy.chores")
+            .hidden(systemConfig?.featureFlagChores == false)
 
             if horizontalSizeClass != .compact {
                 TabSection(
@@ -113,6 +125,7 @@ struct AppTabNavigation: View {
                 )
                 .tabPlacement(.sidebarOnly)
                 .customizationID("georgappdev.Grocy.stockInteraction")
+                .hidden(systemConfig?.featureFlagStock == false)
             }
 
             if horizontalSizeClass != .compact {
@@ -133,6 +146,7 @@ struct AppTabNavigation: View {
                             }
                         }
                         .customizationID("georgappdev.Grocy.mdLocations")
+                        .hidden(systemConfig?.featureFlagStock == false)
                         
                         Tab("Stores", systemImage: MySymbols.store, value: TabNavigationItem.mdStores) {
                             NavigationStack {
@@ -140,6 +154,7 @@ struct AppTabNavigation: View {
                             }
                         }
                         .customizationID("georgappdev.Grocy.mdStores")
+                        .hidden(systemConfig?.featureFlagStock == false)
                         
                         Tab("Quantity units", systemImage: MySymbols.quantityUnit, value: TabNavigationItem.mdQuantityUnits) {
                             NavigationStack {
@@ -161,6 +176,7 @@ struct AppTabNavigation: View {
                             }
                         }
                         .customizationID("georgappdev.Grocy.mdChores")
+                        .hidden(systemConfig?.featureFlagChores == false)
                         
                         Tab("Task categories", systemImage: MySymbols.tasks, value: TabNavigationItem.mdTaskCategories) {
                             NavigationStack {
@@ -168,6 +184,7 @@ struct AppTabNavigation: View {
                             }
                         }
                         .customizationID("georgappdev.Grocy.mdTaskCategories")
+                        .hidden(systemConfig?.featureFlagTasks == false)
                     }
                 )
                 .tabPlacement(.sidebarOnly)
@@ -202,6 +219,9 @@ struct AppTabNavigation: View {
             .tabBarMinimizeBehavior(.onScrollDown)
         #endif
         .onAppear {
+            Task {
+                await grocyVM.requestData(additionalObjects: [.system_config])
+            }
             if deepLinkManager.pendingStockFilter != nil {
                 tabSelection = .stockOverview
             }

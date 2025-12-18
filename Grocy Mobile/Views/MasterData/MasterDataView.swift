@@ -5,6 +5,7 @@
 //  Created by Georg Meissner on 13.11.20.
 //
 
+import SwiftData
 import SwiftUI
 
 private enum MasterDataItem: Hashable {
@@ -21,7 +22,13 @@ private enum MasterDataItem: Hashable {
 }
 
 struct MasterDataView: View {
+    @Environment(GrocyViewModel.self) private var grocyVM
     @AppStorage("devMode") private var devMode: Bool = false
+
+    @Query var systemConfigList: [SystemConfig]
+    var systemConfig: SystemConfig? {
+        systemConfigList.first
+    }
 
     var body: some View {
         List {
@@ -29,12 +36,16 @@ struct MasterDataView: View {
                 MDCategoryRowView(categoryName: "Products", iconName: MySymbols.product, mdType: MDProduct.self)
             }
 
-            NavigationLink(value: MasterDataItem.locations) {
-                MDCategoryRowView(categoryName: "Locations", iconName: MySymbols.location, mdType: MDLocation.self)
+            if !(systemConfig?.featureFlagStock == false) {
+                NavigationLink(value: MasterDataItem.locations) {
+                    MDCategoryRowView(categoryName: "Locations", iconName: MySymbols.location, mdType: MDLocation.self)
+                }
             }
 
-            NavigationLink(value: MasterDataItem.stores) {
-                MDCategoryRowView(categoryName: "Stores", iconName: MySymbols.store, mdType: MDStore.self)
+            if !(systemConfig?.featureFlagStock == false) {
+                NavigationLink(value: MasterDataItem.stores) {
+                    MDCategoryRowView(categoryName: "Stores", iconName: MySymbols.store, mdType: MDStore.self)
+                }
             }
 
             NavigationLink(value: MasterDataItem.quantityUnits) {
@@ -44,19 +55,23 @@ struct MasterDataView: View {
             NavigationLink(value: MasterDataItem.productGroups) {
                 MDCategoryRowView(categoryName: "Product groups", iconName: MySymbols.productGroup, mdType: MDProductGroup.self)
             }
-            
-            NavigationLink(value: MasterDataItem.chores) {
-                MDCategoryRowView(categoryName: "Chores", iconName: MySymbols.chores, mdType: MDChore.self)
+
+            if !(systemConfig?.featureFlagChores == false) {
+                NavigationLink(value: MasterDataItem.chores) {
+                    MDCategoryRowView(categoryName: "Chores", iconName: MySymbols.chores, mdType: MDChore.self)
+                }
             }
 
-            if devMode {
+            if devMode && !(systemConfig?.featureFlagBatteries == false) {
                 NavigationLink(value: MasterDataItem.batteries) {
                     Label("Batteries", systemImage: MySymbols.batteries)
                 }
             }
 
-            NavigationLink(value: MasterDataItem.taskCategories) {
-                MDCategoryRowView(categoryName: "Task categories", iconName: MySymbols.tasks, mdType: MDTaskCategory.self)
+            if !(systemConfig?.featureFlagTasks == false) {
+                NavigationLink(value: MasterDataItem.taskCategories) {
+                    MDCategoryRowView(categoryName: "Task categories", iconName: MySymbols.tasks, mdType: MDTaskCategory.self)
+                }
             }
 
             if devMode {
@@ -97,6 +112,9 @@ struct MasterDataView: View {
                 }
             }
         )
+        .task {
+            await grocyVM.requestData(additionalObjects: [.system_config])
+        }
     }
 }
 

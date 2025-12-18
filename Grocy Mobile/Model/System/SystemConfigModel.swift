@@ -36,8 +36,14 @@ class SystemConfig: Codable {
 //    let tprinterIP: String
 //    let tprinterPort: Int
 //    let tprinterConnector: String
-//    let featureFlagStock, featureFlagShoppinglist, featureFlagRecipes, featureFlagChores: Bool
-//    let featureFlagTasks, featureFlagBatteries, featureFlagEquipment, featureFlagCalendar: Bool
+    var featureFlagStock: Bool
+    var featureFlagShoppinglist: Bool
+    var featureFlagRecipes: Bool
+    var featureFlagChores: Bool
+    var featureFlagTasks: Bool
+    var featureFlagBatteries: Bool
+    var featureFlagEquipment:Bool
+    var featureFlagCalendar: Bool
 //    let featureFlagLabelPrinter, featureFlagStockPriceTracking, featureFlagStockLocationTracking, featureFlagStockBestBeforeDateTracking: Bool
 //    let featureFlagStockProductOpenedTracking, featureFlagStockProductFreezing, featureFlagStockBestBeforeDateFieldNumberPad, featureFlagShoppinglistMultipleLists: Bool
 //    let featureFlagChoresAssignments, featureFlagThermalPrinter, featureSettingStockCountOpenedProductsAgainstMinimumStockAmount, featureFlagAutoTorchOnWithCamera: Bool
@@ -80,14 +86,14 @@ class SystemConfig: Codable {
 //        case tprinterIP = "TPRINTER_IP"
 //        case tprinterPort = "TPRINTER_PORT"
 //        case tprinterConnector = "TPRINTER_CONNECTOR"
-//        case featureFlagStock = "FEATURE_FLAG_STOCK"
-//        case featureFlagShoppinglist = "FEATURE_FLAG_SHOPPINGLIST"
-//        case featureFlagRecipes = "FEATURE_FLAG_RECIPES"
-//        case featureFlagChores = "FEATURE_FLAG_CHORES"
-//        case featureFlagTasks = "FEATURE_FLAG_TASKS"
-//        case featureFlagBatteries = "FEATURE_FLAG_BATTERIES"
-//        case featureFlagEquipment = "FEATURE_FLAG_EQUIPMENT"
-//        case featureFlagCalendar = "FEATURE_FLAG_CALENDAR"
+        case featureFlagStock = "FEATURE_FLAG_STOCK"
+        case featureFlagShoppinglist = "FEATURE_FLAG_SHOPPINGLIST"
+        case featureFlagRecipes = "FEATURE_FLAG_RECIPES"
+        case featureFlagChores = "FEATURE_FLAG_CHORES"
+        case featureFlagTasks = "FEATURE_FLAG_TASKS"
+        case featureFlagBatteries = "FEATURE_FLAG_BATTERIES"
+        case featureFlagEquipment = "FEATURE_FLAG_EQUIPMENT"
+        case featureFlagCalendar = "FEATURE_FLAG_CALENDAR"
 //        case featureFlagLabelPrinter = "FEATURE_FLAG_LABEL_PRINTER"
 //        case featureFlagStockPriceTracking = "FEATURE_FLAG_STOCK_PRICE_TRACKING"
 //        case featureFlagStockLocationTracking = "FEATURE_FLAG_STOCK_LOCATION_TRACKING"
@@ -111,6 +117,16 @@ class SystemConfig: Codable {
             self.currency = try container.decode(String.self, forKey: .currency)
             self.basePath = try container.decode(String.self, forKey: .basePath)
             self.baseURL = try container.decode(String.self, forKey: .baseURL)
+            
+            self.featureFlagStock = try container.decodeFlexibleBool(forKey: .featureFlagStock)
+            self.featureFlagShoppinglist = try container.decodeFlexibleBool(forKey: .featureFlagShoppinglist)
+            self.featureFlagRecipes = try container.decodeFlexibleBool(forKey: .featureFlagRecipes)
+            self.featureFlagChores = try container.decodeFlexibleBool(forKey: .featureFlagChores)
+            self.featureFlagTasks = try container.decodeFlexibleBool(forKey: .featureFlagTasks)
+            self.featureFlagBatteries = try container.decodeFlexibleBool(forKey: .featureFlagBatteries)
+            self.featureFlagEquipment = try container.decodeFlexibleBool(forKey: .featureFlagEquipment)
+            self.featureFlagCalendar = try container.decodeFlexibleBool(forKey: .featureFlagCalendar)
+            
             self.locale = try container.decode(String.self, forKey: .locale)
             self.userUsername = try container.decode(String.self, forKey: .userUsername)
             self.userPictureFileName = try? container.decodeIfPresent(String.self, forKey: .userPictureFileName)
@@ -124,6 +140,14 @@ class SystemConfig: Codable {
         try container.encode(currency, forKey: .currency)
         try container.encode(basePath, forKey: .basePath)
         try container.encode(baseURL, forKey: .baseURL)
+        try container.encode(featureFlagStock, forKey: .featureFlagStock)
+        try container.encode(featureFlagShoppinglist, forKey: .featureFlagShoppinglist)
+        try container.encode(featureFlagRecipes, forKey: .featureFlagRecipes)
+        try container.encode(featureFlagChores, forKey: .featureFlagChores)
+        try container.encode(featureFlagTasks, forKey: .featureFlagTasks)
+        try container.encode(featureFlagBatteries, forKey: .featureFlagBatteries)
+        try container.encode(featureFlagEquipment, forKey: .featureFlagEquipment)
+        try container.encode(featureFlagCalendar, forKey: .featureFlagCalendar)
         try container.encode(locale, forKey: .locale)
         try container.encode(userUsername, forKey: .userUsername)
         try container.encode(userPictureFileName, forKey: .userPictureFileName)
