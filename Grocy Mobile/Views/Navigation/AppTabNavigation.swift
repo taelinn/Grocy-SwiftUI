@@ -5,8 +5,8 @@
 //  Created by Georg Meissner on 13.11.20.
 //
 
-import SwiftUI
 import SwiftData
+import SwiftUI
 
 private enum TabNavigationItem: String, Codable {
     case quickScanMode = "quickScanMode"
@@ -36,12 +36,12 @@ private enum TabNavigationItem: String, Codable {
 struct AppTabNavigation: View {
     @Environment(GrocyViewModel.self) private var grocyVM
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
-    
+
     @AppStorage("tabSelection") private var tabSelection: TabNavigationItem = .stockOverview
     @AppStorage("appTabCustomization") private var appTabCustomization: TabViewCustomization
     @AppStorage("devMode") private var devMode: Bool = false
     @Environment(DeepLinkManager.self) var deepLinkManager
-    
+
     @Query var systemConfigList: [SystemConfig]
     var systemConfig: SystemConfig? {
         systemConfigList.first
@@ -100,21 +100,21 @@ struct AppTabNavigation: View {
                             }
                         }
                         .customizationID("georgappdev.Grocy.purchaseProduct")
-                        
+
                         Tab("Consume", systemImage: MySymbols.consume, value: TabNavigationItem.consumeProduct) {
                             NavigationStack {
                                 ConsumeProductView()
                             }
                         }
                         .customizationID("georgappdev.Grocy.consumeProduct")
-                        
+
                         Tab("Transfer", systemImage: MySymbols.transfer, value: TabNavigationItem.transferProduct) {
                             NavigationStack {
                                 TransferProductView()
                             }
                         }
                         .customizationID("georgappdev.Grocy.transferProduct")
-                        
+
                         Tab("Inventory", systemImage: MySymbols.inventory, value: TabNavigationItem.inventoryProduct) {
                             NavigationStack {
                                 InventoryProductView()
@@ -139,7 +139,7 @@ struct AppTabNavigation: View {
                         }
                         .customizationID("georgappdev.Grocy.mdProducts")
                         //                    .badge(5)
-                        
+
                         Tab("Locations", systemImage: MySymbols.location, value: TabNavigationItem.mdLocations) {
                             NavigationStack {
                                 MDLocationsView()
@@ -147,7 +147,7 @@ struct AppTabNavigation: View {
                         }
                         .customizationID("georgappdev.Grocy.mdLocations")
                         .hidden(systemConfig?.featureFlagStock == false)
-                        
+
                         Tab("Stores", systemImage: MySymbols.store, value: TabNavigationItem.mdStores) {
                             NavigationStack {
                                 MDStoresView()
@@ -155,21 +155,21 @@ struct AppTabNavigation: View {
                         }
                         .customizationID("georgappdev.Grocy.mdStores")
                         .hidden(systemConfig?.featureFlagStock == false)
-                        
+
                         Tab("Quantity units", systemImage: MySymbols.quantityUnit, value: TabNavigationItem.mdQuantityUnits) {
                             NavigationStack {
                                 MDQuantityUnitsView()
                             }
                         }
                         .customizationID("georgappdev.Grocy.mdQuantityUnits")
-                        
+
                         Tab("Product groups", systemImage: MySymbols.productGroup, value: TabNavigationItem.mdProductGroups) {
                             NavigationStack {
                                 MDProductGroupsView()
                             }
                         }
                         .customizationID("georgappdev.Grocy.mdProductGroups")
-                        
+
                         Tab("Chores", systemImage: MySymbols.chores, value: TabNavigationItem.mdChores) {
                             NavigationStack {
                                 MDChoresView()
@@ -177,7 +177,7 @@ struct AppTabNavigation: View {
                         }
                         .customizationID("georgappdev.Grocy.mdChores")
                         .hidden(systemConfig?.featureFlagChores == false)
-                        
+
                         Tab("Task categories", systemImage: MySymbols.tasks, value: TabNavigationItem.mdTaskCategories) {
                             NavigationStack {
                                 MDTaskCategoriesView()
@@ -197,7 +197,7 @@ struct AppTabNavigation: View {
                 }
             }
             #if os(iOS)
-            .defaultVisibility(.hidden, for: .sidebar)
+                .defaultVisibility(.hidden, for: .sidebar)
             #endif
             .customizationID("georgappdev.Grocy.masterData")
 
