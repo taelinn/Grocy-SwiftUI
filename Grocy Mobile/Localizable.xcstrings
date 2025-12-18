@@ -33273,6 +33273,16 @@
         }
       }
     },
+    "iPad: Tab navigation" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iPad: Tab-Navigation"
+          }
+        }
+      }
+    },
     "iPhone: Tab navigation" : {
       "localizations" : {
         "de" : {

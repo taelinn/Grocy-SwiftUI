@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
     @AppStorage("iPhoneTabNavigation") var iPhoneTabNavigation: Bool = true
+    @AppStorage("iPadTabNavigation") var iPadTabNavigation: Bool = false
 
     #if os(iOS)
         @Environment(\.horizontalSizeClass) private var horizontalSizeClass
@@ -16,7 +17,7 @@ struct ContentView: View {
 
     var body: some View {
         #if os(iOS)
-            if horizontalSizeClass == .compact && iPhoneTabNavigation {
+            if (horizontalSizeClass == .compact && iPhoneTabNavigation) || iPadTabNavigation {
                 AppTabNavigation()
             } else {
                 AppSidebarNavigation()

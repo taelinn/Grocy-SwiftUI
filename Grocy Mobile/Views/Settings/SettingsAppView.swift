@@ -21,6 +21,7 @@ struct SettingsAppView: View {
 
     #if os(iOS)
         @AppStorage("iPhoneTabNavigation") var iPhoneTabNavigation: Bool = true
+        @AppStorage("iPadTabNavigation") var iPadTabNavigation: Bool = false
         @AppStorage("useLegacyScanner") private var useLegacyScanner: Bool = false
         @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     #endif
@@ -107,6 +108,8 @@ struct SettingsAppView: View {
 
                 if horizontalSizeClass == .compact {
                     MyToggle(isOn: $iPhoneTabNavigation, description: "iPhone: Tab navigation", icon: "platter.filled.bottom.iphone")
+                } else {
+                    MyToggle(isOn: $iPadTabNavigation, description: "iPad: Tab navigation", icon: "platter.filled.bottom.ipad")
                 }
             #endif
             MyToggle(isOn: $devMode, description: "DEV MODE", icon: MySymbols.devMode)

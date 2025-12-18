@@ -66,7 +66,6 @@ struct StockView: View {
     @State private var showingFilterSheet = false
 
     #if os(iOS)
-        @AppStorage("iPhoneTabNavigation") var iPhoneTabNavigation: Bool = true
         @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     #endif
 
