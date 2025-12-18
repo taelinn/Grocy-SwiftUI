@@ -13,6 +13,7 @@ enum SettingsNavigationItem: Hashable {
     case appSettings
     case stockSettings
     case shoppingListSettings
+    case choresSettings
     case appLog
     case aboutApp
 }
@@ -74,6 +75,10 @@ struct SettingsView: View {
                     Label("Shopping list settings", systemImage: MySymbols.shoppingList)
                         .foregroundStyle(.primary)
                 }
+                NavigationLink(value: SettingsNavigationItem.choresSettings) {
+                    Label("Chores settings", systemImage: MySymbols.chores)
+                        .foregroundStyle(.primary)
+                }
             }
 
             Section("App") {
@@ -99,6 +104,8 @@ struct SettingsView: View {
                 SettingsStockView()
             case .shoppingListSettings:
                 SettingsShoppingListView()
+            case .choresSettings:
+                SettingsChoresView()
             case .appLog:
                 LogView()
             case .aboutApp:

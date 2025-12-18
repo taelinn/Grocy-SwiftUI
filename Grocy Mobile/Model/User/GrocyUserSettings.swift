@@ -39,6 +39,7 @@ class GrocyUserSettings: Codable {
     var shoppingListToStockWorkflowAutoSubmitWhenPrefilled: Bool?
     //    var recipeIngredientsGroupByProductGroup: Bool
     var choresDueSoonDays: Int?
+    var choresOverviewSwapTrackingButtons: Bool?
     //    var batteriesDueSoonDays: Int
     //    var tasksDueSoonDays: Int
     //    var showClockInHeader: Bool
@@ -89,6 +90,7 @@ class GrocyUserSettings: Codable {
         case shoppingListToStockWorkflowAutoSubmitWhenPrefilled = "shopping_list_to_stock_workflow_auto_submit_when_prefilled"
         //        case recipeIngredientsGroupByProductGroup = "recipe_ingredients_group_by_product_group"
         case choresDueSoonDays = "chores_due_soon_days"
+        case choresOverviewSwapTrackingButtons = "chores_overview_swap_tracking_buttons"
         //        case batteriesDueSoonDays = "batteries_due_soon_days"
         //        case tasksDueSoonDays = "tasks_due_soon_days"
         //        case showClockInHeader = "show_clock_in_header"
@@ -144,6 +146,8 @@ class GrocyUserSettings: Codable {
             self.shoppingListAutoAddBelowMinStockAmount = try container.decodeFlexibleBoolIfPresent(forKey: .shoppingListAutoAddBelowMinStockAmount)
             self.shoppingListAutoAddBelowMinStockAmountListID = try container.decodeFlexibleIntIfPresent(forKey: .shoppingListAutoAddBelowMinStockAmountListID)
             self.shoppingListToStockWorkflowAutoSubmitWhenPrefilled = try container.decodeFlexibleBoolIfPresent(forKey: .shoppingListToStockWorkflowAutoSubmitWhenPrefilled)
+            self.choresDueSoonDays = try container.decodeFlexibleIntIfPresent(forKey: .choresDueSoonDays)
+            self.choresOverviewSwapTrackingButtons = try container.decodeFlexibleBoolIfPresent(forKey: .choresOverviewSwapTrackingButtons)
             self.locale = try container.decodeIfPresent(String.self, forKey: .locale)
         } catch {
             throw APIError.decodingError(error: error)
@@ -173,6 +177,8 @@ class GrocyUserSettings: Codable {
         try container.encode(shoppingListAutoAddBelowMinStockAmount, forKey: .shoppingListAutoAddBelowMinStockAmount)
         try container.encode(shoppingListAutoAddBelowMinStockAmountListID, forKey: .shoppingListAutoAddBelowMinStockAmountListID)
         try container.encode(shoppingListToStockWorkflowAutoSubmitWhenPrefilled, forKey: .shoppingListToStockWorkflowAutoSubmitWhenPrefilled)
+        try container.encode(choresDueSoonDays, forKey: .choresDueSoonDays)
+        try container.encode(choresOverviewSwapTrackingButtons, forKey: .choresOverviewSwapTrackingButtons)
         try container.encode(locale, forKey: .locale)
     }
 }
