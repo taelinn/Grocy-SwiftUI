@@ -26,8 +26,9 @@ struct QuickScanModeView: View {
     @Environment(GrocyViewModel.self) private var grocyVM
     @Environment(\.openURL) private var openURL
 
-    @Query(sort: \MDProductBarcode.id, order: .forward) var mdProductBarcodes: MDProductBarcodes
-    @Query(sort: \MDProduct.name, order: .forward) var mdProducts: MDProducts
+    @Query var mdProductBarcodes: MDProductBarcodes
+    @Query var mdProducts: MDProducts
+    @Query var mdChores: MDChores
 
     @AppStorage("devMode") private var devMode: Bool = false
     @AppStorage("quickScanActionAfterAdd") private var quickScanActionAfterAdd: Bool = false
@@ -92,6 +93,8 @@ struct QuickScanModeView: View {
         {
             let stockID: String? = codeComponents.count == 4 ? codeComponents[3] : nil
             return GrocyCode(entityType: .product, entityID: productID, stockID: stockID)
+        } else if codeComponents.count == 3, codeComponents[0] == "grcy", codeComponents[1] == "c", let choreID = Int(codeComponents[2]) {
+            return GrocyCode(entityType: .chore, entityID: choreID, stockID: nil)
         } else {
             return nil
         }
@@ -165,7 +168,7 @@ struct QuickScanModeView: View {
     #endif
 
     var product: MDProduct? {
-        if let grocyCode = recognizedGrocyCode {
+        if let grocyCode = recognizedGrocyCode, grocyCode.entityType == .product {
             return mdProducts.first(where: { $0.id == grocyCode.entityID })
         } else if let productBarcode = recognizedBarcode {
             return mdProducts.first(where: { $0.id == productBarcode.productID })
@@ -369,7 +372,9 @@ struct QuickScanModeView: View {
                         isPopup: true
                     )
                 }
-            } else {
+            } else if let grocyCode = recognizedGrocyCode, grocyCode.entityType == .chore {
+                ChoreTrackingView(mdChoreID: grocyCode.entityID)
+            }  else {
                 EmptyView()
             }
         case .selectProduct:

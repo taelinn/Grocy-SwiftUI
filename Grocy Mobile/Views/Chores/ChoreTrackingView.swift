@@ -24,6 +24,7 @@ struct ChoreTrackingView: View {
     @State private var isSuccessful: Bool? = nil
     @State private var errorMessage: String? = nil
 
+    var mdChoreID: Int? = nil
     var isPopup: Bool = false
 
     @State private var choreID: Int?
@@ -46,7 +47,7 @@ struct ChoreTrackingView: View {
     }
 
     private func resetForm() {
-        choreID = nil
+        choreID = actionPending ? mdChoreID : nil
         trackedTime = Date()
         userID = nil
     }
@@ -62,6 +63,9 @@ struct ChoreTrackingView: View {
                 await grocyVM.requestData(additionalObjects: [.chores])
                 isSuccessful = true
                 actionPending = false
+                if mdChoreID != nil {
+                    finishForm()
+                }
                 resetForm()
             } catch {
                 GrocyLogger.error("Tracking chore failed: \(error)")
