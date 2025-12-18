@@ -143,6 +143,7 @@ struct Grocy_MobileApp: App {
 //            ModelContainer.resetStore()
             let storeURL = mainConfig.url // Get your configuration's URL
             try? ModelContainer.deleteStore(at: storeURL)
+            GrocyLogger.error("Failed to create main ModelContainer after reset: \(error). Deleted and try to create again.")
 
             // Try creating the container again
             do {
