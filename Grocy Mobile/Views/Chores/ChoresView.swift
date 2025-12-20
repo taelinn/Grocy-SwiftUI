@@ -86,7 +86,7 @@ struct ChoresView: View {
     }
 
     var filteredChores: [Chore] {
-        grocyVM.chores
+        chores
             .filter { filteredUserID == nil || $0.nextExecutionAssignedToUserID == filteredUserID }
             .filter { matchesFilter($0) }
     }
