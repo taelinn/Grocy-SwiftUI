@@ -19,6 +19,7 @@ private enum TabNavigationItem: String, Codable {
     case openFoodFacts = "openFoodFacts"
     case recipes = "recipes"
     case chores = "chores"
+    case tasks = "tasks"
     case stockInteraction = "stockInteraction"
     case purchaseProduct = "purchaseProduct"
     case consumeProduct = "consumeProduct"
@@ -89,6 +90,14 @@ struct AppTabNavigation: View {
             }
             .customizationID("georgappdev.Grocy.chores")
             .hidden(systemConfig?.featureFlagChores == false)
+            
+            Tab("Tasks", systemImage: MySymbols.tasks, value: TabNavigationItem.tasks) {
+                NavigationStack {
+                    TasksView()
+                }
+            }
+            .customizationID("georgappdev.Grocy.tasks")
+            .hidden(systemConfig?.featureFlagTasks == false)
 
             if horizontalSizeClass != .compact {
                 TabSection(

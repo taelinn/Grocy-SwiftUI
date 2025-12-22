@@ -115,6 +115,9 @@ protocol GrocyAPI {
     func putFile(fileURL: URL, fileName: String, groupName: String) async throws
     func putFileData(fileData: Data, fileName: String, groupName: String) async throws
     func deleteFile(fileName: String, groupName: String) async throws
+    // MARK: - Tasks
+    func taskComplete(taskID: Int, content: Data) async throws
+    func taskUndo(taskID: Int) async throws
 }
 
 public class GrocyApi: GrocyAPI {
@@ -570,7 +573,7 @@ extension GrocyApi {
     func getChores() async throws -> Chores {
         return try await call(.chores, method: .GET)
     }
-    
+
     func getChoreDetails(id: Int) async throws -> ChoreDetails {
         return try await call(.choreWithID, method: .GET, id: String(id))
     }
@@ -578,7 +581,7 @@ extension GrocyApi {
     func choreExecute(id: Int, content: Data) async throws -> ChoreLogEntry {
         return try await call(.choreWithIDExecute, method: .POST, id: String(id), content: content)
     }
-    
+
     func undoChoreWithID(id: Int) async throws {
         return try await callEmptyResponse(.choreExecutionWithIDUndo, method: .POST, id: String(id))
     }
@@ -713,5 +716,13 @@ extension GrocyApi {
 
     func deleteFile(fileName: String, groupName: String) async throws {
         return try await callEmptyResponse(.filesGroupFilename, method: .DELETE, fileName: fileName, groupName: groupName)
+    }
+
+    // MARK: - Tasks
+    func taskComplete(taskID: Int, content: Data) async throws {
+        try await callEmptyResponse(.taskWithIDComplete, method: .POST, id: String(taskID), content: content)
+    }
+    func taskUndo(taskID: Int) async throws {
+        return try await callEmptyResponse(.taskWithIDUndo, method: .POST, id: String(taskID))
     }
 }

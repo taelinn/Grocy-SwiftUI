@@ -41,7 +41,7 @@ class GrocyUserSettings: Codable {
     var choresDueSoonDays: Int?
     var choresOverviewSwapTrackingButtons: Bool?
     //    var batteriesDueSoonDays: Int
-    //    var tasksDueSoonDays: Int
+    var tasksDueSoonDays: Int?
     //    var showClockInHeader: Bool
     //    var quagga2Numofworkers: Int
     //    var quagga2Halfsample: Bool
@@ -92,7 +92,7 @@ class GrocyUserSettings: Codable {
         case choresDueSoonDays = "chores_due_soon_days"
         case choresOverviewSwapTrackingButtons = "chores_overview_swap_tracking_buttons"
         //        case batteriesDueSoonDays = "batteries_due_soon_days"
-        //        case tasksDueSoonDays = "tasks_due_soon_days"
+        case tasksDueSoonDays = "tasks_due_soon_days"
         //        case showClockInHeader = "show_clock_in_header"
         //        case quagga2Numofworkers = "quagga2_numofworkers"
         //        case quagga2Halfsample = "quagga2_halfsample"
@@ -148,6 +148,7 @@ class GrocyUserSettings: Codable {
             self.shoppingListToStockWorkflowAutoSubmitWhenPrefilled = try container.decodeFlexibleBoolIfPresent(forKey: .shoppingListToStockWorkflowAutoSubmitWhenPrefilled)
             self.choresDueSoonDays = try container.decodeFlexibleIntIfPresent(forKey: .choresDueSoonDays)
             self.choresOverviewSwapTrackingButtons = try container.decodeFlexibleBoolIfPresent(forKey: .choresOverviewSwapTrackingButtons)
+            self.tasksDueSoonDays = try container.decodeFlexibleIntIfPresent(forKey: .tasksDueSoonDays)
             self.locale = try container.decodeIfPresent(String.self, forKey: .locale)
         } catch {
             throw APIError.decodingError(error: error)
@@ -179,6 +180,7 @@ class GrocyUserSettings: Codable {
         try container.encode(shoppingListToStockWorkflowAutoSubmitWhenPrefilled, forKey: .shoppingListToStockWorkflowAutoSubmitWhenPrefilled)
         try container.encode(choresDueSoonDays, forKey: .choresDueSoonDays)
         try container.encode(choresOverviewSwapTrackingButtons, forKey: .choresOverviewSwapTrackingButtons)
+        try container.encode(tasksDueSoonDays, forKey: .tasksDueSoonDays)
         try container.encode(locale, forKey: .locale)
     }
 }

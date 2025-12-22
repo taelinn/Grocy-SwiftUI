@@ -53,6 +53,7 @@ class GrocyViewModel {
     var recipePosResolved: [RecipePosResolvedElement] = []
     var chores: Chores = []
     var choreLog: ChoreLog = []
+    var grocyTasks: GrocyTasks = []
 
     var mdProducts: MDProducts = []
     var mdProductBarcodes: MDProductBarcodes = []
@@ -254,6 +255,8 @@ class GrocyViewModel {
             ints = self.shoppingList.map { $0.id }
         case .product_barcodes:
             ints = self.mdProductBarcodes.map { $0.id }
+        case .tasks:
+            ints = self.grocyTasks.map { $0.id }
         case .task_categories:
             ints = self.mdTaskCategories.map { $0.id }
         case .userfields:
@@ -335,6 +338,9 @@ class GrocyViewModel {
                         case .stock_current_locations:
                             self.stockCurrentLocations = try await grocyApi.getObject(object: object)
                             try swiftDataSync.syncPersistentCollection(self.stockCurrentLocations)
+                        case .tasks:
+                            self.grocyTasks = try await grocyApi.getObject(object: object)
+                            try swiftDataSync.syncPersistentCollection(self.grocyTasks)
                         case .task_categories:
                             self.mdTaskCategories = try await grocyApi.getObject(object: object)
                             try swiftDataSync.syncPersistentCollection(self.mdTaskCategories)
@@ -452,6 +458,7 @@ class GrocyViewModel {
         self.mdChores = []
         self.chores = []
         self.choreLog = []
+        self.grocyTasks = []
 
         self.mdProducts = []
         self.mdProductBarcodes = []
@@ -510,6 +517,7 @@ class GrocyViewModel {
             try self.modelContext.delete(model: MDChore.self)
             try self.modelContext.delete(model: Chore.self)
             try self.modelContext.delete(model: ChoreDetails.self)
+            try self.modelContext.delete(model: GrocyTask.self)
         } catch {
             GrocyLogger.error("\(error)")
         }
@@ -712,7 +720,7 @@ class GrocyViewModel {
         return try await grocyApi.externalBarcodeLookup(barcode: barcode)
     }
 
-    // MARK: -Shopping Lists
+    // MARK: - Shopping Lists
     func shoppingListAction(content: ShoppingListAction, actionType: ShoppingListActionType) async throws {
         let jsonContent = try! jsonEncoder.encode(content)
         try await grocyApi.shoppingListAction(content: jsonContent, actionType: actionType)
@@ -737,7 +745,7 @@ class GrocyViewModel {
     func getChoreDetails(id: Int) async {
         do {
             let choreDetails = try await grocyApi.getChoreDetails(id: id)
-            
+
             self.choreDetails[id] = choreDetails
             let fetchDescriptor = FetchDescriptor<ChoreDetails>(
                 predicate: #Predicate { details in
@@ -753,13 +761,23 @@ class GrocyViewModel {
             GrocyLogger.error("Failed to get chore details. \(error)")
         }
     }
-    
+
     func executeChore(id: Int, content: ChoreExecuteModel) async throws -> ChoreLogEntry {
         let jsonContent = try! jsonEncoder.encode(content)
         return try await grocyApi.choreExecute(id: id, content: jsonContent)
     }
-    
+
     func undoChoreWithID(id: Int) async throws {
         return try await grocyApi.undoChoreWithID(id: id)
+    }
+
+    // MARK: - Tasks
+    func executeTask(taskID: Int, content: TaskExecuteModel) async throws {
+        let jsonContent = try! jsonEncoder.encode(content)
+        try await grocyApi.taskComplete(taskID: taskID, content: jsonContent)
+    }
+
+    func undoTask(taskID: Int) async throws {
+        return try await grocyApi.taskUndo(taskID: taskID)
     }
 }
