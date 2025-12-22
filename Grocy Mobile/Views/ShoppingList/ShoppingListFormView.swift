@@ -16,23 +16,28 @@ struct ShoppingListFormView: View {
     @Environment(\.dismiss) var dismiss
 
     @State private var isProcessing: Bool = false
+    @State private var isSuccessful: Bool? = nil
+    @State private var errorMessage: String? = nil
 
-    @State private var name: String = ""
-
-    var shoppingListDescription: ShoppingListDescription?
+    var existingShoppingListDescription: ShoppingListDescription?
+    @State var shoppingListDescription: ShoppingListDescription
 
     @State private var isNameCorrect: Bool = false
     private func checkNameCorrect() -> Bool {
-        let foundShoppingListDescription = shoppingListDescriptions.first(where: { $0.name == name })
-        return shoppingListDescription == nil ? !(name.isEmpty || foundShoppingListDescription != nil) : !(name.isEmpty || (foundShoppingListDescription != nil && foundShoppingListDescription!.id != shoppingListDescription!.id))
+        guard !shoppingListDescription.name.isEmpty else { return false }
+        if let foundShoppingListDescription = shoppingListDescriptions.first(where: { $0.name == shoppingListDescription.name }) {
+            guard foundShoppingListDescription.id == shoppingListDescription.id else { return false }
+        }
+        return true
+    }
+
+    init(existingShoppingListDescription: ShoppingListDescription? = nil) {
+        self.existingShoppingListDescription = existingShoppingListDescription
+        self.shoppingListDescription = existingShoppingListDescription ?? ShoppingListDescription()
     }
 
     private func finishForm() {
-        #if os(iOS)
-            self.dismiss()
-        #elseif os(macOS)
-            NSApp.sendAction(#selector(NSPopover.performClose(_:)), to: nil, from: nil)
-        #endif
+        self.dismiss()
     }
 
     private func updateData() async {
@@ -40,86 +45,59 @@ struct ShoppingListFormView: View {
     }
 
     func saveShoppingList() async {
-        let id = shoppingListDescription == nil ? grocyVM.findNextID(.shopping_lists) : shoppingListDescription!.id
-        let timeStamp = shoppingListDescription == nil ? Date().iso8601withFractionalSeconds : shoppingListDescription!.rowCreatedTimestamp
-        let shoppingListPOST = ShoppingListDescription(
-            id: id,
-            name: name,
-            rowCreatedTimestamp: timeStamp
-        )
-        isProcessing = true
-        if shoppingListDescription == nil {
+        if shoppingListDescription.id == -1 {
             do {
-                _ = try await grocyVM.postMDObject(
-                    object: .shopping_lists,
-                    content: shoppingListPOST
-                )
-                GrocyLogger.info("Shopping list save successful.")
-                await updateData()
-                finishForm()
+                shoppingListDescription.id = try grocyVM.findNextID(.shopping_lists)
             } catch {
-                GrocyLogger.error("Shopping list save failed. \(error)")
+                GrocyLogger.error("Failed to get next ID: \(error)")
+                return
             }
-        } else {
-            do {
-                try await grocyVM.putMDObjectWithID(
-                    object: .shopping_lists,
-                    id: id,
-                    content: shoppingListPOST
-                )
-                GrocyLogger.info("Shopping list edit successful.")
-                await updateData()
-                finishForm()
-            } catch {
-                GrocyLogger.error("Shopping list edit failed. \(error)")
+        }
+        isProcessing = true
+        isSuccessful = nil
+        do {
+            try shoppingListDescription.modelContext?.save()
+            if existingShoppingListDescription == nil {
+                _ = try await grocyVM.postMDObject(object: .locations, content: shoppingListDescription)
+            } else {
+                try await grocyVM.putMDObjectWithID(object: .locations, id: shoppingListDescription.id, content: shoppingListDescription)
+            }
+            GrocyLogger.info("Shopping list \(shoppingListDescription.name) successful.")
+            await updateData()
+            isSuccessful = true
+        } catch {
+            GrocyLogger.error("Shopping list \(shoppingListDescription.name) failed. \(error)")
+            isSuccessful = false
+            if let apiError = error as? APIError {
+                errorMessage = apiError.displayMessage
+            } else {
+                errorMessage = error.localizedDescription
             }
         }
         isProcessing = false
     }
 
-    private func resetForm() {
-        name = shoppingListDescription?.name ?? ""
-        isNameCorrect = checkNameCorrect()
-    }
-
     var body: some View {
         Form {
-            #if os(macOS)
-                Text(shoppingListDescription == nil ? "Create shopping list" : "Edit shopping list")
-                    .font(.headline)
-            #endif
             MyTextField(
-                textToEdit: $name,
+                textToEdit: $shoppingListDescription.name,
                 description: "Name",
                 isCorrect: $isNameCorrect,
                 leadingIcon: MySymbols.name,
                 emptyMessage: "A name is required",
                 errorMessage: "Name already exists"
             )
-            .onChange(of: name) {
+            .onChange(of: shoppingListDescription.name) {
                 isNameCorrect = checkNameCorrect()
             }
-            #if os(macOS)
-                HStack {
-                    Button("Cancel") {
-                        finishForm()
-                    }
-                    .keyboardShortcut(.cancelAction)
-                    Spacer()
-                    Button("Save") {
-                        Task {
-                            await saveShoppingList()
-                        }
-                    }
-                    .disabled(isProcessing)
-                    .keyboardShortcut(.defaultAction)
-                }
-            #endif
         }
-        .onAppear(perform: resetForm)
-        .navigationTitle(shoppingListDescription == nil ? "Create shopping list" : "Edit shopping list")
+        .navigationTitle(existingShoppingListDescription == nil ? "Create shopping list" : "Edit shopping list")
+        .task {
+            await updateData()
+            self.isNameCorrect = checkNameCorrect()
+        }
         .toolbar {
-            if shoppingListDescription == nil {
+            if existingShoppingListDescription == nil {
                 ToolbarItem(
                     placement: .cancellationAction,
                     content: {
@@ -168,6 +146,6 @@ struct ShoppingListFormView: View {
 
 #Preview("Edit", traits: .previewData) {
     NavigationStack {
-        ShoppingListFormView(shoppingListDescription: ShoppingListDescription(id: 1, name: "Shopping list", rowCreatedTimestamp: ""))
+        ShoppingListFormView(existingShoppingListDescription: ShoppingListDescription(id: 1, name: "Shopping list", rowCreatedTimestamp: ""))
     }
 }

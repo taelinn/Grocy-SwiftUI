@@ -44,12 +44,12 @@ struct QuickScanModeSelectProductView: View {
         if let barcode = barcode,
             let productID = productID
         {
-            let newBarcode = MDProductBarcode(
-                id: grocyVM.findNextID(.product_barcodes),
-                productID: productID,
-                barcode: barcode
-            )
             do {
+                let newBarcode = MDProductBarcode(
+                    id: try grocyVM.findNextID(.product_barcodes),
+                    productID: productID,
+                    barcode: barcode
+                )
                 _ = try await grocyVM.postMDObject(object: .product_barcodes, content: newBarcode)
                 GrocyLogger.info("Add barcode successful.")
                 await grocyVM.requestData(objects: [.product_barcodes])

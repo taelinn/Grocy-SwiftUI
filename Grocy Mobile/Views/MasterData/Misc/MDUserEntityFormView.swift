@@ -62,7 +62,17 @@ struct MDUserEntityFormView: View {
     }
 
     private func saveUserEntity() async {
-        let id: Int = isNewUserEntity ? grocyVM.findNextID(.userentities) : userEntity!.id
+        let id: Int
+        if isNewUserEntity {
+            do {
+                id = try grocyVM.findNextID(.userentities)
+            } catch {
+                GrocyLogger.error("Failed to get next ID: \(error)")
+                return
+            }
+        } else {
+            id = userEntity!.id
+        }
         let timeStamp = isNewUserEntity ? Date().iso8601withFractionalSeconds : userEntity!.rowCreatedTimestamp
         let userEntityPOST = MDUserEntity(id: id, name: name, caption: caption, mdUserEntityDescription: mdUserEntityDescription, showInSidebarMenu: showInSidebarMenu ? 1 : 0, iconCSSClass: nil, rowCreatedTimestamp: timeStamp)
         isProcessing = true

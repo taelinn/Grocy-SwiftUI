@@ -57,7 +57,12 @@ struct MDBarcodeFormView: View {
 
     private func saveBarcode() async {
         if barcode.id == -1 {
-            barcode.id = grocyVM.findNextID(.product_barcodes)
+            do {
+                barcode.id = try grocyVM.findNextID(.product_barcodes)
+            } catch {
+                GrocyLogger.error("Failed to get next ID: \(error)")
+                return
+            }
         }
         isProcessing = true
         isSuccessful = nil

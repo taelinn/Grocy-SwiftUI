@@ -68,7 +68,17 @@ struct MDUserFieldFormView: View {
     
     private func saveUserField() async {
         if let entity = entity {
-            let id = isNewUserField ? grocyVM.findNextID(.userfields) : userField!.id
+            let id: Int
+            if isNewUserField {
+                do {
+                    id = try grocyVM.findNextID(.userfields)
+                } catch {
+                    GrocyLogger.error("Failed to get next ID: \(error)")
+                    return
+                }
+            } else {
+                id = userField!.id
+            }
             let timeStamp = isNewUserField ? Date().iso8601withFractionalSeconds : userField!.rowCreatedTimestamp
             let userFieldPOST = MDUserField(id: id, name: name, entity: entity.rawValue, caption: caption, type: type.rawValue, showAsColumnInTables: showAsColumnInTables, config: nil, sortNumber: sortNumber, rowCreatedTimestamp: timeStamp)
             isProcessing = true

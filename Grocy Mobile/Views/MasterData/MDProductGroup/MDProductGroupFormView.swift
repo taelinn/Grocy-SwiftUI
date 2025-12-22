@@ -30,9 +30,7 @@ struct MDProductGroupFormView: View {
 
     init(existingProductGroup: MDProductGroup? = nil) {
         self.existingProductGroup = existingProductGroup
-        let initialProductGroup = existingProductGroup ?? MDProductGroup()
-        _productGroup = State(initialValue: initialProductGroup)
-        _isNameCorrect = State(initialValue: true)
+        self.productGroup = existingProductGroup ?? MDProductGroup()
     }
 
     private let dataToUpdate: [ObjectEntities] = [.product_groups]
@@ -46,7 +44,12 @@ struct MDProductGroupFormView: View {
 
     private func saveProductGroup() async {
         if productGroup.id == -1 {
-            productGroup.id = grocyVM.findNextID(.product_groups)
+            do {
+                productGroup.id = try grocyVM.findNextID(.product_groups)
+            } catch {
+                GrocyLogger.error("Failed to get next ID: \(error)")
+                return
+            }
         }
         isProcessing = true
         isSuccessful = nil
@@ -85,6 +88,9 @@ struct MDProductGroupFormView: View {
                 emptyMessage: "A name is required",
                 errorMessage: "Name already exists"
             )
+            .onChange(of: productGroup.name) {
+                isNameCorrect = checkNameCorrect()
+            }
             MyToggle(
                 isOn: $productGroup.active,
                 description: "Active",
@@ -97,9 +103,6 @@ struct MDProductGroupFormView: View {
             )
         }
         .formStyle(.grouped)
-        .onChange(of: productGroup.name) {
-            isNameCorrect = checkNameCorrect()
-        }
         .navigationTitle(existingProductGroup == nil ? "Create product group" : "Edit product group")
         .toolbar(content: {
             if existingProductGroup == nil {

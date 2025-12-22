@@ -30,9 +30,7 @@ struct MDStoreFormView: View {
 
     init(existingStore: MDStore? = nil) {
         self.existingStore = existingStore
-        let initialStore = existingStore ?? MDStore()
-        _store = State(initialValue: initialStore)
-        _isNameCorrect = State(initialValue: true)
+        self.store = existingStore ?? MDStore()
     }
 
     private let dataToUpdate: [ObjectEntities] = [.shopping_locations]
@@ -46,7 +44,12 @@ struct MDStoreFormView: View {
 
     private func saveStore() async {
         if store.id == -1 {
-            store.id = grocyVM.findNextID(.shopping_locations)
+            do {
+                store.id = try grocyVM.findNextID(.shopping_locations)
+            } catch {
+                GrocyLogger.error("Failed to get next ID: \(error)")
+                return
+            }
         }
         isProcessing = true
         isSuccessful = nil

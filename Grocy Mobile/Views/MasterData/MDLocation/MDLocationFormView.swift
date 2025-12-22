@@ -30,8 +30,7 @@ struct MDLocationFormView: View {
 
     init(existingLocation: MDLocation? = nil) {
         self.existingLocation = existingLocation
-        _location = State(initialValue: existingLocation ?? MDLocation())
-        _isNameCorrect = State(initialValue: true)
+        self.location = existingLocation ?? MDLocation()
     }
 
     private let dataToUpdate: [ObjectEntities] = [.locations]
@@ -45,7 +44,12 @@ struct MDLocationFormView: View {
 
     private func saveLocation() async {
         if location.id == -1 {
-            location.id = grocyVM.findNextID(.locations)
+            do {
+                location.id = try grocyVM.findNextID(.locations)
+            } catch {
+                GrocyLogger.error("Failed to get next ID: \(error)")
+                return
+            }
         }
         isProcessing = true
         isSuccessful = nil

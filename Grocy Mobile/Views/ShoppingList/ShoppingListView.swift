@@ -418,7 +418,7 @@ struct ShoppingListView: View {
         .navigationDestination(
             for: ShoppingListDescription.self,
             destination: { desc in
-                ShoppingListFormView(shoppingListDescription: desc)
+                ShoppingListFormView(existingShoppingListDescription: desc)
             }
         )
         .navigationDestination(

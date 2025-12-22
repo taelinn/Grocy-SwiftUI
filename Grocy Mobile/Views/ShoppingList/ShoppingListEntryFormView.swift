@@ -69,7 +69,12 @@ struct ShoppingListEntryFormView: View {
 
     private func saveShoppingListEntry() async {
         if shoppingListEntry.id == -1 {
-            shoppingListEntry.id = grocyVM.findNextID(.shopping_list)
+            do {
+                shoppingListEntry.id = try grocyVM.findNextID(.shopping_list)
+            } catch {
+                GrocyLogger.error("Failed to get next ID: \(error)")
+                return
+            }
         }
         isProcessing = true
         isSuccessful = nil

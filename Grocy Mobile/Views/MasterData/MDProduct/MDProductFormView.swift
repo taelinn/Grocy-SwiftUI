@@ -38,6 +38,8 @@ struct MDProductFormView: View {
     @State private var isSuccessful: Bool? = nil
     @State private var errorMessage: String? = nil
 
+    @State private var processingKIBumms: Bool = false
+
     @Binding var createdProductID: Int?
     var createBarcode: Bool
 
@@ -67,7 +69,7 @@ struct MDProductFormView: View {
         self.existingProduct = existingProduct
         self.queuedBarcode = queuedBarcode ?? ""
         self.createBarcode = createBarcode
-        let initialProduct =
+        self.product =
             existingProduct
             ?? MDProduct(
                 productGroupID: userSettings?.productPresetsProductGroupID,
@@ -79,8 +81,6 @@ struct MDProductFormView: View {
                 defaultDueDays: userSettings?.productPresetsDefaultDueDays ?? 0,
                 treatOpenedAsOutOfStock: userSettings?.productPresetsTreatOpenedAsOutOfStock ?? false,
             )
-        _product = State(initialValue: initialProduct)
-        _isNameCorrect = State(initialValue: true)
         _createdProductID = createdProductID
     }
 
@@ -107,7 +107,12 @@ struct MDProductFormView: View {
 
     private func saveProduct() async {
         if product.id == -1 {
-            product.id = grocyVM.findNextID(.products)
+            do {
+                product.id = try grocyVM.findNextID(.products)
+            } catch {
+                GrocyLogger.error("Failed to get next ID: \(error)")
+                return
+            }
         }
         isProcessing = true
         isSuccessful = nil
@@ -118,14 +123,18 @@ struct MDProductFormView: View {
                 await grocyVM.requestData(objects: [.products])
                 createdProductID = product.id
                 if createBarcode == true && !queuedBarcode.isEmpty {
-                    let newBarcode = MDProductBarcode(
-                        id: grocyVM.findNextID(.product_barcodes),
-                        productID: product.id,
+                    do {
+                        let newBarcode = MDProductBarcode(
+                            id: try grocyVM.findNextID(.product_barcodes),
+                            productID: product.id,
                         barcode: queuedBarcode
-                    )
-                    let _ = try await grocyVM.postMDObject(object: .product_barcodes, content: newBarcode)
-                    GrocyLogger.info("Barcode add successful.")
-                    await grocyVM.requestData(objects: [.product_barcodes])
+                        )
+                        let _ = try await grocyVM.postMDObject(object: .product_barcodes, content: newBarcode)
+                        GrocyLogger.info("Barcode add successful.")
+                        await grocyVM.requestData(objects: [.product_barcodes])
+                    } catch {
+                        GrocyLogger.error("Barcode add failed. \(error)")
+                    }
                 }
                 GrocyLogger.info("Product \(product.name) successful.")
                 isSuccessful = true
@@ -153,6 +162,30 @@ struct MDProductFormView: View {
                 .onChange(of: product.name) {
                     isNameCorrect = checkNameCorrect()
                 }
+
+            Button(
+                action: {
+                    Task {
+                        processingKIBumms = true
+                        do {
+                            let foundProductGroup = try await grocyVM.aiCategoryMatcher.matchWithLogging(word: product.name, in: mdProductGroups)
+                            product.productGroupID = foundProductGroup.id
+                        } catch {
+                            GrocyLogger.error("AI does AI things. \(error)")
+                        }
+                        processingKIBumms = false
+                    }
+                },
+                label: {
+                    HStack {
+                        if processingKIBumms {
+                            ProgressView()
+                                .progressViewStyle(.circular)
+                        }
+                        Label("KI-Bumms", systemImage: "apple.intelligence")
+                    }
+                }
+            )
 
             if !queuedBarcode.isEmpty && existingProduct == nil {
                 Section("Barcode") {

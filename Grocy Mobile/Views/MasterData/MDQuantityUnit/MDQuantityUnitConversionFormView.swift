@@ -79,7 +79,12 @@ struct MDQuantityUnitConversionFormView: View {
 
     private func saveQuantityUnitConversion() async {
         if quantityUnitConversion.id == -1 {
-            quantityUnitConversion.id = grocyVM.findNextID(.quantity_unit_conversions)
+            do {
+                quantityUnitConversion.id = try grocyVM.findNextID(.quantity_unit_conversions)
+            } catch {
+                GrocyLogger.error("Failed to get next ID: \(error)")
+                return
+            }
         }
         isProcessing = true
         isSuccessful = nil
@@ -90,7 +95,7 @@ struct MDQuantityUnitConversionFormView: View {
                 if createInverseConversion {
                     do {
                         let inverseQuantityUnitConversion = MDQuantityUnitConversion(
-                            id: grocyVM.findNextID(.quantity_unit_conversions) + 1,
+                            id: try grocyVM.findNextID(.quantity_unit_conversions) + 1,
                             fromQuID: quantityUnitConversion.toQuID,
                             toQuID: quantityUnitConversion.fromQuID,
                             factor: (1 / quantityUnitConversion.factor),

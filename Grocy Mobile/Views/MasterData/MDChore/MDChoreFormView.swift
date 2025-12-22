@@ -101,7 +101,12 @@ struct MDChoreFormView: View {
 
     private func saveChore() async {
         if chore.id == -1 {
-            chore.id = grocyVM.findNextID(.chores)
+            do {
+                chore.id = try grocyVM.findNextID(.chores)
+            } catch {
+                GrocyLogger.error("Failed to get next ID: \(error)")
+                return
+            }
         }
         isProcessing = true
         isSuccessful = nil

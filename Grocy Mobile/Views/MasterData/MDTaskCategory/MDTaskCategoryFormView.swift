@@ -47,7 +47,12 @@ struct MDTaskCategoryFormView: View {
 
     private func saveTaskCategory() async {
         if taskCategory.id == -1 {
-            taskCategory.id = grocyVM.findNextID(.task_categories)
+            do {
+                taskCategory.id = try grocyVM.findNextID(.task_categories)
+            } catch {
+                GrocyLogger.error("Failed to get next ID: \(error)")
+                return
+            }
         }
         isProcessing = true
         isSuccessful = nil

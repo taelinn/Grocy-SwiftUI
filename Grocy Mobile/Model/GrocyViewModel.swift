@@ -231,7 +231,7 @@ class GrocyViewModel {
         }
     }
 
-    func findNextID(_ object: ObjectEntities) -> Int {
+    func findNextID(_ object: ObjectEntities) throws -> Int {
         var ints: [Int] = []
         switch object {
         case .chores:
@@ -261,7 +261,7 @@ class GrocyViewModel {
         case .userentities:
             ints = self.mdUserEntities.map { $0.id }
         default:
-            GrocyLogger.error("Find next ID not implemented for \(object.rawValue).")
+            throw APIError.invalidResponse
         }
         var startvar = 1
         while ints.contains(startvar) { startvar += 1 }
