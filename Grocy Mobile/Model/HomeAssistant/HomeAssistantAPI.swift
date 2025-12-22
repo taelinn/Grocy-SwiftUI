@@ -34,30 +34,80 @@ final class WebSocket: NSObject, URLSessionWebSocketDelegate {
 }
 
 class HomeAssistantWebSocket {
-    private var webSocketTask: URLSessionWebSocketTask
+    private var webSocketTask: URLSessionWebSocketTask?
     private var requestID: Int = 1
     private var timeoutInterval: Double
     private var hassToken: String
     private var socketAuthenticated: Bool = false
+    private let hassURL: String
+    
+    // Reconnection state
+    private var reconnectAttempts: Int = 0
+    private let maxReconnectAttempts: Int = 5
+    private var lastReconnectTime: Date = Date()
     
     init(hassURL: String, hassToken: String, timeoutInterval: Double) {
         self.hassToken = hassToken
         self.timeoutInterval = timeoutInterval
+        self.hassURL = hassURL
+        self.webSocketTask = Self.createWebSocketTask(from: hassURL, with: timeoutInterval)
+        self.webSocketTask?.resume()
+    }
+    
+    private static func createWebSocketTask(from hassURL: String, with timeoutInterval: Double) -> URLSessionWebSocketTask {
         let webSocketURL = hassURL
             .replacingOccurrences(of: "https", with: "wss")
             .replacingOccurrences(of: "http", with: "ws")
         let webSocketPath = "\(webSocketURL)/api/websocket"
-        guard let url = URL(string: webSocketPath)
-        else {
+        guard let url = URL(string: webSocketPath) else {
             preconditionFailure("Bad URL")
         }
-        let urlRequest = URLRequest(url: url, timeoutInterval: self.timeoutInterval)
+        let urlRequest = URLRequest(url: url, timeoutInterval: timeoutInterval)
         let session = URLSession(configuration: .default, delegate: WebSocket(), delegateQueue: OperationQueue())
-        self.webSocketTask = session.webSocketTask(with: urlRequest)
-        self.webSocketTask.resume()
+        return session.webSocketTask(with: urlRequest)
+    }
+    
+    // MARK: - Reconnection Logic
+    
+    private func reconnectIfNeeded() async throws {
+        guard let task = webSocketTask else {
+            try await performReconnect()
+            return
+        }
+        
+        guard task.state != .running else { return }
+        
+        try await performReconnect()
+    }
+    
+    private func performReconnect() async throws {
+        reconnectAttempts += 1
+        
+        guard reconnectAttempts <= maxReconnectAttempts else {
+            throw APIError.hassError(error: APIError.errorString(description: "Web Socket reconnection failed after \(reconnectAttempts) attempts."))
+        }
+        
+        // Exponential backoff: 1s, 2s, 4s, 8s, 16s
+        let backoffDelay = pow(2.0, Double(reconnectAttempts - 1))
+        let delay = min(backoffDelay, 16.0) // Cap at 16 seconds
+        
+        try await Task.sleep(nanoseconds: UInt64(delay * 1_000_000_000))
+        
+        // Create new WebSocket connection
+        let newTask = Self.createWebSocketTask(from: hassURL, with: timeoutInterval)
+        newTask.resume()
+        self.webSocketTask = newTask
+        
+        // Re-authenticate
+        socketAuthenticated = false
+        try await authenticateSocket()
+        reconnectAttempts = 0
     }
     
     func authenticateSocket() async throws {
+        // Ensure WebSocket is running
+        try await reconnectIfNeeded()
+        
         // 1. Get data, should show not authorized message
         let authStateMessageNonAuthorized: HomeAssistantSocketAuthState = try await self.receiveData()
         guard authStateMessageNonAuthorized.type == "auth_required" else {
@@ -90,14 +140,17 @@ class HomeAssistantWebSocket {
     }
     
     func send(sendStr: String) async throws {
-        try await webSocketTask.send(.string(sendStr))
+        try await webSocketTask?.send(.string(sendStr))
     }
     
     func receiveData<T: Codable>() async throws -> T {
-        guard self.webSocketTask.state == .running else {
-            throw APIError.internalError
+        try await reconnectIfNeeded()
+        
+        guard let task = webSocketTask, task.state == .running else {
+            throw APIError.hassError(error: APIError.errorString(description: "Web Socket not available."))
         }
-        let webSocketResult = try await self.webSocketTask.receive()
+        
+        let webSocketResult = try await task.receive()
         switch webSocketResult {
         case .data(let data):
             let decoded = try JSONDecoder().decode(T.self, from: data)
@@ -117,16 +170,18 @@ class HomeAssistantWebSocket {
     }
     
     func sendDataAsString(data: Data) async throws {
-        // Sending the data as data doesn't work, so it gets sent as string.
-        guard self.webSocketTask.state == .running else {
-            throw APIError.hassError(error: APIError.errorString(description: "Web Socket not running."))
+        // Attempt to reconnect if necessary before sending
+        try await reconnectIfNeeded()
+        
+        guard let task = webSocketTask, task.state == .running else {
+            throw APIError.hassError(error: APIError.errorString(description: "Web Socket unavailable. Retrying..."))
         }
         let str = String(decoding: data, as: UTF8.self)
-        try await self.webSocketTask.send(.string(str))
+        try await task.send(.string(str))
     }
 }
 
-class HomeAssistantAuthenticator {
+actor HomeAssistantAuthenticator {
     private var hassURL: String = ""
     private var hassToken: String
     
@@ -135,7 +190,7 @@ class HomeAssistantAuthenticator {
     
     private var timeoutInterval: Double = 60.0
     
-    private var homeAssistantWebSocket: HomeAssistantWebSocket? = nil
+    private var homeAssistantWebSocket: HomeAssistantWebSocket?
     
     init(hassURL: String, hassToken: String, timeoutInterval: Double = 60) {
         self.hassURL = hassURL
@@ -146,23 +201,34 @@ class HomeAssistantAuthenticator {
     func validTokenAsync(forceRefresh: Bool = false) async throws -> String {
         // Create new websocket and authenticate if it doesn't exist yet
         if self.homeAssistantWebSocket == nil {
-            self.homeAssistantWebSocket = HomeAssistantWebSocket(hassURL: hassURL, hassToken: self.hassToken, timeoutInterval: self.timeoutInterval)
+            self.homeAssistantWebSocket = await HomeAssistantWebSocket(hassURL: hassURL, hassToken: self.hassToken, timeoutInterval: self.timeoutInterval)
             try await self.homeAssistantWebSocket?.authenticateSocket()
         }
         
         // Scenario 1: The session Token is valid and will be returned
-        if let hassIngressToken = self.hassIngressToken, self.hassIngressTokenDate?.distance(to: Date()) ?? 100 < 60, !forceRefresh {
+        if let hassIngressToken = self.hassIngressToken, 
+           let tokenDate = self.hassIngressTokenDate,
+           tokenDate.distance(to: Date()) < 60, 
+           !forceRefresh {
             return hassIngressToken
         }
         
         // Scenario 2: There is no session Token, create a new one
-        if self.homeAssistantWebSocket != nil {
-            let hassToken = try await self.homeAssistantWebSocket!.getToken()
+        guard let socket = self.homeAssistantWebSocket else {
+            self.homeAssistantWebSocket = await HomeAssistantWebSocket(hassURL: hassURL, hassToken: self.hassToken, timeoutInterval: self.timeoutInterval)
+            try await self.homeAssistantWebSocket?.authenticateSocket()
+            guard let socket = self.homeAssistantWebSocket else {
+                throw APIError.hassError(error: APIError.errorString(description: "Web Socket initialization failed"))
+            }
+            let hassToken = try await socket.getToken()
             self.hassIngressToken = hassToken
             self.hassIngressTokenDate = Date()
             return hassToken
-        } else {
-            throw APIError.hassError(error: APIError.errorString(description: "Web Socket not existing"))
         }
+        
+        let hassToken = try await socket.getToken()
+        self.hassIngressToken = hassToken
+        self.hassIngressTokenDate = Date()
+        return hassToken
     }
 }
