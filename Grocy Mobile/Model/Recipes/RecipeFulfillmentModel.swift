@@ -56,7 +56,7 @@ class RecipeFulfilment: Codable, Identifiable {
     }
 
     init(
-        id: Int = -1,
+        equalID: Int = 1,
         recipeID: Int,
         needFulfilled: Int? = 0,
         needFulfilledWithShoppingList: Int? = 0,
@@ -68,7 +68,7 @@ class RecipeFulfilment: Codable, Identifiable {
         productNamesCommaSeparated: String? = nil,
     ) {
         self.id = UUID()
-        self.equalID = id
+        self.equalID = equalID
         self.recipeID = recipeID
         self.needFulfilled = needFulfilled
         self.needFulfilledWithShoppingList = needFulfilledWithShoppingList

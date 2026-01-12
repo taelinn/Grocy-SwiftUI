@@ -582,6 +582,16 @@
     "%@s" : {
       "shouldTranslate" : false
     },
+    "%lf %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lf %2$@"
+          }
+        }
+      }
+    },
     "%lld" : {
       "localizations" : {
         "de" : {
@@ -6897,6 +6907,9 @@
     "2D Matrix codes" : {
       "shouldTranslate" : false
     },
+    "123" : {
+
+    },
     "A barcode is required" : {
       "localizations" : {
         "cs" : {
@@ -9641,6 +9654,9 @@
     "ADD TO CALENDAR" : {
       "shouldTranslate" : false
     },
+    "Add to meal plan" : {
+
+    },
     "Add to shopping list" : {
       "localizations" : {
         "ca" : {
@@ -11283,6 +11299,9 @@
           }
         }
       }
+    },
+    "Are you sure you want to delete recipe \"%@\"?" : {
+
     },
     "Are you sure you want to delete shopping list \"%@\"?" : {
       "localizations" : {
@@ -14220,6 +14239,9 @@
         }
       }
     },
+    "Based on the prices of the default consume rule (Opened first, then first due first, then first in first out) for in stock ingredients and on the last price for missing ones" : {
+
+    },
     "Basic Barcodes" : {
       "shouldTranslate" : false
     },
@@ -15158,6 +15180,9 @@
           }
         }
       }
+    },
+    "By default the amount to be added to the shopping list is \"needed amount - stock amount - shopping list amount\" - when this is enabled, it is only checked against the stock amount, not against what is already on the shopping list" : {
+
     },
     "Calendar" : {
       "localizations" : {
@@ -19557,6 +19582,12 @@
         }
       }
     },
+    "Copy recipe" : {
+
+    },
+    "Costs" : {
+
+    },
     "Create API key" : {
       "localizations" : {
         "cs" : {
@@ -20782,6 +20813,9 @@
           }
         }
       }
+    },
+    "Create recipe" : {
+
     },
     "Create shopping list" : {
       "localizations" : {
@@ -26807,6 +26841,9 @@
         }
       }
     },
+    "Do not check against the shopping list when adding missing items to it" : {
+
+    },
     "Do selected action after assigning a barcode" : {
       "localizations" : {
         "cs" : {
@@ -29853,6 +29890,9 @@
           }
         }
       }
+    },
+    "Edit recipe" : {
+
     },
     "Edit shopping list" : {
       "localizations" : {
@@ -35137,6 +35177,7 @@
       }
     },
     "Ingredients" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ca" : {
           "stringUnit" : {
@@ -35894,6 +35935,9 @@
           }
         }
       }
+    },
+    "kcal" : {
+
     },
     "KI-Bumms" : {
       "shouldTranslate" : false
@@ -42650,6 +42694,16 @@
         }
       }
     },
+    "Not enough in stock, %@ missing, %@ already on shopping list " : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Not enough in stock, %1$@ missing, %2$@ already on shopping list "
+          }
+        }
+      }
+    },
     "Not enough in stock, %lld ingredient missing" : {
       "localizations" : {
         "ca" : {
@@ -46041,6 +46095,9 @@
         }
       }
     },
+    "per serving" : {
+
+    },
     "Per stock quantity unit" : {
       "localizations" : {
         "ca" : {
@@ -47471,6 +47528,9 @@
           }
         }
       }
+    },
+    "Produces product" : {
+
     },
     "Product" : {
       "localizations" : {
@@ -52844,6 +52904,9 @@
           }
         }
       }
+    },
+    "Servings" : {
+
     },
     "Set to 0 to hide due soon filters/highlighting" : {
       "localizations" : {
@@ -59240,6 +59303,9 @@
           }
         }
       }
+    },
+    "The ingredients listed here result in this amount of servings" : {
+
     },
     "The selected amount is equal to the stock amount." : {
       "localizations" : {
@@ -72310,6 +72376,9 @@
           }
         }
       }
+    },
+    "When a product is selected, one unit (per serving in stock quantity unit) will be added to stock on consuming this recipe" : {
+
     },
     "When displaying prices for this product, they will be related to this quantity unit" : {
       "localizations" : {

@@ -12,11 +12,11 @@ import SwiftData
 class Recipe: Codable, Identifiable {
     @Attribute(.unique) var id: Int
     var name: String
-    var recipeDescription: String?
+    var recipeDescription: String
     var pictureFileName: String?
-    var baseServings: Int
-    var desiredServings: Int?
-    var notCheckShoppinglist: Bool?
+    var baseServings: Double
+    var desiredServings: Double
+    var notCheckShoppinglist: Bool
     var type: RecipeType
     var productID: Int?
     var rowCreatedTimestamp: String
@@ -39,11 +39,11 @@ class Recipe: Codable, Identifiable {
             let container = try decoder.container(keyedBy: CodingKeys.self)
             self.id = try container.decodeFlexibleInt(forKey: .id)
             self.name = try container.decode(String.self, forKey: .name)
-            self.recipeDescription = try? container.decodeIfPresent(String.self, forKey: .recipeDescription) ?? nil
+            self.recipeDescription = try container.decodeIfPresent(String.self, forKey: .recipeDescription) ?? ""
             self.pictureFileName = try? container.decodeIfPresent(String.self, forKey: .pictureFileName) ?? nil
-            self.baseServings = try container.decodeFlexibleInt(forKey: .baseServings)
-            self.desiredServings = try container.decodeFlexibleIntIfPresent(forKey: .desiredServings)
-            self.notCheckShoppinglist = try container.decodeFlexibleBoolIfPresent(forKey: .notCheckShoppinglist)
+            self.baseServings = try container.decodeFlexibleDouble(forKey: .baseServings)
+            self.desiredServings = try container.decodeFlexibleDouble(forKey: .desiredServings)
+            self.notCheckShoppinglist = try container.decodeFlexibleBool(forKey: .notCheckShoppinglist)
             self.type = try container.decode(RecipeType.self, forKey: .type)
             self.productID = try container.decodeFlexibleIntIfPresent(forKey: .productID)
             self.rowCreatedTimestamp = try container.decode(String.self, forKey: .rowCreatedTimestamp)
@@ -55,11 +55,11 @@ class Recipe: Codable, Identifiable {
     init(
         id: Int = -1,
         name: String = "",
-        recipeDescription: String? = nil,
+        recipeDescription: String = "",
         pictureFileName: String? = nil,
-        baseServings: Int = 0,
-        desiredServings: Int? = nil,
-        notCheckShoppinglist: Bool? = nil,
+        baseServings: Double = 1.0,
+        desiredServings: Double = 1.0,
+        notCheckShoppinglist: Bool = false,
         type: RecipeType = .normal,
         productID: Int? = nil,
         rowCreatedTimestamp: String? = nil
