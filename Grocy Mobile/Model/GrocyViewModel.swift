@@ -112,7 +112,7 @@ class GrocyViewModel {
         self.swiftDataSync = SwiftDataSynchronizer(modelContext: modelContext)
         jsonEncoder.dateEncodingStrategy = .custom({ (date, encoder) in
             let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "yyyy-MM-dd"
+            dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
             let dateString = dateFormatter.string(from: date)
             var container = encoder.singleValueContainer()
             try container.encode(dateString)
