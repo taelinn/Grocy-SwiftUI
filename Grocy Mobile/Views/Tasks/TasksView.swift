@@ -395,7 +395,7 @@ struct TasksView: View {
                 Button(
                     action: { showDoneTasks.toggle() },
                     label: {
-                        Label("Show done tasks ", systemImage: MySymbols.show)
+                        Label("Show done tasks", systemImage: MySymbols.show)
                             .symbolVariant(showDoneTasks ? .fill : .none)
                     }
                 )

@@ -31,7 +31,7 @@ struct RecipeIngredientRowView: View {
                         Image(systemName: "xmark.circle.fill")
                             .foregroundStyle(.red)
                     }
-                    Text("Not enough in stock, \(recipePos.missingAmount.formattedAmount) missing, \(recipePos.amountOnShoppingList.formattedAmount) already on shopping list ")
+                    Text("Not enough in stock, \(recipePos.missingAmount.formattedAmount) missing, \(recipePos.amountOnShoppingList.formattedAmount) already on shopping list")
                 }
             }
         }
