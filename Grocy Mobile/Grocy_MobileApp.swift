@@ -13,13 +13,13 @@ import SwiftUI
 @Observable
 class DeepLinkManager {
     var pendingStockFilter: ProductStatus?
-    
+
     func apply(deepLink: GrocyDeepLink) {
         if case .stock(let filter) = deepLink {
             pendingStockFilter = filter
         }
     }
-    
+
     func consume() {
         pendingStockFilter = nil
     }
@@ -28,21 +28,32 @@ class DeepLinkManager {
 extension ModelContainer {
     static func deleteStore(at url: URL) throws {
         let fileManager = FileManager.default
-        
+
         // Delete main store file
         if fileManager.fileExists(atPath: url.path) {
             try fileManager.removeItem(at: url)
         }
-        
+
         // Delete SQLite WAL and SHM files
         let walURL = url.deletingPathExtension().appendingPathExtension("store-wal")
         let shmURL = url.deletingPathExtension().appendingPathExtension("store-shm")
-        
+
         if fileManager.fileExists(atPath: walURL.path) {
             try fileManager.removeItem(at: walURL)
         }
         if fileManager.fileExists(atPath: shmURL.path) {
             try fileManager.removeItem(at: shmURL)
+        }
+    }
+
+    static func ensureStorePath() throws {
+        let storeURL = sharedModelContainerURL()
+        let storeDirectory = storeURL.deletingLastPathComponent()
+        let fileManager = FileManager.default
+
+        // Create directory if it doesn't exist
+        if !fileManager.fileExists(atPath: storeDirectory.path) {
+            try fileManager.createDirectory(at: storeDirectory, withIntermediateDirectories: true, attributes: nil)
         }
     }
 }
@@ -64,7 +75,7 @@ struct Grocy_MobileApp: App {
     @AppStorage("useHassIngress") var useHassIngress: Bool = false
     @AppStorage("hassToken") var hassToken: String = ""
 
-    let modelContainer: ModelContainer
+    var modelContainer: ModelContainer
     let profileModelContainer: ModelContainer
 
     init() {
@@ -91,6 +102,7 @@ struct Grocy_MobileApp: App {
             Recipe.self,
             StockLocation.self,
             SystemConfig.self,
+            RecipePos.self,
             RecipePosResolvedElement.self,
             RecipeFulfilment.self,
             MDChore.self,
@@ -117,7 +129,7 @@ struct Grocy_MobileApp: App {
             allowsSave: true,
             cloudKitDatabase: isRunningOnSimulator() ? .none : .private("iCloud.georgappdev.Grocy")
         )
-        
+
         // Initialize profile container
         do {
             profileModelContainer = try ModelContainer(for: profileSchema, migrationPlan: .none, configurations: profileConfig)
@@ -134,34 +146,68 @@ struct Grocy_MobileApp: App {
             isLoggedIn = false
         }
 
-        // Initialize main container
-        do {
-            modelContainer = try ModelContainer(for: mainSchema, migrationPlan: .none, configurations: mainConfig)
-            let modelContext = ModelContext(modelContainer)
-            _grocyVM = State(initialValue: GrocyViewModel(modelContext: modelContext, profileModelContext: ModelContext(profileModelContainer)))
-        } catch {
-            // Reset store if there's a migration error
-//            ModelContainer.resetStore()
-            let storeURL = mainConfig.url // Get your configuration's URL
-            try? ModelContainer.deleteStore(at: storeURL)
-            GrocyLogger.error("Failed to create main ModelContainer after reset: \(error). Deleted and try to create again.")
+        func initializeMainContainer(profileContainer: ModelContainer) throws -> (ModelContainer, GrocyViewModel) {
+            try ModelContainer.ensureStorePath()
+            let container = try ModelContainer(for: mainSchema, configurations: mainConfig)
+            let modelContext = ModelContext(container)
+            let vm = GrocyViewModel(modelContext: modelContext, profileModelContext: ModelContext(profileContainer))
+            return (container, vm)
+        }
 
-            // Try creating the container again
-            do {
-                modelContainer = try ModelContainer(for: mainSchema, configurations: mainConfig)
-                let modelContext = ModelContext(modelContainer)
-                _grocyVM = State(initialValue: GrocyViewModel(modelContext: modelContext, profileModelContext: ModelContext(profileModelContainer)))
-            } catch {
-                fatalError("Failed to create main ModelContainer after reset: \(error)")
+        do {
+            let (container, vm) = try initializeMainContainer(profileContainer: profileModelContainer)
+            self.modelContainer = container
+            self._grocyVM = State(initialValue: vm)
+        } catch {
+            // First attempt failed, try recovery
+            let storeURL = sharedModelContainerURL()
+            let nsError = error as NSError
+            let isMigrationError = nsError.code == 134140 && nsError.domain == NSCocoaErrorDomain
+
+            if isMigrationError {
+                GrocyLogger.error("Data model migration error detected. The data model has changed and the store is incompatible. Deleting store at \(storeURL.path)")
+            } else {
+                GrocyLogger.error("Failed to create main ModelContainer: \(error). Attempting to delete store at \(storeURL.path)")
             }
-            isLoggedIn = false
+
+            // Delete corrupted/incompatible store files
+            try? ModelContainer.deleteStore(at: storeURL)
+
+            // Retry after cleanup with fresh directory creation
+            do {
+                // Force clean directory creation
+                let storeDirectory = storeURL.deletingLastPathComponent()
+                try? FileManager.default.removeItem(at: storeDirectory)
+                try ModelContainer.ensureStorePath()
+
+                let (container, vm) = try initializeMainContainer(profileContainer: profileModelContainer)
+                self.modelContainer = container
+                self._grocyVM = State(initialValue: vm)
+                GrocyLogger.info("Successfully recovered main ModelContainer after store deletion")
+            } catch {
+                // Last resort: reset everything and start fresh
+                GrocyLogger.error("Failed to recover main ModelContainer, attempting full reset: \(error)")
+                try? ModelContainer.deleteStore(at: storeURL)
+                ModelContainer.resetProfileStore()
+
+                do {
+                    // Try one more time with clean slate
+                    let (container, vm) = try initializeMainContainer(profileContainer: profileModelContainer)
+                    self.modelContainer = container
+                    self._grocyVM = State(initialValue: vm)
+                    GrocyLogger.info("Successfully recovered main ModelContainer after full reset")
+                } catch {
+                    // Complete failure - this should not happen if the code is correct
+                    fatalError("Failed to create main ModelContainer after all recovery attempts: \(error)")
+                }
+            }
         }
 
         // Do migration for old AppStorage based to profile
         let profileModelContext = ModelContext(profileModelContainer)
         var descriptor = FetchDescriptor<ServerProfile>()
         descriptor.fetchLimit = 0
-        
+
         let numProfiles: Int = (try? profileModelContext.fetchCount(descriptor)) ?? 0
         if isLoggedIn && !isDemoModus && numProfiles == 0 && !grocyServerURL.isEmpty && !grocyAPIKey.isEmpty {
             let profile = ServerProfile(name: "", grocyServerURL: grocyServerURL, grocyAPIKey: grocyAPIKey, useHassIngress: useHassIngress, hassToken: hassToken)
@@ -222,8 +268,8 @@ struct Grocy_MobileApp: App {
 
 extension ModelContainer {
     static func resetStore() {
-        let storePath = sharedModelContainerURL()
-        try? FileManager.default.removeItem(at: storePath)
+        let storeURL = sharedModelContainerURL()
+        try? ModelContainer.deleteStore(at: storeURL)
     }
 
     static func resetProfileStore() {
