@@ -55,6 +55,7 @@ struct ProductField: View {
 
     @Binding var productID: Int?
     var description: LocalizedStringKey
+    var descriptionInfo: LocalizedStringKey?
 
     @State private var searchTerm: String = ""
     #if os(iOS)
@@ -99,7 +100,12 @@ struct ProductField: View {
         var pickerView: some View {
             Picker(
                 selection: $productID,
-                label: Label(description, systemImage: MySymbols.product).foregroundStyle(.primary),
+                label: HStack {
+                    Label(description, systemImage: MySymbols.product).foregroundStyle(.primary)
+                    if let descriptionInfo {
+                        FieldDescription(description: descriptionInfo)
+                    }
+                },
                 content: {
                     HStack {
                         SearchBar(text: $searchTerm)
