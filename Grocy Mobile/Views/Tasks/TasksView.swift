@@ -22,9 +22,9 @@ struct TasksView: View {
     @State private var searchString: String = ""
     @State private var showingFilterSheet = false
     @State private var filteredStatus: TaskStatus = .all
-    @State private var filteredTaskCategoryID: Int? = nil
+    @State private var filteredTaskCategoryID: Int? = -1
     @State private var filteredUserID: Int? = nil
-    @State private var sortOption: TasksSortOption = .byName
+    @State private var sortOption: TasksSortOption = .byDueDate
     @State private var sortOrder: SortOrder = .forward
 
     @State private var showCreateTask: Bool = false
@@ -70,7 +70,7 @@ struct TasksView: View {
     var filteredTasks: [GrocyTask] {
         grocyTasks
             .filter { filteredUserID == nil || $0.assignedToUserID == filteredUserID }
-            .filter { filteredTaskCategoryID == nil || $0.categoryID == filteredTaskCategoryID }
+            .filter { filteredTaskCategoryID == -1 || $0.categoryID == filteredTaskCategoryID }
             .filter { matchesFilter($0) }
     }
 

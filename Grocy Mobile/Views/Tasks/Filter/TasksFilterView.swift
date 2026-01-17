@@ -51,13 +51,13 @@ struct TasksFilterView: View {
                 selection: $filteredTaskCategoryID,
                 content: {
                     Text("All")
-                        .tag(nil as Int?)
+                        .tag(-1 as Int?)
                     ForEach(mdTaskCategories, id: \.id) { taskCategory in
                         Text(taskCategory.name)
                             .tag(taskCategory.id)
                     }
                     Text("Uncategorized")
-                        .tag(-1 as Int?)
+                        .tag(nil as Int?)
                 },
                 label: {
                     Label("Category", systemImage: MySymbols.filter)
