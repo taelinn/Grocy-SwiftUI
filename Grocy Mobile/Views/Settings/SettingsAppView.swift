@@ -18,6 +18,7 @@ struct SettingsAppView: View {
     @AppStorage("isDemoModus") var isDemoModus: Bool = true
     @AppStorage("localizationKey") var localizationKey: String = "en"
     @AppStorage("timeoutInterval") var timeoutInterval: Double = 60.0
+    @AppStorage("useAppleIntelligence") var useAppleIntelligence: Bool = true
 
     #if os(iOS)
         @AppStorage("iPhoneTabNavigation") var iPhoneTabNavigation: Bool = true
@@ -144,6 +145,9 @@ struct SettingsAppView: View {
                         }
                     )
                 }
+            }
+            Section("Apple Intelligence") {
+                MyToggle(isOn: $useAppleIntelligence, description: "Apple Intelligence", icon: "apple.intelligence")
             }
         }
         .formStyle(.grouped)

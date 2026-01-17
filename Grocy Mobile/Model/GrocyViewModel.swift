@@ -21,6 +21,8 @@ class GrocyViewModel {
     let profileModelContext: ModelContext?
     private let swiftDataSync: SwiftDataSynchronizer
 
+    var aiCategoryMatcher: AICategoryMatcher?
+
     @ObservationIgnored @AppStorage("isLoggedIn") var isLoggedIn: Bool = false
     @ObservationIgnored @AppStorage("isDemoModus") var isDemoModus: Bool = false
     @ObservationIgnored @AppStorage("demoServerURL") var demoServerURL: String = GrocyAPP.DemoServers.noLanguage.rawValue
@@ -31,6 +33,7 @@ class GrocyViewModel {
     @ObservationIgnored @AppStorage("syncShoppingListToReminders") private var syncShoppingListToReminders: Bool = false
     @ObservationIgnored @AppStorage("shoppingListToSyncID") private var shoppingListToSyncID: Int = 0
     @ObservationIgnored @AppStorage("selectedServerProfileID") private var selectedServerProfileID: UUID?
+    @ObservationIgnored @AppStorage("useAppleIntelligence") var useAppleIntelligence: Bool = true
 
     @ObservationIgnored @State private var refreshTimer: Timer?
 
@@ -50,6 +53,7 @@ class GrocyViewModel {
     var shoppingList: [ShoppingListItem] = []
     var recipes: Recipes = []
     var recipeFulfillments: RecipeFulfilments = []
+    var recipePos: [RecipePos] = []
     var recipePosResolved: [RecipePosResolvedElement] = []
     var chores: Chores = []
     var choreLog: ChoreLog = []
@@ -110,6 +114,7 @@ class GrocyViewModel {
         self.modelContext.autosaveEnabled = false
         self.profileModelContext = profileModelContext
         self.swiftDataSync = SwiftDataSynchronizer(modelContext: modelContext)
+        self.aiCategoryMatcher = nil
         jsonEncoder.dateEncodingStrategy = .custom({ (date, encoder) in
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
@@ -146,6 +151,9 @@ class GrocyViewModel {
             }
         } else {
             GrocyLogger.info("Not logged in")
+        }
+        if useAppleIntelligence && AICategoryMatcher.isAppleIntelligenceAvailable {
+            self.aiCategoryMatcher = AICategoryMatcher()
         }
     }
 
@@ -255,6 +263,8 @@ class GrocyViewModel {
             ints = self.shoppingList.map { $0.id }
         case .product_barcodes:
             ints = self.mdProductBarcodes.map { $0.id }
+        case .recipes:
+            ints = self.recipes.map { $0.id }
         case .tasks:
             ints = self.grocyTasks.map { $0.id }
         case .task_categories:
@@ -511,6 +521,7 @@ class GrocyViewModel {
             try self.modelContext.delete(model: StockProductDetails.self)
             try self.modelContext.delete(model: StockLocation.self)
             try self.modelContext.delete(model: Recipe.self)
+            try self.modelContext.delete(model: RecipePos.self)
             try self.modelContext.delete(model: RecipePosResolvedElement.self)
             try self.modelContext.delete(model: StockLocation.self)
             try self.modelContext.delete(model: SystemConfig.self)

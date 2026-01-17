@@ -38,7 +38,7 @@ struct MDProductFormView: View {
     @State private var isSuccessful: Bool? = nil
     @State private var errorMessage: String? = nil
 
-    @State private var processingKIBumms: Bool = false
+    @State private var processingAppleIntelligence: Bool = false
 
     @Binding var createdProductID: Int?
     var createBarcode: Bool
@@ -46,7 +46,7 @@ struct MDProductFormView: View {
     var existingProduct: MDProduct?
     @State var product: MDProduct
 
-    @AppStorage("devMode") private var devMode: Bool = false
+    @AppStorage("useAppleIntelligence") var useAppleIntelligence: Bool = true
 
     @State private var queuedBarcode: String = ""
     @State private var foundExternalBarcode: ExternalBarcodeLookup?
@@ -156,6 +156,50 @@ struct MDProductFormView: View {
         isProcessing = false
     }
 
+    private func matchUsingAppleIntelligence() async {
+        processingAppleIntelligence = true
+        do {
+            // Match default location
+            if product.locationID == -1 {
+                let categoryNames = mdLocations.map { $0.name }
+                if let matchResult = try await grocyVM.aiCategoryMatcher?.matchByNames(word: product.name, categoryNames: categoryNames), matchResult.confidence > 0.5 {
+                    // Find the product group by matching the category name
+                    if let foundLocation = mdLocations.first(where: { $0.name.lowercased() == matchResult.categoryName.lowercased() }) {
+                        product.locationID = foundLocation.id
+                    }
+                }
+            }
+            
+            // Match product group
+            if product.productGroupID == nil {
+                let categoryNames = mdProductGroups.map { $0.name }
+                if let matchResult = try await grocyVM.aiCategoryMatcher?.matchByNames(word: product.name, categoryNames: categoryNames), matchResult.confidence > 0.5 {
+                    // Find the product group by matching the category name
+                    if let foundProductGroup = mdProductGroups.first(where: { $0.name.lowercased() == matchResult.categoryName.lowercased() }) {
+                        product.productGroupID = foundProductGroup.id
+                    }
+                }
+            }
+            
+            // Match quantityUnitStock
+            if product.quIDStock == -1 {
+                let categoryNames = mdQuantityUnits.map { $0.name }
+                if let matchResult = try await grocyVM.aiCategoryMatcher?.matchByNames(word: product.name, categoryNames: categoryNames), matchResult.confidence > 0.5 {
+                    // Find the product group by matching the category name
+                    if let foundQuantityUnit = mdQuantityUnits.first(where: { $0.name.lowercased() == matchResult.categoryName.lowercased() }) {
+                        product.quIDStock = foundQuantityUnit.id
+                        product.quIDPurchase = foundQuantityUnit.id
+                        product.quIDConsume = foundQuantityUnit.id
+                        product.quIDPrice = foundQuantityUnit.id
+                    }
+                }
+            }
+        } catch {
+            GrocyLogger.error("AI does AI things. \(error)")
+        }
+        processingAppleIntelligence = false
+    }
+
     var body: some View {
         List {
             MyTextField(textToEdit: $product.name, description: "Name", isCorrect: $isNameCorrect, leadingIcon: "tag", emptyMessage: "A name is required", errorMessage: "Name already exists")
@@ -163,29 +207,30 @@ struct MDProductFormView: View {
                     isNameCorrect = checkNameCorrect()
                 }
 
-            Button(
-                action: {
-                    Task {
-                        processingKIBumms = true
-                        do {
-                            let foundProductGroup = try await grocyVM.aiCategoryMatcher.matchWithLogging(word: product.name, in: mdProductGroups)
-                            product.productGroupID = foundProductGroup.id
-                        } catch {
-                            GrocyLogger.error("AI does AI things. \(error)")
+            if useAppleIntelligence && AICategoryMatcher.isAppleIntelligenceAvailable {
+                Button(
+                    action: {
+                        Task {
+                            await matchUsingAppleIntelligence()
                         }
-                        processingKIBumms = false
-                    }
-                },
-                label: {
-                    HStack {
-                        if processingKIBumms {
-                            ProgressView()
-                                .progressViewStyle(.circular)
+                    },
+                    label: {
+                        Label {
+                            Text("Apple Intelligence")
+                        } icon: {
+                            Image(systemName: "apple.intelligence")
+                                .symbolEffect(
+                                    .variableColor.iterative.reversing,
+                                    options: .speed(0.5),
+                                    isActive: processingAppleIntelligence
+                                )
+                                .foregroundStyle(.linearGradient(colors: [.blue, .purple], startPoint: .leading, endPoint: .trailing))
                         }
-                        Label("KI-Bumms", systemImage: "apple.intelligence")
                     }
-                }
-            )
+                )
+                .foregroundStyle(.primary)
+                .disabled(processingAppleIntelligence)
+            }
 
             if !queuedBarcode.isEmpty && existingProduct == nil {
                 Section("Barcode") {

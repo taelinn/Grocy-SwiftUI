@@ -64,15 +64,4 @@ class MDProductGroup: Codable, Equatable, Identifiable {
     }
 }
 
-extension MDProductGroup: Categorizable {
-    public nonisolated var categoryName: String {
-        // Return the name property for AI matching
-        name
-    }
-}
-extension MDProductGroup: @unchecked Sendable {
-    // SwiftData models are @MainActor isolated by default
-    // Using @unchecked Sendable because SwiftData manages thread safety
-}
-
 typealias MDProductGroups = [MDProductGroup]
