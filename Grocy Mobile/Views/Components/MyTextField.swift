@@ -19,7 +19,7 @@ struct MyTextField: View {
     var emptyMessage: LocalizedStringKey?
     var errorMessage: LocalizedStringKey?
     var helpText: LocalizedStringKey?
-    
+
     var body: some View {
         LabeledContent {
             VStack(alignment: .leading, spacing: 0) {
@@ -33,7 +33,7 @@ struct MyTextField: View {
                                 .frame(height: 2)
                         }
                     )
-                
+
                 if !isCorrect && !textToEdit.isEmpty, let errorMessage = errorMessage {
                     Text(errorMessage)
                         .lineLimit(nil)
@@ -50,41 +50,44 @@ struct MyTextField: View {
                 }
             }
         } label: {
-            HStack(spacing: 4) {
-                if let leadingIcon = leadingIcon {
-                    Image(systemName: leadingIcon)
-                        .foregroundStyle(.primary)
-                }
-                VStack(alignment: .leading, spacing: 2) {
-                    HStack(spacing: 4) {
-                        Text(description)
-                            .foregroundStyle(.primary)
-                    }
-                    if let subtitle = subtitle {
-                        Text(subtitle)
-                            .lineLimit(nil)
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
-                }
-                if let helpText = helpText {
-                    FieldDescription(description: helpText)
-                }
+            if let leadingIcon = leadingIcon {
+                Label(description, systemImage: leadingIcon)
+                    .foregroundStyle(.primary)
+                    .lineLimit(nil)
+                    .fixedSize(horizontal: false, vertical: true)
+            } else {
+                Text(description)
+                    .foregroundStyle(.primary)
+                    .lineLimit(nil)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            if let subtitle = subtitle {
+                Text(subtitle)
+                    .lineLimit(nil)
+            }
+            if let helpText = helpText {
+                FieldDescription(description: helpText)
             }
         }
     }
 }
 
 #Preview {
+    @Previewable @State var textToEdit: String = "Text to Edit"
+    @Previewable @State var isCorrect: Bool = true
+    
     Form {
         MyTextField(
-            textToEdit: .constant("Text to Edit"),
+            textToEdit: $textToEdit,
             description: "Description",
             subtitle: "Optional subtitle",
-            isCorrect: .constant(false),
+            isCorrect: $isCorrect,
             leadingIcon: "tag",
             errorMessage: "Error message",
             helpText: "This is a help text"
         )
+        .onChange(of: textToEdit, {
+            if textToEdit == "Error" { isCorrect = false } else { isCorrect = true }
+        })
     }
 }
