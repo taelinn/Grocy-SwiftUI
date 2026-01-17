@@ -84,7 +84,7 @@ struct TasksView: View {
 
     func matchesFilter(_ grocyTask: GrocyTask, for status: TaskStatus? = nil) -> Bool {
         let targetStatus = status ?? filteredStatus
-        
+
         // Don't show done items in this filter
         guard !(grocyTask.done && ![TaskStatus.all, TaskStatus.assignedToMe].contains(targetStatus)) else { return false }
 
@@ -143,19 +143,39 @@ struct TasksView: View {
             }
         case .byCategory:
             return { a, b in
-                let aCategory = a.categoryID ?? -1
-                let bCategory = b.categoryID ?? -1
+                let aCategoryName = self.mdTaskCategories.first(where: { $0.id == a.categoryID })?.name ?? ""
+                let bCategoryName = self.mdTaskCategories.first(where: { $0.id == b.categoryID })?.name ?? ""
+
+                // Empty strings always come last
+                if aCategoryName.isEmpty && !bCategoryName.isEmpty {
+                    return false
+                }
+                if !aCategoryName.isEmpty && bCategoryName.isEmpty {
+                    return true
+                }
+
+                let comparison = aCategoryName.localizedCaseInsensitiveCompare(bCategoryName)
                 return self.sortOrder == .forward
-                    ? aCategory < bCategory
-                    : aCategory > bCategory
+                    ? comparison == .orderedAscending
+                    : comparison == .orderedDescending
             }
         case .byUser:
             return { a, b in
-                let aAmount = a.assignedToUserID ?? 0
-                let bAmount = b.assignedToUserID ?? 0
+                let aUserName = self.grocyUsers.first(where: { $0.id == a.assignedToUserID })?.displayName ?? ""
+                let bUserName = self.grocyUsers.first(where: { $0.id == b.assignedToUserID })?.displayName ?? ""
+
+                // Empty strings always come last
+                if aUserName.isEmpty && !bUserName.isEmpty {
+                    return false
+                }
+                if !aUserName.isEmpty && bUserName.isEmpty {
+                    return true
+                }
+
+                let comparison = aUserName.localizedCaseInsensitiveCompare(bUserName)
                 return self.sortOrder == .forward
-                    ? aAmount < bAmount
-                    : aAmount > bAmount
+                    ? comparison == .orderedAscending
+                    : comparison == .orderedDescending
             }
         }
     }
@@ -420,16 +440,16 @@ struct TasksView: View {
                     content: {
                         Label("Name", systemImage: MySymbols.name)
                             .labelStyle(.titleAndIcon)
-                            .tag(ChoresSortOption.byName)
-                        Label("Next estimated tracking", systemImage: MySymbols.date)
+                            .tag(TasksSortOption.byName)
+                        Label("Due", systemImage: MySymbols.date)
                             .labelStyle(.titleAndIcon)
-                            .tag(ChoresSortOption.byNextEstimatedTracking)
-                        Label("Last tracked", systemImage: MySymbols.date)
+                            .tag(TasksSortOption.byDueDate)
+                        Label("Category", systemImage: MySymbols.sortCategory)
                             .labelStyle(.titleAndIcon)
-                            .tag(ChoresSortOption.byLastTracked)
-                        Label("Assign to", systemImage: MySymbols.user)
+                            .tag(TasksSortOption.byCategory)
+                        Label("Assigned to", systemImage: MySymbols.user)
                             .labelStyle(.titleAndIcon)
-                            .tag(ChoresSortOption.byUser)
+                            .tag(TasksSortOption.byUser)
                     }
                 )
                 #if os(iOS)
