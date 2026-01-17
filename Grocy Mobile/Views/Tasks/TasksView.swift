@@ -25,7 +25,8 @@ struct TasksView: View {
     @State private var filteredTaskCategoryID: Int? = -1
     @State private var filteredUserID: Int? = nil
     @State private var sortOption: TasksSortOption = .byDueDate
-    @State private var sortOrder: SortOrder = .forward
+    @State private var sortOrder: SortOrder = .reverse
+    @State private var showDoneTasks: Bool = false
 
     @State private var showCreateTask: Bool = false
     @State private var taskToDelete: GrocyTask? = nil
@@ -69,6 +70,7 @@ struct TasksView: View {
 
     var filteredTasks: [GrocyTask] {
         grocyTasks
+            .filter { showDoneTasks || $0.done == false }
             .filter { filteredUserID == nil || $0.assignedToUserID == filteredUserID }
             .filter { filteredTaskCategoryID == -1 || $0.categoryID == filteredTaskCategoryID }
             .filter { matchesFilter($0) }
@@ -390,6 +392,13 @@ struct TasksView: View {
                     }
                 )
                 sortGroupMenu
+                Button(
+                    action: { showDoneTasks.toggle() },
+                    label: {
+                        Label("Show done tasks ", systemImage: MySymbols.show)
+                            .symbolVariant(showDoneTasks ? .fill : .none)
+                    }
+                )
             }
         }
         .sheet(isPresented: $showingFilterSheet) {

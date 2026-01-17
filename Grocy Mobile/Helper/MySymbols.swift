@@ -20,7 +20,6 @@ nonisolated struct MySymbols {
     static let settings = "gear"
     static let chores = "list.bullet.clipboard"
     static let batteries = "battery.25percent"
-    static let tasks = "point.fill.topleft.down.curvedto.point.fill.bottomright.up"
 
     static let stockOverview = "archivebox"
     static let product = "shippingbox"
@@ -98,7 +97,8 @@ nonisolated struct MySymbols {
     static let changeCamera = "arrow.triangle.2.circlepath.camera"
     static let app = "app"
     static let devMode = "wrench.and.screwdriver"
-    
+    static let show = "eye"
+
     static let expiringSoon = "hourglass.bottomhalf.fill"
     static let overdue = "exclamationmark.triangle.fill"
     static let expired = "trash.fill"
@@ -106,7 +106,7 @@ nonisolated struct MySymbols {
     static let soon = "clock.badge.exclamationmark.fill"
     static let today = "calendar.circle.fill"
     static let me = "person.fill"
-    
+
     static let choreRescheduled = "clock.fill"
     static let choreTrackNext = "play.fill"
     static let choreSkipNext = "forward.fill"
@@ -114,4 +114,7 @@ nonisolated struct MySymbols {
     static let choreDayOfMonth = "31.calendar"
     static let choreAssignmentType = "person.crop.circle.fill.badge.checkmark"
     static let choreRollover = "clock.arrow.trianglehead.counterclockwise.rotate.90"
+
+    static let task = "checkmark.circle"
+    static let tasks = "checklist"
 }
