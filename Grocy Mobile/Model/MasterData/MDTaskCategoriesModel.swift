@@ -14,7 +14,7 @@ class MDTaskCategory: Codable, Equatable, Identifiable {
     var name: String
     var active: Bool
     var mdTaskCategoryDescription: String
-    var rowCreatedTimestamp: String
+    var rowCreatedTimestamp: Date
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -31,7 +31,7 @@ class MDTaskCategory: Codable, Equatable, Identifiable {
             self.name = try container.decode(String.self, forKey: .name)
             self.active = try container.decodeFlexibleBool(forKey: .active)
             self.mdTaskCategoryDescription = (try? container.decodeIfPresent(String.self, forKey: .mdTaskCategoryDescription)) ?? ""
-            self.rowCreatedTimestamp = try container.decode(String.self, forKey: .rowCreatedTimestamp)
+            self.rowCreatedTimestamp = getDateFromString(try container.decode(String.self, forKey: .rowCreatedTimestamp))!
         } catch {
             throw APIError.decodingError(error: error)
         }
@@ -51,13 +51,13 @@ class MDTaskCategory: Codable, Equatable, Identifiable {
         name: String = "",
         active: Bool = true,
         mdTaskCategoryDescription: String = "",
-        rowCreatedTimestamp: String? = nil
+        rowCreatedTimestamp: Date = Date()
     ) {
         self.id = id
         self.name = name
         self.active = active
         self.mdTaskCategoryDescription = mdTaskCategoryDescription
-        self.rowCreatedTimestamp = rowCreatedTimestamp ?? Date().iso8601withFractionalSeconds
+        self.rowCreatedTimestamp = rowCreatedTimestamp
     }
 }
 

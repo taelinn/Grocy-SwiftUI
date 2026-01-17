@@ -16,7 +16,7 @@ struct MDUserEntity: Codable {
     let mdUserEntityDescription: String?
     let showInSidebarMenu: Int?
     let iconCSSClass: String?
-    let rowCreatedTimestamp: String
+    let rowCreatedTimestamp: Date
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -37,7 +37,7 @@ struct MDUserEntity: Codable {
             self.mdUserEntityDescription = try? container.decodeIfPresent(String.self, forKey: .mdUserEntityDescription) ?? nil
             self.showInSidebarMenu = try container.decodeFlexibleInt(forKey: .showInSidebarMenu)
             self.iconCSSClass = try? container.decodeIfPresent(String.self, forKey: .iconCSSClass) ?? nil
-            self.rowCreatedTimestamp = try container.decode(String.self, forKey: .rowCreatedTimestamp)
+            self.rowCreatedTimestamp = getDateFromString(try container.decode(String.self, forKey: .rowCreatedTimestamp))!
         } catch {
             throw APIError.decodingError(error: error)
         }
@@ -50,7 +50,7 @@ struct MDUserEntity: Codable {
         mdUserEntityDescription: String? = nil,
         showInSidebarMenu: Int? = nil,
         iconCSSClass: String? = nil,
-        rowCreatedTimestamp: String? = nil
+        rowCreatedTimestamp: Date = Date()
     ) {
         self.id = id
         self.name = name
@@ -58,7 +58,7 @@ struct MDUserEntity: Codable {
         self.mdUserEntityDescription = mdUserEntityDescription
         self.showInSidebarMenu = showInSidebarMenu
         self.iconCSSClass = iconCSSClass
-        self.rowCreatedTimestamp = rowCreatedTimestamp ?? Date().iso8601withFractionalSeconds
+        self.rowCreatedTimestamp = rowCreatedTimestamp
     }
 }
 

@@ -44,7 +44,7 @@ class MDProduct: Codable, Equatable, Identifiable {
     var defaultConsumeLocationID: Int?
     var moveOnOpen: Bool
     var autoReprintStockLabel: Bool
-    var rowCreatedTimestamp: String
+    var rowCreatedTimestamp: Date
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -121,7 +121,7 @@ class MDProduct: Codable, Equatable, Identifiable {
             self.quIDConsume = try container.decodeFlexibleInt(forKey: .quIDConsume)
             self.autoReprintStockLabel = try container.decodeFlexibleBool(forKey: .autoReprintStockLabel)
             self.quIDPrice = try container.decodeFlexibleInt(forKey: .quIDPrice)
-            self.rowCreatedTimestamp = try container.decode(String.self, forKey: .rowCreatedTimestamp)
+            self.rowCreatedTimestamp = getDateFromString(try container.decode(String.self, forKey: .rowCreatedTimestamp))!
         } catch {
             throw APIError.decodingError(error: error)
         }
@@ -201,7 +201,7 @@ class MDProduct: Codable, Equatable, Identifiable {
         defaultConsumeLocationID: Int? = nil,
         moveOnOpen: Bool = false,
         autoReprintStockLabel: Bool = false,
-        rowCreatedTimestamp: String? = nil
+        rowCreatedTimestamp: Date = Date()
     ) {
         self.id = id
         self.name = name
@@ -237,7 +237,7 @@ class MDProduct: Codable, Equatable, Identifiable {
         self.quIDConsume = quIDConsume
         self.autoReprintStockLabel = autoReprintStockLabel
         self.quIDPrice = quIDPrice
-        self.rowCreatedTimestamp = rowCreatedTimestamp ?? Date().iso8601withFractionalSeconds
+        self.rowCreatedTimestamp = rowCreatedTimestamp
     }
 
     static func == (lhs: MDProduct, rhs: MDProduct) -> Bool {

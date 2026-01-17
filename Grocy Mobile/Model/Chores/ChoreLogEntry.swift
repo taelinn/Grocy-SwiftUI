@@ -18,7 +18,7 @@ class ChoreLogEntry: Codable {
     var undoneTimestamp: Date?
     var skipped: Bool
     var scheduledExecutionTime: Date?
-    var rowCreatedTimestamp: String
+    var rowCreatedTimestamp: Date
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -43,7 +43,7 @@ class ChoreLogEntry: Codable {
             self.undoneTimestamp = getDateFromString(try container.decodeIfPresent(String.self, forKey: .undoneTimestamp))
             self.skipped = try container.decodeFlexibleBool(forKey: .skipped)
             self.scheduledExecutionTime = getDateFromString(try container.decodeIfPresent(String.self, forKey: .scheduledExecutionTime))
-            self.rowCreatedTimestamp = try container.decode(String.self, forKey: .rowCreatedTimestamp)
+            self.rowCreatedTimestamp = getDateFromString(try container.decode(String.self, forKey: .rowCreatedTimestamp))!
         } catch {
             throw APIError.decodingError(error: error)
         }
@@ -58,7 +58,7 @@ class ChoreLogEntry: Codable {
         undoneTimestamp: Date? = nil,
         skipped: Bool = false,
         scheduledExecutionTime: Date? = nil,
-        rowCreatedTimestamp: String? = nil,
+        rowCreatedTimestamp: Date = Date(),
     ) {
         self.id = id
         self.choreID = choreID
@@ -68,7 +68,7 @@ class ChoreLogEntry: Codable {
         self.undoneTimestamp = undoneTimestamp
         self.skipped = skipped
         self.scheduledExecutionTime = scheduledExecutionTime
-        self.rowCreatedTimestamp = rowCreatedTimestamp ?? Date().iso8601withFractionalSeconds
+        self.rowCreatedTimestamp = rowCreatedTimestamp
     }
 
     func encode(to encoder: Encoder) throws {

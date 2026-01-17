@@ -73,7 +73,7 @@ struct MDUserEntityFormView: View {
         } else {
             id = userEntity!.id
         }
-        let timeStamp = isNewUserEntity ? Date().iso8601withFractionalSeconds : userEntity!.rowCreatedTimestamp
+        let timeStamp = isNewUserEntity ? Date() : userEntity!.rowCreatedTimestamp
         let userEntityPOST = MDUserEntity(id: id, name: name, caption: caption, mdUserEntityDescription: mdUserEntityDescription, showInSidebarMenu: showInSidebarMenu ? 1 : 0, iconCSSClass: nil, rowCreatedTimestamp: timeStamp)
         isProcessing = true
         if isNewUserEntity {

@@ -19,10 +19,10 @@ class StockEntry: Codable, Equatable, Identifiable {
     var price: Double?
     var stockEntryOpen: Bool
     var openedDate: Date?
-    var rowCreatedTimestamp: String
     var locationID: Int?
     var storeID: Int?
     var note: String?
+    var rowCreatedTimestamp: Date
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -53,10 +53,10 @@ class StockEntry: Codable, Equatable, Identifiable {
             self.price = try container.decodeFlexibleDoubleIfPresent(forKey: .price)
             self.stockEntryOpen = try container.decodeFlexibleBool(forKey: .stockEntryOpen)
             self.openedDate = getDateFromString(try? container.decodeIfPresent(String.self, forKey: .openedDate))
-            self.rowCreatedTimestamp = try container.decode(String.self, forKey: .rowCreatedTimestamp)
             self.locationID = try container.decodeFlexibleIntIfPresent(forKey: .locationID)
             self.storeID = try container.decodeFlexibleIntIfPresent(forKey: .storeID)
             self.note = try container.decodeIfPresent(String.self, forKey: .note)
+            self.rowCreatedTimestamp = getDateFromString(try container.decode(String.self, forKey: .rowCreatedTimestamp))!
         } catch {
             throw APIError.decodingError(error: error)
         }
@@ -75,7 +75,7 @@ class StockEntry: Codable, Equatable, Identifiable {
         locationID: Int? = nil,
         storeID: Int? = nil,
         note: String = "",
-        rowCreatedTimestamp: String? = nil
+        rowCreatedTimestamp: Date = Date()
     ) {
         self.id = id
         self.productID = productID
@@ -89,7 +89,7 @@ class StockEntry: Codable, Equatable, Identifiable {
         self.locationID = locationID
         self.storeID = storeID
         self.note = note
-        self.rowCreatedTimestamp = rowCreatedTimestamp ?? Date().iso8601withFractionalSeconds
+        self.rowCreatedTimestamp = rowCreatedTimestamp
     }
 
     func encode(to encoder: Encoder) throws {

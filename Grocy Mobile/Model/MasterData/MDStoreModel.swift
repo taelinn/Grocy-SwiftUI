@@ -14,7 +14,7 @@ class MDStore: Codable, Equatable, Identifiable {
     var name: String
     var active: Bool
     var mdStoreDescription: String
-    var rowCreatedTimestamp: String
+    var rowCreatedTimestamp: Date
 
     enum CodingKeys: String, CodingKey {
         case id, name
@@ -30,7 +30,7 @@ class MDStore: Codable, Equatable, Identifiable {
             self.name = try container.decode(String.self, forKey: .name)
             self.active = try container.decodeFlexibleBool(forKey: .active)
             self.mdStoreDescription = (try? container.decodeIfPresent(String.self, forKey: .mdStoreDescription)) ?? ""
-            self.rowCreatedTimestamp = try container.decode(String.self, forKey: .rowCreatedTimestamp)
+            self.rowCreatedTimestamp = getDateFromString(try container.decode(String.self, forKey: .rowCreatedTimestamp))!
         } catch {
             throw APIError.decodingError(error: error)
         }
@@ -50,13 +50,13 @@ class MDStore: Codable, Equatable, Identifiable {
         name: String = "",
         active: Bool = true,
         mdStoreDescription: String = "",
-        rowCreatedTimestamp: String? = nil
+        rowCreatedTimestamp: Date = Date()
     ) {
         self.id = id
         self.name = name
         self.active = active
         self.mdStoreDescription = mdStoreDescription
-        self.rowCreatedTimestamp = rowCreatedTimestamp ?? Date().iso8601withFractionalSeconds
+        self.rowCreatedTimestamp = rowCreatedTimestamp
     }
 
     static func == (lhs: MDStore, rhs: MDStore) -> Bool {

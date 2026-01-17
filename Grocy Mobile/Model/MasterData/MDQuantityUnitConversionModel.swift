@@ -15,7 +15,7 @@ class MDQuantityUnitConversion: Codable, Equatable, Identifiable {
     var toQuID: Int
     var factor: Double
     var productID: Int?
-    var rowCreatedTimestamp: String
+    var rowCreatedTimestamp: Date
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -34,7 +34,7 @@ class MDQuantityUnitConversion: Codable, Equatable, Identifiable {
             self.toQuID = try container.decodeFlexibleInt(forKey: .toQuID)
             self.factor = try container.decodeFlexibleDouble(forKey: .factor)
             self.productID = try container.decodeFlexibleIntIfPresent(forKey: .productID)
-            self.rowCreatedTimestamp = try container.decode(String.self, forKey: .rowCreatedTimestamp)
+            self.rowCreatedTimestamp = getDateFromString(try container.decode(String.self, forKey: .rowCreatedTimestamp))!
         } catch {
             throw APIError.decodingError(error: error)
         }
@@ -56,14 +56,14 @@ class MDQuantityUnitConversion: Codable, Equatable, Identifiable {
         toQuID: Int = -1,
         factor: Double = 1.0,
         productID: Int? = nil,
-        rowCreatedTimestamp: String? = nil
+        rowCreatedTimestamp: Date = Date()
     ) {
         self.id = id
         self.fromQuID = fromQuID
         self.toQuID = toQuID
         self.factor = factor
         self.productID = productID
-        self.rowCreatedTimestamp = rowCreatedTimestamp ?? Date().iso8601withFractionalSeconds
+        self.rowCreatedTimestamp = rowCreatedTimestamp
     }
 
     static func == (lhs: MDQuantityUnitConversion, rhs: MDQuantityUnitConversion) -> Bool {

@@ -218,6 +218,6 @@ struct ShoppingListEntryFormView: View {
 
 #Preview("Edit", traits: .previewData) {
     NavigationStack {
-        ShoppingListEntryFormView(existingShoppingListEntry: ShoppingListItem(id: 1, amount: 1.0, shoppingListID: 1, done: false, rowCreatedTimestamp: ""))
+        ShoppingListEntryFormView(existingShoppingListEntry: ShoppingListItem(id: 1, amount: 1.0, shoppingListID: 1, done: false))
     }
 }

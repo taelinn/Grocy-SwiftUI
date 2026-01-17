@@ -29,7 +29,7 @@ class MDChore: Codable, Equatable, Identifiable {
     var startDate: Date
     var rescheduledDate: Date?
     var rescheduledNextExecutionAssignedToUserID: Int?
-    var rowCreatedTimestamp: String
+    var rowCreatedTimestamp: Date
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -76,7 +76,7 @@ class MDChore: Codable, Equatable, Identifiable {
             self.startDate = getDateFromString(try container.decode(String.self, forKey: .startDate))!
             self.rescheduledDate = getDateFromString(try container.decodeIfPresent(String.self, forKey: .rescheduledDate) ?? "")
             self.rescheduledNextExecutionAssignedToUserID = try container.decodeFlexibleIntIfPresent(forKey: .rescheduledNextExecutionAssignedToUserID)
-            self.rowCreatedTimestamp = try container.decode(String.self, forKey: .rowCreatedTimestamp)
+            self.rowCreatedTimestamp = getDateFromString(try container.decode(String.self, forKey: .rowCreatedTimestamp))!
         } catch {
             throw APIError.decodingError(error: error)
         }
@@ -127,7 +127,7 @@ class MDChore: Codable, Equatable, Identifiable {
         startDate: Date = Date(),
         rescheduledDate: Date? = nil,
         rescheduledNextExecutionAssignedToUserID: Int? = nil,
-        rowCreatedTimestamp: String? = nil,
+        rowCreatedTimestamp: Date = Date(),
     ) {
         self.id = id
         self.name = name
@@ -148,7 +148,7 @@ class MDChore: Codable, Equatable, Identifiable {
         self.startDate = startDate
         self.rescheduledDate = rescheduledDate
         self.rescheduledNextExecutionAssignedToUserID = rescheduledNextExecutionAssignedToUserID
-        self.rowCreatedTimestamp = rowCreatedTimestamp ?? Date().iso8601withFractionalSeconds
+        self.rowCreatedTimestamp = rowCreatedTimestamp
     }
 }
 

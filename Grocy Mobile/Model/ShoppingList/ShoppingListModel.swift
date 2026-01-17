@@ -17,7 +17,7 @@ class ShoppingListItem: Codable, Equatable {
     var shoppingListID: Int
     var done: Bool
     var quID: Int?
-    var rowCreatedTimestamp: String?
+    var rowCreatedTimestamp: Date
     
     enum CodingKeys: String, CodingKey {
         case id
@@ -39,7 +39,7 @@ class ShoppingListItem: Codable, Equatable {
             self.shoppingListID = try container.decodeFlexibleInt(forKey: .shoppingListID)
             self.done = try container.decodeFlexibleBool(forKey: .done)
             self.quID = try container.decodeFlexibleIntIfPresent(forKey: .quID)
-            self.rowCreatedTimestamp = try? container.decode(String.self, forKey: .rowCreatedTimestamp)
+            self.rowCreatedTimestamp = getDateFromString(try container.decode(String.self, forKey: .rowCreatedTimestamp))!
         } catch {
             throw APIError.decodingError(error: error)
         }
@@ -65,7 +65,7 @@ class ShoppingListItem: Codable, Equatable {
         shoppingListID: Int = -1,
         done: Bool = false,
         quID: Int = -1,
-        rowCreatedTimestamp: String? = nil
+        rowCreatedTimestamp: Date = Date()
     ) {
         self.id = id
         self.productID = productID
@@ -74,7 +74,7 @@ class ShoppingListItem: Codable, Equatable {
         self.shoppingListID = shoppingListID
         self.done = done
         self.quID = quID
-        self.rowCreatedTimestamp = rowCreatedTimestamp ?? Date().iso8601withFractionalSeconds
+        self.rowCreatedTimestamp = rowCreatedTimestamp
     }
     
     static func == (lhs: ShoppingListItem, rhs: ShoppingListItem) -> Bool {

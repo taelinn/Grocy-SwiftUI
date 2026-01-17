@@ -12,7 +12,7 @@ import SwiftData
 class ShoppingListDescription: Codable, Equatable {
     @Attribute(.unique) var id: Int
     var name: String
-    var rowCreatedTimestamp: String
+    var rowCreatedTimestamp: Date
 
     enum CodingKeys: String, CodingKey {
         case id, name
@@ -25,7 +25,7 @@ class ShoppingListDescription: Codable, Equatable {
             
             self.id = try container.decodeFlexibleInt(forKey: .id)
             self.name = try container.decode(String.self, forKey: .name)
-            self.rowCreatedTimestamp = try container.decode(String.self, forKey: .rowCreatedTimestamp)
+            self.rowCreatedTimestamp = getDateFromString(try container.decode(String.self, forKey: .rowCreatedTimestamp))!
         } catch {
             throw APIError.decodingError(error: error)
         }
@@ -41,11 +41,11 @@ class ShoppingListDescription: Codable, Equatable {
     init(
         id: Int = -1,
         name: String = "",
-        rowCreatedTimestamp: String? = nil
+        rowCreatedTimestamp: Date = Date()
     ) {
         self.id = id
         self.name = name
-        self.rowCreatedTimestamp = rowCreatedTimestamp ?? Date().iso8601withFractionalSeconds
+        self.rowCreatedTimestamp = rowCreatedTimestamp
     }
     
     static func == (lhs: ShoppingListDescription, rhs: ShoppingListDescription) -> Bool {

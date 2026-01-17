@@ -16,7 +16,7 @@ class GrocyUser: Codable, Equatable {
     var lastName: String?
     var displayName: String
     var pictureFileName: String?
-    var rowCreatedTimestamp: String
+    var rowCreatedTimestamp: Date
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -37,7 +37,7 @@ class GrocyUser: Codable, Equatable {
             self.lastName = try? container.decodeIfPresent(String.self, forKey: .lastName)
             self.displayName = try container.decode(String.self, forKey: .displayName)
             self.pictureFileName = try? container.decodeIfPresent(String.self, forKey: .pictureFileName)
-            self.rowCreatedTimestamp = try container.decode(String.self, forKey: .rowCreatedTimestamp)
+            self.rowCreatedTimestamp = getDateFromString(try container.decode(String.self, forKey: .rowCreatedTimestamp))!
         } catch {
             throw APIError.decodingError(error: error)
         }
@@ -50,7 +50,7 @@ class GrocyUser: Codable, Equatable {
         lastName: String? = nil,
         displayName: String = "",
         pictureFileName: String? = nil,
-        rowCreatedTimestamp: String? = nil
+        rowCreatedTimestamp: Date = Date()
     ) {
         self.id = id
         self.username = username
@@ -58,7 +58,7 @@ class GrocyUser: Codable, Equatable {
         self.lastName = lastName
         self.displayName = displayName
         self.pictureFileName = pictureFileName
-        self.rowCreatedTimestamp = rowCreatedTimestamp ?? Date().iso8601withFractionalSeconds
+        self.rowCreatedTimestamp = rowCreatedTimestamp
     }
 
     func encode(to encoder: Encoder) throws {
@@ -89,7 +89,7 @@ typealias GrocyUsers = [GrocyUser]
 struct GrocyUserPOST: Codable {
     let id: Int
     let username, firstName, lastName, password: String
-    let rowCreatedTimestamp: String
+    let rowCreatedTimestamp: Date
 
     enum CodingKeys: String, CodingKey {
         case id

@@ -14,7 +14,7 @@ class MDProductGroup: Codable, Equatable, Identifiable {
     var name: String
     var active: Bool
     var mdProductGroupDescription: String
-    var rowCreatedTimestamp: String
+    var rowCreatedTimestamp: Date
 
     enum CodingKeys: String, CodingKey {
         case id, name
@@ -30,7 +30,7 @@ class MDProductGroup: Codable, Equatable, Identifiable {
             self.name = try container.decode(String.self, forKey: .name)
             self.active = try container.decodeFlexibleBool(forKey: .active)
             self.mdProductGroupDescription = (try? container.decodeIfPresent(String.self, forKey: .mdProductGroupDescription)) ?? ""
-            self.rowCreatedTimestamp = try container.decode(String.self, forKey: .rowCreatedTimestamp)
+            self.rowCreatedTimestamp = getDateFromString(try container.decode(String.self, forKey: .rowCreatedTimestamp))!
         } catch {
             throw APIError.decodingError(error: error)
         }
@@ -50,18 +50,29 @@ class MDProductGroup: Codable, Equatable, Identifiable {
         name: String = "",
         active: Bool = true,
         mdProductGroupDescription: String = "",
-        rowCreatedTimestamp: String? = nil
+        rowCreatedTimestamp: Date = Date()
     ) {
         self.id = id
         self.name = name
         self.active = active
         self.mdProductGroupDescription = mdProductGroupDescription
-        self.rowCreatedTimestamp = rowCreatedTimestamp ?? Date().iso8601withFractionalSeconds
+        self.rowCreatedTimestamp = rowCreatedTimestamp
     }
 
     static func == (lhs: MDProductGroup, rhs: MDProductGroup) -> Bool {
         lhs.id == rhs.id && lhs.name == rhs.name && lhs.active == rhs.active && lhs.mdProductGroupDescription == rhs.mdProductGroupDescription && lhs.rowCreatedTimestamp == rhs.rowCreatedTimestamp
     }
+}
+
+extension MDProductGroup: Categorizable {
+    public nonisolated var categoryName: String {
+        // Return the name property for AI matching
+        name
+    }
+}
+extension MDProductGroup: @unchecked Sendable {
+    // SwiftData models are @MainActor isolated by default
+    // Using @unchecked Sendable because SwiftData manages thread safety
 }
 
 typealias MDProductGroups = [MDProductGroup]

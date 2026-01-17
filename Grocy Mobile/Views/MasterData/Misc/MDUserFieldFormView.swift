@@ -79,7 +79,7 @@ struct MDUserFieldFormView: View {
             } else {
                 id = userField!.id
             }
-            let timeStamp = isNewUserField ? Date().iso8601withFractionalSeconds : userField!.rowCreatedTimestamp
+            let timeStamp = isNewUserField ? Date() : userField!.rowCreatedTimestamp
             let userFieldPOST = MDUserField(id: id, name: name, entity: entity.rawValue, caption: caption, type: type.rawValue, showAsColumnInTables: showAsColumnInTables, config: nil, sortNumber: sortNumber, rowCreatedTimestamp: timeStamp)
             isProcessing = true
             if isNewUserField {

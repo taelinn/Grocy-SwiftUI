@@ -16,7 +16,7 @@ class MDBattery: Codable, Equatable, Identifiable {
     var usedIn: String?
     var chargeIntervalDays: Int
     var active: Bool
-    var rowCreatedTimestamp: String
+    var rowCreatedTimestamp: Date
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -37,7 +37,7 @@ class MDBattery: Codable, Equatable, Identifiable {
             self.usedIn = try? container.decodeIfPresent(String.self, forKey: .usedIn) ?? nil
             self.chargeIntervalDays = try container.decodeFlexibleInt(forKey: .chargeIntervalDays)
             self.active = try container.decodeFlexibleBool(forKey: .active)
-            self.rowCreatedTimestamp = try container.decode(String.self, forKey: .rowCreatedTimestamp)
+            self.rowCreatedTimestamp = getDateFromString(try container.decode(String.self, forKey: .rowCreatedTimestamp))!
         } catch {
             throw APIError.decodingError(error: error)
         }
@@ -61,7 +61,7 @@ class MDBattery: Codable, Equatable, Identifiable {
         usedIn: String? = nil,
         chargeIntervalDays: Int,
         active: Bool,
-        rowCreatedTimestamp: String? = nil
+        rowCreatedTimestamp: Date = Date()
     ) {
         self.id = id
         self.name = name
@@ -69,7 +69,7 @@ class MDBattery: Codable, Equatable, Identifiable {
         self.usedIn = usedIn
         self.chargeIntervalDays = chargeIntervalDays
         self.active = active
-        self.rowCreatedTimestamp = rowCreatedTimestamp ?? Date().iso8601withFractionalSeconds
+        self.rowCreatedTimestamp = rowCreatedTimestamp
     }
 }
 

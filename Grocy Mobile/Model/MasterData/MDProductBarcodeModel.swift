@@ -18,7 +18,7 @@ class MDProductBarcode: Codable, Equatable, Identifiable, CustomStringConvertibl
     var storeID: Int?
     var lastPrice: Double?
     var note: String
-    var rowCreatedTimestamp: String
+    var rowCreatedTimestamp: Date
 
     var description: String {
         return """
@@ -57,7 +57,7 @@ class MDProductBarcode: Codable, Equatable, Identifiable, CustomStringConvertibl
             self.storeID = try container.decodeFlexibleIntIfPresent(forKey: .storeID)
             self.lastPrice = try container.decodeFlexibleDoubleIfPresent(forKey: .lastPrice)
             self.note = (try? container.decodeIfPresent(String.self, forKey: .note)) ?? ""
-            self.rowCreatedTimestamp = try container.decode(String.self, forKey: .rowCreatedTimestamp)
+            self.rowCreatedTimestamp = getDateFromString(try container.decode(String.self, forKey: .rowCreatedTimestamp))!
         } catch {
             throw APIError.decodingError(error: error)
         }
@@ -85,7 +85,7 @@ class MDProductBarcode: Codable, Equatable, Identifiable, CustomStringConvertibl
         storeID: Int? = nil,
         lastPrice: Double? = nil,
         note: String = "",
-        rowCreatedTimestamp: String? = nil
+        rowCreatedTimestamp: Date = Date()
     ) {
         self.id = id
         self.productID = productID
@@ -95,7 +95,7 @@ class MDProductBarcode: Codable, Equatable, Identifiable, CustomStringConvertibl
         self.storeID = storeID
         self.lastPrice = lastPrice
         self.note = note
-        self.rowCreatedTimestamp = rowCreatedTimestamp ?? Date().iso8601withFractionalSeconds
+        self.rowCreatedTimestamp = rowCreatedTimestamp
     }
 
     static func == (lhs: MDProductBarcode, rhs: MDProductBarcode) -> Bool {

@@ -18,7 +18,7 @@ struct MDUserField: Codable {
     let showAsColumnInTables: Bool
     let config: String?
     let sortNumber: Int?
-    let rowCreatedTimestamp: String
+    let rowCreatedTimestamp: Date
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -43,7 +43,7 @@ struct MDUserField: Codable {
             self.showAsColumnInTables = try container.decodeFlexibleBool(forKey: .showAsColumnInTables)
             self.config = try? container.decodeIfPresent(String.self, forKey: .config) ?? nil
             self.sortNumber = try container.decodeFlexibleIntIfPresent(forKey: .sortNumber)
-            self.rowCreatedTimestamp = try container.decode(String.self, forKey: .rowCreatedTimestamp)
+            self.rowCreatedTimestamp = getDateFromString(try container.decode(String.self, forKey: .rowCreatedTimestamp))!
         } catch {
             throw APIError.decodingError(error: error)
         }
@@ -58,7 +58,7 @@ struct MDUserField: Codable {
         showAsColumnInTables: Bool,
         config: String? = nil,
         sortNumber: Int? = nil,
-        rowCreatedTimestamp: String? = nil
+        rowCreatedTimestamp: Date = Date()
     ) {
         self.id = id
         self.name = name
@@ -68,7 +68,7 @@ struct MDUserField: Codable {
         self.showAsColumnInTables = showAsColumnInTables
         self.config = config
         self.sortNumber = sortNumber
-        self.rowCreatedTimestamp = rowCreatedTimestamp ?? Date().iso8601withFractionalSeconds
+        self.rowCreatedTimestamp = rowCreatedTimestamp
     }
 }
 

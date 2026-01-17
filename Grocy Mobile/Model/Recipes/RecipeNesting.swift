@@ -13,7 +13,7 @@ struct RecipeNesting: Codable {
     let recipeID: Int
     let includesRecipeID: Int
     let servings: Int
-    let rowCreatedTimestamp: String
+    let rowCreatedTimestamp: Date
 
     enum CodingKeys: String, CodingKey {
         case id

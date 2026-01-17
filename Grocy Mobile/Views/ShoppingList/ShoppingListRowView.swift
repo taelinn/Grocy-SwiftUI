@@ -129,11 +129,11 @@ struct ShoppingListRowView: View {
 #Preview {
     List {
         ShoppingListRowView(
-            shoppingListItem: ShoppingListItem(id: 1, productID: 1, note: "note", amount: 2, shoppingListID: 1, done: true, quID: 1, rowCreatedTimestamp: "ts"),
+            shoppingListItem: ShoppingListItem(id: 1, productID: 1, note: "note", amount: 2, shoppingListID: 1, done: true, quID: 1),
             isBelowStock: false
         )
         ShoppingListRowView(
-            shoppingListItem: ShoppingListItem(id: 2, productID: 1, note: "note", amount: 2, shoppingListID: 1, done: false, quID: 1, rowCreatedTimestamp: "ts"),
+            shoppingListItem: ShoppingListItem(id: 2, productID: 1, note: "note", amount: 2, shoppingListID: 1, done: false, quID: 1),
             isBelowStock: true
         )
     }

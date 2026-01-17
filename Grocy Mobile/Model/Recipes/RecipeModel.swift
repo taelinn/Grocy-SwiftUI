@@ -19,7 +19,7 @@ class Recipe: Codable, Identifiable {
     var notCheckShoppinglist: Bool
     var type: RecipeType
     var productID: Int?
-    var rowCreatedTimestamp: String
+    var rowCreatedTimestamp: Date
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -46,7 +46,7 @@ class Recipe: Codable, Identifiable {
             self.notCheckShoppinglist = try container.decodeFlexibleBool(forKey: .notCheckShoppinglist)
             self.type = try container.decode(RecipeType.self, forKey: .type)
             self.productID = try container.decodeFlexibleIntIfPresent(forKey: .productID)
-            self.rowCreatedTimestamp = try container.decode(String.self, forKey: .rowCreatedTimestamp)
+            self.rowCreatedTimestamp = getDateFromString(try container.decode(String.self, forKey: .rowCreatedTimestamp))!
         } catch {
             throw APIError.decodingError(error: error)
         }
@@ -62,7 +62,7 @@ class Recipe: Codable, Identifiable {
         notCheckShoppinglist: Bool = false,
         type: RecipeType = .normal,
         productID: Int? = nil,
-        rowCreatedTimestamp: String? = nil
+        rowCreatedTimestamp: Date = Date()
     ) {
         self.id = id
         self.name = name
@@ -73,7 +73,7 @@ class Recipe: Codable, Identifiable {
         self.notCheckShoppinglist = notCheckShoppinglist
         self.type = type
         self.productID = productID
-        self.rowCreatedTimestamp = rowCreatedTimestamp ?? Date().iso8601withFractionalSeconds
+        self.rowCreatedTimestamp = rowCreatedTimestamp
     }
 
     func encode(to encoder: Encoder) throws {

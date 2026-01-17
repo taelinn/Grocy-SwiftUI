@@ -15,7 +15,7 @@ class MDLocation: Codable, Equatable, Identifiable, CustomStringConvertible {
     var active: Bool
     var mdLocationDescription: String
     var isFreezer: Bool
-    var rowCreatedTimestamp: String
+    var rowCreatedTimestamp: Date
 
     var description: String {
         return """
@@ -44,7 +44,7 @@ class MDLocation: Codable, Equatable, Identifiable, CustomStringConvertible {
             self.active = try container.decodeFlexibleBool(forKey: .active)
             self.mdLocationDescription = (try? container.decodeIfPresent(String.self, forKey: .mdLocationDescription)) ?? ""
             self.isFreezer = try container.decodeFlexibleBool(forKey: .isFreezer)
-            self.rowCreatedTimestamp = try container.decode(String.self, forKey: .rowCreatedTimestamp)
+            self.rowCreatedTimestamp = getDateFromString(try container.decode(String.self, forKey: .rowCreatedTimestamp))!
         } catch {
             throw APIError.decodingError(error: error)
         }
@@ -60,13 +60,20 @@ class MDLocation: Codable, Equatable, Identifiable, CustomStringConvertible {
         try container.encode(rowCreatedTimestamp, forKey: .rowCreatedTimestamp)
     }
 
-    init(id: Int = -1, name: String = "", active: Bool = true, mdLocationDescription: String = "", isFreezer: Bool = false, rowCreatedTimestamp: String? = nil) {
+    init(
+        id: Int = -1,
+        name: String = "",
+        active: Bool = true,
+        mdLocationDescription: String = "",
+        isFreezer: Bool = false,
+        rowCreatedTimestamp: Date = Date()
+    ) {
         self.id = id
         self.name = name
         self.active = active
         self.mdLocationDescription = mdLocationDescription
         self.isFreezer = isFreezer
-        self.rowCreatedTimestamp = rowCreatedTimestamp ?? Date().iso8601withFractionalSeconds
+        self.rowCreatedTimestamp = rowCreatedTimestamp
     }
 
     static func == (lhs: MDLocation, rhs: MDLocation) -> Bool {

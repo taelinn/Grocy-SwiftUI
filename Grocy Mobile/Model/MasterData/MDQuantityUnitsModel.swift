@@ -15,7 +15,7 @@ class MDQuantityUnit: Codable, Equatable, Identifiable {
     var namePlural: String
     var active: Bool
     var mdQuantityUnitDescription: String
-    var rowCreatedTimestamp: String
+    var rowCreatedTimestamp: Date
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -34,7 +34,7 @@ class MDQuantityUnit: Codable, Equatable, Identifiable {
             self.namePlural = (try? container.decodeIfPresent(String.self, forKey: .namePlural)) ?? ""
             self.active = try container.decodeFlexibleBool(forKey: .active)
             self.mdQuantityUnitDescription = (try? container.decodeIfPresent(String.self, forKey: .mdQuantityUnitDescription)) ?? ""
-            self.rowCreatedTimestamp = try container.decode(String.self, forKey: .rowCreatedTimestamp)
+            self.rowCreatedTimestamp = getDateFromString(try container.decode(String.self, forKey: .rowCreatedTimestamp))!
         } catch {
             throw APIError.decodingError(error: error)
         }
@@ -56,14 +56,14 @@ class MDQuantityUnit: Codable, Equatable, Identifiable {
         namePlural: String = "",
         active: Bool = true,
         mdQuantityUnitDescription: String = "",
-        rowCreatedTimestamp: String? = nil
+        rowCreatedTimestamp: Date = Date()
     ) {
         self.id = id
         self.name = name
         self.namePlural = namePlural
         self.active = active
         self.mdQuantityUnitDescription = mdQuantityUnitDescription
-        self.rowCreatedTimestamp = rowCreatedTimestamp ?? Date().iso8601withFractionalSeconds
+        self.rowCreatedTimestamp = rowCreatedTimestamp
     }
 
     static func == (lhs: MDQuantityUnit, rhs: MDQuantityUnit) -> Bool {

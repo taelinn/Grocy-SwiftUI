@@ -57,7 +57,7 @@ struct UserFormView: View {
     
     private func saveUser() async {
         if isNewUser {
-            let userPost = GrocyUserPOST(id: grocyVM.getNewUserID(), username: username, firstName: firstName, lastName: lastName, password: password, rowCreatedTimestamp: Date().iso8601withFractionalSeconds)
+            let userPost = GrocyUserPOST(id: grocyVM.getNewUserID(), username: username, firstName: firstName, lastName: lastName, password: password, rowCreatedTimestamp: Date())
             do {
                 try await grocyVM.postUser(user: userPost)
                 GrocyLogger.info("Successfully saved user.")
