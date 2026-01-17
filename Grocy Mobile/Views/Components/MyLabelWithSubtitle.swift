@@ -16,23 +16,27 @@ struct MyLabelWithSubtitle: View {
     var hideSubtitle: Bool = false
 
     var body: some View {
-        HStack {
-            if let systemImage = systemImage {
-                Image(systemName: systemImage)
-                    .foregroundStyle(.primary)
-            }
-            VStack(alignment: .leading) {
-                Text(title)
-                    .foregroundStyle(isProblem ? Color.red : Color.primary)
-                if !hideSubtitle {
-                    if let subTitle = subTitle {
-                        Text(subTitle)
-                            .font(.caption)
-                            .foregroundStyle(isSubtitleProblem ? Color.red : Color.primary)
+        LabeledContent(
+            content: {},
+            label: {
+                if let systemImage = systemImage {
+                    Label {
+                        Text(title)
+                            .foregroundStyle(isProblem ? Color.red : Color.primary)
+                    } icon: {
+                        Image(systemName: systemImage)
+                            .foregroundStyle(.primary)
                     }
+                } else {
+                    Text(title)
+                        .foregroundStyle(isProblem ? Color.red : Color.primary)
+                }
+                if !hideSubtitle, let subTitle = subTitle {
+                    Text(subTitle)
+                        .foregroundStyle(isSubtitleProblem ? Color.red : Color.secondary)
                 }
             }
-        }
+        )
     }
 }
 

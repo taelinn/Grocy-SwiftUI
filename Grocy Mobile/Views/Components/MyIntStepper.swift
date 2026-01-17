@@ -26,44 +26,54 @@ struct MyIntStepper: View {
     }
 
     var body: some View {
-        Stepper(
-            value: $amount,
-            in: ((minAmount ?? 0)...(Int.max - 1)),
-            step: 1,
-            label: {
+        VStack(alignment: .leading) {
+            LabeledContent {
                 HStack {
-                    if let systemImage = systemImage {
-                        Image(systemName: systemImage)
+                    TextField("", value: $amount, formatter: formatter)
+                        #if os(macOS)
+                            .frame(width: 90)
+                        #elseif os(iOS)
+                            .keyboardType(.numbersAndPunctuation)
+                            .submitLabel(.done)
+                        #endif
+                    if let amountName = amountName {
+                        Text(amountName)
+                            .fixedSize(horizontal: false, vertical: true)
                     }
-                    VStack(alignment: .leading) {
+                    Stepper(
+                        "",
+                        value: $amount,
+                        in: ((minAmount ?? 0)...(Int.max - 1)),
+                        step: 1
+                    )
+                    .labelsHidden()
+                }
+            } label: {
+                if let systemImage {
+                    Label {
                         HStack {
                             Text(description)
-                            if let helpText = helpText {
+                                .fixedSize(horizontal: false, vertical: true)
+                            if let helpText {
                                 FieldDescription(description: helpText)
                             }
                         }
-                        HStack {
-                            TextField("", value: $amount, formatter: formatter)
-                                #if os(macOS)
-                                    .frame(width: 90)
-                                #elseif os(iOS)
-                                    .keyboardType(.numbersAndPunctuation)
-                                    .submitLabel(.done)
-                                #endif
-                            if let amountName = amountName {
-                                Text(amountName)
-                            }
-                        }
-                        if let minAmount = minAmount, amount < minAmount, let errorMessage = errorMessage {
-                            Text(errorMessage)
-                                .font(.caption)
-                                .foregroundStyle(.red)
-                                .fixedSize(horizontal: false, vertical: true)
-                        }
+                    } icon: {
+                        Image(systemName: systemImage)
                     }
+                    .foregroundStyle(.primary)
+                } else {
+                    Text(description)
                 }
             }
-        )
+            if let minAmount = minAmount, amount < minAmount, let errorMessage = errorMessage {
+                Text(errorMessage)
+                    .font(.caption)
+                    .foregroundStyle(.red)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+
     }
 }
 
@@ -86,63 +96,73 @@ struct MyIntStepperOptional: View {
     }
 
     var body: some View {
-        Stepper(
-            onIncrement: {
-                if let previousAmount = amount {
-                    amount = previousAmount + 1
-                } else {
-                    amount = 1
-                }
-            },
-            onDecrement: {
-                if let previousAmount = amount {
-                    if let minAmount = minAmount {
-                        if previousAmount > minAmount {
-                            amount = previousAmount - 1
-                        } else {
-                            amount = nil
-                        }
-                    } else {
-                        amount = previousAmount - 1
-                    }
-                } else {
-                    amount = minAmount
-                }
-            },
-            label: {
+        VStack(alignment: .leading) {
+            LabeledContent {
                 HStack {
-                    if let systemImage = systemImage {
-                        Image(systemName: systemImage)
+                    TextField("", value: $amount, formatter: formatter)
+                        #if os(macOS)
+                            .frame(width: 90)
+                        #elseif os(iOS)
+                            .keyboardType(.numbersAndPunctuation)
+                            .submitLabel(.done)
+                        #endif
+                    if let amountName = amountName {
+                        Text(amountName)
+                            .fixedSize(horizontal: false, vertical: true)
                     }
-                    VStack(alignment: .leading) {
+
+                    Stepper(
+                        "",
+                        onIncrement: {
+                            if let previousAmount = amount {
+                                amount = previousAmount + 1
+                            } else {
+                                amount = 1
+                            }
+                        },
+                        onDecrement: {
+                            if let previousAmount = amount {
+                                if let minAmount = minAmount {
+                                    if previousAmount > minAmount {
+                                        amount = previousAmount - 1
+                                    } else {
+                                        amount = nil
+                                    }
+                                } else {
+                                    amount = previousAmount - 1
+                                }
+                            } else {
+                                amount = minAmount
+                            }
+                        }
+                    )
+                    .labelsHidden()
+                }
+            } label: {
+                if let systemImage {
+                    Label {
                         HStack {
                             Text(description)
-                            if let helpText = helpText {
+                                .fixedSize(horizontal: false, vertical: true)
+                            if let helpText {
                                 FieldDescription(description: helpText)
                             }
                         }
-                        HStack {
-                            TextField("", value: $amount, formatter: formatter)
-                                #if os(macOS)
-                                    .frame(width: 90)
-                                #elseif os(iOS)
-                                    .keyboardType(.numbersAndPunctuation)
-                                    .submitLabel(.done)
-                                #endif
-                            if let amountName = amountName {
-                                Text(amountName)
-                            }
-                        }
-                        if let minAmount = minAmount, let amount = amount, amount < minAmount, let errorMessage = errorMessage {
-                            Text(errorMessage)
-                                .font(.caption)
-                                .foregroundStyle(.red)
-                                .fixedSize(horizontal: false, vertical: true)
-                        }
+                    } icon: {
+                        Image(systemName: systemImage)
                     }
+                    .foregroundStyle(.primary)
+                } else {
+                    Text(description)
                 }
             }
-        )
+            if let minAmount = minAmount, let amount = amount, amount < minAmount, let errorMessage = errorMessage {
+                Text(errorMessage)
+                    .font(.caption)
+                    .foregroundStyle(.red)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
     }
 }
 

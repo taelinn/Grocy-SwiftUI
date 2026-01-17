@@ -127,7 +127,7 @@ struct MDProductFormView: View {
                         let newBarcode = MDProductBarcode(
                             id: try grocyVM.findNextID(.product_barcodes),
                             productID: product.id,
-                        barcode: queuedBarcode
+                            barcode: queuedBarcode
                         )
                         let _ = try await grocyVM.postMDObject(object: .product_barcodes, content: newBarcode)
                         GrocyLogger.info("Barcode add successful.")
@@ -431,10 +431,10 @@ struct MDProductFormView: View {
             // Product group
             Picker(
                 selection: $product.productGroupID,
-                label: HStack {
-                    Image(systemName: MySymbols.productGroup)
-                        .foregroundStyle(.primary)
+                label: Label {
                     Text("Product group")
+                } icon: {
+                    Image(systemName: MySymbols.productGroup).foregroundStyle(.primary)
                 },
                 content: {
                     Text("").tag(nil as Int?)
@@ -488,28 +488,42 @@ struct MDProductFormView: View {
             // Default Location - REQUIRED
             Picker(
                 selection: $product.locationID,
-                label: MyLabelWithSubtitle(title: "Default location", subTitle: "A location is required", systemImage: MySymbols.location, isSubtitleProblem: true, hideSubtitle: product.locationID != -1),
                 content: {
                     Text("").tag(-1 as Int?)
                     ForEach(mdLocations.filter({ $0.active }), id: \.id) { grocyLocation in
                         Text(grocyLocation.name).tag(grocyLocation.id as Int?)
                     }
+                },
+                label: {
+                    Label("Default location", systemImage: MySymbols.location)
+                        .foregroundStyle(.primary)
+                    if product.locationID == -1 {
+                        Text("A location is required")
+                            .foregroundStyle(.red)
+                    }
                 }
             )
             // Default consume location
-            HStack {
-                Picker(
-                    selection: $product.defaultConsumeLocationID,
-                    label: MyLabelWithSubtitle(title: "Default consume location", systemImage: MySymbols.location, hideSubtitle: true),
-                    content: {
-                        Text("").tag(-1 as Int?)
-                        ForEach(mdLocations.filter({ $0.active }), id: \.id) { grocyLocation in
-                            Text(grocyLocation.name).tag(grocyLocation.id as Int?)
-                        }
+            Picker(
+                selection: $product.defaultConsumeLocationID,
+                content: {
+                    Text("").tag(-1 as Int?)
+                    ForEach(mdLocations.filter({ $0.active }), id: \.id) { grocyLocation in
+                        Text(grocyLocation.name).tag(grocyLocation.id as Int?)
                     }
-                )
-                FieldDescription(description: "Stock entries at this location will be consumed first")
-            }
+                },
+                label: {
+                    Label {
+                        HStack {
+                            Text("Default consume location")
+                            FieldDescription(description: "Stock entries at this location will be consumed first")
+                        }
+                    } icon: {
+                        Image(systemName: MySymbols.location)
+                            .foregroundStyle(.primary)
+                    }
+                }
+            )
 
             // Move on open
             if product.defaultConsumeLocationID != -1 {
@@ -524,12 +538,15 @@ struct MDProductFormView: View {
             // Default Store
             Picker(
                 selection: $product.storeID,
-                label: MyLabelWithSubtitle(title: "Default store", systemImage: MySymbols.store, hideSubtitle: true),
                 content: {
                     Text("").tag(-1 as Int?)
                     ForEach(mdStores.filter({ $0.active }), id: \.id) { grocyStore in
                         Text(grocyStore.name).tag(grocyStore.id as Int?)
                     }
+                },
+                label: {
+                    Label("Default store", systemImage: MySymbols.store)
+                        .foregroundStyle(.primary)
                 }
             )
         }
@@ -603,82 +620,124 @@ struct MDProductFormView: View {
     var quantityUnitPropertiesView: some View {
         Form {
             // Default Quantity Unit Stock - REQUIRED
-            HStack {
-                Picker(
-                    selection: $product.quIDStock,
-                    label: MyLabelWithSubtitle(title: "Quantity unit stock", subTitle: "A quantity unit is required", systemImage: MySymbols.quantityUnit, isSubtitleProblem: true, hideSubtitle: product.quIDStock != -1),
-                    content: {
-                        Text("").tag(-1 as Int?)
-                        ForEach(mdQuantityUnits.filter({ $0.active }), id: \.id) { grocyQuantityUnit in
-                            Text(grocyQuantityUnit.name).tag(grocyQuantityUnit.id as Int?)
+            Picker(
+                selection: $product.quIDStock,
+                content: {
+                    Text("").tag(-1 as Int?)
+                    ForEach(mdQuantityUnits.filter({ $0.active }), id: \.id) { grocyQuantityUnit in
+                        Text(grocyQuantityUnit.name).tag(grocyQuantityUnit.id as Int?)
+                    }
+                },
+                label: {
+                    Label {
+                        HStack {
+                            Text("Quantity unit stock")
+                            FieldDescription(description: "Quantity unit stock cannot be changed after first purchase")
                         }
+                    } icon: {
+                        Image(systemName: MySymbols.quantityUnit).foregroundStyle(.primary)
                     }
-                )
-                .onChange(of: product.quIDStock) {
-                    if product.quIDPurchase == -1 {
-                        product.quIDPurchase = product.quIDStock
-                    }
-                    if product.quIDConsume == -1 {
-                        product.quIDConsume = product.quIDStock
-                    }
-                    if product.quIDPrice == -1 {
-                        product.quIDPrice = product.quIDStock
+
+                    if product.quIDStock == -1 {
+                        Text("A quantity unit is required")
+                            .foregroundStyle(.red)
                     }
                 }
-
-                FieldDescription(description: "Quantity unit stock cannot be changed after first purchase")
+            )
+            .onChange(of: product.quIDStock) {
+                if product.quIDPurchase == -1 {
+                    product.quIDPurchase = product.quIDStock
+                }
+                if product.quIDConsume == -1 {
+                    product.quIDConsume = product.quIDStock
+                }
+                if product.quIDPrice == -1 {
+                    product.quIDPrice = product.quIDStock
+                }
             }
 
             // Default Quantity Unit Purchase - REQUIRED
-            HStack {
-                Picker(
-                    selection: $product.quIDPurchase,
-                    label: MyLabelWithSubtitle(title: "Default quantity unit purchase", subTitle: "A quantity unit is required", systemImage: MySymbols.quantityUnit, isSubtitleProblem: true, hideSubtitle: product.quIDPurchase != -1),
-                    content: {
-                        Text("")
-                            .tag(nil as Int?)
-                        ForEach(mdQuantityUnits.filter({ $0.active }), id: \.id) { grocyQuantityUnit in
-                            Text(grocyQuantityUnit.name)
-                                .tag(grocyQuantityUnit.id as Int?)
-                        }
+            Picker(
+                selection: $product.quIDPurchase,
+                content: {
+                    Text("")
+                        .tag(nil as Int?)
+                    ForEach(mdQuantityUnits.filter({ $0.active }), id: \.id) { grocyQuantityUnit in
+                        Text(grocyQuantityUnit.name)
+                            .tag(grocyQuantityUnit.id as Int?)
                     }
-                )
-                FieldDescription(description: "This is the default quantity unit used when adding this product to the shopping list")
-            }
+                },
+                label: {
+                    Label {
+                        HStack {
+                            Text("Default quantity unit purchase")
+                            FieldDescription(description: "This is the default quantity unit used when adding this product to the shopping list")
+                        }
+                    } icon: {
+                        Image(systemName: MySymbols.quantityUnit).foregroundStyle(.primary)
+                    }
+                    if product.quIDPurchase == -1 {
+                        Text("A quantity unit is required")
+                            .foregroundStyle(.red)
+                    }
+                }
+            )
 
             // Default Quantity Unit Consume - REQUIRED
-            HStack {
-                Picker(
-                    selection: $product.quIDConsume,
-                    label: MyLabelWithSubtitle(title: "Default quantity unit consume", subTitle: "A quantity unit is required", systemImage: MySymbols.quantityUnit, isSubtitleProblem: true, hideSubtitle: product.quIDConsume != -1),
-                    content: {
-                        Text("")
-                            .tag(nil as Int?)
-                        ForEach(mdQuantityUnits.filter({ $0.active }), id: \.id) { grocyQuantityUnit in
-                            Text(grocyQuantityUnit.name)
-                                .tag(grocyQuantityUnit.id as Int?)
-                        }
+            Picker(
+                selection: $product.quIDConsume,
+                content: {
+                    Text("")
+                        .tag(nil as Int?)
+                    ForEach(mdQuantityUnits.filter({ $0.active }), id: \.id) { grocyQuantityUnit in
+                        Text(grocyQuantityUnit.name)
+                            .tag(grocyQuantityUnit.id as Int?)
                     }
-                )
-                FieldDescription(description: "This is the default quantity unit used when consuming this product")
-            }
+                },
+                label: {
+                    Label {
+                        HStack {
+                            Text("Default quantity unit consume")
+                            FieldDescription(description: "This is the default quantity unit used when consuming this product")
+                        }
+                    } icon: {
+                        Image(systemName: MySymbols.quantityUnit).foregroundStyle(.primary)
+                    }
+                    if product.quIDConsume == -1 {
+                        Text("A quantity unit is required")
+                            .foregroundStyle(.red)
+                    }
+                }
+            )
 
             // Default Quantity Unit Price - REQUIRED
-            HStack {
-                Picker(
-                    selection: $product.quIDPrice,
-                    label: MyLabelWithSubtitle(title: "Quantity unit for prices", subTitle: "A quantity unit is required", systemImage: MySymbols.quantityUnit, isSubtitleProblem: true, hideSubtitle: product.quIDPrice != -1),
-                    content: {
-                        Text("")
-                            .tag(nil as Int?)
-                        ForEach(mdQuantityUnits.filter({ $0.active }), id: \.id) { grocyQuantityUnit in
-                            Text(grocyQuantityUnit.name)
-                                .tag(grocyQuantityUnit.id as Int?)
-                        }
+            Picker(
+                selection: $product.quIDPrice,
+                content: {
+                    Text("")
+                        .tag(nil as Int?)
+                    ForEach(mdQuantityUnits.filter({ $0.active }), id: \.id) { grocyQuantityUnit in
+                        Text(grocyQuantityUnit.name)
+                            .tag(grocyQuantityUnit.id as Int?)
                     }
-                )
-                FieldDescription(description: "When displaying prices for this product, they will be related to this quantity unit")
-            }
+                },
+                label: {
+                    Label {
+                        HStack {
+                            Text("Quantity unit for prices")
+                            FieldDescription(description: "When displaying prices for this product, they will be related to this quantity unit")
+                        }
+                    } icon: {
+                        Image(systemName: MySymbols.quantityUnit).foregroundStyle(.primary)
+                    }
+                    if product.quIDPrice == -1 {
+                        Text("A quantity unit is required")
+                            .foregroundStyle(.red)
+                    }
+
+                }
+            )
+
         }
         .navigationTitle("Quantity units")
     }

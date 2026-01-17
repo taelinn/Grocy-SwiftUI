@@ -53,52 +53,61 @@ struct MyDoubleStepper: View {
     }
 
     var body: some View {
-        Stepper(
-            value: $amount,
-            in: -Double.greatestFiniteMagnitude...Double.greatestFiniteMagnitude,
-            step: 1.0,
-            label: {
+        VStack(alignment: .leading) {
+            LabeledContent {
                 HStack {
-                    if let systemImage = systemImage {
-                        Image(systemName: systemImage)
+                    TextField("", value: $amount, formatter: formatter)
+                        #if os(macOS)
+                            .frame(width: 90)
+                        #elseif os(iOS)
+                            .keyboardType(.numbersAndPunctuation)
+                            .submitLabel(.done)
+                        #endif
+                    if let amountName = amountName {
+                        Text(amountName)
+                            .fixedSize(horizontal: false, vertical: true)
                     }
-                    VStack(alignment: .leading) {
+                    Stepper(
+                        "",
+                        value: $amount,
+                        in: -Double.greatestFiniteMagnitude...Double.greatestFiniteMagnitude,
+                        step: 1.0,
+                    )
+                    .labelsHidden()
+                }
+            } label: {
+                if let systemImage {
+                    Label {
                         HStack {
                             Text(description)
-                            if let descriptionInfo = descriptionInfo {
+                                .fixedSize(horizontal: false, vertical: true)
+                            if let descriptionInfo {
                                 FieldDescription(description: descriptionInfo)
                             }
                         }
-                        HStack {
-                            TextField("", value: $amount, formatter: formatter)
-                                #if os(macOS)
-                                    .frame(width: 90)
-                                #elseif os(iOS)
-                                    .keyboardType(.numbersAndPunctuation)
-                                    .submitLabel(.done)
-                                #endif
-                            if let amountName = amountName {
-                                Text(amountName)
-                            }
-                        }
-                        if let minAmount = minAmount, amount < minAmount {
-                            Text(
-                                "This cannot be lower than \(smallestValidAmount.formatted(.number.precision(.fractionLength(0...(userSettings?.stockDecimalPlacesAmounts ?? 4))))) and needs to be a valid number with max. \(userSettings?.stockDecimalPlacesAmounts ?? 4) decimal places"
-                            )
-                            .font(.caption)
-                            .foregroundStyle(.red)
-                            .fixedSize(horizontal: false, vertical: true)
-                        }
-                        if let maxAmount = maxAmount, amount > maxAmount, let errorMessageMax = errorMessageMax {
-                            Text(errorMessageMax)
-                                .font(.caption)
-                                .foregroundStyle(.red)
-                                .fixedSize(horizontal: false, vertical: true)
-                        }
+                    } icon: {
+                        Image(systemName: systemImage)
                     }
+                    .foregroundStyle(.primary)
+                } else {
+                    Text(description)
                 }
             }
-        )
+            if let minAmount = minAmount, amount < minAmount {
+                Text(
+                    "This cannot be lower than \(smallestValidAmount.formatted(.number.precision(.fractionLength(0...(userSettings?.stockDecimalPlacesAmounts ?? 4))))) and needs to be a valid number with max. \(userSettings?.stockDecimalPlacesAmounts ?? 4) decimal places"
+                )
+                .font(.caption)
+                .foregroundStyle(.red)
+                .fixedSize(horizontal: false, vertical: true)
+            }
+            if let maxAmount = maxAmount, amount > maxAmount, let errorMessageMax = errorMessageMax {
+                Text(errorMessageMax)
+                    .font(.caption)
+                    .foregroundStyle(.red)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
     }
 }
 
@@ -147,73 +156,86 @@ struct MyDoubleStepperOptional: View {
     }
 
     var body: some View {
-        Stepper(
-            onIncrement: {
-                if let previousAmount = amount {
-                    amount = previousAmount + (amountStep ?? 1.0)
-                } else {
-                    amount = amountStep
-                }
-            },
-            onDecrement: {
-                if let previousAmount = amount {
-                    if let minAmount = minAmount {
-                        if previousAmount == minAmount {
-                            amount = nil
-                        } else if previousAmount - (amountStep ?? 1.0) < minAmount {
-                            amount = minAmount
-                        } else {
-                            amount = previousAmount - (amountStep ?? 1.0)
-                        }
-                    } else {
-                        amount = previousAmount - (amountStep ?? 1.0)
-                    }
-                } else {
-                    amount = 0
-                }
-            },
-            label: {
+        VStack(alignment: .leading, spacing: 4) {
+            LabeledContent {
                 HStack {
-                    if let systemImage = systemImage {
-                        Image(systemName: systemImage)
+                    TextField("", value: $amount, formatter: formatter)
+                        #if os(macOS)
+                            .frame(width: 90)
+                        #elseif os(iOS)
+                            .keyboardType(.numbersAndPunctuation)
+                            .submitLabel(.done)
+                            .multilineTextAlignment(.trailing)
+                        #endif
+
+                    if let amountName = amountName {
+                        Text(amountName)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .foregroundStyle(.secondary)
                     }
-                    VStack(alignment: .leading) {
+
+                    Stepper(
+                        "",
+                        onIncrement: {
+                            if let previousAmount = amount {
+                                amount = previousAmount + (amountStep ?? 1.0)
+                            } else {
+                                amount = amountStep
+                            }
+                        },
+                        onDecrement: {
+                            if let previousAmount = amount {
+                                if let minAmount = minAmount {
+                                    if previousAmount == minAmount {
+                                        amount = nil
+                                    } else if previousAmount - (amountStep ?? 1.0) < minAmount {
+                                        amount = minAmount
+                                    } else {
+                                        amount = previousAmount - (amountStep ?? 1.0)
+                                    }
+                                } else {
+                                    amount = previousAmount - (amountStep ?? 1.0)
+                                }
+                            } else {
+                                amount = 0
+                            }
+                        }
+                    )
+                    .labelsHidden()
+                }
+            } label: {
+                if let systemImage {
+                    Label {
                         HStack {
                             Text(description)
-                            if let descriptionInfo = descriptionInfo {
+                                .fixedSize(horizontal: false, vertical: true)
+                            if let descriptionInfo {
                                 FieldDescription(description: descriptionInfo)
                             }
                         }
-                        HStack {
-                            TextField("", value: $amount, formatter: formatter)
-                                #if os(macOS)
-                                    .frame(width: 90)
-                                #elseif os(iOS)
-                                    .keyboardType(.numbersAndPunctuation)
-                                    .submitLabel(.done)
-                                #endif
-                            if let amountName = amountName {
-                                Text(amountName)
-                            }
-                        }
-                        if let minAmount = minAmount, let amount = amount, amount < minAmount {
-                            Text(
-                                "This cannot be lower than \(smallestValidAmount.formatted(.number.precision(.fractionLength(0...(userSettings?.stockDecimalPlacesAmounts ?? 4))))) and needs to be a valid number with max. \(userSettings?.stockDecimalPlacesAmounts ?? 4) decimal places"
-                            )
-                            .font(.caption)
-                            .foregroundStyle(.red)
-                            .fixedSize(horizontal: false, vertical: true)
-                        }
-                        if let maxAmount = maxAmount, let amount = amount, amount > maxAmount, let errorMessageMax = errorMessageMax {
-                            Text(errorMessageMax)
-                                .font(.caption)
-                                .foregroundStyle(.red)
-                                .fixedSize(horizontal: false, vertical: true)
-                        }
+                    } icon: {
+                        Image(systemName: systemImage)
                     }
+                    .foregroundStyle(.primary)
+                } else {
+                    Text(description)
                 }
             }
-        )
+            if let minAmount = minAmount, let amount = amount, amount < minAmount {
+                Text(
+                    "This cannot be lower than \(smallestValidAmount.formatted(.number.precision(.fractionLength(0...(userSettings?.stockDecimalPlacesAmounts ?? 4))))) and needs to be a valid number with max. \(userSettings?.stockDecimalPlacesAmounts ?? 4) decimal places"
+                )
+                .font(.caption)
+                .foregroundStyle(.red)
+                .fixedSize(horizontal: false, vertical: true)
+            }
+            if let maxAmount = maxAmount, let amount = amount, amount > maxAmount, let errorMessageMax = errorMessageMax {
+                Text(errorMessageMax)
+                    .font(.caption)
+                    .foregroundStyle(.red)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
     }
 }
 
@@ -222,8 +244,30 @@ struct MyDoubleStepperOptional: View {
     @Previewable @State var amountOptional: Double? = nil
 
     List {
-        MyDoubleStepper(amount: $amount, description: "Description", descriptionInfo: "Description info Text", minAmount: 1.0, amountStep: 0.1, amountName: "QuantityUnit", systemImage: "tag")
-        
-        MyDoubleStepperOptional(amount: $amountOptional, description: "Description", descriptionInfo: "Description info Text", minAmount: 1.0, amountStep: 0.1, amountName: "QuantityUnit", systemImage: "tag")
+        MyDoubleStepper(
+            amount: $amount,
+            description: "Description",
+            descriptionInfo: "Description info Text",
+            minAmount: 1.0,
+            amountStep: 0.1,
+            amountName: "Quantityunit",
+            systemImage: "tag"
+        )
+
+        MyDoubleStepperOptional(
+            amount: $amountOptional,
+            description: "Description",
+            minAmount: 1.0,
+            amountStep: 0.1,
+        )
+        MyDoubleStepperOptional(
+            amount: $amountOptional,
+            description: "Description",
+            descriptionInfo: "Description info Text",
+            minAmount: 1.0,
+            amountStep: 0.1,
+            amountName: "Quantityunit",
+            systemImage: "tag"
+        )
     }
 }

@@ -213,9 +213,14 @@ struct MDChoreFormView: View {
                         DatePicker("", selection: $chore.startDate)
                     },
                     label: {
-                        HStack {
-                            Label("Start date", systemImage: MySymbols.date)
-                            FieldDescription(description: "The start date cannot be changed when the chore was once tracked")
+                        Label {
+                            HStack {
+                                Text("Start date")
+                                FieldDescription(description: "The start date cannot be changed when the chore was once tracked")
+                            }
+                        } icon: {
+                            Image(systemName: MySymbols.date)
+                                .foregroundStyle(.primary)
                         }
                     }
                 )
