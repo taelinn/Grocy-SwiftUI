@@ -41,6 +41,15 @@ struct AppTabNavigation: View {
     @AppStorage("tabSelection") private var tabSelection: TabNavigationItem = .stockOverview
     @AppStorage("appTabCustomization") private var appTabCustomization: TabViewCustomization
     @AppStorage("devMode") private var devMode: Bool = false
+
+    @AppStorage("enableQuickScan") var enableQuickScan: Bool = true
+    @AppStorage("enableStockOverview") var enableStockOverview: Bool = true
+    @AppStorage("enableShoppingList") var enableShoppingList: Bool = true
+    @AppStorage("enableRecipes") var enableRecipes: Bool = true
+    @AppStorage("enableChores") var enableChores: Bool = true
+    @AppStorage("enableTasks") var enableTasks: Bool = true
+    @AppStorage("enableMasterData") var enableMasterData: Bool = true
+
     @Environment(DeepLinkManager.self) var deepLinkManager
 
     @Query var systemConfigList: [SystemConfig]
@@ -56,6 +65,7 @@ struct AppTabNavigation: View {
                 }
             }
             .customizationID("georgappdev.Grocy.quickScanMode")
+            .hidden(!enableQuickScan)
 
             Tab("Stock overview", systemImage: MySymbols.stockOverview, value: TabNavigationItem.stockOverview) {
                 NavigationStack {
@@ -63,7 +73,7 @@ struct AppTabNavigation: View {
                 }
             }
             .customizationID("georgappdev.Grocy.stockOverview")
-            .hidden(systemConfig?.featureFlagStock == false)
+            .hidden(systemConfig?.featureFlagStock == false || !enableStockOverview)
 
             Tab("Shopping list", systemImage: MySymbols.shoppingList, value: TabNavigationItem.shoppingList) {
                 NavigationStack {
@@ -71,7 +81,7 @@ struct AppTabNavigation: View {
                 }
             }
             .customizationID("georgappdev.Grocy.shoppingList")
-            .hidden(systemConfig?.featureFlagShoppinglist == false)
+            .hidden(systemConfig?.featureFlagShoppinglist == false || !enableShoppingList)
 
             if devMode {
                 Tab("Recipes", systemImage: MySymbols.recipe, value: TabNavigationItem.recipes) {
@@ -80,7 +90,7 @@ struct AppTabNavigation: View {
                     }
                 }
                 .customizationID("georgappdev.Grocy.recipes")
-                .hidden(systemConfig?.featureFlagRecipes == false)
+                .hidden(systemConfig?.featureFlagRecipes == false || !enableRecipes)
             }
 
             Tab("Chores overview", systemImage: MySymbols.chores, value: TabNavigationItem.chores) {
@@ -89,15 +99,15 @@ struct AppTabNavigation: View {
                 }
             }
             .customizationID("georgappdev.Grocy.chores")
-            .hidden(systemConfig?.featureFlagChores == false)
-            
+            .hidden(systemConfig?.featureFlagChores == false || !enableChores)
+
             Tab("Tasks", systemImage: MySymbols.tasks, value: TabNavigationItem.tasks) {
                 NavigationStack {
                     TasksView()
                 }
             }
             .customizationID("georgappdev.Grocy.tasks")
-            .hidden(systemConfig?.featureFlagTasks == false)
+            .hidden(systemConfig?.featureFlagTasks == false || !enableTasks)
 
             if horizontalSizeClass != .compact {
                 TabSection(
@@ -205,6 +215,7 @@ struct AppTabNavigation: View {
                     MasterDataView()
                 }
             }
+            .hidden(!enableMasterData)
             #if os(iOS)
                 .defaultVisibility(.hidden, for: .sidebar)
             #endif

@@ -33502,6 +33502,16 @@
         }
       }
     },
+    "Enabled Tabs" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aktivierte Tabs"
+          }
+        }
+      }
+    },
     "Energy" : {
       "localizations" : {
         "ca" : {
