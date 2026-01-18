@@ -141,13 +141,11 @@ struct TaskFormView: View {
                     }
                 },
                 label: {
-                    HStack {
-                        Label("Due", systemImage: MySymbols.date)
-                        if grocyTask.dueDate != nil {
-                            Text(getRelativeDateAsText(grocyTask.dueDate, localizationKey: localizationKey) ?? "")
-                                .foregroundStyle(.secondary)
-                                .italic()
-                        }
+                    Label("Due", systemImage: MySymbols.date)
+                    if grocyTask.dueDate != nil {
+                        Text(getRelativeDateAsText(grocyTask.dueDate, localizationKey: localizationKey) ?? "")
+                            .foregroundStyle(.secondary)
+                            .italic()
                     }
                 }
             )
