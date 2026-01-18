@@ -37347,7 +37347,6 @@
       }
     },
     "Ingredients" : {
-      "extractionState" : "stale",
       "localizations" : {
         "ca" : {
           "stringUnit" : {

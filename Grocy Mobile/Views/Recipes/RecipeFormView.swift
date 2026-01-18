@@ -19,6 +19,9 @@ struct RecipeFormView: View {
     @State private var isProcessing: Bool = false
     @State private var isSuccessful: Bool? = nil
     @State private var errorMessage: String? = nil
+    @State private var isPreparationExpanded: Bool = false
+    
+    @State private var showAddRecipeIngredient: Bool = false
 
     var existingRecipe: Recipe?
     @State var recipe: Recipe
@@ -99,12 +102,83 @@ struct RecipeFormView: View {
                 isOn: $recipe.notCheckShoppinglist,
                 description: "Do not check against the shopping list when adding missing items to it",
                 descriptionInfo:
-                    "By default the amount to be added to the shopping list is \"needed amount - stock amount - shopping list amount\" - when this is enabled, it is only checked against the stock amount, not against what is already on the shopping list"
+                    "By default the amount to be added to the shopping list is \"needed amount - stock amount - shopping list amount\" - when this is enabled, it is only checked against the stock amount, not against what is already on the shopping list",
+                icon: MySymbols.shoppingList,
             )
 
             ProductField(productID: $recipe.productID, description: "Produces product", descriptionInfo: "When a product is selected, one unit (per serving in stock quantity unit) will be added to stock on consuming this recipe")
 
-            MyTextEditor(textToEdit: $recipe.recipeDescription, description: "Preparation", leadingIcon: MySymbols.description)
+            if existingRecipe != nil {
+                Section(
+                    content: {
+//                        ForEach(quConversions, id: \.id) { quConversion in
+//                            NavigationLink(value: quConversion) {
+//                                Text("\(quConversion.factor.formattedAmount) \(mdQuantityUnits.first(where: { $0.id == quConversion.toQuID })?.name ?? "\(quConversion.id)")")
+//                            }
+//                            .swipeActions(
+//                                edge: .trailing,
+//                                allowsFullSwipe: true,
+//                                content: {
+//                                    Button(
+//                                        role: .destructive,
+//                                        action: { markDeleteQUConversion(conversion: quConversion) },
+//                                        label: { Label("Delete", systemImage: MySymbols.delete) }
+//                                    )
+//                                }
+//                            )
+//                        }
+                    },
+                    header: {
+                        VStack(alignment: .leading) {
+                            HStack(alignment: .top) {
+                                Text("Ingredients list")
+                                Spacer()
+                                Button(
+                                    action: {
+                                        showAddRecipeIngredient.toggle()
+                                    },
+                                    label: {
+                                        Label("Add", systemImage: MySymbols.new)
+                                    }
+                                )
+                            }
+//                            Text("1 \(quantityUnit.name) is the same as...")
+//                                .italic()
+                        }
+                    }
+                )
+
+                Section("Included recipes") {
+
+                }
+
+                Section("Picture") {
+
+                }
+            }
+
+            Section(isExpanded: $isPreparationExpanded) {
+                MyTextEditor(textToEdit: $recipe.recipeDescription, description: "Preparation", leadingIcon: MySymbols.description)
+            } header: {
+
+                Button(action: {
+                    withAnimation {
+                        isPreparationExpanded.toggle()
+                    }
+                }) {
+                    HStack {
+                        Text("Preparation")
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .rotationEffect(
+                                !isPreparationExpanded ? Angle(degrees: 0) : Angle(degrees: 90)
+                            )
+                            .frame(width: 20, height: 20)
+                    }
+                }
+                .foregroundStyle(.secondary)
+                .font(.headline)
+            }
         }
         .formStyle(.grouped)
         .task {

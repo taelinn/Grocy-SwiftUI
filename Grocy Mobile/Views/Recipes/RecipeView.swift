@@ -64,7 +64,7 @@ struct RecipeView: View {
                 //                MyDoubleStepper(amount: $recipe.desiredServings, description: "Desired servings", systemImage: MySymbols.amount)
                 LabeledContent(
                     content: {
-                        Text("123")
+                        Text("")
                         //                    Text("\(recipe.)")
                     },
                     label: {
@@ -77,7 +77,7 @@ struct RecipeView: View {
                 .foregroundStyle(.primary)
                 LabeledContent(
                     content: {
-                        Text("123")
+                        Text("")
                         //                    Text("\(recipe.)")
                     },
                     label: {
@@ -89,11 +89,11 @@ struct RecipeView: View {
                 )
                 .foregroundStyle(.primary)
             }
-            //            Section("Ingredients") {
-            //                ForEach(recipePosResolved, id: \.id) { pos in
-            //                    RecipeIngredientRowView(recipePos: pos, quantityUnit: quantityUnits.first(where: { $0.id == pos.quID }))
-            //                }
-            //            }
+            Section("Ingredients") {
+                //                ForEach(recipePosResolved, id: \.id) { pos in
+                //                    RecipeIngredientRowView(recipePos: pos, quantityUnit: quantityUnits.first(where: { $0.id == pos.quID }))
+                //                }
+            }
             Section(
                 "Preparation",
                 content: {
