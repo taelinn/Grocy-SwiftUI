@@ -20,6 +20,12 @@ extension Date {
         formatter.timeZone = TimeZone(secondsFromGMT: 0)
         return formatter.string(from: self)
     }
+
+    var hasTimeComponent: Bool {
+        let calendar = Calendar.current
+        let startOfDay = calendar.startOfDay(for: self)
+        return self != startOfDay
+    }
 }
 
 func formatDateOutput(_ dateStrIN: String) -> String? {
@@ -67,13 +73,17 @@ func formatTimestampOutput(_ timeStamp: String, localizationKey: String? = nil) 
 
 nonisolated func getDateFromString(_ dateString: String?) -> Date? {
     guard let dateString else { return nil }
-    let strategy = Date.ISO8601FormatStyle()
-        .year()
-        .month()
-        .day()
-        .dateSeparator(.dash)
-    let date = try? Date(dateString, strategy: strategy)
-    return date
+    let formatter = DateFormatter()
+    formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+    formatter.timeZone = TimeZone.current
+
+    if let date = formatter.date(from: dateString) {
+        return date
+    }
+
+    // Try without time if parse fails
+    formatter.dateFormat = "yyyy-MM-dd"
+    return formatter.date(from: dateString)
 }
 
 func getDateFromTimestamp(_ dateString: String) -> Date? {
