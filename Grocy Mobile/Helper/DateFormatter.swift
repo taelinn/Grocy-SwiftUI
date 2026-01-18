@@ -73,17 +73,26 @@ func formatTimestampOutput(_ timeStamp: String, localizationKey: String? = nil) 
 
 nonisolated func getDateFromString(_ dateString: String?) -> Date? {
     guard let dateString else { return nil }
-    let formatter = DateFormatter()
-    formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-    formatter.timeZone = TimeZone.current
-
-    if let date = formatter.date(from: dateString) {
+    
+    // Try ISO8601 first
+    let iso8601Formatter = ISO8601DateFormatter()
+    iso8601Formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+    if let date = iso8601Formatter.date(from: dateString) {
         return date
     }
 
-    // Try without time if parse fails
-    formatter.dateFormat = "yyyy-MM-dd"
-    return formatter.date(from: dateString)
+    // Fall back to DateFormatter for custom formats
+    let formatter = DateFormatter()
+    let formats = ["yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd"]
+
+    for format in formats {
+        formatter.dateFormat = format
+        if let date = formatter.date(from: dateString) {
+            return date
+        }
+    }
+
+    return nil
 }
 
 func getDateFromTimestamp(_ dateString: String) -> Date? {
