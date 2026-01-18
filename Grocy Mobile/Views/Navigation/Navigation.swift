@@ -59,6 +59,14 @@ struct Navigation: View {
             EmptyView()
         case .choresOverview:
             ChoresView()
+        case .tasks:
+            TasksView()
+        case .batteriesOverview:
+            EmptyView()
+        case .equipment:
+            EmptyView()
+        case .calendar:
+            EmptyView()
         case .purchase:
             PurchaseProductView()
         case .consume:
@@ -69,6 +77,12 @@ struct Navigation: View {
             InventoryProductView()
         case .choreTracking:
             ChoreTrackingView()
+        case .batteryTracking:
+            EmptyView()
+        case .userEntity:
+            EmptyView()
+        case .masterData:
+            MasterDataView()
         case .mdProducts:
             MDProductsView()
         case .mdLocations:
@@ -89,8 +103,10 @@ struct Navigation: View {
             SettingsView()
         case .userManagement:
             UserManagementView()
-        default:
-            EmptyView()
+        case .mdUserFields:
+            MDUserFieldsView()
+        case .mdUserEntities:
+            MDUserEntitiesView()
         }
     }
 }
