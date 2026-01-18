@@ -13,16 +13,35 @@ struct Provider: AppIntentTimelineProvider {
     let sharedModelContainer = createSharedModelContainer()
 
     func placeholder(in context: Context) -> SimpleEntry {
-        SimpleEntry(date: Date(), configuration: ConfigurationAppIntent(), modelContainer: nil)
+        SimpleEntry(date: Date(), configuration: ConfigurationAppIntent(), modelContainer: nil, volatileStock: nil)
     }
 
     func snapshot(for configuration: ConfigurationAppIntent, in context: Context) async -> SimpleEntry {
-        SimpleEntry(date: Date(), configuration: configuration, modelContainer: sharedModelContainer)
+        let volatileStock = await loadVolatileStock()
+        return SimpleEntry(date: Date(), configuration: configuration, modelContainer: sharedModelContainer, volatileStock: volatileStock)
     }
 
     func timeline(for configuration: ConfigurationAppIntent, in context: Context) async -> Timeline<SimpleEntry> {
-        let entry = SimpleEntry(date: Date(), configuration: configuration, modelContainer: sharedModelContainer)
-        return Timeline(entries: [entry], policy: .never)
+        let volatileStock = await loadVolatileStock()
+        let entry = SimpleEntry(date: Date(), configuration: configuration, modelContainer: sharedModelContainer, volatileStock: volatileStock)
+        
+        // Request update every 15 minutes to keep data fresh
+        let nextUpdate = Calendar.current.date(byAdding: .minute, value: 15, to: Date()) ?? Date()
+        return Timeline(entries: [entry], policy: .after(nextUpdate))
+    }
+    
+    private func loadVolatileStock() async -> VolatileStock? {
+        guard let modelContainer = sharedModelContainer else { return nil }
+        
+        let context = ModelContext(modelContainer)
+        do {
+            let fetchDescriptor = FetchDescriptor<VolatileStock>()
+            let results = try context.fetch(fetchDescriptor)
+            return results.first
+        } catch {
+            print("Failed to load VolatileStock: \(error)")
+            return nil
+        }
     }
 }
 
@@ -30,6 +49,7 @@ struct SimpleEntry: TimelineEntry {
     let date: Date
     let configuration: ConfigurationAppIntent
     let modelContainer: ModelContainer?
+    let volatileStock: VolatileStock?
 }
 
 struct Grocy_WidgetEntryView: View {

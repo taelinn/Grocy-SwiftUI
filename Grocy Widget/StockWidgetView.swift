@@ -13,9 +13,8 @@ struct StockWidgetView: View {
     let entry: Provider.Entry
     @Environment(\.widgetFamily) var widgetFamily
 
-    @Query var volatileStockList: [VolatileStock]
     var volatileStock: VolatileStock? {
-        volatileStockList.first
+        entry.volatileStock
     }
 
     var numExpiringSoon: Int {
@@ -225,17 +224,23 @@ struct StockWidgetView: View {
 #Preview("Small", as: .systemSmall) {
     Grocy_Widget()
 } timeline: {
-    SimpleEntry(date: .now, configuration: ConfigurationAppIntent(), modelContainer: nil)
+    let mockVolatileStock = VolatileStock()
+
+    SimpleEntry(date: .now, configuration: ConfigurationAppIntent(), modelContainer: nil, volatileStock: mockVolatileStock)
 }
 
 #Preview("Medium", as: .systemMedium) {
     Grocy_Widget()
 } timeline: {
-    SimpleEntry(date: .now, configuration: ConfigurationAppIntent(), modelContainer: nil)
+    let mockVolatileStock = VolatileStock()
+
+    SimpleEntry(date: .now, configuration: ConfigurationAppIntent(), modelContainer: nil, volatileStock: mockVolatileStock)
 }
 
 #Preview("Large", as: .systemLarge) {
     Grocy_Widget()
 } timeline: {
-    SimpleEntry(date: .now, configuration: ConfigurationAppIntent(), modelContainer: nil)
+    let mockVolatileStock = VolatileStock()
+
+    SimpleEntry(date: .now, configuration: ConfigurationAppIntent(), modelContainer: nil, volatileStock: mockVolatileStock)
 }

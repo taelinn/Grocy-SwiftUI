@@ -43,6 +43,18 @@ class VolatileStock: Codable {
         try container.encode(expiredProducts, forKey: .expiredProducts)
         try container.encode(missingProducts, forKey: .missingProducts)
     }
+
+    init(
+        dueProducts: [VolatileStockElement] = [],
+        overdueProducts: [VolatileStockElement] = [],
+        expiredProducts: [VolatileStockElement] = [],
+        missingProducts: [VolatileStockProductMissing] = [],
+    ) {
+        self.dueProducts = dueProducts
+        self.overdueProducts = overdueProducts
+        self.expiredProducts = expiredProducts
+        self.missingProducts = missingProducts
+    }
 }
 
 @Model
