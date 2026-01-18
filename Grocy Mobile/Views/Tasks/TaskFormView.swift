@@ -135,7 +135,7 @@ struct TaskFormView: View {
                                     get: { grocyTask.dueDate ?? Date() },
                                     set: { grocyTask.dueDate = $0 }
                                 ),
-                                displayedComponents: .date
+                                displayedComponents: [.date, .hourAndMinute]
                             )
                         }
                     }

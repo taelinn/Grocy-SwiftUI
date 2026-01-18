@@ -28,7 +28,7 @@ struct TaskRowView: View {
                 HStack {
                     Text("\(Text("Due")):")
                     Spacer()
-                    Text(formatDateAsString(dueDate, showTime: false, localizationKey: localizationKey) ?? "")
+                    Text(formatDateAsString(dueDate, showTime: dueDate.hasTimeComponent  ? true : false, localizationKey: localizationKey) ?? "")
                     Text(getRelativeDateAsText(dueDate, localizationKey: localizationKey) ?? "")
                         .font(.caption)
                         .italic()
