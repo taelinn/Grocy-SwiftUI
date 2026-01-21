@@ -118,7 +118,7 @@ struct SettingsAppView: View {
                 if horizontalSizeClass == .compact {
                     MyToggle(isOn: $iPhoneTabNavigation, description: "iPhone: Tab navigation", icon: "platter.filled.bottom.iphone")
                 } else {
-                    MyToggle(isOn: $iPadTabNavigation, description: "iPad: Tab navigation", icon: "platter.filled.bottom.ipad")
+                    MyToggle(isOn: $iPadTabNavigation, description: "iPad: Tab navigation", icon: "sidebar.left")
                 }
             #endif
             MyToggle(isOn: $devMode, description: "DEV MODE", icon: MySymbols.devMode)
