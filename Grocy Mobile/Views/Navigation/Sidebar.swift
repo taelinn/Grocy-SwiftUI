@@ -61,12 +61,12 @@ struct Sidebar: View {
                         Label("Chores overview", systemImage: MySymbols.chores)
                     }
                 }
-                if devMode {
-                    if !(systemConfig?.featureFlagTasks == false) {
-                        NavigationLink(value: NavigationItem.tasks) {
-                            Label("Tasks", systemImage: MySymbols.tasks)
-                        }
+                if !(systemConfig?.featureFlagTasks == false) {
+                    NavigationLink(value: NavigationItem.tasks) {
+                        Label("Tasks", systemImage: MySymbols.tasks)
                     }
+                }
+                if devMode {
                     if !(systemConfig?.featureFlagBatteries == false) {
                         NavigationLink(value: NavigationItem.batteriesOverview) {
                             Label("Batteries overview", systemImage: MySymbols.batteries)
