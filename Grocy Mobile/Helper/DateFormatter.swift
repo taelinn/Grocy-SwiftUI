@@ -83,6 +83,7 @@ nonisolated func getDateFromString(_ dateString: String?) -> Date? {
 
     // Fall back to DateFormatter for custom formats
     let formatter = DateFormatter()
+    formatter.locale = Locale(identifier: "en_US_POSIX")
     let formats = ["yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd"]
 
     for format in formats {
