@@ -14,6 +14,7 @@ struct ServerSelectionView: View {
     @State private var serverProfiles: [ServerProfile] = []
 
     @AppStorage("selectedServerProfileID") private var selectedServerProfileID: UUID?
+    @AppStorage("localizationKey") var localizationKey: String = "en"
 
     private func fetchServerProfiles() {
         guard let modelContext = profileModelContext else { return }
@@ -131,14 +132,16 @@ struct ServerSelectionView: View {
                 duplicateProfile(profile)
             },
             label: {
-                Label("Duplicate", systemImage: MySymbols.duplicate)
+                Label("Copy", systemImage: MySymbols.duplicate)
             }
         )
     }
 
     private func duplicateProfile(_ profile: ServerProfile) {
+        var resource = LocalizedStringResource("Copy of \(profile.name)")
+        resource.locale = Locale(identifier: localizationKey)
         let newServerProfile = ServerProfile(
-            name: profile.name + " (Duplicate)",
+            name: String(localized: resource),
             grocyServerURL: profile.grocyServerURL,
             grocyAPIKey: profile.grocyAPIKey,
             useHassIngress: profile.useHassIngress,
@@ -147,6 +150,7 @@ struct ServerSelectionView: View {
         )
         profileModelContext?.insert(newServerProfile)
         _ = try? profileModelContext?.save()
+        fetchServerProfiles()
     }
 }
 
