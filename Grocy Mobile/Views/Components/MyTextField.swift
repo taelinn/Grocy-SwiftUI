@@ -51,22 +51,33 @@ struct MyTextField: View {
             }
         } label: {
             if let leadingIcon = leadingIcon {
-                Label(description, systemImage: leadingIcon)
-                    .foregroundStyle(.primary)
-                    .lineLimit(nil)
-                    .fixedSize(horizontal: false, vertical: true)
+                Label {
+                    HStack {
+                        Text(description)
+                            .lineLimit(nil)
+                        if let helpText = helpText {
+                            FieldDescription(description: helpText)
+                        }
+                    }
+                } icon: {
+                    Image(systemName: leadingIcon)
+                }
+                .foregroundStyle(.primary)
+                .fixedSize(horizontal: false, vertical: true)
             } else {
-                Text(description)
-                    .foregroundStyle(.primary)
-                    .lineLimit(nil)
-                    .fixedSize(horizontal: false, vertical: true)
+                HStack {
+                    Text(description)
+                        .foregroundStyle(.primary)
+                        .lineLimit(nil)
+                        .fixedSize(horizontal: false, vertical: true)
+                    if let helpText = helpText {
+                        FieldDescription(description: helpText)
+                    }
+                }
             }
             if let subtitle = subtitle {
                 Text(subtitle)
                     .lineLimit(nil)
-            }
-            if let helpText = helpText {
-                FieldDescription(description: helpText)
             }
         }
     }
@@ -75,7 +86,7 @@ struct MyTextField: View {
 #Preview {
     @Previewable @State var textToEdit: String = "Text to Edit"
     @Previewable @State var isCorrect: Bool = true
-    
+
     Form {
         MyTextField(
             textToEdit: $textToEdit,
@@ -86,8 +97,11 @@ struct MyTextField: View {
             errorMessage: "Error message",
             helpText: "This is a help text"
         )
-        .onChange(of: textToEdit, {
-            if textToEdit == "Error" { isCorrect = false } else { isCorrect = true }
-        })
+        .onChange(
+            of: textToEdit,
+            {
+                if textToEdit == "Error" { isCorrect = false } else { isCorrect = true }
+            }
+        )
     }
 }
