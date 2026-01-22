@@ -46,7 +46,7 @@ struct StockView: View {
     @Environment(GrocyViewModel.self) private var grocyVM
     @Environment(\.modelContext) private var modelContext
 
-    @Query(filter: #Predicate<StockElement> { $0.amount > 0 }) var stock: [StockElement]
+    @Query(filter: #Predicate<StockElement> { $0.amountAggregated > 0 }) var stock: [StockElement]
     @Query(filter: #Predicate<StockLocation> { $0.amount > 0 }) var stockLocations: StockLocations
     @Query(sort: \MDProduct.name, order: .forward) var mdProducts: MDProducts
     @Query(sort: \MDProductGroup.id, order: .forward) var mdProductGroups: MDProductGroups
