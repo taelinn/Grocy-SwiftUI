@@ -13,11 +13,11 @@ class StockJournalEntry: Codable, Equatable {
     var transactionType: TransactionType {
         TransactionType(rawValue: transactionTypeRaw) ?? .purchase
     }
-    
+
     @Attribute(.unique) var id: Int
     var productID: Int
     var amount: Double
-    var bestBeforeDate: Date?
+    var bestBeforeDate: Date
     var purchasedDate: Date?
     var usedDate: Date?
     var spoiled: Bool
@@ -68,7 +68,7 @@ class StockJournalEntry: Codable, Equatable {
             self.id = try container.decodeFlexibleInt(forKey: .id)
             self.productID = try container.decodeFlexibleInt(forKey: .productID)
             self.amount = try container.decodeFlexibleDouble(forKey: .amount)
-            self.bestBeforeDate =  getDateFromString(try? container.decode(String.self, forKey: .bestBeforeDate))
+            self.bestBeforeDate = getDateFromString(try? container.decodeIfPresent(String.self, forKey: .bestBeforeDate)) ?? Date.neverOverdue
             self.purchasedDate = getDateFromString(try? container.decodeIfPresent(String.self, forKey: .purchasedDate))
             self.usedDate = getDateFromString(try? container.decodeIfPresent(String.self, forKey: .usedDate))
             self.spoiled = try container.decodeFlexibleBool(forKey: .spoiled)
@@ -91,7 +91,7 @@ class StockJournalEntry: Codable, Equatable {
             throw APIError.decodingError(error: error)
         }
     }
-    
+
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(id, forKey: .id)
@@ -117,30 +117,12 @@ class StockJournalEntry: Codable, Equatable {
         try container.encode(note, forKey: .note)
         try container.encode(rowCreatedTimestamp, forKey: .rowCreatedTimestamp)
     }
-    
+
     static func == (lhs: StockJournalEntry, rhs: StockJournalEntry) -> Bool {
-        lhs.id == rhs.id &&
-        lhs.productID == rhs.productID &&
-        lhs.amount == rhs.amount &&
-        lhs.bestBeforeDate == rhs.bestBeforeDate &&
-        lhs.purchasedDate == rhs.purchasedDate &&
-        lhs.usedDate == rhs.usedDate &&
-        lhs.spoiled == rhs.spoiled &&
-        lhs.stockID == rhs.stockID &&
-        lhs.transactionTypeRaw == rhs.transactionTypeRaw &&
-        lhs.price == rhs.price &&
-        lhs.undone == rhs.undone &&
-        lhs.undoneTimestamp == rhs.undoneTimestamp &&
-        lhs.openedDate == rhs.openedDate &&
-        lhs.locationID == rhs.locationID &&
-        lhs.recipeID == rhs.recipeID &&
-        lhs.correlationID == rhs.correlationID &&
-        lhs.transactionID == rhs.transactionID &&
-        lhs.stockRowID == rhs.stockRowID &&
-        lhs.storeID == rhs.storeID &&
-        lhs.userID == rhs.userID &&
-        lhs.note == rhs.note &&
-        lhs.rowCreatedTimestamp == rhs.rowCreatedTimestamp
+        lhs.id == rhs.id && lhs.productID == rhs.productID && lhs.amount == rhs.amount && lhs.bestBeforeDate == rhs.bestBeforeDate && lhs.purchasedDate == rhs.purchasedDate && lhs.usedDate == rhs.usedDate && lhs.spoiled == rhs.spoiled
+            && lhs.stockID == rhs.stockID && lhs.transactionTypeRaw == rhs.transactionTypeRaw && lhs.price == rhs.price && lhs.undone == rhs.undone && lhs.undoneTimestamp == rhs.undoneTimestamp && lhs.openedDate == rhs.openedDate
+            && lhs.locationID == rhs.locationID && lhs.recipeID == rhs.recipeID && lhs.correlationID == rhs.correlationID && lhs.transactionID == rhs.transactionID && lhs.stockRowID == rhs.stockRowID && lhs.storeID == rhs.storeID
+            && lhs.userID == rhs.userID && lhs.note == rhs.note && lhs.rowCreatedTimestamp == rhs.rowCreatedTimestamp
     }
 }
 

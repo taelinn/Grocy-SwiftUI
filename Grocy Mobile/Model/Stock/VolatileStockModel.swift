@@ -63,7 +63,7 @@ class VolatileStockElement: Codable, Equatable, Identifiable {
     var amount: Double
     var amountAggregated: Double
     var value: Double
-    var bestBeforeDate: Date?
+    var bestBeforeDate: Date
     var amountOpened: Double
     var amountOpenedAggregated: Double
     var isAggregatedAmount: Bool
@@ -89,7 +89,7 @@ class VolatileStockElement: Codable, Equatable, Identifiable {
             self.amount = try container.decodeFlexibleDouble(forKey: .amount)
             self.amountAggregated = try container.decodeFlexibleDouble(forKey: .amountAggregated)
             self.value = try container.decodeFlexibleDouble(forKey: .value)
-            self.bestBeforeDate = getDateFromString(try container.decodeIfPresent(String.self, forKey: .bestBeforeDate))
+            self.bestBeforeDate = getDateFromString(try container.decodeIfPresent(String.self, forKey: .bestBeforeDate)) ?? Date.neverOverdue
             self.amountOpened = try container.decodeFlexibleDouble(forKey: .amountOpened)
             self.amountOpenedAggregated = try container.decodeFlexibleDouble(forKey: .amountOpenedAggregated)
             self.isAggregatedAmount = try container.decodeFlexibleBool(forKey: .isAggregatedAmount)
@@ -114,13 +114,13 @@ class VolatileStockElement: Codable, Equatable, Identifiable {
     }
 
     init(
-        amount: Double,
-        amountAggregated: Double,
-        value: Double,
-        bestBeforeDate: Date?,
-        amountOpened: Double,
-        amountOpenedAggregated: Double,
-        isAggregatedAmount: Bool,
+        amount: Double = 1.0,
+        amountAggregated: Double = 1.0,
+        value: Double = 1.0,
+        bestBeforeDate: Date = Date(),
+        amountOpened: Double = 0.0,
+        amountOpenedAggregated: Double = 0.0,
+        isAggregatedAmount: Bool = false,
         dueType: Int,
         productID: Int
     ) {

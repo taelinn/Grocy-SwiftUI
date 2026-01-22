@@ -43,7 +43,7 @@ struct StockEntryFormView: View {
     init(existingStockEntry: StockEntry? = nil) {
         self.existingStockEntry = existingStockEntry
         let initialStockEntry = existingStockEntry ?? StockEntry()
-        _productDoesntSpoil = State(initialValue: (existingStockEntry?.bestBeforeDate == getNeverOverdueDate()))
+        _productDoesntSpoil = State(initialValue: (existingStockEntry?.bestBeforeDate == Date.neverOverdue))
         _note = State(initialValue: existingStockEntry?.note ?? "")
         _stockEntry = State(initialValue: initialStockEntry)
     }

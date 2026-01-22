@@ -155,17 +155,13 @@ struct StockTableRow: View {
                         .foregroundStyle(Color(.GrocyColors.grocyGray))
                         .help("This product is currently on a shopping list.")
                 }
-            }
-            if let dueDate = stockElement.bestBeforeDate {
-                HStack {
-                    if dueDate == getNeverOverdueDate() {
-                        Text("Never overdue")
-                    } else {
-                        Text(formatDateAsString(dueDate, showTime: false, localizationKey: localizationKey) ?? "")
-                        Text(getRelativeDateAsText(dueDate, localizationKey: localizationKey) ?? "")
-                            .font(.caption)
-                            .italic()
-                    }
+                if stockElement.bestBeforeDate == Date.neverOverdue {
+                    Text("Never overdue")
+                } else {
+                    Text(formatDateAsString(stockElement.bestBeforeDate, showTime: false, localizationKey: localizationKey) ?? "")
+                    Text(getRelativeDateAsText(stockElement.bestBeforeDate, localizationKey: localizationKey) ?? "")
+                        .font(.caption)
+                        .italic()
                 }
             }
         }

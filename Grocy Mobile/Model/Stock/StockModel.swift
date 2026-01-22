@@ -41,7 +41,7 @@ class StockElement: Codable, Equatable {
             self.amount = try container.decodeFlexibleDouble(forKey: .amount)
             self.amountAggregated = try container.decodeFlexibleDouble(forKey: .amountAggregated)
             self.value = try container.decodeFlexibleDouble(forKey: .value)
-            self.bestBeforeDate = getDateFromString(try container.decodeIfPresent(String.self, forKey: .bestBeforeDate))
+            self.bestBeforeDate = getDateFromString(try container.decodeIfPresent(String.self, forKey: .bestBeforeDate)) ?? Date.neverOverdue
             self.amountOpened = try container.decodeFlexibleDouble(forKey: .amountOpened)
             self.amountOpenedAggregated = try container.decodeFlexibleDouble(forKey: .amountAggregated)
             self.isAggregatedAmount = try container.decodeFlexibleBool(forKey: .isAggregatedAmount)
@@ -71,7 +71,7 @@ class StockElement: Codable, Equatable {
         amount: Double = 0.0,
         amountAggregated: Double = 0.0,
         value: Double = 0.0,
-        bestBeforeDate: Date? = nil,
+        bestBeforeDate: Date? = Date(),
         amountOpened: Double = 0.0,
         amountOpenedAggregated: Double = 0.0,
         isAggregatedAmount: Bool = false,

@@ -104,7 +104,7 @@ struct InventoryProductView: View {
 
     private func inventoryProduct() async {
         if productNeverOverdue {
-            productInventory.bestBeforeDate = getNeverOverdueDate()
+            productInventory.bestBeforeDate = Date.neverOverdue
         }
         if let productID = productID {
             isProcessingAction = true

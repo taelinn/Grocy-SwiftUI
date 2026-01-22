@@ -46,7 +46,7 @@ struct StockEntryRowView: View {
 
                     Text("\(Text("Amount")): \(stockEntry.amount.formattedAmount) \(quantityUnit?.getName(amount: stockEntry.amount) ?? "") \(Text(stockEntry.stockEntryOpen == true ? "Opened" : ""))")
 
-                    if stockEntry.bestBeforeDate == getNeverOverdueDate() {
+                    if stockEntry.bestBeforeDate == Date.neverOverdue {
                         HStack(alignment: .bottom) {
                             Text("\(Text("Due date")): ")
                             Text("Never overdue")

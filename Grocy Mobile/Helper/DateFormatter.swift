@@ -194,18 +194,21 @@ func formatDuration(value: Int, unit: Calendar.Component, localizationKey: Strin
     return formatter.string(from: components)
 }
 
-func getNeverOverdueDate() -> Date {
-    var dateComponents = DateComponents()
-    dateComponents.year = 2999
-    dateComponents.month = 12
-    dateComponents.day = 31
-    dateComponents.timeZone = TimeZone(abbreviation: "UTC")
-    dateComponents.hour = 0
-    dateComponents.minute = 0
-    dateComponents.second = 0
-    return Calendar(identifier: .gregorian)
-        .date(from: dateComponents)!
+extension Date {
+    nonisolated static let neverOverdue: Date = {
+        var dateComponents = DateComponents()
+        dateComponents.year = 2999
+        dateComponents.month = 12
+        dateComponents.day = 31
+        dateComponents.timeZone = TimeZone(abbreviation: "UTC")
+        dateComponents.hour = 0
+        dateComponents.minute = 0
+        dateComponents.second = 0
+        return Calendar(identifier: .gregorian)
+            .date(from: dateComponents)!
+    }()
 }
+
 
 func daysDifference(for date: Date?) -> Int? {
     guard let nextTime = date else { return nil }

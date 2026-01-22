@@ -47,7 +47,7 @@ class StockEntry: Codable, Equatable, Identifiable {
             self.id = try container.decodeFlexibleInt(forKey: .id)
             self.productID = try container.decodeFlexibleInt(forKey: .productID)
             self.amount = try container.decodeFlexibleDouble(forKey: .amount)
-            self.bestBeforeDate = getDateFromString(try container.decode(String.self, forKey: .bestBeforeDate))!
+            self.bestBeforeDate = getDateFromString(try container.decodeIfPresent(String.self, forKey: .bestBeforeDate)) ?? Date.neverOverdue
             self.purchasedDate = getDateFromString(try? container.decodeIfPresent(String.self, forKey: .purchasedDate))
             self.stockID = try container.decodeFlexibleString(forKey: .stockID)
             self.price = try container.decodeFlexibleDoubleIfPresent(forKey: .price)
