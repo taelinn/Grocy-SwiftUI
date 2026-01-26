@@ -97,8 +97,8 @@ class GrocyViewModel {
     var recipePictures: [String: Data] = [:]
 
     var cancellables = Set<AnyCancellable>()
-
-    let jsonEncoder = JSONEncoder()
+    
+    var jsonEncoder: JSONEncoder
 
     var selectedServerProfile: ServerProfile? {
         guard let modelContext = profileModelContext else { return nil }
@@ -115,14 +115,19 @@ class GrocyViewModel {
         self.profileModelContext = profileModelContext
         self.swiftDataSync = SwiftDataSynchronizer(modelContext: modelContext)
         self.aiCategoryMatcher = nil
-        jsonEncoder.dateEncodingStrategy = .custom({ (date, encoder) in
+        self.jsonEncoder = JSONEncoder()
+        self.jsonEncoder.dateEncodingStrategy = .custom({ (date, encoder) in
             let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+            if date.hasTimeComponent {
+                dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+            } else {
+                dateFormatter.dateFormat = "yyyy-MM-dd"
+            }
             let dateString = dateFormatter.string(from: date)
             var container = encoder.singleValueContainer()
             try container.encode(dateString)
         })
-        jsonEncoder.outputFormatting = .prettyPrinted
+        self.jsonEncoder.outputFormatting = .prettyPrinted
         if isLoggedIn {
             Task {
                 do {
