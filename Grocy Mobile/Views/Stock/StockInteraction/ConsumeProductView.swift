@@ -351,8 +351,8 @@ struct ConsumeProductView: View {
                                         Text("\(Text("Amount")): \(stockProduct.amount.formattedAmount); ")
                                         Text("Due on \(formatDateAsString(stockProduct.bestBeforeDate, localizationKey: localizationKey) ?? "?")")
                                         Text(stockProduct.stockEntryOpen == true ? "Opened" : "Not opened")
-                                        if stockProduct.note != nil {
-                                            Text("\(Text("Note")): \(stockProduct.note ?? "")")
+                                        if !stockProduct.note.isEmpty {
+                                            Text("\(Text("Note")): \(stockProduct.note)")
                                         }
                                     }
                                     .tag(stockProduct.stockID as String?)

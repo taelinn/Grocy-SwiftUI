@@ -21,7 +21,7 @@ class StockEntry: Codable, Equatable, Identifiable {
     var openedDate: Date?
     var locationID: Int?
     var storeID: Int?
-    var note: String?
+    var note: String
     var rowCreatedTimestamp: Date
 
     enum CodingKeys: String, CodingKey {
@@ -55,7 +55,7 @@ class StockEntry: Codable, Equatable, Identifiable {
             self.openedDate = getDateFromString(try? container.decodeIfPresent(String.self, forKey: .openedDate))
             self.locationID = try container.decodeFlexibleIntIfPresent(forKey: .locationID)
             self.storeID = try container.decodeFlexibleIntIfPresent(forKey: .storeID)
-            self.note = try container.decodeIfPresent(String.self, forKey: .note)
+            self.note = try container.decodeIfPresent(String.self, forKey: .note) ?? ""
             self.rowCreatedTimestamp = getDateFromString(try container.decode(String.self, forKey: .rowCreatedTimestamp))!
         } catch {
             throw APIError.decodingError(error: error)

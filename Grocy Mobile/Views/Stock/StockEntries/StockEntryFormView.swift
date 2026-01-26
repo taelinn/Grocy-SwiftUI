@@ -19,7 +19,7 @@ struct StockEntryFormView: View {
     @Environment(\.dismiss) var dismiss
     @AppStorage("localizationKey") var localizationKey: String = "en"
 
-    var existingStockEntry: StockEntry?
+    var existingStockEntry: StockEntry
     @State var stockEntry: StockEntry
 
     @State private var isProcessing: Bool = false
@@ -27,7 +27,6 @@ struct StockEntryFormView: View {
     @State private var errorMessage: String? = nil
 
     @State private var productDoesntSpoil: Bool = false
-    @State private var note: String = ""
 
     private var product: MDProduct? {
         mdProducts.first(where: { $0.id == stockEntry.productID })
@@ -40,12 +39,10 @@ struct StockEntryFormView: View {
         stockEntry.amount > 0
     }
 
-    init(existingStockEntry: StockEntry? = nil) {
+    init(existingStockEntry: StockEntry) {
         self.existingStockEntry = existingStockEntry
-        let initialStockEntry = existingStockEntry ?? StockEntry()
-        _productDoesntSpoil = State(initialValue: (existingStockEntry?.bestBeforeDate == Date.neverOverdue))
-        _note = State(initialValue: existingStockEntry?.note ?? "")
-        _stockEntry = State(initialValue: initialStockEntry)
+        self.productDoesntSpoil = existingStockEntry.bestBeforeDate == Date.neverOverdue
+        self.stockEntry = existingStockEntry
     }
 
     private func updateData() async {
@@ -62,7 +59,7 @@ struct StockEntryFormView: View {
         isProcessing = true
         isSuccessful = nil
         do {
-            stockEntry.note = note.isEmpty ? nil : note
+            stockEntry.bestBeforeDate = Calendar.current.startOfDay(for: self.stockEntry.bestBeforeDate)
             try stockEntry.modelContext?.save()
             _ = try await grocyVM.putStockProductEntry(id: stockEntry.id, content: stockEntry)
             GrocyLogger.info("Stock entry edit successful.")
@@ -95,15 +92,30 @@ struct StockEntryFormView: View {
     var content: some View {
         Form {
             VStack(alignment: .trailing, spacing: 5.0) {
-                HStack {
-                    Image(systemName: MySymbols.date)
-                    DatePicker("Due date", selection: $stockEntry.bestBeforeDate, displayedComponents: .date)
-                        .disabled(productDoesntSpoil)
+                if !productDoesntSpoil {
+                    DatePicker(
+                        selection: $stockEntry.bestBeforeDate,
+                        displayedComponents: .date,
+                        label: {
+                            Label("Due date", systemImage: MySymbols.date)
+                                .foregroundStyle(.primary)
+                        }
+                    )
+                    Text(getRelativeDateAsText(stockEntry.bestBeforeDate, localizationKey: localizationKey) ?? "")
+                        .foregroundStyle(.gray)
+                        .italic()
                 }
-                Text(getRelativeDateAsText(stockEntry.bestBeforeDate, localizationKey: localizationKey) ?? "")
-                    .foregroundStyle(.gray)
-                    .italic()
                 MyToggle(isOn: $productDoesntSpoil, description: "Never overdue", descriptionInfo: nil, icon: MySymbols.doesntSpoil)
+                    .onChange(
+                        of: productDoesntSpoil,
+                        {
+                            if productDoesntSpoil == true {
+                                self.stockEntry.bestBeforeDate = Date.neverOverdue
+                            } else if productDoesntSpoil == false && self.stockEntry.bestBeforeDate == Date.neverOverdue {
+                                self.stockEntry.bestBeforeDate = Date()
+                            }
+                        }
+                    )
             }
 
             MyDoubleStepper(amount: $stockEntry.amount, description: "Amount", minAmount: 0.0001, amountStep: 1.0, amountName: quantityUnit?.getName(amount: stockEntry.amount), systemImage: MySymbols.amount)
@@ -138,7 +150,7 @@ struct StockEntryFormView: View {
                 }
             )
 
-            MyTextEditor(textToEdit: $note, description: "Note", leadingIcon: MySymbols.description)
+            MyTextEditor(textToEdit: $stockEntry.note, description: "Note", leadingIcon: MySymbols.description)
         }
         .toolbar(content: {
             ToolbarItem(
@@ -167,6 +179,6 @@ struct StockEntryFormView: View {
 
 #Preview(traits: .previewData) {
     NavigationStack {
-        StockEntryFormView()
+        StockEntryFormView(existingStockEntry: StockEntry())
     }
 }

@@ -78,8 +78,8 @@ struct StockEntryRowView: View {
                             .font(.caption).italic()
                     }
 
-                    if let note = stockEntry.note {
-                        Text("\(Text("Note")): \(note)")
+                    if !stockEntry.note.isEmpty {
+                        Text("\(Text("Note")): \(stockEntry.note)")
                     }
                 }
             }
