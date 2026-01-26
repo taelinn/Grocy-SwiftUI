@@ -21,7 +21,7 @@ extension Date {
         return formatter.string(from: self)
     }
 
-    var hasTimeComponent: Bool {
+    nonisolated var hasTimeComponent: Bool {
         let calendar = Calendar.current
         let startOfDay = calendar.startOfDay(for: self)
         return self != startOfDay
@@ -73,7 +73,7 @@ func formatTimestampOutput(_ timeStamp: String, localizationKey: String? = nil) 
 
 nonisolated func getDateFromString(_ dateString: String?) -> Date? {
     guard let dateString else { return nil }
-    
+
     // Try ISO8601 first
     let iso8601Formatter = ISO8601DateFormatter()
     iso8601Formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
@@ -197,19 +197,20 @@ func formatDuration(value: Int, unit: Calendar.Component, localizationKey: Strin
 
 extension Date {
     nonisolated static let neverOverdue: Date = {
-        var dateComponents = DateComponents()
-        dateComponents.year = 2999
-        dateComponents.month = 12
-        dateComponents.day = 31
-        dateComponents.timeZone = TimeZone(abbreviation: "UTC")
-        dateComponents.hour = 0
-        dateComponents.minute = 0
-        dateComponents.second = 0
-        return Calendar(identifier: .gregorian)
-            .date(from: dateComponents)!
+        let calendar = Calendar(identifier: .gregorian)
+        let components = DateComponents(
+            calendar: calendar,
+            timeZone: TimeZone(abbreviation: "UTC"),
+            year: 2999,
+            month: 12,
+            day: 31,
+            hour: 0,
+            minute: 0,
+            second: 0
+        )
+        return calendar.startOfDay(for: calendar.date(from: components)!)
     }()
 }
-
 
 func daysDifference(for date: Date?) -> Int? {
     guard let nextTime = date else { return nil }
