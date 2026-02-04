@@ -11,7 +11,8 @@ import SwiftUI
 enum RecipeInteraction: Hashable, Identifiable {
     case showRecipe(recipe: Recipe)
     case editRecipe(recipe: Recipe)
-    case editIngredient(ingredient: RecipePos)
+    case editIngredient(ingredient: RecipePos, recipe: Recipe)
+    case editNesting(nesting: RecipeNesting, recipeID: Int)
 
     var id: Self { self }
 }
@@ -132,9 +133,11 @@ struct RecipesView: View {
                 case .editRecipe(let recipe):
                     RecipeFormView(existingRecipe: recipe)
                         .environment(recipeInteractionRouter)
-                case .editIngredient(let ingredient):
-                    RecipeIngredientFormView(existingIngredient: ingredient)
+                case .editIngredient(let ingredient, let recipe):
+                    RecipeIngredientFormView(existingIngredient: ingredient, recipe: recipe)
                         .environment(recipeInteractionRouter)
+                case .editNesting(let nesting, let recipeID):
+                    NestedRecipeFormView(existingRecipeNesting: nesting, recipeID: recipeID)
                 }
             }
             .alert(
@@ -154,6 +157,7 @@ struct RecipesView: View {
             .sheet(isPresented: $showAddRecipe) {
                 NavigationStack {
                     RecipeFormView()
+                        .environment(recipeInteractionRouter)
                 }
             }
             .refreshable(action: {

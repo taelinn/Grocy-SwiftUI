@@ -60,7 +60,7 @@ class RecipePos: Codable, Equatable, Identifiable {
     init(
         id: Int = -1,
         recipeID: Int = -1,
-        productID: Int = -1,
+        productID: Int? = nil,
         amount: Double = 1.0,
         note: String = "",
         quID: Int = -1,

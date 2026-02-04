@@ -21,18 +21,20 @@ struct RecipeIngredientFormView: View {
     @State private var errorMessage: String? = nil
 
     var existingIngredient: RecipePos?
+    var recipe: Recipe
     @State var ingredient: RecipePos
 
     @State private var isFormCorrect: Bool = false
     private func checkFormCorrect() -> Bool {
+        if ingredient.productID == nil { return false }
+        if ingredient.amount.isZero { return false }
         return true
-        //        let foundRecipe = recipes.first(where: { $0.name == recipe.name })
-        //        return !(ingredient.name.isEmpty || (foundRecipe != nil && foundRecipe!.id != recipe.id)) && recipe.baseServings > 0
     }
 
-    init(existingIngredient: RecipePos? = nil) {
+    init(existingIngredient: RecipePos? = nil, recipe: Recipe) {
         self.existingIngredient = existingIngredient
-        self.ingredient = existingIngredient ?? RecipePos()
+        self.recipe = recipe
+        self.ingredient = existingIngredient ?? RecipePos(recipeID: recipe.id)
     }
 
     private let dataToUpdate: [ObjectEntities] = [.products]
@@ -44,37 +46,37 @@ struct RecipeIngredientFormView: View {
         dismiss()
     }
 
-    private func saveRecipe() async {
-        //        if recipe.id == -1 {
-        //            do {
-        //                recipe.id = try grocyVM.findNextID(.recipes)
-        //            } catch {
-        //                GrocyLogger.error("Failed to get next ID: \(error)")
-        //                return
-        //            }
-        //        }
-        //        isProcessing = true
-        //        isSuccessful = nil
-        //        do {
-        //            try recipe.modelContext?.save()
-        //            if existingRecipe == nil {
-        //                _ = try await grocyVM.postMDObject(object: .recipes, content: recipe)
-        //            } else {
-        //                try await grocyVM.putMDObjectWithID(object: .recipes, id: recipe.id, content: recipe)
-        //            }
-        //            GrocyLogger.info("Recipe \(recipe.name) successful.")
-        //            await updateData()
-        //            isSuccessful = true
-        //        } catch {
-        //            GrocyLogger.error("Recipe \(recipe.name) failed. \(error)")
-        //            isSuccessful = false
-        //            if let apiError = error as? APIError {
-        //                errorMessage = apiError.displayMessage
-        //            } else {
-        //                errorMessage = error.localizedDescription
-        //            }
-        //        }
-        //        isProcessing = false
+    private func saveIngredient() async {
+        if ingredient.id == -1 {
+            do {
+                ingredient.id = try grocyVM.findNextID(.recipes_pos)
+            } catch {
+                GrocyLogger.error("Failed to get next ID: \(error)")
+                return
+            }
+        }
+        isProcessing = true
+        isSuccessful = nil
+        do {
+            try ingredient.modelContext?.save()
+            if existingIngredient == nil {
+                _ = try await grocyVM.postMDObject(object: .recipes_pos, content: ingredient)
+            } else {
+                try await grocyVM.putMDObjectWithID(object: .recipes_pos, id: ingredient.id, content: ingredient)
+            }
+            GrocyLogger.info("Ingredient \(ingredient.id) successful.")
+            await grocyVM.requestData(objects: [.recipes_pos])
+            isSuccessful = true
+        } catch {
+            GrocyLogger.error("Ingredient \(ingredient.id) failed. \(error)")
+            isSuccessful = false
+            if let apiError = error as? APIError {
+                errorMessage = apiError.displayMessage
+            } else {
+                errorMessage = error.localizedDescription
+            }
+        }
+        isProcessing = false
     }
 
     var body: some View {
@@ -84,6 +86,9 @@ struct RecipeIngredientFormView: View {
             }
 
             ProductField(productID: $ingredient.productID, description: "Product")
+                .onChange(of: ingredient.productID) {
+                    ingredient.quID = mdProducts.first(where: { $0.id == ingredient.productID })?.quIDConsume
+                }
 
             MyToggle(
                 isOn: $ingredient.onlyCheckSingleUnitInStock,
@@ -121,9 +126,9 @@ struct RecipeIngredientFormView: View {
                 leadingIcon: MySymbols.groupBy,
                 helpText: "This will be used as a headline to group ingredients together",
             )
-            
+
             MyTextEditor(textToEdit: $ingredient.note, description: "Note", leadingIcon: MySymbols.description)
-            
+
             MyDoubleStepper(amount: $ingredient.priceFactor, description: "Price factor", descriptionInfo: "The resulting price of this ingredient will be multiplied by this factor", systemImage: MySymbols.price)
         }
         .formStyle(.grouped)
@@ -154,7 +159,7 @@ struct RecipeIngredientFormView: View {
                         role: .confirm,
                         action: {
                             Task {
-                                await saveRecipe()
+                                await saveIngredient()
                             }
                         },
                         label: {
@@ -183,12 +188,12 @@ struct RecipeIngredientFormView: View {
 
 #Preview("Create", traits: .previewData) {
     NavigationStack {
-        RecipeIngredientFormView()
+        RecipeIngredientFormView(recipe: Recipe())
     }
 }
 
 #Preview("Edit", traits: .previewData) {
     NavigationStack {
-        RecipeIngredientFormView(existingIngredient: RecipePos())
+        RecipeIngredientFormView(existingIngredient: RecipePos(), recipe: Recipe())
     }
 }

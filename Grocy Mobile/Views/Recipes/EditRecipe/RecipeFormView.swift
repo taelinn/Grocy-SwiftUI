@@ -25,6 +25,7 @@ struct RecipeFormView: View {
     @State private var isPreparationExpanded: Bool = false
 
     @State private var showAddRecipeIngredient: Bool = false
+    @State private var showAddNestedRecipe: Bool = false
 
     var existingRecipe: Recipe?
     @State var recipe: Recipe
@@ -105,7 +106,7 @@ struct RecipeFormView: View {
                 try await grocyVM.putMDObjectWithID(object: .recipes, id: recipe.id, content: recipe)
             }
             GrocyLogger.info("Recipe \(recipe.name) successful.")
-            await updateData()
+            await grocyVM.requestData(objects: [.recipes])
             isSuccessful = true
         } catch {
             GrocyLogger.error("Recipe \(recipe.name) failed. \(error)")
@@ -151,13 +152,13 @@ struct RecipeFormView: View {
             if existingRecipe != nil {
                 Section(
                     content: {
-                        ForEach(groupedRecipes.sorted(by: { $0.key < $1.key }), id: \.key) { (groupName, recipes) in
+                        ForEach(groupedRecipes.sorted(by: { $0.key < $1.key }), id: \.key) { (groupName, ingredients) in
                             Section {
-                                ForEach(recipes, id: \.id) { recipe in
+                                ForEach(ingredients, id: \.id) { ingredient in
                                     NavigationLink(
-                                        value: RecipeInteraction.editIngredient(ingredient: recipe),
+                                        value: RecipeInteraction.editIngredient(ingredient: ingredient, recipe: recipe),
                                         label: {
-                                            RecipeFormIngredientRowView(recipePos: recipe, product: mdProducts.first(where: { $0.id == recipe.productID }), quantityUnit: mdQuantityUnits.first(where: { $0.id == recipe.quID }))
+                                            RecipeFormIngredientRowView(recipePos: ingredient, product: mdProducts.first(where: { $0.id == ingredient.productID }), quantityUnit: mdQuantityUnits.first(where: { $0.id == ingredient.quID }))
                                         }
                                     )
                                 }
@@ -188,11 +189,31 @@ struct RecipeFormView: View {
                     }
                 )
 
-                Section("Included recipes") {
+                Section(content: {
                     ForEach(nestedRecipes.sorted(by: { $0.recipeID < $1.recipeID }), id: \.id) { nesting in
-                        NestedRecipeRowView(nesting: nesting, recipe: recipes.first(where: { $0.id == nesting.includesRecipeID }))
+                        NavigationLink(
+                            value: RecipeInteraction.editNesting(nesting: nesting, recipeID: nesting.includesRecipeID),
+                            label: {
+                                NestedRecipeRowView(nesting: nesting, recipe: recipes.first(where: { $0.id == nesting.includesRecipeID }))
+                            }
+                        )
                     }
-                }
+                }, header: {
+                    VStack(alignment: .leading) {
+                        HStack(alignment: .top) {
+                            Text("Included recipes")
+                            Spacer()
+                            Button(
+                                action: {
+                                    showAddNestedRecipe.toggle()
+                                },
+                                label: {
+                                    Label("Add", systemImage: MySymbols.new)
+                                }
+                            )
+                        }
+                    }
+                })
 
                 Section("Picture") {
 
@@ -228,6 +249,22 @@ struct RecipeFormView: View {
             self.isFormCorrect = checkFormCorrect()
         }
         .navigationTitle(existingRecipe == nil ? "Create recipe" : "Edit recipe")
+        .sheet(
+            isPresented: $showAddRecipeIngredient,
+            content: {
+                NavigationStack {
+                    RecipeIngredientFormView(recipe: recipe)
+                }
+            }
+        )
+        .sheet(
+            isPresented: $showAddNestedRecipe,
+            content: {
+                NavigationStack {
+                    NestedRecipeFormView(recipeID: recipe.id)
+                }
+            }
+        )
         .toolbar(content: {
             if existingRecipe == nil {
                 ToolbarItem(

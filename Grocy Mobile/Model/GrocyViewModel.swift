@@ -271,6 +271,8 @@ class GrocyViewModel {
             ints = self.mdProductBarcodes.map { $0.id }
         case .recipes:
             ints = self.recipes.map { $0.id }
+        case .recipes_pos:
+            ints = self.recipesPos.map { $0.id }
         case .tasks:
             ints = self.grocyTasks.map { $0.id }
         case .task_categories:

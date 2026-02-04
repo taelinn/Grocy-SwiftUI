@@ -12,7 +12,11 @@ struct NestedRecipeRowView: View {
     var recipe: Recipe?
 
     var body: some View {
-        Text("\(nesting.servings.formattedAmount) \(recipe?.name ?? "")")
+        HStack {
+            Text(recipe?.name ?? "")
+            Spacer()
+            Text(nesting.servings.formattedAmount)
+        }
     }
 }
 
