@@ -10,21 +10,61 @@ import SwiftUI
 
 struct RecipeFormView: View {
     @Environment(GrocyViewModel.self) private var grocyVM
+    @Environment(\.modelContext) private var modelContext
 
     @Query var mdProducts: MDProducts
+    @Query var mdQuantityUnits: MDQuantityUnits
     @Query var recipes: Recipes
 
     @Environment(\.dismiss) var dismiss
+    @Environment(RecipeInteractionNavigationRouter.self) private var recipeInteractionNavigationRouter
 
     @State private var isProcessing: Bool = false
     @State private var isSuccessful: Bool? = nil
     @State private var errorMessage: String? = nil
     @State private var isPreparationExpanded: Bool = false
-    
+
     @State private var showAddRecipeIngredient: Bool = false
 
     var existingRecipe: Recipe?
     @State var recipe: Recipe
+
+    var groupedRecipes: [String: [RecipePos]] {
+        let sortDescriptor = SortDescriptor<RecipePos>(\.ingredientGroup)
+        let predicate = #Predicate<RecipePos> { recipePos in
+            recipePos.recipeID == recipe.id
+        }
+
+        let descriptor = FetchDescriptor<RecipePos>(
+            predicate: predicate,
+            sortBy: [sortDescriptor]
+        )
+
+        let matchingRecipes = (try? modelContext.fetch(descriptor)) ?? []
+
+        var groupedRecipes: [String: [RecipePos]] = [:]
+        for recipePos in matchingRecipes {
+            if groupedRecipes[recipePos.ingredientGroup] == nil {
+                groupedRecipes[recipePos.ingredientGroup] = []
+            }
+            groupedRecipes[recipePos.ingredientGroup]?.append(recipePos)
+        }
+        return groupedRecipes
+    }
+
+    var nestedRecipes: RecipesNesting {
+        let sortDescriptor = SortDescriptor<RecipeNesting>(\.recipeID)
+        let predicate = #Predicate<RecipeNesting> { nesting in
+            nesting.recipeID == recipe.id
+        }
+
+        let descriptor = FetchDescriptor<RecipeNesting>(
+            predicate: predicate,
+            sortBy: [sortDescriptor]
+        )
+
+        return (try? modelContext.fetch(descriptor)) ?? []
+    }
 
     @State private var isFormCorrect: Bool = false
     private func checkFormCorrect() -> Bool {
@@ -37,7 +77,7 @@ struct RecipeFormView: View {
         self.recipe = existingRecipe ?? Recipe()
     }
 
-    private let dataToUpdate: [ObjectEntities] = [.products]
+    private let dataToUpdate: [ObjectEntities] = [.products, .recipes_nestings, .recipes_pos, .quantity_units]
     private func updateData() async {
         await grocyVM.requestData(objects: dataToUpdate)
     }
@@ -111,22 +151,24 @@ struct RecipeFormView: View {
             if existingRecipe != nil {
                 Section(
                     content: {
-//                        ForEach(quConversions, id: \.id) { quConversion in
-//                            NavigationLink(value: quConversion) {
-//                                Text("\(quConversion.factor.formattedAmount) \(mdQuantityUnits.first(where: { $0.id == quConversion.toQuID })?.name ?? "\(quConversion.id)")")
-//                            }
-//                            .swipeActions(
-//                                edge: .trailing,
-//                                allowsFullSwipe: true,
-//                                content: {
-//                                    Button(
-//                                        role: .destructive,
-//                                        action: { markDeleteQUConversion(conversion: quConversion) },
-//                                        label: { Label("Delete", systemImage: MySymbols.delete) }
-//                                    )
-//                                }
-//                            )
-//                        }
+                        ForEach(groupedRecipes.sorted(by: { $0.key < $1.key }), id: \.key) { (groupName, recipes) in
+                            Section {
+                                ForEach(recipes, id: \.id) { recipe in
+                                    NavigationLink(
+                                        value: RecipeInteraction.editIngredient(ingredient: recipe),
+                                        label: {
+                                            RecipeFormIngredientRowView(recipePos: recipe, product: mdProducts.first(where: { $0.id == recipe.productID }), quantityUnit: mdQuantityUnits.first(where: { $0.id == recipe.quID }))
+                                        }
+                                    )
+                                }
+                            } header: {
+                                if !groupName.isEmpty {
+                                    Text(groupName)
+                                        .font(.headline)
+                                        .italic()
+                                }
+                            }
+                        }
                     },
                     header: {
                         VStack(alignment: .leading) {
@@ -142,14 +184,14 @@ struct RecipeFormView: View {
                                     }
                                 )
                             }
-//                            Text("1 \(quantityUnit.name) is the same as...")
-//                                .italic()
                         }
                     }
                 )
 
                 Section("Included recipes") {
-
+                    ForEach(nestedRecipes.sorted(by: { $0.recipeID < $1.recipeID }), id: \.id) { nesting in
+                        NestedRecipeRowView(nesting: nesting, recipe: recipes.first(where: { $0.id == nesting.includesRecipeID }))
+                    }
                 }
 
                 Section("Picture") {

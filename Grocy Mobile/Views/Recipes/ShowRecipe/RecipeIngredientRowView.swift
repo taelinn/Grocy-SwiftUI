@@ -9,18 +9,18 @@ import SwiftUI
 
 struct RecipeIngredientRowView: View {
     var recipePos: RecipePosResolvedElement
-
-    var quantityUnits: MDQuantityUnits
+    var quantityUnit: MDQuantityUnit?
 
     var body: some View {
         VStack(alignment: .leading) {
-            Text("\(recipePos.recipeAmount.formattedAmount) \(recipePos.productName)")
+            Text("\(recipePos.recipeAmount.formattedAmount) \(quantityUnit?.getName(amount: recipePos.recipeAmount) ?? "") \(recipePos.productName)")
                 .font(.title2)
             if recipePos.missingAmount == 0.0 {
                 HStack {
                     Image(systemName: "checkmark.circle.fill")
                         .foregroundStyle(.green)
-//                    Text("\(Text("Enough in stock")) (\(recipePos.stockAmount.formattedAmount) \(quantityUnit?.name ?? ""))")
+                    Text("\(Text("Enough in stock")) (\(recipePos.stockAmount.formattedAmount) \(quantityUnit?.getName(amount: recipePos.stockAmount) ?? ""))")
+                        .font(.caption)
                 }
             } else {
                 HStack {
@@ -32,14 +32,17 @@ struct RecipeIngredientRowView: View {
                             .foregroundStyle(.red)
                     }
                     Text("Not enough in stock, \(recipePos.missingAmount.formattedAmount) missing, \(recipePos.amountOnShoppingList.formattedAmount) already on shopping list")
+                        .font(.caption)
                 }
             }
         }
     }
 }
 
-//#Preview(traits: .previewData) {
-//    List {
-//        RecipeIngredientRowView(recipePos: RecipePosResolvedElement(quID: 1, productName: "Product name"))
-//    }
-//}
+#Preview {
+    List {
+        RecipeIngredientRowView(recipePos: RecipePosResolvedElement(quID: 1, productName: "Product name"), quantityUnit: MDQuantityUnit(name: "QU"))
+        RecipeIngredientRowView(recipePos: RecipePosResolvedElement(missingAmount: 1.0, quID: 2, productName: "Product name missing"), quantityUnit: MDQuantityUnit(name: "QU"))
+        RecipeIngredientRowView(recipePos: RecipePosResolvedElement(missingAmount: 1.0, amountOnShoppingList: 1.0, quID: 2, productName: "Product name shopping list"), quantityUnit: MDQuantityUnit(name: "QU"))
+    }
+}

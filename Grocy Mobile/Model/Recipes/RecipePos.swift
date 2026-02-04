@@ -9,7 +9,7 @@ import Foundation
 import SwiftData
 
 @Model
-final class RecipePos: Codable {
+class RecipePos: Codable, Equatable, Identifiable {
     @Attribute(.unique) var id: Int
     var recipeID: Int
     var productID: Int?
@@ -17,7 +17,7 @@ final class RecipePos: Codable {
     var note: String
     var quID: Int?
     var onlyCheckSingleUnitInStock: Bool
-    var ingredientGroup: String?
+    var ingredientGroup: String
     var notCheckStockFulfillment: Bool
     var variableAmount: String
     var priceFactor: Double
@@ -39,7 +39,7 @@ final class RecipePos: Codable {
         case roundUp = "round_up"
     }
 
-    init(from decoder: Decoder) throws {
+    required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
         id = try container.decodeFlexibleInt(forKey: .id)
@@ -49,7 +49,7 @@ final class RecipePos: Codable {
         note = try container.decodeIfPresent(String.self, forKey: .note) ?? ""
         quID = try container.decodeFlexibleIntIfPresent(forKey: .quID)
         onlyCheckSingleUnitInStock = try container.decodeFlexibleBool(forKey: .onlyCheckSingleUnitInStock)
-        ingredientGroup = try container.decodeIfPresent(String.self, forKey: .ingredientGroup)
+        ingredientGroup = try container.decodeIfPresent(String.self, forKey: .ingredientGroup) ?? ""
         notCheckStockFulfillment = try container.decodeFlexibleBool(forKey: .notCheckStockFulfillment)
         variableAmount = try container.decodeIfPresent(String.self, forKey: .variableAmount) ?? ""
         priceFactor = try container.decodeFlexibleDouble(forKey: .priceFactor)
@@ -65,7 +65,7 @@ final class RecipePos: Codable {
         note: String = "",
         quID: Int = -1,
         onlyCheckSingleUnitInStock: Bool = false,
-        ingredientGroup: String? = nil,
+        ingredientGroup: String = "",
         notCheckStockFulfillment: Bool = false,
         rowCreatedTimestamp: Date = Date(),
         variableAmount: String = "",

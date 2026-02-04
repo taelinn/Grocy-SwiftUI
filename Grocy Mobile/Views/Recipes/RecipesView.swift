@@ -11,6 +11,7 @@ import SwiftUI
 enum RecipeInteraction: Hashable, Identifiable {
     case showRecipe(recipe: Recipe)
     case editRecipe(recipe: Recipe)
+    case editIngredient(ingredient: RecipePos)
 
     var id: Self { self }
 }
@@ -111,7 +112,7 @@ struct RecipesView: View {
                             )
                             Button(
                                 action: {
-//                                    recipeInteractionRouter.present(.copyRecipe(recipe: recipe))
+                                    //                                    recipeInteractionRouter.present(.copyRecipe(recipe: recipe))
                                 },
                                 label: {
                                     Label("Copy recipe", systemImage: "document.on.document")
@@ -127,8 +128,13 @@ struct RecipesView: View {
                 switch interaction {
                 case .showRecipe(let recipe):
                     RecipeView(recipe: recipe)
+                        .environment(recipeInteractionRouter)
                 case .editRecipe(let recipe):
                     RecipeFormView(existingRecipe: recipe)
+                        .environment(recipeInteractionRouter)
+                case .editIngredient(let ingredient):
+                    RecipeIngredientFormView(existingIngredient: ingredient)
+                        .environment(recipeInteractionRouter)
                 }
             }
             .alert(

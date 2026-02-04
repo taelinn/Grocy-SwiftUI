@@ -13,7 +13,7 @@ struct RecipeView: View {
     @Environment(GrocyViewModel.self) private var grocyVM
     @Environment(\.modelContext) private var modelContext
 
-    @Query var quantityUnits: MDQuantityUnits
+    @Query var mdQuantityUnits: MDQuantityUnits
 
     var recipe: Recipe
 
@@ -28,10 +28,10 @@ struct RecipeView: View {
         await grocyVM.requestData(objects: dataToUpdate, additionalObjects: additionalDataToUpdate)
     }
 
-    var recipePosResolved: [RecipePosResolvedElement] {
-        let sortDescriptor = SortDescriptor<RecipePosResolvedElement>(\.productName)
-        let predicate = #Predicate<RecipePosResolvedElement> { pos in
-            pos.recipeID == recipe.id
+    var groupedRecipes: [String: [RecipePosResolvedElement]] {
+        let sortDescriptor = SortDescriptor<RecipePosResolvedElement>(\.ingredientGroup)
+        let predicate = #Predicate<RecipePosResolvedElement> { recipePos in
+            recipePos.recipeID == recipe.id
         }
 
         let descriptor = FetchDescriptor<RecipePosResolvedElement>(
@@ -39,7 +39,17 @@ struct RecipeView: View {
             sortBy: [sortDescriptor]
         )
 
-        return (try? modelContext.fetch(descriptor)) ?? []
+        let matchingRecipes = (try? modelContext.fetch(descriptor)) ?? []
+
+        var groupedRecipes: [String: [RecipePosResolvedElement]] = [:]
+        for recipePos in matchingRecipes {
+            let ingredientGroup = recipePos.ingredientGroup ?? ""
+            if groupedRecipes[ingredientGroup] == nil {
+                groupedRecipes[ingredientGroup] = []
+            }
+            groupedRecipes[ingredientGroup]?.append(recipePos)
+        }
+        return groupedRecipes
     }
 
     var posResCount: Int {
@@ -90,9 +100,19 @@ struct RecipeView: View {
                 .foregroundStyle(.primary)
             }
             Section("Ingredients") {
-                //                ForEach(recipePosResolved, id: \.id) { pos in
-                //                    RecipeIngredientRowView(recipePos: pos, quantityUnit: quantityUnits.first(where: { $0.id == pos.quID }))
-                //                }
+                ForEach(groupedRecipes.sorted(by: { $0.key < $1.key }), id: \.key) { (groupName, recipes) in
+                    Section {
+                        ForEach(recipes, id: \.id) { recipe in
+                            RecipeIngredientRowView(recipePos: recipe, quantityUnit: mdQuantityUnits.first(where: { $0.id == recipe.quID }))
+                        }
+                    } header: {
+                        if !groupName.isEmpty {
+                            Text(groupName)
+                                .font(.headline)
+                                .italic()
+                        }
+                    }
+                }
             }
             Section(
                 "Preparation",

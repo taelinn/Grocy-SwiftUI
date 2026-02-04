@@ -115,7 +115,7 @@ struct RecipeIngredientFormView: View {
             )
 
             MyTextField(
-                textToEdit: $ingredient.variableAmount,
+                textToEdit: $ingredient.ingredientGroup,
                 description: "Group",
                 isCorrect: .constant(true),
                 leadingIcon: MySymbols.groupBy,

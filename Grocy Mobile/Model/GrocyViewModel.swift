@@ -53,8 +53,9 @@ class GrocyViewModel {
     var shoppingList: [ShoppingListItem] = []
     var recipes: Recipes = []
     var recipeFulfillments: RecipeFulfilments = []
-    var recipePos: [RecipePos] = []
-    var recipePosResolved: [RecipePosResolvedElement] = []
+    var recipesNestings: RecipesNesting = []
+    var recipesPos: [RecipePos] = []
+    var recipesPosResolved: [RecipePosResolvedElement] = []
     var chores: Chores = []
     var choreLog: ChoreLog = []
     var grocyTasks: GrocyTasks = []
@@ -329,9 +330,15 @@ class GrocyViewModel {
                         case .recipes:
                             self.recipes = try await grocyApi.getObject(object: object)
                             try swiftDataSync.syncPersistentCollection(self.recipes)
+                        case .recipes_nestings:
+                            self.recipesNestings = try await grocyApi.getObject(object: object)
+                            try swiftDataSync.syncPersistentCollection(self.recipesNestings)
+                        case .recipes_pos:
+                            self.recipesPos = try await grocyApi.getObject(object: object)
+                            try swiftDataSync.syncPersistentCollection(self.recipesPos)
                         case .recipes_pos_resolved:
-                            self.recipePosResolved = try await grocyApi.getObject(object: object)
-                            try swiftDataSync.syncPersistentCollection(self.recipePosResolved)
+                            self.recipesPosResolved = try await grocyApi.getObject(object: object)
+                            try swiftDataSync.syncPersistentCollection(self.recipesPosResolved)
                         case .quantity_units:
                             self.mdQuantityUnits = try await grocyApi.getObject(object: object)
                             try swiftDataSync.syncPersistentCollection(self.mdQuantityUnits)
@@ -469,7 +476,9 @@ class GrocyViewModel {
         self.shoppingList = []
         self.recipes = []
         self.recipeFulfillments = []
-        self.recipePosResolved = []
+        self.recipesNestings = []
+        self.recipesPos = []
+        self.recipesPosResolved = []
         self.mdChores = []
         self.chores = []
         self.choreLog = []
