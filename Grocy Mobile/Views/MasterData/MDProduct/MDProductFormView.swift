@@ -72,7 +72,7 @@ struct MDProductFormView: View {
         self.product =
             existingProduct
             ?? MDProduct(
-                productGroupID: userSettings?.productPresetsProductGroupID,
+                productGroupID: userSettings?.productPresetsProductGroupID != -1 ? userSettings?.productPresetsProductGroupID : nil,
                 locationID: userSettings?.productPresetsLocationID ?? -1,
                 quIDPurchase: userSettings?.productPresetsQuID ?? -1,
                 quIDStock: userSettings?.productPresetsQuID ?? -1,
@@ -169,7 +169,7 @@ struct MDProductFormView: View {
                     }
                 }
             }
-            
+
             // Match product group
             if product.productGroupID == nil {
                 let categoryNames = mdProductGroups.map { $0.name }
@@ -180,7 +180,7 @@ struct MDProductFormView: View {
                     }
                 }
             }
-            
+
             // Match quantityUnitStock
             if product.quIDStock == -1 {
                 let categoryNames = mdQuantityUnits.map { $0.name }
@@ -668,9 +668,9 @@ struct MDProductFormView: View {
             Picker(
                 selection: $product.quIDStock,
                 content: {
-                    Text("").tag(-1 as Int?)
+                    Text("").tag(-1)
                     ForEach(mdQuantityUnits.filter({ $0.active }), id: \.id) { grocyQuantityUnit in
-                        Text(grocyQuantityUnit.name).tag(grocyQuantityUnit.id as Int?)
+                        Text(grocyQuantityUnit.name).tag(grocyQuantityUnit.id)
                     }
                 },
                 label: {
@@ -706,10 +706,10 @@ struct MDProductFormView: View {
                 selection: $product.quIDPurchase,
                 content: {
                     Text("")
-                        .tag(nil as Int?)
+                        .tag(-1)
                     ForEach(mdQuantityUnits.filter({ $0.active }), id: \.id) { grocyQuantityUnit in
                         Text(grocyQuantityUnit.name)
-                            .tag(grocyQuantityUnit.id as Int?)
+                            .tag(grocyQuantityUnit.id)
                     }
                 },
                 label: {
@@ -733,10 +733,10 @@ struct MDProductFormView: View {
                 selection: $product.quIDConsume,
                 content: {
                     Text("")
-                        .tag(nil as Int?)
+                        .tag(-1)
                     ForEach(mdQuantityUnits.filter({ $0.active }), id: \.id) { grocyQuantityUnit in
                         Text(grocyQuantityUnit.name)
-                            .tag(grocyQuantityUnit.id as Int?)
+                            .tag(grocyQuantityUnit.id)
                     }
                 },
                 label: {
@@ -760,10 +760,10 @@ struct MDProductFormView: View {
                 selection: $product.quIDPrice,
                 content: {
                     Text("")
-                        .tag(nil as Int?)
+                        .tag(-1)
                     ForEach(mdQuantityUnits.filter({ $0.active }), id: \.id) { grocyQuantityUnit in
                         Text(grocyQuantityUnit.name)
-                            .tag(grocyQuantityUnit.id as Int?)
+                            .tag(grocyQuantityUnit.id)
                     }
                 },
                 label: {
