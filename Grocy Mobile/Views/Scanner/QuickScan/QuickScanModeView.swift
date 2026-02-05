@@ -30,7 +30,6 @@ struct QuickScanModeView: View {
     @Query var mdProducts: MDProducts
     @Query var mdChores: MDChores
 
-    @AppStorage("devMode") private var devMode: Bool = false
     @AppStorage("quickScanActionAfterAdd") private var quickScanActionAfterAdd: Bool = false
     #if os(iOS)
         @AppStorage("useLegacyScanner") private var useLegacyScanner: Bool = false

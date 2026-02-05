@@ -92,7 +92,7 @@ struct RecipesView: View {
 
     var filteredRecipes: Recipes {
         let filtered = getFilteredRecipes(for: filteredStatus)
-        
+
         switch sortOption {
         case .name:
             return filtered.sorted { recipe1, recipe2 in
@@ -226,6 +226,12 @@ struct RecipesView: View {
             .animation(.default, value: recipes.count)
             .toolbar {
                 ToolbarItem(
+                    placement: .topBarLeading,
+                    content: {
+                        sortMenu
+                    }
+                )
+                ToolbarItem(
                     placement: .automatic,
                     content: {
                         #if os(macOS)
@@ -233,6 +239,7 @@ struct RecipesView: View {
                         #endif
                     }
                 )
+                ToolbarSpacer(.fixed)
                 ToolbarItem(
                     placement: .primaryAction,
                     content: {
@@ -244,12 +251,6 @@ struct RecipesView: View {
                                 Label("Create recipe", systemImage: MySymbols.new)
                             }
                         )
-                    }
-                )
-                ToolbarItem(
-                    placement: .navigation,
-                    content: {
-                        sortMenu
                     }
                 )
             }

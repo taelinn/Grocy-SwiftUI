@@ -10,8 +10,6 @@ import SwiftUI
 struct SettingsChoresView: View {
     @Environment(GrocyViewModel.self) private var grocyVM
 
-    @AppStorage("devMode") private var devMode: Bool = false
-
     @State private var isFirst: Bool = true
 
     private let dataToUpdate: [ObjectEntities] = [.locations, .product_groups, .quantity_units]

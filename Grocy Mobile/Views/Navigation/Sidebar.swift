@@ -42,12 +42,12 @@ struct Sidebar: View {
                 }
             }
 
-            if devMode {
-                Section {
-                    if !(systemConfig?.featureFlagRecipes == false) {
-                        NavigationLink(value: NavigationItem.recipes) {
-                            Label("Recipes", systemImage: MySymbols.recipe)
-                        }
+            Section {
+                if !(systemConfig?.featureFlagRecipes == false) {
+                    NavigationLink(value: NavigationItem.recipes) {
+                        Label("Recipes", systemImage: MySymbols.recipe)
+                    }
+                    if devMode {
                         NavigationLink(value: NavigationItem.mealPlan) {
                             Label("Meal plan", systemImage: MySymbols.date)
                         }
