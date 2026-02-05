@@ -53,7 +53,7 @@ struct RecipePictureView: View {
                         return
                     }
                 #elseif os(macOS)
-                guard let cgImage = unsafe imagePicture?.cgImage(forProposedRect: nil, context: nil, hints: nil) else {
+                    guard let cgImage = unsafe imagePicture?.cgImage(forProposedRect: nil, context: nil, hints: nil) else {
                         isProcessing = false
                         return
                     }
@@ -97,77 +97,78 @@ struct RecipePictureView: View {
     }
 
     var body: some View {
-        if let pictureFileName = pictureFileName, !pictureFileName.isEmpty {
-            Section {
-                VStack(alignment: .leading) {
-                    PictureView(pictureFileName: pictureFileName, pictureType: .recipePictures)
-                        .clipShape(.rect(cornerRadius: 5.0))
-                        .frame(maxWidth: 300.0, maxHeight: 300.0)
-                    Text(pictureFileName)
-                        .font(.caption)
-                }
-                if let pictureFileNameData = pictureFileName.data(using: .utf8) {
-                    Button(
-                        action: {
-                            Task {
-                                await deletePicture(savedPictureFileNameData: pictureFileNameData)
+        List {
+            if let pictureFileName = pictureFileName, !pictureFileName.isEmpty {
+                Section {
+                    VStack(alignment: .leading) {
+                        PictureView(pictureFileName: pictureFileName, pictureType: .recipePictures)
+                            .clipShape(.rect(cornerRadius: 5.0))
+                            .frame(maxWidth: 300.0, maxHeight: 300.0)
+                        Text(pictureFileName)
+                            .font(.caption)
+                    }
+                    if let pictureFileNameData = pictureFileName.data(using: .utf8) {
+                        Button(
+                            action: {
+                                Task {
+                                    await deletePicture(savedPictureFileNameData: pictureFileNameData)
+                                }
+                            },
+                            label: {
+                                Label("Delete", systemImage: MySymbols.delete)
+                                    .foregroundStyle(.red)
                             }
-                        },
-                        label: {
-                            Label("Delete", systemImage: MySymbols.delete)
-                                .foregroundStyle(.red)
-                        }
-                    )
-                    .disabled(isProcessing)
+                        )
+                        .disabled(isProcessing)
+                    }
                 }
             }
-        }
-        Section {
-            PhotosPicker(
-                selection: $recipeImageItem,
-                matching: .images,
-                label: {
-                    Label("Select picture from gallery", systemImage: MySymbols.gallery)
-                }
-            )
-            #if os(iOS)
-                Button(
-                    action: {
-                        showCamera.toggle()
-                    },
+            Section {
+                PhotosPicker(
+                    selection: $recipeImageItem,
+                    matching: .images,
                     label: {
-                        Label("Add picture from camera", systemImage: MySymbols.camera)
+                        Label("Select picture from gallery", systemImage: MySymbols.gallery)
                     }
                 )
-                .fullScreenCover(isPresented: $showCamera) {
-                    CameraPicker(sourceType: .camera) { image in
-                        capturedImage = image
-                    }
-                }
-            #endif
-            if let recipeImage {
-                recipeImage
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 300.0, height: 300.0)
-                if let recipeImageFilename {
-                    Text(recipeImageFilename)
-                        .font(.caption)
+                #if os(iOS)
                     Button(
                         action: {
-                            Task {
-                                await uploadPicture()
-                            }
+                            showCamera.toggle()
                         },
                         label: {
-                            Label("Upload picture", systemImage: MySymbols.upload)
+                            Label("Add picture from camera", systemImage: MySymbols.camera)
                         }
                     )
-                    .disabled(isProcessing)
+                    .fullScreenCover(isPresented: $showCamera) {
+                        CameraPicker(sourceType: .camera) { image in
+                            capturedImage = image
+                        }
+                    }
+                #endif
+                if let recipeImage {
+                    recipeImage
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 300.0, height: 300.0)
+                    if let recipeImageFilename {
+                        Text(recipeImageFilename)
+                            .font(.caption)
+                        Button(
+                            action: {
+                                Task {
+                                    await uploadPicture()
+                                }
+                            },
+                            label: {
+                                Label("Upload picture", systemImage: MySymbols.upload)
+                            }
+                        )
+                        .disabled(isProcessing)
+                    }
                 }
             }
         }
-        //        .navigationTitle("Picture")
         #if os(iOS)
             .onChange(of: capturedImage) {
                 Task {

@@ -190,75 +190,60 @@ struct RecipeFormView: View {
                     }
                 )
 
-                Section(content: {
-                    ForEach(nestedRecipes.sorted(by: { $0.recipeID < $1.recipeID }), id: \.id) { nesting in
-                        NavigationLink(
-                            value: RecipeInteraction.editNesting(nesting: nesting, recipeID: nesting.includesRecipeID),
-                            label: {
-                                NestedRecipeRowView(nesting: nesting, recipe: recipes.first(where: { $0.id == nesting.includesRecipeID }))
-                            }
-                        )
-                    }
-                }, header: {
-                    VStack(alignment: .leading) {
-                        HStack(alignment: .top) {
-                            Text("Included recipes")
-                            Spacer()
-                            Button(
-                                action: {
-                                    showAddNestedRecipe.toggle()
-                                },
+                Section(
+                    content: {
+                        ForEach(nestedRecipes.sorted(by: { $0.recipeID < $1.recipeID }), id: \.id) { nesting in
+                            NavigationLink(
+                                value: RecipeInteraction.editNesting(nesting: nesting, recipeID: nesting.includesRecipeID),
                                 label: {
-                                    Label("Add", systemImage: MySymbols.new)
+                                    NestedRecipeRowView(nesting: nesting, recipe: recipes.first(where: { $0.id == nesting.includesRecipeID }))
                                 }
                             )
                         }
-                    }
-                })
-
-                Section(isExpanded: $isPictureExpanded) {
-                    RecipePictureView(existingRecipe: recipe, pictureFileName: $recipe.pictureFileName)
-                } header: {
-                    Button(action: {
-                        withAnimation {
-                            isPictureExpanded.toggle()
-                        }
-                    }) {
-                        HStack {
-                            Text("Picture")
-                            Spacer()
-                            Image(systemName: "chevron.right")
-                                .rotationEffect(
-                                    !isPictureExpanded ? Angle(degrees: 0) : Angle(degrees: 90)
+                    },
+                    header: {
+                        VStack(alignment: .leading) {
+                            HStack(alignment: .top) {
+                                Text("Included recipes")
+                                Spacer()
+                                Button(
+                                    action: {
+                                        showAddNestedRecipe.toggle()
+                                    },
+                                    label: {
+                                        Label("Add", systemImage: MySymbols.new)
+                                    }
                                 )
-                                .frame(width: 20, height: 20)
+                            }
                         }
                     }
-                    .foregroundStyle(.secondary)
-                    .font(.headline)
+                )
+
+                Section {
+                    DisclosureGroup(
+                        isExpanded: $isPictureExpanded,
+                        content: {
+                                RecipePictureView(existingRecipe: recipe, pictureFileName: $recipe.pictureFileName)
+                        },
+                        label: {
+                            Label("Picture", systemImage: MySymbols.picture)
+                                .foregroundStyle(.primary)
+                        }
+                    )
                 }
             }
 
-            Section(isExpanded: $isPreparationExpanded) {
-                MyTextEditor(textToEdit: $recipe.recipeDescription, description: "Preparation", leadingIcon: MySymbols.description)
-            } header: {
-                Button(action: {
-                    withAnimation {
-                        isPreparationExpanded.toggle()
+            Section {
+                DisclosureGroup(
+                    isExpanded: $isPreparationExpanded,
+                    content: {
+                        MyTextEditor(textToEdit: $recipe.recipeDescription, description: "")
+                    },
+                    label: {
+                        Label("Preparation", systemImage: MySymbols.description)
+                            .foregroundStyle(.primary)
                     }
-                }) {
-                    HStack {
-                        Text("Preparation")
-                        Spacer()
-                        Image(systemName: "chevron.right")
-                            .rotationEffect(
-                                !isPreparationExpanded ? Angle(degrees: 0) : Angle(degrees: 90)
-                            )
-                            .frame(width: 20, height: 20)
-                    }
-                }
-                .foregroundStyle(.secondary)
-                .font(.headline)
+                )
             }
         }
         .formStyle(.grouped)
