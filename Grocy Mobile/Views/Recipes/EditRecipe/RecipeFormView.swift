@@ -22,6 +22,7 @@ struct RecipeFormView: View {
     @State private var isProcessing: Bool = false
     @State private var isSuccessful: Bool? = nil
     @State private var errorMessage: String? = nil
+    @State private var isPictureExpanded: Bool = false
     @State private var isPreparationExpanded: Bool = false
 
     @State private var showAddRecipeIngredient: Bool = false
@@ -215,15 +216,32 @@ struct RecipeFormView: View {
                     }
                 })
 
-                Section("Picture") {
-
+                Section(isExpanded: $isPictureExpanded) {
+                    RecipePictureView(existingRecipe: recipe, pictureFileName: $recipe.pictureFileName)
+                } header: {
+                    Button(action: {
+                        withAnimation {
+                            isPictureExpanded.toggle()
+                        }
+                    }) {
+                        HStack {
+                            Text("Picture")
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                                .rotationEffect(
+                                    !isPictureExpanded ? Angle(degrees: 0) : Angle(degrees: 90)
+                                )
+                                .frame(width: 20, height: 20)
+                        }
+                    }
+                    .foregroundStyle(.secondary)
+                    .font(.headline)
                 }
             }
 
             Section(isExpanded: $isPreparationExpanded) {
                 MyTextEditor(textToEdit: $recipe.recipeDescription, description: "Preparation", leadingIcon: MySymbols.description)
             } header: {
-
                 Button(action: {
                     withAnimation {
                         isPreparationExpanded.toggle()

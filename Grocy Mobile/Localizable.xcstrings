@@ -9576,6 +9576,16 @@
         }
       }
     },
+    "Add picture from camera" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bild von Kamera hinzufügen"
+          }
+        }
+      }
+    },
     "Add product picture from camera" : {
       "localizations" : {
         "cs" : {
@@ -56467,6 +56477,16 @@
         }
       }
     },
+    "Select picture from gallery" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bild aus der Galerie auswählen"
+          }
+        }
+      }
+    },
     "Select product picture from gallery" : {
       "localizations" : {
         "cs" : {
@@ -75203,6 +75223,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Version du serveur non prise en charge"
+          }
+        }
+      }
+    },
+    "Upload picture" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bild hochladen"
           }
         }
       }
