@@ -32,7 +32,7 @@ class StockProduct: Codable, Equatable {
     var parentProductID: Int?
     var calories: Double?
     var cumulateMinStockAmountOfSubProducts: Bool
-    var dueType: Int
+    var dueType: DueType
     var quickConsumeAmount: Double?
     var quickOpenAmount: Double?
     var hideOnStockOverview: Bool
@@ -107,7 +107,7 @@ class StockProduct: Codable, Equatable {
             self.parentProductID = try container.decodeFlexibleIntIfPresent(forKey: .parentProductID)
             self.calories = try container.decodeFlexibleDoubleIfPresent(forKey: .calories)
             self.cumulateMinStockAmountOfSubProducts = try container.decodeFlexibleBool(forKey: .cumulateMinStockAmountOfSubProducts)
-            self.dueType = try container.decodeFlexibleInt(forKey: .dueType)
+            self.dueType = DueType(rawValue: try container.decodeFlexibleInt(forKey: .dueType))!
             self.quickConsumeAmount = try container.decodeFlexibleDoubleIfPresent(forKey: .quickConsumeAmount)
             self.quickOpenAmount = try container.decodeFlexibleDoubleIfPresent(forKey: .quickOpenAmount)
             self.hideOnStockOverview = try container.decodeFlexibleBool(forKey: .hideOnStockOverview)
@@ -150,7 +150,7 @@ class StockProduct: Codable, Equatable {
         parentProductID: Int? = nil,
         calories: Double? = nil,
         cumulateMinStockAmountOfSubProducts: Bool,
-        dueType: Int,
+        dueType: DueType = .bestBefore,
         quickConsumeAmount: Double? = nil,
         quickOpenAmount: Double? = nil,
         hideOnStockOverview: Bool = false,

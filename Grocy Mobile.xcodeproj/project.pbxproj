@@ -73,6 +73,7 @@
 				Helper/Decoder.swift,
 				Helper/MySymbols.swift,
 				Model/APIError.swift,
+				Model/SharedModel.swift,
 				Model/Stock/ProductStatus.swift,
 				Model/Stock/VolatileStockModel.swift,
 			);

@@ -67,7 +67,7 @@ class VolatileStockElement: Codable, Equatable, Identifiable {
     var amountOpened: Double
     var amountOpenedAggregated: Double
     var isAggregatedAmount: Bool
-    var dueType: Int
+    var dueType: DueType
     var productID: Int
 
     enum CodingKeys: String, CodingKey {
@@ -93,7 +93,7 @@ class VolatileStockElement: Codable, Equatable, Identifiable {
             self.amountOpened = try container.decodeFlexibleDouble(forKey: .amountOpened)
             self.amountOpenedAggregated = try container.decodeFlexibleDouble(forKey: .amountOpenedAggregated)
             self.isAggregatedAmount = try container.decodeFlexibleBool(forKey: .isAggregatedAmount)
-            self.dueType = try container.decodeFlexibleInt(forKey: .dueType)
+            self.dueType = DueType(rawValue: try container.decodeFlexibleInt(forKey: .dueType))!
             self.productID = try container.decodeFlexibleInt(forKey: .productID)
         } catch {
             throw APIError.decodingError(error: error)
@@ -121,7 +121,7 @@ class VolatileStockElement: Codable, Equatable, Identifiable {
         amountOpened: Double = 0.0,
         amountOpenedAggregated: Double = 0.0,
         isAggregatedAmount: Bool = false,
-        dueType: Int,
+        dueType: DueType = .bestBefore,
         productID: Int
     ) {
         self.amount = amount

@@ -18,7 +18,7 @@ class StockElement: Codable, Equatable {
     var amountOpened: Double
     var amountOpenedAggregated: Double
     var isAggregatedAmount: Bool
-    var dueType: Int
+    var dueType: DueType
     var productID: Int
     @Relationship(deleteRule: .nullify) var product: MDProduct?
 
@@ -45,7 +45,7 @@ class StockElement: Codable, Equatable {
             self.amountOpened = try container.decodeFlexibleDouble(forKey: .amountOpened)
             self.amountOpenedAggregated = try container.decodeFlexibleDouble(forKey: .amountAggregated)
             self.isAggregatedAmount = try container.decodeFlexibleBool(forKey: .isAggregatedAmount)
-            self.dueType = try container.decodeFlexibleInt(forKey: .dueType)
+            self.dueType = DueType(rawValue: try container.decodeFlexibleInt(forKey: .dueType))!
             self.productID = try container.decodeFlexibleInt(forKey: .productID)
             self.product = nil
         } catch {
@@ -75,7 +75,7 @@ class StockElement: Codable, Equatable {
         amountOpened: Double = 0.0,
         amountOpenedAggregated: Double = 0.0,
         isAggregatedAmount: Bool = false,
-        dueType: Int = 1,
+        dueType: DueType = .bestBefore,
         productID: Int = -1,
         product: MDProduct
     ) {

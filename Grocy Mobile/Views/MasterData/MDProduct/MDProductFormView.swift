@@ -609,9 +609,9 @@ struct MDProductFormView: View {
                     selection: $product.dueType,
                     content: {
                         Text("Best before date")
-                            .tag(DueType.bestBefore.rawValue)
+                            .tag(DueType.bestBefore)
                         Text("Expiration date")
-                            .tag(DueType.expires.rawValue)
+                            .tag(DueType.expires)
                     }
                 )
                 .pickerStyle(.segmented)

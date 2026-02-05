@@ -25,10 +25,10 @@ struct StockEntryRowView: View {
         if (0..<(userSettings?.stockDueSoonDays ?? 5 + 1)) ~= getTimeDistanceFromNow(date: stockEntry.bestBeforeDate) ?? 100 {
             return Color(.GrocyColors.grocyYellowBackground)
         }
-        if stockElement.dueType == 1 ? (getTimeDistanceFromNow(date: stockEntry.bestBeforeDate) ?? 100 < 0) : false {
+        if stockElement.dueType == .bestBefore ? (getTimeDistanceFromNow(date: stockEntry.bestBeforeDate) ?? 100 < 0) : false {
             return Color(.GrocyColors.grocyGrayBackground)
         }
-        if stockElement.dueType == 2 ? (getTimeDistanceFromNow(date: stockEntry.bestBeforeDate) ?? 100 < 0) : false {
+        if stockElement.dueType == .expires ? (getTimeDistanceFromNow(date: stockEntry.bestBeforeDate) ?? 100 < 0) : false {
             return Color(.GrocyColors.grocyRedBackground)
         }
         return nil
