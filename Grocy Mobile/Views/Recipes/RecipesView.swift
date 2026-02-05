@@ -17,6 +17,11 @@ enum RecipeInteraction: Hashable, Identifiable {
     var id: Self { self }
 }
 
+enum RecipeSortOption: Hashable {
+    case name
+    case dueScore
+}
+
 @Observable
 final class RecipeInteractionNavigationRouter {
     var path: [RecipeInteraction] = []
@@ -38,7 +43,8 @@ struct RecipesView: View {
     @State private var showAddRecipe: Bool = false
     @State private var recipeToDelete: Recipe? = nil
     @State private var showDeleteConfirmation: Bool = false
-    @State private var sortOrder = [KeyPathComparator(\Recipe.name)]
+    @State private var sortOption: RecipeSortOption = .dueScore
+    @State private var sortOrder: SortOrder = .reverse
     @State private var filteredStatus: RecipeStatus = .all
 
     private let dataToUpdate: [ObjectEntities] = [.recipes, .products]
@@ -85,7 +91,23 @@ struct RecipesView: View {
     }
 
     var filteredRecipes: Recipes {
-        getFilteredRecipes(for: filteredStatus).sorted(using: sortOrder)
+        let filtered = getFilteredRecipes(for: filteredStatus)
+        
+        switch sortOption {
+        case .name:
+            return filtered.sorted { recipe1, recipe2 in
+                let comparison = recipe1.name.localizedCaseInsensitiveCompare(recipe2.name)
+                let result = comparison == .orderedAscending
+                return sortOrder == .forward ? result : !result
+            }
+        case .dueScore:
+            return filtered.sorted { recipe1, recipe2 in
+                let fulfillment1 = recipeFulfilments.first(where: { $0.recipeID == recipe1.id })?.dueScore ?? 0
+                let fulfillment2 = recipeFulfilments.first(where: { $0.recipeID == recipe2.id })?.dueScore ?? 0
+                let result = fulfillment1 < fulfillment2
+                return sortOrder == .forward ? result : !result
+            }
+        }
     }
 
     private func getRecipeCount(for status: RecipeStatus) -> Int {
@@ -224,8 +246,61 @@ struct RecipesView: View {
                         )
                     }
                 )
+                ToolbarItem(
+                    placement: .navigation,
+                    content: {
+                        sortMenu
+                    }
+                )
             }
         }
+    }
+
+    var sortMenu: some View {
+        Menu(
+            content: {
+                Picker(
+                    "Sort category",
+                    systemImage: MySymbols.sortCategory,
+                    selection: $sortOption,
+                    content: {
+                        Label("Name", systemImage: MySymbols.product)
+                            .labelStyle(.titleAndIcon)
+                            .tag(RecipeSortOption.name)
+                        Label("Due score", systemImage: MySymbols.amount)
+                            .labelStyle(.titleAndIcon)
+                            .tag(RecipeSortOption.dueScore)
+                    }
+                )
+                #if os(iOS)
+                    .pickerStyle(.menu)
+                #else
+                    .pickerStyle(.inline)
+                #endif
+
+                Picker(
+                    "Sort order",
+                    systemImage: MySymbols.sortOrder,
+                    selection: $sortOrder,
+                    content: {
+                        Label("Ascending", systemImage: MySymbols.sortForward)
+                            .labelStyle(.titleAndIcon)
+                            .tag(SortOrder.forward)
+                        Label("Descending", systemImage: MySymbols.sortReverse)
+                            .labelStyle(.titleAndIcon)
+                            .tag(SortOrder.reverse)
+                    }
+                )
+                #if os(iOS)
+                    .pickerStyle(.menu)
+                #else
+                    .pickerStyle(.inline)
+                #endif
+            },
+            label: {
+                Label("Sort", systemImage: MySymbols.sort)
+            }
+        )
     }
 }
 
