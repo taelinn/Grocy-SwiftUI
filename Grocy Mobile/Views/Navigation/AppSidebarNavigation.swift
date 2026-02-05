@@ -11,7 +11,6 @@ struct AppSidebarNavigation: View {
     @Environment(DeepLinkManager.self) var deepLinkManager
 
     @State private var selection: NavigationItem? = .none
-    @State private var path = NavigationPath()
 
     var body: some View {
         NavigationSplitView(
@@ -19,7 +18,7 @@ struct AppSidebarNavigation: View {
                 Sidebar(selection: $selection)
             },
             detail: {
-                NavigationStack(path: $path) {
+                NavigationStack {
                     Navigation(selection: $selection)
                 }
             }
