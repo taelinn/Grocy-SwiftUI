@@ -53,7 +53,26 @@ extension ModelContainer {
 
         // Create directory if it doesn't exist
         if !fileManager.fileExists(atPath: storeDirectory.path) {
-            try fileManager.createDirectory(at: storeDirectory, withIntermediateDirectories: true, attributes: nil)
+            do {
+                try fileManager.createDirectory(at: storeDirectory, withIntermediateDirectories: true, attributes: nil)
+                GrocyLogger.info("Created store directory at \(storeDirectory.path)")
+            } catch {
+                GrocyLogger.error("Failed to create store directory: \(error)")
+                throw error
+            }
+        }
+
+        // If store file exists but might be corrupted, verify it's valid
+        if fileManager.fileExists(atPath: storeURL.path) {
+            do {
+                let attributes = try fileManager.attributesOfItem(atPath: storeURL.path)
+                if let fileSize = attributes[.size] as? Int, fileSize == 0 {
+                    GrocyLogger.warning("Store file is empty, will be deleted and recreated")
+                    try fileManager.removeItem(at: storeURL)
+                }
+            } catch {
+                GrocyLogger.error("Error checking store file: \(error)")
+            }
         }
     }
 }
@@ -286,7 +305,23 @@ extension ModelContainer {
 func sharedModelContainerURL() -> URL {
     let appGroupID = "group.georgappdev.Grocy"
     guard let sharedContainerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroupID) else {
-        fatalError("Could not access shared app group container")
+        let errorMsg = "Could not access shared app group container. App Groups entitlement might not be configured correctly. Expected identifier: \(appGroupID)"
+        GrocyLogger.error(errorMsg)
+        fatalError(errorMsg)
     }
-    return sharedContainerURL.appending(component: "default.store")
+    
+    let appSupportDir = sharedContainerURL.appending(component: "Library/Application Support")
+    let fileManager = FileManager.default
+    
+    // Ensure Application Support directory exists
+    if !fileManager.fileExists(atPath: appSupportDir.path) {
+        do {
+            try fileManager.createDirectory(at: appSupportDir, withIntermediateDirectories: true, attributes: nil)
+            GrocyLogger.info("Created Application Support directory at \(appSupportDir.path)")
+        } catch {
+            GrocyLogger.error("Failed to create Application Support directory: \(error)")
+        }
+    }
+    
+    return appSupportDir.appending(component: "default.store")
 }
