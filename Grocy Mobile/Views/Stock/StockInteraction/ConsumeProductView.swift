@@ -10,6 +10,7 @@ import SwiftUI
 
 struct ConsumeProductView: View {
     @Environment(GrocyViewModel.self) private var grocyVM
+    @Environment(\.modelContext) private var modelContext
 
     @Query(sort: \MDProduct.name, order: .forward) var mdProducts: MDProducts
     @Query(sort: \MDQuantityUnit.id, order: .forward) var mdQuantityUnits: MDQuantityUnits
@@ -22,6 +23,10 @@ struct ConsumeProductView: View {
     @Query var userSettingsList: GrocyUserSettingsList
     var userSettings: GrocyUserSettings? {
         userSettingsList.first
+    }
+    @Query(sort: \Recipe.name) var allRecipes: Recipes
+    var recipes: Recipes {
+        allRecipes.filter { $0.type == .normal }
     }
 
     @Environment(\.dismiss) var dismiss
@@ -300,34 +305,24 @@ struct ConsumeProductView: View {
                         MyToggle(isOn: $spoiled, description: "Spoiled", icon: MySymbols.spoiled)
                     }
 
-                    if devMode {
-                        HStack {
-                            Picker(
-                                selection: $recipeID,
-                                label: Label("Recipe", systemImage: "tag"),
-                                content: {
-                                    Text("Not implemented").tag(nil as Int?)
-                                }
-                            )
-                            #if os(macOS)
-                                Image(systemName: "questionmark.circle.fill")
-                                    .help("This is for statistical purposes only")
-                            #elseif os(iOS)
-                                Image(systemName: "questionmark.circle.fill")
-                                    .onTapGesture {
-                                        showRecipeInfo.toggle()
-                                    }
-                                    .help("This is for statistical purposes only")
-                                    .popover(
-                                        isPresented: $showRecipeInfo,
-                                        content: {
-                                            Text("This is for statistical purposes only")
-                                                .padding()
-                                        }
-                                    )
-                            #endif
+                    Picker(
+                        selection: $recipeID,
+                        label: Label {
+                            HStack {
+                                Text("Recipe")
+                                FieldDescription(description: "This is for statistical purposes only")
+                            }
+                        } icon: {
+                            Image(systemName: MySymbols.recipe)
+                                .foregroundStyle(.primary)
+                        },
+                        content: {
+                            Text("").tag(nil as Int?)
+                            ForEach(recipes, id: \.id) { recipe in
+                                Text(recipe.name).tag(recipe.id as Int?)
+                            }
                         }
-                    }
+                    )
 
                     if productID != nil {
                         MyToggle(
