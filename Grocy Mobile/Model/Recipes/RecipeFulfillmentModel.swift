@@ -13,8 +13,8 @@ class RecipeFulfilment: Codable, Identifiable {
     @Attribute(.unique) var id: UUID
     var equalID: Int
     var recipeID: Int
-    var needFulfilled: Int?
-    var needFulfilledWithShoppingList: Int?
+    var needFulfilled: Bool
+    var needFulfilledWithShoppingList: Bool
     var missingProductsCount: Int?
     var costs: Double?
     var costsPerServing: Double?
@@ -42,8 +42,8 @@ class RecipeFulfilment: Codable, Identifiable {
             self.id = UUID()
             self.equalID = try container.decodeFlexibleInt(forKey: .equalID)
             self.recipeID = try container.decodeFlexibleInt(forKey: .recipeID)
-            self.needFulfilled = try container.decodeFlexibleIntIfPresent(forKey: .needFulfilled)
-            self.needFulfilledWithShoppingList = try container.decodeFlexibleIntIfPresent(forKey: .needFulfilledWithShoppingList)
+            self.needFulfilled = try container.decodeFlexibleBool(forKey: .needFulfilled)
+            self.needFulfilledWithShoppingList = try container.decodeFlexibleBool(forKey: .needFulfilledWithShoppingList)
             self.missingProductsCount = try container.decodeFlexibleIntIfPresent(forKey: .missingProductsCount)
             self.costs = try container.decodeFlexibleDoubleIfPresent(forKey: .costs)
             self.costsPerServing = try container.decodeFlexibleDoubleIfPresent(forKey: .costsPerServing)
@@ -58,8 +58,8 @@ class RecipeFulfilment: Codable, Identifiable {
     init(
         equalID: Int = 1,
         recipeID: Int,
-        needFulfilled: Int? = 0,
-        needFulfilledWithShoppingList: Int? = 0,
+        needFulfilled: Bool = false,
+        needFulfilledWithShoppingList: Bool = false,
         missingProductsCount: Int? = nil,
         costs: Double? = nil,
         costsPerServing: Double? = nil,

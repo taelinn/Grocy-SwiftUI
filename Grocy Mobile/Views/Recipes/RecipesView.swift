@@ -39,6 +39,7 @@ struct RecipesView: View {
     @State private var recipeToDelete: Recipe? = nil
     @State private var showDeleteConfirmation: Bool = false
     @State private var sortOrder = [KeyPathComparator(\Recipe.name)]
+    @State private var filteredStatus: RecipeStatus = .all
 
     private let dataToUpdate: [ObjectEntities] = [.recipes, .products]
     private let additionalDataToUpdate: [AdditionalEntities] = [.recipeFulfillments]
@@ -63,21 +64,54 @@ struct RecipesView: View {
         }
     }
 
-    var filteredRecipes: Recipes {
+    private func getFilteredRecipes(for status: RecipeStatus) -> Recipes {
         recipes
-            .filter({
-                $0.type == .normal
+            .filter({ $0.type == .normal })
+            .filter({ searchString.isEmpty ? true : $0.name.localizedCaseInsensitiveContains(searchString) })
+            .filter({ recipe in
+                let fulfillment = recipeFulfilments.first(where: { $0.recipeID == recipe.id })
+
+                switch status {
+                case .all:
+                    return true
+                case .enoughInStock:
+                    return fulfillment?.needFulfilled == true
+                case .alreadyOnShoppingList:
+                    return fulfillment?.needFulfilledWithShoppingList == true && fulfillment?.needFulfilled != true
+                case .notEnoughInStock:
+                    return fulfillment?.needFulfilled != true && fulfillment?.needFulfilledWithShoppingList != true
+                }
             })
-            .filter({
-                searchString.isEmpty ? true : $0.name.localizedCaseInsensitiveContains(searchString)
-            })
-            .sorted(using: sortOrder)
+    }
+
+    var filteredRecipes: Recipes {
+        getFilteredRecipes(for: filteredStatus).sorted(using: sortOrder)
+    }
+
+    private func getRecipeCount(for status: RecipeStatus) -> Int {
+        getFilteredRecipes(for: status).count
+    }
+
+    var enoughInStockCount: Int {
+        getRecipeCount(for: .enoughInStock)
+    }
+
+    var alreadyOnShoppingListCount: Int {
+        getRecipeCount(for: .alreadyOnShoppingList)
+    }
+
+    var notEnoughInStockCount: Int {
+        getRecipeCount(for: .notEnoughInStock)
     }
 
     var body: some View {
         NavigationStack(path: $recipeInteractionRouter.path) {
             ScrollView {
                 VStack(spacing: 8) {
+                    Section {
+                        RecipeFilterActionsView(filteredStatus: $filteredStatus, enoughInStockCount: enoughInStockCount, alreadyOnShoppingListCount: alreadyOnShoppingListCount, notEnoughInStockCount: notEnoughInStockCount)
+                            .listRowInsets(EdgeInsets())
+                    }
                     ForEach(filteredRecipes, id: \.id) { recipe in
                         NavigationLink(
                             value: RecipeInteraction.showRecipe(recipe: recipe),

@@ -71,7 +71,7 @@ struct RecipeRowView: View {
 
                     Spacer()
 
-                    if fulfillment?.needFulfilled == 1 {
+                    if fulfillment?.needFulfilled == true {
                         VStack(alignment: .trailing) {
                             Image(systemName: "checkmark.circle.fill")
                                 .foregroundStyle(.green)
@@ -80,7 +80,7 @@ struct RecipeRowView: View {
                                 .font(.caption)
                                 .fixedSize(horizontal: false, vertical: true)
                         }
-                    } else if fulfillment?.needFulfilledWithShoppingList == 1 {
+                    } else if fulfillment?.needFulfilledWithShoppingList == true {
                         VStack(alignment: .trailing) {
                             Image(systemName: "exclamationmark.circle.fill")
                                 .foregroundStyle(.yellow)
@@ -112,8 +112,8 @@ struct RecipeRowView: View {
 #Preview(traits: .previewData) {
     ScrollView {
         VStack {
-            RecipeRowView(recipe: Recipe(id: 1, name: "Pasta Carbonara"), fulfillment: RecipeFulfilment(recipeID: 1, needFulfilled: 1, dueScore: 10))
-            RecipeRowView(recipe: Recipe(id: 2, name: "Vegetable Stir Fry"), fulfillment: RecipeFulfilment(recipeID: 2, needFulfilledWithShoppingList: 1, missingProductsCount: 5))
+            RecipeRowView(recipe: Recipe(id: 1, name: "Pasta Carbonara"), fulfillment: RecipeFulfilment(recipeID: 1, needFulfilled: true, dueScore: 10))
+            RecipeRowView(recipe: Recipe(id: 2, name: "Vegetable Stir Fry"), fulfillment: RecipeFulfilment(recipeID: 2, needFulfilledWithShoppingList: true, missingProductsCount: 5))
             RecipeRowView(recipe: Recipe(id: 3, name: "Chocolate Cake"), fulfillment: RecipeFulfilment(recipeID: 3, missingProductsCount: 3))
         }
         .padding()
