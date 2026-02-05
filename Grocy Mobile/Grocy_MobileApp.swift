@@ -256,11 +256,15 @@ struct Grocy_MobileApp: App {
         #if os(macOS)
             Settings {
                 if !onboardingNeeded, isLoggedIn {
-                    SettingsView()
-                        .environment(grocyVM)
-                        .modelContainer(modelContainer)
-                        .modelContainer(profileModelContainer)
-                        .environment(\.profileModelContext, ModelContext(profileModelContainer))
+                    NavigationStack {
+                        SettingsView()
+                    }
+                    .modelContainer(modelContainer)
+                    .modelContainer(profileModelContainer)
+                    .environment(grocyVM)
+                    .environment(\.profileModelContext, ModelContext(profileModelContainer))
+                    .environment(\.profileModelContainer, profileModelContainer)
+                    .environment(\.locale, Locale(identifier: localizationKey))
                 }
             }
         #endif

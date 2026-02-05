@@ -53,7 +53,7 @@ struct MDProductPictureFormView: View {
                         return
                     }
                 #elseif os(macOS)
-                    guard let cgImage = imagePicture?.cgImage(forProposedRect: nil, context: nil, hints: nil) else {
+                    guard let cgImage = unsafe imagePicture?.cgImage(forProposedRect: nil, context: nil, hints: nil) else {
                         isProcessing = false
                         return
                     }
