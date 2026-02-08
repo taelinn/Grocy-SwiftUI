@@ -55,12 +55,6 @@
 		78B01C1F2DFF826D0080C814 /* Grocy Mobile.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Grocy Mobile.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		78B01C2D2DFF826F0080C814 /* Grocy MobileTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Grocy MobileTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		78B01C372DFF826F0080C814 /* Grocy MobileUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Grocy MobileUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		BB395B4A2F38EF120042625A /* AppIcon-BlackOnOrange@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AppIcon-BlackOnOrange@2x.png"; sourceTree = "<group>"; };
-		BB395B4B2F38EF120042625A /* AppIcon-BlackOnOrange@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AppIcon-BlackOnOrange@3x.png"; sourceTree = "<group>"; };
-		BB395B4C2F38EF120042625A /* AppIcon-BlueOnWhite@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AppIcon-BlueOnWhite@2x.png"; sourceTree = "<group>"; };
-		BB395B4D2F38EF120042625A /* AppIcon-BlueOnWhite@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AppIcon-BlueOnWhite@3x.png"; sourceTree = "<group>"; };
-		BB395B4E2F38EF120042625A /* AppIcon-OrangeOnBlack@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AppIcon-OrangeOnBlack@2x.png"; sourceTree = "<group>"; };
-		BB395B4F2F38EF120042625A /* AppIcon-OrangeOnBlack@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AppIcon-OrangeOnBlack@3x.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -160,12 +154,6 @@
 				789BAF3B2EE444FB00C82475 /* Grocy Widget */,
 				78CB749B255E9EF800319108 /* Products */,
 				78B868D22590B19B005A0CAF /* Frameworks */,
-				BB395B4C2F38EF120042625A /* AppIcon-BlueOnWhite@2x.png */,
-				BB395B4D2F38EF120042625A /* AppIcon-BlueOnWhite@3x.png */,
-				BB395B4E2F38EF120042625A /* AppIcon-OrangeOnBlack@2x.png */,
-				BB395B4F2F38EF120042625A /* AppIcon-OrangeOnBlack@3x.png */,
-				BB395B4A2F38EF120042625A /* AppIcon-BlackOnOrange@2x.png */,
-				BB395B4B2F38EF120042625A /* AppIcon-BlackOnOrange@3x.png */,
 			);
 			sourceTree = "<group>";
 		};
