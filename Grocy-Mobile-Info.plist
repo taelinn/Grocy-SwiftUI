@@ -15,17 +15,5 @@
 	<array>
 		<string>remote-notification</string>
 	</array>
-	<key>CFBundleIcons</key>
-	<dict>
-		<key>CFBundleAlternateIcons</key>
-		<dict>
-			<key>AppIcon-BlueOnWhite</key>
-			<dict/>
-			<key>AppIcon-OrangeOnBlack</key>
-			<dict/>
-			<key>AppIcon-BlackOnOrange</key>
-			<dict/>
-		</dict>
-	</dict>
 </dict>
 </plist>
