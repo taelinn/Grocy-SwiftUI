@@ -57,6 +57,7 @@ struct PurchaseProductView: View {
     @State private var locationID: Int = -1
     @State private var note: String = ""
     @State private var selfProduction: Bool = false
+    @State private var printLabel: Bool = false
 
     private let dataToUpdate: [ObjectEntities] = [.products, .quantity_units, .quantity_unit_conversions, .locations, .shopping_locations, .product_barcodes]
     private let additionalDataToUpdate: [AdditionalEntities] = [.system_config, .system_info]
@@ -137,13 +138,15 @@ struct PurchaseProductView: View {
         let noteText = note.isEmpty ? nil : note
         let purchasePrice = selfProduction ? nil : unitPrice
         let purchaseStoreID = selfProduction ? nil : storeID
-        let purchaseInfo = ProductBuy(amount: factoredAmount, bestBeforeDate: strDueDate, transactionType: selfProduction ? .selfProduction : .purchase, price: purchasePrice, locationID: locationID, storeID: purchaseStoreID, note: noteText)
+        let stockLabelType = printLabel ? 2 : nil
+        let purchaseInfo = ProductBuy(amount: factoredAmount, bestBeforeDate: strDueDate, transactionType: selfProduction ? .selfProduction : .purchase, price: purchasePrice, locationID: locationID, storeID: purchaseStoreID, note: noteText, stockLabelType: stockLabelType)
         if let productID = productID {
             isProcessingAction = true
             isSuccessful = nil
             do {
                 try await grocyVM.postStockObject(id: productID, stockModePost: .add, content: purchaseInfo)
                 GrocyLogger.info("Purchase \(product?.name ?? String(productID)) successful.")
+                
                 await grocyVM.requestData(additionalObjects: [.stock, .volatileStock])
                 isSuccessful = true
                 if autoPurchase || quickScan || productToPurchaseID != nil {
@@ -281,6 +284,8 @@ struct PurchaseProductView: View {
                 MyTextField(textToEdit: $note, description: "Note", isCorrect: Binding.constant(true), leadingIcon: MySymbols.description)
 
                 MyToggle(isOn: $selfProduction, description: "Self-production", icon: MySymbols.selfProduction)
+                
+                MyToggle(isOn: $printLabel, description: "Print label", icon: "printer")
             }
         }
         .navigationTitle("Purchase")

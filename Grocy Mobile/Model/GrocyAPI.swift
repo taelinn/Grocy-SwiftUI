@@ -99,6 +99,7 @@ protocol GrocyAPI {
     func postStock<T: Codable>(id: Int, content: Data, stockModePost: StockProductPost) async throws -> T
     func getBookingWithID(id: Int) async throws -> StockJournalEntry
     func undoBookingWithID(id: Int) async throws
+    func printStockEntryLabel(entryID: Int) async throws
     func getPictureURL(groupName: String, fileName: String) async throws -> String?
     func externalBarcodeLookup(barcode: String) async throws -> ExternalBarcodeLookup?
     // MARK: - Shopping List
@@ -110,6 +111,9 @@ protocol GrocyAPI {
     func getObjectWithID<T: Codable>(object: ObjectEntities, id: Int) async throws -> T
     func putObjectWithID(object: ObjectEntities, id: Int, content: Data) async throws
     func deleteObjectWithID(object: ObjectEntities, id: Int) async throws
+    // MARK: - UserFields
+    func getUserfields(entity: ObjectEntities, objectId: Int) async throws -> [String: String?]
+    func putUserfields(entity: ObjectEntities, objectId: Int, content: Data) async throws
     // MARK: - Files
     func getFile(fileName: String, groupName: String, bestFitHeight: Int?, bestFitWidth: Int?) async throws -> Data
     func putFile(fileURL: URL, fileName: String, groupName: String) async throws
@@ -644,6 +648,10 @@ extension GrocyApi {
     func undoBookingWithID(id: Int) async throws {
         return try await callEmptyResponse(.stockBookingWithIdUndo, method: .POST, id: String(id))
     }
+    
+    func printStockEntryLabel(entryID: Int) async throws {
+        return try await callEmptyResponse(.stockEntryWithIDPrintlabel, method: .GET, id: String(entryID))
+    }
 
     func getPictureURL(groupName: String, fileName: String) -> String? {
         let filepath = request(for: .filesGroupFilename, method: .GET, fileName: fileName, groupName: groupName, queries: ["force_serve_as=picture"]).url?.absoluteString
@@ -699,6 +707,16 @@ extension GrocyApi {
 
     func deleteObjectWithID(object: ObjectEntities, id: Int) async throws {
         return try await callEmptyResponse(.objectsEntityWithID, method: .DELETE, object: object, id: String(id))
+    }
+
+    // MARK: - UserFields
+    
+    func getUserfields(entity: ObjectEntities, objectId: Int) async throws -> [String: String?] {
+        return try await call(.userfieldsEntity, method: .GET, object: entity, id: String(objectId))
+    }
+    
+    func putUserfields(entity: ObjectEntities, objectId: Int, content: Data) async throws {
+        return try await callEmptyResponse(.userfieldsEntity, method: .PUT, object: entity, id: String(objectId), content: content)
     }
 
     // MARK: - Files

@@ -10,6 +10,8 @@ import SwiftUI
 
 private enum TabNavigationItem: String, Codable {
     case quickScanMode = "quickScanMode"
+    case barcodeBuddy = "barcodeBuddy"
+    case quickAdd = "quickAdd"
     case stockOverview = "stockOverview"
     case stockJournal = "stockJournal"
     case shoppingList = "shoppingList"
@@ -43,6 +45,8 @@ struct AppTabNavigation: View {
     @AppStorage("devMode") private var devMode: Bool = false
 
     @AppStorage("enableQuickScan") var enableQuickScan: Bool = true
+    @AppStorage("enableQuickAdd") var enableQuickAdd: Bool = true
+    @AppStorage("enableBarcodeBuddy") var enableBarcodeBuddy: Bool = true
     @AppStorage("enableStockOverview") var enableStockOverview: Bool = true
     @AppStorage("enableShoppingList") var enableShoppingList: Bool = true
     @AppStorage("enableRecipes") var enableRecipes: Bool = true
@@ -56,9 +60,30 @@ struct AppTabNavigation: View {
     var systemConfig: SystemConfig? {
         systemConfigList.first
     }
+    
+    @State private var tabOrderManager = TabOrderManager()
 
+    @ViewBuilder
     var body: some View {
+        #if os(iOS)
+        if horizontalSizeClass == .compact {
+            // iPhone: Dynamic tabs based on user's custom order
+            iPhoneTabView
+        } else {
+            // iPad: Traditional fixed layout with sections
+            iPadTabView
+        }
+        #else
+        // macOS: Traditional layout
+        macOSTabView
+        #endif
+    }
+    
+    // MARK: - iPhone TabView
+    
+    private var iPhoneTabView: some View {
         TabView(selection: $tabSelection) {
+            // Fixed 5 tabs - no "More" menu
             Tab("Quick Scan", systemImage: MySymbols.barcodeScan, value: TabNavigationItem.quickScanMode) {
                 NavigationStack {
                     QuickScanModeView()
@@ -66,76 +91,133 @@ struct AppTabNavigation: View {
             }
             .customizationID("georgappdev.Grocy.quickScanMode")
             .hidden(!enableQuickScan)
-
-            Tab("Stock overview", systemImage: MySymbols.stockOverview, value: TabNavigationItem.stockOverview) {
+            
+            Tab("Quick Add", systemImage: "bolt.fill", value: TabNavigationItem.quickAdd) {
                 NavigationStack {
-                    StockView()
+                    QuickAddTabView()
                 }
+            }
+            .customizationID("com.roadworkstechnology.grocymobile.quickAdd")
+            .hidden(!enableQuickAdd)
+            
+            Tab("Barcodes", systemImage: "barcode.viewfinder", value: TabNavigationItem.barcodeBuddy) {
+                BarcodeBuddyTabView()
+            }
+            .customizationID("georgappdev.Grocy.barcodeBuddy")
+            .hidden(!enableBarcodeBuddy)
+            
+            Tab("Stock", systemImage: MySymbols.stockOverview, value: TabNavigationItem.stockOverview) {
+                StockView()
             }
             .customizationID("georgappdev.Grocy.stockOverview")
-            .hidden(systemConfig?.featureFlagStock == false || !enableStockOverview)
+            
+            Tab("Settings", systemImage: MySymbols.settings, value: TabNavigationItem.settings) {
+                SettingsView()
+            }
+        }
+        .tabBarMinimizeBehavior(.onScrollDown)
+        .onAppear {
+            Task {
+                await grocyVM.requestData(additionalObjects: [.system_config])
+            }
+            if deepLinkManager.pendingStockFilter != nil {
+                tabSelection = .stockOverview
+            }
+        }
+        .onChange(of: deepLinkManager.pendingStockFilter) { _, newValue in
+            if newValue != nil {
+                tabSelection = .stockOverview
+            }
+        }
+    }
+    
+    // MARK: - iPad/macOS TabView
+    
+    private var iPadTabView: some View {
+        tabViewContent
+    }
+    
+    private var macOSTabView: some View {
+        tabViewContent
+    }
+    
+    private var tabViewContent: some View {
+        TabView(selection: $tabSelection) {
+            Group {
+                Tab("Quick Scan", systemImage: MySymbols.barcodeScan, value: TabNavigationItem.quickScanMode) {
+                    NavigationStack {
+                        QuickScanModeView()
+                    }
+                }
+                .customizationID("georgappdev.Grocy.quickScanMode")
+                .hidden(!enableQuickScan)
+                
+                Tab("Quick Add", systemImage: "bolt.fill", value: TabNavigationItem.quickAdd) {
+                    NavigationStack {
+                        QuickAddTabView()
+                    }
+                }
+                .customizationID("com.roadworkstechnology.grocymobile.quickAdd")
+                .hidden(!enableQuickAdd)
 
-            Tab("Shopping list", systemImage: MySymbols.shoppingList, value: TabNavigationItem.shoppingList) {
-                NavigationStack {
+                Tab("Barcodes", systemImage: "barcode.viewfinder", value: TabNavigationItem.barcodeBuddy) {
+                    BarcodeBuddyTabView()
+                }
+                .customizationID("georgappdev.Grocy.barcodeBuddy")
+                .hidden(!enableBarcodeBuddy)
+
+                Tab("Stock overview", systemImage: MySymbols.stockOverview, value: TabNavigationItem.stockOverview) {
+                    StockView()
+                }
+                .customizationID("georgappdev.Grocy.stockOverview")
+                .hidden(systemConfig?.featureFlagStock == false || !enableStockOverview)
+
+                Tab("Shopping list", systemImage: MySymbols.shoppingList, value: TabNavigationItem.shoppingList) {
                     ShoppingListView()
                 }
-            }
-            .customizationID("georgappdev.Grocy.shoppingList")
-            .hidden(systemConfig?.featureFlagShoppinglist == false || !enableShoppingList)
+                .customizationID("georgappdev.Grocy.shoppingList")
+                .hidden(systemConfig?.featureFlagShoppinglist == false || !enableShoppingList)
 
-            Tab("Recipes", systemImage: MySymbols.recipe, value: TabNavigationItem.recipes) {
-                NavigationStack {
+                Tab("Recipes", systemImage: MySymbols.recipe, value: TabNavigationItem.recipes) {
                     RecipesView()
                 }
-            }
-            .customizationID("georgappdev.Grocy.recipes")
-            .hidden(systemConfig?.featureFlagRecipes == false || !enableRecipes)
+                .customizationID("georgappdev.Grocy.recipes")
+                .hidden(systemConfig?.featureFlagRecipes == false || !enableRecipes)
 
-            Tab("Chores overview", systemImage: MySymbols.chores, value: TabNavigationItem.chores) {
-                NavigationStack {
+                Tab("Chores overview", systemImage: MySymbols.chores, value: TabNavigationItem.chores) {
                     ChoresView()
                 }
-            }
-            .customizationID("georgappdev.Grocy.chores")
-            .hidden(systemConfig?.featureFlagChores == false || !enableChores)
+                .customizationID("georgappdev.Grocy.chores")
+                .hidden(systemConfig?.featureFlagChores == false || !enableChores)
 
-            Tab("Tasks", systemImage: MySymbols.tasks, value: TabNavigationItem.tasks) {
-                NavigationStack {
+                Tab("Tasks", systemImage: MySymbols.tasks, value: TabNavigationItem.tasks) {
                     TasksView()
                 }
+                .customizationID("georgappdev.Grocy.tasks")
+                .hidden(systemConfig?.featureFlagTasks == false || !enableTasks)
             }
-            .customizationID("georgappdev.Grocy.tasks")
-            .hidden(systemConfig?.featureFlagTasks == false || !enableTasks)
 
             if horizontalSizeClass != .compact {
                 TabSection(
                     "Stock interaction",
                     content: {
                         Tab("Purchase", systemImage: MySymbols.purchase, value: TabNavigationItem.purchaseProduct) {
-                            NavigationStack {
-                                PurchaseProductView()
-                            }
+                            PurchaseProductView()
                         }
                         .customizationID("georgappdev.Grocy.purchaseProduct")
 
                         Tab("Consume", systemImage: MySymbols.consume, value: TabNavigationItem.consumeProduct) {
-                            NavigationStack {
-                                ConsumeProductView()
-                            }
+                            ConsumeProductView()
                         }
                         .customizationID("georgappdev.Grocy.consumeProduct")
 
                         Tab("Transfer", systemImage: MySymbols.transfer, value: TabNavigationItem.transferProduct) {
-                            NavigationStack {
-                                TransferProductView()
-                            }
+                            TransferProductView()
                         }
                         .customizationID("georgappdev.Grocy.transferProduct")
 
                         Tab("Inventory", systemImage: MySymbols.inventory, value: TabNavigationItem.inventoryProduct) {
-                            NavigationStack {
-                                InventoryProductView()
-                            }
+                            InventoryProductView()
                         }
                         .customizationID("georgappdev.Grocy.inventoryProduct")
                     }
@@ -150,55 +232,40 @@ struct AppTabNavigation: View {
                     "Master data",
                     content: {
                         Tab("Products", systemImage: MySymbols.product, value: TabNavigationItem.mdProducts) {
-                            NavigationStack {
-                                MDProductsView()
-                            }
+                            MDProductsView()
                         }
                         .customizationID("georgappdev.Grocy.mdProducts")
-                        //                    .badge(5)
 
                         Tab("Locations", systemImage: MySymbols.location, value: TabNavigationItem.mdLocations) {
-                            NavigationStack {
-                                MDLocationsView()
-                            }
+                            MDLocationsView()
                         }
                         .customizationID("georgappdev.Grocy.mdLocations")
                         .hidden(systemConfig?.featureFlagStock == false)
 
                         Tab("Stores", systemImage: MySymbols.store, value: TabNavigationItem.mdStores) {
-                            NavigationStack {
-                                MDStoresView()
-                            }
+                            MDStoresView()
                         }
                         .customizationID("georgappdev.Grocy.mdStores")
                         .hidden(systemConfig?.featureFlagStock == false)
 
                         Tab("Quantity units", systemImage: MySymbols.quantityUnit, value: TabNavigationItem.mdQuantityUnits) {
-                            NavigationStack {
-                                MDQuantityUnitsView()
-                            }
+                            MDQuantityUnitsView()
                         }
                         .customizationID("georgappdev.Grocy.mdQuantityUnits")
 
                         Tab("Product groups", systemImage: MySymbols.productGroup, value: TabNavigationItem.mdProductGroups) {
-                            NavigationStack {
-                                MDProductGroupsView()
-                            }
+                            MDProductGroupsView()
                         }
                         .customizationID("georgappdev.Grocy.mdProductGroups")
 
                         Tab("Chores", systemImage: MySymbols.chores, value: TabNavigationItem.mdChores) {
-                            NavigationStack {
-                                MDChoresView()
-                            }
+                            MDChoresView()
                         }
                         .customizationID("georgappdev.Grocy.mdChores")
                         .hidden(systemConfig?.featureFlagChores == false)
 
                         Tab("Task categories", systemImage: MySymbols.tasks, value: TabNavigationItem.mdTaskCategories) {
-                            NavigationStack {
-                                MDTaskCategoriesView()
-                            }
+                            MDTaskCategoriesView()
                         }
                         .customizationID("georgappdev.Grocy.mdTaskCategories")
                         .hidden(systemConfig?.featureFlagTasks == false)
@@ -208,25 +275,22 @@ struct AppTabNavigation: View {
                 .customizationID("georgappdev.Grocy.masterDataSection")
             }
 
-            Tab("Master data", systemImage: MySymbols.masterData, value: TabNavigationItem.masterData) {
-                NavigationStack {
+            Group {
+                Tab("Master data", systemImage: MySymbols.masterData, value: TabNavigationItem.masterData) {
                     MasterDataView()
                 }
-            }
-            .hidden(!enableMasterData)
-            #if os(iOS)
-                .defaultVisibility(.hidden, for: .sidebar)
-            #endif
-            .customizationID("georgappdev.Grocy.masterData")
+                .hidden(!enableMasterData)
+                #if os(iOS)
+                    .defaultVisibility(.hidden, for: .sidebar)
+                #endif
+                .customizationID("georgappdev.Grocy.masterData")
 
-            #if os(iOS)
+                #if os(iOS)
                 Tab("Settings", systemImage: MySymbols.settings, value: TabNavigationItem.settings) {
-                    NavigationStack {
-                        SettingsView()
-                    }
+                    SettingsView()
                 }
-                .customizationID("georgappdev.Grocy.settings")
-            #endif
+                #endif
+            }
         }
         .tabViewStyle(.sidebarAdaptable)
         .tabViewCustomization($appTabCustomization)
@@ -252,6 +316,90 @@ struct AppTabNavigation: View {
             }
         }
     }
+    
+    // MARK: - Computed Properties
+    
+    /// Get ordered and enabled tabs for iPhone
+    private var orderedTabs: [TabDefinition] {
+        tabOrderManager.getEnabledTabs(systemConfig: systemConfig)
+    }
+    
+    
+    // MARK: - Helper Methods
+    
+    /// Create a tab based on tab definition
+    @TabContentBuilder<TabNavigationItem>
+    private func createTab(for tabDef: TabDefinition) -> some TabContent<TabNavigationItem> {
+        switch tabDef.id {
+        case "quickScan":
+            Tab(tabDef.name, systemImage: tabDef.icon, value: TabNavigationItem.quickScanMode) {
+                NavigationStack {
+                    QuickScanModeView()
+                }
+            }
+            .customizationID("georgappdev.Grocy.quickScanMode")
+            
+        case "quickAdd":
+            Tab(tabDef.name, systemImage: tabDef.icon, value: TabNavigationItem.quickAdd) {
+                QuickAddTabView()
+            }
+            .customizationID("com.roadworkstechnology.grocymobile.quickAdd")
+            
+        case "barcodeBuddy":
+            Tab(tabDef.name, systemImage: tabDef.icon, value: TabNavigationItem.barcodeBuddy) {
+                BarcodeBuddyTabView()
+            }
+            .customizationID("georgappdev.Grocy.barcodeBuddy")
+            
+        case "stockOverview":
+            Tab(tabDef.name, systemImage: tabDef.icon, value: TabNavigationItem.stockOverview) {
+                StockView()
+            }
+            .customizationID("georgappdev.Grocy.stockOverview")
+            
+        case "shoppingList":
+            Tab(tabDef.name, systemImage: tabDef.icon, value: TabNavigationItem.shoppingList) {
+                ShoppingListView()
+            }
+            .customizationID("georgappdev.Grocy.shoppingList")
+            
+        case "recipes":
+            Tab(tabDef.name, systemImage: tabDef.icon, value: TabNavigationItem.recipes) {
+                RecipesView()
+            }
+            .customizationID("georgappdev.Grocy.recipes")
+            
+        case "chores":
+            Tab(tabDef.name, systemImage: tabDef.icon, value: TabNavigationItem.chores) {
+                ChoresView()
+            }
+            .customizationID("georgappdev.Grocy.chores")
+            
+        case "tasks":
+            Tab(tabDef.name, systemImage: tabDef.icon, value: TabNavigationItem.tasks) {
+                TasksView()
+            }
+            .customizationID("georgappdev.Grocy.tasks")
+            
+        case "masterData":
+            Tab(tabDef.name, systemImage: tabDef.icon, value: TabNavigationItem.masterData) {
+                MasterDataView()
+            }
+            .customizationID("georgappdev.Grocy.masterData")
+            
+        case "settings":
+            Tab(tabDef.name, systemImage: tabDef.icon, value: TabNavigationItem.settings) {
+                SettingsView()
+            }
+            
+        default:
+            Tab("Unknown", systemImage: "questionmark", value: TabNavigationItem.stockOverview) {
+                Text("Unknown tab: \(tabDef.id)")
+            }
+        }
+    }
+    
+
 }
 
 #Preview {

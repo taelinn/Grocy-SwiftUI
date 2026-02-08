@@ -130,6 +130,8 @@ struct Grocy_MobileApp: App {
             ChoreDetails.self,
             GrocyTask.self,
             RecipeNesting.self,
+            QuickAddFavorite.self,
+            BarcodeBuddyCache.self,
         ])
 
         // Profile container schema (ServerProfile and LoginCustomHeader with iCloud sync)
@@ -140,14 +142,14 @@ struct Grocy_MobileApp: App {
 
         let mainConfig = ModelConfiguration(
             schema: mainSchema,
-            groupContainer: .identifier("group.georgappdev.Grocy"),
+            groupContainer: .identifier("group.com.roadworkstechnology.grocymobile"),
             cloudKitDatabase: .none
         )
         let profileConfig = ModelConfiguration(
             schema: profileSchema,
             url: URL.applicationSupportDirectory.appending(component: "profiles.store"),
             allowsSave: true,
-            cloudKitDatabase: isRunningOnSimulator() ? .none : .private("iCloud.georgappdev.Grocy")
+            cloudKitDatabase: isRunningOnSimulator() ? .none : .private("iCloud.com.roadworkstechnology.grocymobile")
         )
 
         // Initialize profile container
@@ -303,7 +305,7 @@ extension ModelContainer {
 }
 
 func sharedModelContainerURL() -> URL {
-    let appGroupID = "group.georgappdev.Grocy"
+    let appGroupID = "group.com.roadworkstechnology.grocymobile"
     guard let sharedContainerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroupID) else {
         let errorMsg = "Could not access shared app group container. App Groups entitlement might not be configured correctly. Expected identifier: \(appGroupID)"
         GrocyLogger.error(errorMsg)

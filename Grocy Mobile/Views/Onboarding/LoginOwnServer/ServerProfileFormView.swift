@@ -132,7 +132,7 @@ struct ServerProfileFormView: View {
 
                 MyTextField(
                     textToEdit: $serverProfile.grocyAPIKey,
-                    description: "Valid API key",
+                    description: "API Key",
                     isCorrect: Binding.constant(true),
                     leadingIcon: "key",
                     helpText: "API key for the user which is shown in the Manage API keys webview. If none exist, you need to create a new one."
@@ -192,6 +192,41 @@ struct ServerProfileFormView: View {
                     )
                 #endif
             }
+            
+            Section("BarcodeBuddy (Optional)") {
+                MyTextField(
+                    textToEdit: Binding(
+                        get: { serverProfile.barcodeBuddyURL ?? "" },
+                        set: { serverProfile.barcodeBuddyURL = $0.isEmpty ? nil : $0 }
+                    ),
+                    description: "URL",
+                    isCorrect: Binding.constant(true),
+                    leadingIcon: "network",
+                    helpText: "URL of your BarcodeBuddy instance (e.g., http://192.168.1.100:8080)"
+                )
+                .textContentType(.URL)
+                #if os(iOS)
+                    .keyboardType(.URL)
+                    .textInputAutocapitalization(.never)
+                #endif
+                .autocorrectionDisabled(true)
+                
+                MyTextField(
+                    textToEdit: Binding(
+                        get: { serverProfile.barcodeBuddyAPIKey ?? "" },
+                        set: { serverProfile.barcodeBuddyAPIKey = $0.isEmpty ? nil : $0 }
+                    ),
+                    description: "API Key",
+                    isCorrect: Binding.constant(true),
+                    leadingIcon: "key",
+                    helpText: "API key for BarcodeBuddy (found in Settings > API)"
+                )
+                .autocorrectionDisabled(true)
+                #if os(iOS)
+                    .textInputAutocapitalization(.never)
+                #endif
+            }
+            
             Section("Home Assistant Ingress") {
                 MyToggle(isOn: $serverProfile.useHassIngress, description: "Use Home Assistant Ingress", icon: "house")
                 if serverProfile.useHassIngress {

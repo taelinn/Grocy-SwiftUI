@@ -55,6 +55,12 @@
 		78B01C1F2DFF826D0080C814 /* Grocy Mobile.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Grocy Mobile.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		78B01C2D2DFF826F0080C814 /* Grocy MobileTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Grocy MobileTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		78B01C372DFF826F0080C814 /* Grocy MobileUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Grocy MobileUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		BB395B4A2F38EF120042625A /* AppIcon-BlackOnOrange@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AppIcon-BlackOnOrange@2x.png"; sourceTree = "<group>"; };
+		BB395B4B2F38EF120042625A /* AppIcon-BlackOnOrange@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AppIcon-BlackOnOrange@3x.png"; sourceTree = "<group>"; };
+		BB395B4C2F38EF120042625A /* AppIcon-BlueOnWhite@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AppIcon-BlueOnWhite@2x.png"; sourceTree = "<group>"; };
+		BB395B4D2F38EF120042625A /* AppIcon-BlueOnWhite@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AppIcon-BlueOnWhite@3x.png"; sourceTree = "<group>"; };
+		BB395B4E2F38EF120042625A /* AppIcon-OrangeOnBlack@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AppIcon-OrangeOnBlack@2x.png"; sourceTree = "<group>"; };
+		BB395B4F2F38EF120042625A /* AppIcon-OrangeOnBlack@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AppIcon-OrangeOnBlack@3x.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -154,6 +160,12 @@
 				789BAF3B2EE444FB00C82475 /* Grocy Widget */,
 				78CB749B255E9EF800319108 /* Products */,
 				78B868D22590B19B005A0CAF /* Frameworks */,
+				BB395B4C2F38EF120042625A /* AppIcon-BlueOnWhite@2x.png */,
+				BB395B4D2F38EF120042625A /* AppIcon-BlueOnWhite@3x.png */,
+				BB395B4E2F38EF120042625A /* AppIcon-OrangeOnBlack@2x.png */,
+				BB395B4F2F38EF120042625A /* AppIcon-OrangeOnBlack@3x.png */,
+				BB395B4A2F38EF120042625A /* AppIcon-BlackOnOrange@2x.png */,
+				BB395B4B2F38EF120042625A /* AppIcon-BlackOnOrange@3x.png */,
 			);
 			sourceTree = "<group>";
 		};
@@ -405,7 +417,8 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_ENTITLEMENTS = "Grocy Widget/Grocy Widget.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 50;
+				CURRENT_PROJECT_VERSION = 2;
+				DEVELOPMENT_TEAM = ZDHL3P7V6C;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
@@ -425,8 +438,8 @@
 					"@executable_path/../../../../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 26.1;
-				MARKETING_VERSION = 3.2.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "georgappdev.Grocy.Grocy-Widget";
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.roadworkstechnology.grocymobile.widget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
@@ -451,7 +464,8 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_ENTITLEMENTS = "Grocy Widget/Grocy Widget.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 50;
+				CURRENT_PROJECT_VERSION = 2;
+				DEVELOPMENT_TEAM = ZDHL3P7V6C;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
@@ -471,8 +485,8 @@
 					"@executable_path/../../../../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 26.1;
-				MARKETING_VERSION = 3.2.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "georgappdev.Grocy.Grocy-Widget";
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.roadworkstechnology.grocymobile.widget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
@@ -496,7 +510,8 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_ENTITLEMENTS = "Grocy Widget/Grocy Widget.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 50;
+				CURRENT_PROJECT_VERSION = 2;
+				DEVELOPMENT_TEAM = ZDHL3P7V6C;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
@@ -516,8 +531,8 @@
 					"@executable_path/../../../../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 26.1;
-				MARKETING_VERSION = 3.2.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "georgappdev.Grocy.Grocy-Widget";
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.roadworkstechnology.grocymobile.widget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
@@ -542,8 +557,9 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_ENTITLEMENTS = "Grocy Mobile/Grocy Mobile.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 50;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_ASSET_PATHS = "\"Grocy Mobile/Model/Preview/TestData\"";
+				DEVELOPMENT_TEAM = ZDHL3P7V6C;
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = NO;
 				ENABLE_PREVIEWS = YES;
@@ -556,6 +572,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Grocy-Mobile-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = Pantry;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.shopping";
 				INFOPLIST_KEY_NSCameraUsageDescription = "The app uses the camera to scan barcodes.";
 				INFOPLIST_KEY_NSRemindersFullAccessUsageDescription = "Sync shopping lists between Grocy Mobile and Reminders.";
@@ -573,8 +590,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 3.2.0;
-				PRODUCT_BUNDLE_IDENTIFIER = georgappdev.Grocy;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.roadworkstechnology.grocymobile;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				RUNTIME_EXCEPTION_ALLOW_DYLD_ENVIRONMENT_VARIABLES = NO;
@@ -607,8 +624,9 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_ENTITLEMENTS = "Grocy Mobile/Grocy Mobile.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 50;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_ASSET_PATHS = "\"Grocy Mobile/Model/Preview/TestData\"";
+				DEVELOPMENT_TEAM = ZDHL3P7V6C;
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = NO;
 				ENABLE_PREVIEWS = YES;
@@ -621,6 +639,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Grocy-Mobile-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = Pantry;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.shopping";
 				INFOPLIST_KEY_NSCameraUsageDescription = "The app uses the camera to scan barcodes.";
 				INFOPLIST_KEY_NSRemindersFullAccessUsageDescription = "Sync shopping lists between Grocy Mobile and Reminders.";
@@ -638,8 +657,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 3.2.0;
-				PRODUCT_BUNDLE_IDENTIFIER = georgappdev.Grocy;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.roadworkstechnology.grocymobile;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				RUNTIME_EXCEPTION_ALLOW_DYLD_ENVIRONMENT_VARIABLES = NO;
@@ -671,8 +690,9 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_ENTITLEMENTS = "Grocy Mobile/Grocy Mobile.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 50;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_ASSET_PATHS = "\"Grocy Mobile/Model/Preview/TestData\"";
+				DEVELOPMENT_TEAM = ZDHL3P7V6C;
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = NO;
 				ENABLE_PREVIEWS = YES;
@@ -685,6 +705,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Grocy-Mobile-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = Pantry;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.shopping";
 				INFOPLIST_KEY_NSCameraUsageDescription = "The app uses the camera to scan barcodes.";
 				INFOPLIST_KEY_NSRemindersFullAccessUsageDescription = "Sync shopping lists between Grocy Mobile and Reminders.";
@@ -702,8 +723,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 3.2.0;
-				PRODUCT_BUNDLE_IDENTIFIER = georgappdev.Grocy;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.roadworkstechnology.grocymobile;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				RUNTIME_EXCEPTION_ALLOW_DYLD_ENVIRONMENT_VARIABLES = NO;
@@ -738,7 +759,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "georgmeissner.Grocy-MobileTests";
+				PRODUCT_BUNDLE_IDENTIFIER = com.roadworkstechnology.grocymobile.tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
@@ -765,7 +786,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "georgmeissner.Grocy-MobileTests";
+				PRODUCT_BUNDLE_IDENTIFIER = com.roadworkstechnology.grocymobile.tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
@@ -791,7 +812,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "georgmeissner.Grocy-MobileTests";
+				PRODUCT_BUNDLE_IDENTIFIER = com.roadworkstechnology.grocymobile.tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
@@ -816,7 +837,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "georgmeissner.Grocy-MobileUITests";
+				PRODUCT_BUNDLE_IDENTIFIER = com.roadworkstechnology.grocymobile.uitests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
@@ -842,7 +863,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "georgmeissner.Grocy-MobileUITests";
+				PRODUCT_BUNDLE_IDENTIFIER = com.roadworkstechnology.grocymobile.uitests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
@@ -867,7 +888,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "georgmeissner.Grocy-MobileUITests";
+				PRODUCT_BUNDLE_IDENTIFIER = com.roadworkstechnology.grocymobile.uitests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;

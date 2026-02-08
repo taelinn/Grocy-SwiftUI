@@ -561,7 +561,7 @@ class GrocyViewModel {
                 let filtered =
                     allEntries
                     .compactMap { $0 as? OSLogEntryLog }
-                    .filter { $0.subsystem == "georgappdev.Grocy" }
+                    .filter { $0.subsystem == "com.roadworkstechnology.grocymobile" }
 
                 await MainActor.run {
                     self.logEntries = filtered
@@ -695,6 +695,10 @@ class GrocyViewModel {
         let stockJournalReturn: StockJournal = try await grocyApi.postStock(id: id, content: jsonContent, stockModePost: stockModePost)
         self.lastStockActions.append(contentsOf: stockJournalReturn)
     }
+    
+    func printStockEntryLabel(entryID: Int) async throws {
+        try await grocyApi.printStockEntryLabel(entryID: entryID)
+    }
 
     func undoBookingWithID(id: Int) async throws {
         return try await grocyApi.undoBookingWithID(id: id)
@@ -766,6 +770,154 @@ class GrocyViewModel {
     func putMDObjectWithID<T: Codable>(object: ObjectEntities, id: Int, content: T) async throws {
         let jsonContent = try! jsonEncoder.encode(content)
         try await grocyApi.putObjectWithID(object: object, id: id, content: jsonContent)
+    }
+
+    // MARK: - Quick Add Favorites (Server-side)
+    
+    /// Set or clear the quick_add_favorite UserField for a product
+    func setProductFavorite(productID: Int, isFavorite: Bool) async throws {
+        let content: [String: String] = [
+            AppSpecificUserFields.quickAddFavorite.rawValue: isFavorite ? "1" : "0"
+        ]
+        let data = try JSONEncoder().encode(content)
+        try await grocyApi.putUserfields(entity: .products, objectId: productID, content: data)
+    }
+    
+    /// Get all UserFields for a product
+    func getProductUserfields(productID: Int) async throws -> [String: String?] {
+        return try await grocyApi.getUserfields(entity: .products, objectId: productID)
+    }
+    
+    /// Check if a product is marked as a Quick Add favorite on the server
+    func isProductFavorite(productID: Int) async -> Bool {
+        do {
+            let userfields = try await getProductUserfields(productID: productID)
+            return userfields[AppSpecificUserFields.quickAddFavorite.rawValue] ?? nil == "1"
+        } catch {
+            GrocyLogger.error("Failed to check favorite status for product \(productID): \(error)")
+            return false
+        }
+    }
+    
+    /// Check if a product requires a note (checks product-level, then product group level)
+    func isNoteRequired(for product: MDProduct) async -> Bool {
+        do {
+            // First check product-level userfield
+            let productUserfields = try await grocyApi.getUserfields(entity: .products, objectId: product.id)
+            let productNoteRequired = productUserfields[AppSpecificUserFields.noteRequired.rawValue] ?? nil
+            
+            if productNoteRequired == "1" {
+                return true
+            }
+            
+            // If not set at product level, check product group level
+            if let groupID = product.productGroupID {
+                let groupUserfields = try await grocyApi.getUserfields(entity: .product_groups, objectId: groupID)
+                let groupNoteRequired = groupUserfields[AppSpecificUserFields.noteRequired.rawValue] ?? nil
+                return groupNoteRequired == "1"
+            }
+            
+            return false
+        } catch {
+            GrocyLogger.warning("Failed to check note_required for product \(product.id): \(error)")
+            return false
+        }
+    }
+    
+    /// Sync all product favorites from server to local cache
+    /// This reads the quick_add UserField for product groups and individual products
+    func syncFavoritesFromServer(modelContext: ModelContext) async throws {
+        let serverURL = selectedServerProfile?.grocyServerURL ?? ""
+        var syncedCount = 0
+        var favoritesFound = 0
+        
+        GrocyLogger.info("Starting Quick Add favorites sync from server...")
+        GrocyLogger.info("Server URL: \(serverURL)")
+        
+        // First, ensure products and product groups are loaded
+        if mdProducts.isEmpty {
+            GrocyLogger.info("Products not loaded, fetching from server...")
+            await requestData(objects: [.products, .product_groups])
+        }
+        
+        GrocyLogger.info("Total products to check: \(mdProducts.count)")
+        
+        // Step 1: Get product groups with quick_add enabled
+        var favoriteGroupIDs = Set<Int>()
+        for group in mdProductGroups {
+            do {
+                let userfields = try await grocyApi.getUserfields(entity: .product_groups, objectId: group.id)
+                let fieldValue = userfields[AppSpecificUserFields.quickAddFavorite.rawValue] ?? nil
+                if fieldValue == "1" {
+                    favoriteGroupIDs.insert(group.id)
+                    GrocyLogger.info("Product group \(group.id) (\(group.name)) is marked as quick_add")
+                }
+            } catch {
+                GrocyLogger.warning("Failed to check product group \(group.id): \(error)")
+            }
+        }
+        
+        // Step 2: Check each product
+        for product in mdProducts {
+            do {
+                // Check if product's group is a favorite
+                var isFavorite = false
+                if let groupID = product.productGroupID, favoriteGroupIDs.contains(groupID) {
+                    isFavorite = true
+                    GrocyLogger.info("Product \(product.id) (\(product.name)) is favorite via group")
+                } else {
+                    // Check individual product userfield
+                    let userfields = try await grocyApi.getUserfields(entity: .products, objectId: product.id)
+                    let fieldValue = userfields[AppSpecificUserFields.quickAddFavorite.rawValue] ?? nil
+                    isFavorite = fieldValue == "1"
+                    
+                    if !userfields.isEmpty && isFavorite {
+                        GrocyLogger.info("Product \(product.id) (\(product.name)) is individually marked as favorite")
+                    }
+                }
+                
+                if isFavorite {
+                    // Check if local favorite exists
+                    let fetchDescriptor = FetchDescriptor<QuickAddFavorite>(
+                        predicate: #Predicate { favorite in
+                            favorite.productID == product.id && favorite.grocyServerURL == serverURL
+                        }
+                    )
+                    
+                    if let existingFavorite = try modelContext.fetch(fetchDescriptor).first {
+                        // Already exists, no update needed
+                    } else {
+                        // Create new local favorite
+                        let newFavorite = QuickAddFavorite(
+                            productID: product.id,
+                            sortOrder: 0,
+                            grocyServerURL: serverURL
+                        )
+                        modelContext.insert(newFavorite)
+                        favoritesFound += 1
+                    }
+                } else {
+                    // Not a favorite, remove if exists locally
+                    let fetchDescriptor = FetchDescriptor<QuickAddFavorite>(
+                        predicate: #Predicate { favorite in
+                            favorite.productID == product.id && favorite.grocyServerURL == serverURL
+                        }
+                    )
+                    
+                    if let existingFavorite = try modelContext.fetch(fetchDescriptor).first {
+                        modelContext.delete(existingFavorite)
+                    }
+                }
+                
+                syncedCount += 1
+            } catch {
+                GrocyLogger.warning("Failed to sync favorite for product \(product.id): \(error)")
+                // Continue with other products
+            }
+        }
+        
+        try modelContext.save()
+        GrocyLogger.info("Synced \(syncedCount) products, found \(favoritesFound) favorites")
     }
 
     // MARK: - Chores

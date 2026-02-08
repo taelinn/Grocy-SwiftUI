@@ -65,13 +65,15 @@ struct MDProductFormView: View {
         return (queuedBarcode.isEmpty || (foundBarcode == nil))
     }
 
-    init(existingProduct: MDProduct? = nil, userSettings: GrocyUserSettings? = nil, queuedBarcode: String? = nil, createBarcode: Bool = false, createdProductID: Binding<Int?> = .constant(nil)) {
+    init(existingProduct: MDProduct? = nil, userSettings: GrocyUserSettings? = nil, queuedBarcode: String? = nil, createBarcode: Bool = false, createdProductID: Binding<Int?> = .constant(nil), initialName: String? = nil) {
         self.existingProduct = existingProduct
         self.queuedBarcode = queuedBarcode ?? ""
         self.createBarcode = createBarcode
-        self.product =
-            existingProduct
-            ?? MDProduct(
+        
+        if let existingProduct {
+            self.product = existingProduct
+        } else {
+            var newProduct = MDProduct(
                 productGroupID: userSettings?.productPresetsProductGroupID != -1 ? userSettings?.productPresetsProductGroupID : nil,
                 locationID: userSettings?.productPresetsLocationID ?? -1,
                 quIDPurchase: userSettings?.productPresetsQuID ?? -1,
@@ -79,8 +81,15 @@ struct MDProductFormView: View {
                 quIDConsume: userSettings?.productPresetsQuID ?? -1,
                 quIDPrice: userSettings?.productPresetsQuID ?? -1,
                 defaultDueDays: userSettings?.productPresetsDefaultDueDays ?? 0,
-                treatOpenedAsOutOfStock: userSettings?.productPresetsTreatOpenedAsOutOfStock ?? false,
+                treatOpenedAsOutOfStock: userSettings?.productPresetsTreatOpenedAsOutOfStock ?? false
             )
+            // Pre-fill name if provided (e.g., from barcode lookup)
+            if let initialName, !initialName.isEmpty {
+                newProduct.name = initialName
+            }
+            self.product = newProduct
+        }
+        
         _createdProductID = createdProductID
     }
 
@@ -337,14 +346,113 @@ struct MDProductFormView: View {
                     }
                 }
             }
+            
+            // Quick Setup Section - Essential fields for faster product creation
+            Section("Quick Setup") {
+                // Product group
+                Picker(
+                    selection: $product.productGroupID,
+                    label: Label {
+                        Text("Product group")
+                    } icon: {
+                        Image(systemName: MySymbols.productGroup).foregroundStyle(.secondary)
+                    },
+                    content: {
+                        Text("").tag(nil as Int?)
+                        ForEach(mdProductGroups.filter({ $0.active }), id: \.id) { productGroup in
+                            Text(productGroup.name).tag(productGroup.id as Int?)
+                        }
+                    }
+                )
+                
+                // Default Location - REQUIRED
+                Picker(
+                    selection: $product.locationID,
+                    content: {
+                        Text("").tag(-1)
+                        ForEach(mdLocations.filter({ $0.active }), id: \.id) { location in
+                            Text(location.name).tag(location.id)
+                        }
+                    },
+                    label: {
+                        Label("Default location", systemImage: MySymbols.location)
+                            .foregroundStyle(.primary)
+                        if product.locationID == -1 {
+                            Text("Required")
+                                .foregroundStyle(.red)
+                        }
+                    }
+                )
+                
+                // Default due days
+                Stepper(
+                    value: $product.defaultDueDays,
+                    in: 0...9999,
+                    step: 1,
+                    label: {
+                        HStack {
+                            Label("Default due days", systemImage: MySymbols.date)
+                            Spacer()
+                            Text("\(product.defaultDueDays)")
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                )
+                
+                // Default days after freezing
+                Stepper(
+                    value: $product.defaultDueDaysAfterFreezing,
+                    in: -1...9999,
+                    step: 1,
+                    label: {
+                        HStack {
+                            Label("Default days after freezing", systemImage: MySymbols.freezing)
+                            Spacer()
+                            Text(product.defaultDueDaysAfterFreezing == -1 ? "Default" : "\(product.defaultDueDaysAfterFreezing)")
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                )
+                
+                // Quantity Unit Stock - REQUIRED
+                Picker(
+                    selection: $product.quIDStock,
+                    content: {
+                        Text("").tag(-1)
+                        ForEach(mdQuantityUnits.filter({ $0.active }), id: \.id) { quantityUnit in
+                            Text(quantityUnit.name).tag(quantityUnit.id)
+                        }
+                    },
+                    label: {
+                        Label("Quantity unit stock", systemImage: MySymbols.quantityUnit)
+                            .foregroundStyle(.primary)
+                        if product.quIDStock == -1 {
+                            Text("Required")
+                                .foregroundStyle(.red)
+                        }
+                    }
+                )
+                .onChange(of: product.quIDStock) { oldValue, newValue in
+                    // Auto-fill other quantity units when stock unit is set
+                    if product.quIDPurchase == -1 {
+                        product.quIDPurchase = newValue
+                    }
+                    if product.quIDConsume == -1 {
+                        product.quIDConsume = newValue
+                    }
+                    if product.quIDPrice == -1 {
+                        product.quIDPrice = newValue
+                    }
+                }
+            }
 
-            Section {
+            Section("More Options") {
                 NavigationLink(
                     value: MDProductFormPart.optional,
                     label: {
                         MyLabelWithSubtitle(
                             title: "Optional properties",
-                            subTitle: "\(Text("Status")), \(Text("Parent product")), \(Text("Description")), \(Text("Product group")), \(Text("Energy")), \(Text("Picture"))",
+                            subTitle: "\(Text("Status")), \(Text("Parent product")), \(Text("Description")), \(Text("Energy")), \(Text("Picture"))",
                             systemImage: MySymbols.description
                         )
                     }
@@ -352,23 +460,23 @@ struct MDProductFormView: View {
                 NavigationLink(
                     value: MDProductFormPart.location,
                     label: {
-                        MyLabelWithSubtitle(title: "Default location", subTitle: "\(Text("Location")), \(Text("Store"))", systemImage: MySymbols.location, isProblem: product.locationID == -1)
+                        MyLabelWithSubtitle(title: "Location & Store", subTitle: "\(Text("Consume location")), \(Text("Store")), \(Text("Move on open"))", systemImage: MySymbols.location)
                     }
                 )
                 NavigationLink(
                     value: MDProductFormPart.dueDate,
                     label: {
-                        MyLabelWithSubtitle(title: "Due date", subTitle: "\(Text("Type")), \(Text("Default due days"))", systemImage: MySymbols.date)
+                        MyLabelWithSubtitle(title: "Due date (advanced)", subTitle: "\(Text("Type")), \(Text("After open")), \(Text("After thawing"))", systemImage: MySymbols.date)
                     }
                 )
                 NavigationLink(
                     value: MDProductFormPart.quantityUnit,
                     label: {
                         MyLabelWithSubtitle(
-                            title: "Quantity units",
-                            subTitle: "\(Text("Stock")), \(Text("Purchase"))",
+                            title: "Quantity units (advanced)",
+                            subTitle: "\(Text("Purchase")), \(Text("Consume")), \(Text("Price"))",
                             systemImage: MySymbols.quantityUnit,
-                            isProblem: (product.quIDStock == -1 || product.quIDPurchase == -1 || product.quIDConsume == -1 || product.quIDPrice == -1)
+                            isProblem: (product.quIDPurchase == -1 || product.quIDConsume == -1 || product.quIDPrice == -1)
                         )
                     }
                 )

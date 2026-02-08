@@ -178,7 +178,8 @@ struct QuickScanModeView: View {
     var body: some View {
         if grocyVM.failedToLoadObjects.count == 0 && grocyVM.failedToLoadAdditionalObjects.count == 0 {
             bodyContent
-                .ignoresSafeArea()
+                .ignoresSafeArea(.container, edges: .bottom)
+                .navigationTitle("Quick Scan")
                 #if os(iOS)
                     .navigationBarTitleDisplayMode(.inline)
                 #endif
@@ -186,6 +187,9 @@ struct QuickScanModeView: View {
             ServerProblemView()
                 .padding()
                 .navigationTitle("Quick Scan")
+                #if os(iOS)
+                    .navigationBarTitleDisplayMode(.inline)
+                #endif
         }
     }
 

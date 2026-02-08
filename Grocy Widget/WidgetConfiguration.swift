@@ -7,11 +7,14 @@ import SwiftData
 import SwiftUI
 
 func createSharedModelContainer() -> ModelContainer? {
-    let schema = Schema([VolatileStock.self])
+    let schema = Schema([
+        VolatileStock.self,
+        BarcodeBuddyCache.self
+    ])
 
     let config = ModelConfiguration(
         schema: schema,
-        groupContainer: .identifier("group.georgappdev.Grocy"),
+        groupContainer: .identifier("group.com.roadworkstechnology.grocymobile"),
         cloudKitDatabase: .none
     )
 

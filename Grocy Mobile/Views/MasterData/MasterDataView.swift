@@ -31,7 +31,8 @@ struct MasterDataView: View {
     }
 
     var body: some View {
-        List {
+        NavigationStack {
+            List {
             NavigationLink(value: MasterDataItem.products) {
                 MDCategoryRowView(categoryName: "Products", iconName: MySymbols.product, mdType: MDProduct.self)
             }
@@ -114,6 +115,7 @@ struct MasterDataView: View {
         )
         .task {
             await grocyVM.requestData(additionalObjects: [.system_config])
+        }
         }
     }
 }

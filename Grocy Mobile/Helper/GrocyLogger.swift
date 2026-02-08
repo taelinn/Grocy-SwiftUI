@@ -8,7 +8,7 @@
 import OSLog
 
 enum GrocyLogger {
-    private static let logger = Logger(subsystem: "georgappdev.Grocy", category: "AppLogger")
+    private static let logger = Logger(subsystem: "com.roadworkstechnology.grocymobile", category: "AppLogger")
 
     static func error(_ message: String) {
         logger.error("\(message, privacy: .public)")
@@ -20,5 +20,9 @@ enum GrocyLogger {
 
     static func debug(_ message: String) {
         logger.debug("\(message, privacy: .public)")
+    }
+    
+    static func warning(_ message: String) {
+        logger.warning("\(message, privacy: .public)")
     }
 }

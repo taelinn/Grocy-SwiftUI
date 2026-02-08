@@ -33,6 +33,7 @@ struct ProductBuy: Codable {
     let locationID: Int?
     let storeID: Int?
     let note: String?
+    let stockLabelType: Int?
 
     enum CodingKeys: String, CodingKey {
         case amount
@@ -42,5 +43,6 @@ struct ProductBuy: Codable {
         case locationID = "location_id"
         case storeID = "shopping_location_id"
         case note
+        case stockLabelType = "stock_label_type"
     }
 }

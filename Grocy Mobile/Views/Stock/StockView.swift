@@ -450,6 +450,19 @@ struct StockView: View {
                             Label("Purchase", systemImage: MySymbols.purchase)
                         }
                     )
+                    
+                    if horizontalSizeClass == .compact {
+                        Menu {
+                            NavigationLink(value: NavigationItem.shoppingList) {
+                                Label("Shopping List", systemImage: MySymbols.shoppingList)
+                            }
+                            NavigationLink(value: NavigationItem.masterData) {
+                                Label("Master Data", systemImage: MySymbols.masterData)
+                            }
+                        } label: {
+                            Label("More", systemImage: "ellipsis.circle")
+                        }
+                    }
                 }
             #elseif os(macOS)
                 ToolbarItemGroup(
@@ -528,6 +541,19 @@ struct StockView: View {
             for: StockElement.self,
             destination: { stockElement in
                 StockEntriesView(stockElement: stockElement)
+            }
+        )
+        .navigationDestination(
+            for: NavigationItem.self,
+            destination: { item in
+                switch item {
+                case .shoppingList:
+                    ShoppingListView()
+                case .masterData:
+                    MasterDataView()
+                default:
+                    EmptyView()
+                }
             }
         )
         #if os(iOS)

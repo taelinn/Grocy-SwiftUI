@@ -6,7 +6,7 @@
 //  Copyright © 2021 Paul Hudson. All rights reserved.
 //
 
-import AVFoundation
+@preconcurrency @unsafe import AVFoundation
 import SwiftUI
 
 #if os(iOS)
@@ -291,19 +291,28 @@ import SwiftUI
                 }
 
                 @objc func updateOrientation() {
-                    guard let orientation = view.window?.windowScene?.interfaceOrientation else { return }
-                    guard let connection = captureSession?.connections.last, connection.isVideoOrientationSupported else { return }
-                    switch orientation {
-                    case .portrait:
-                        connection.videoOrientation = .portrait
-                    case .landscapeLeft:
-                        connection.videoOrientation = .landscapeLeft
-                    case .landscapeRight:
-                        connection.videoOrientation = .landscapeRight
-                    case .portraitUpsideDown:
-                        connection.videoOrientation = .portraitUpsideDown
-                    default:
-                        connection.videoOrientation = .portrait
+                    // iOS 26+ uses effectiveGeometry, but since we require iOS 26+ we can use it directly
+                    if #available(iOS 26.0, *) {
+                        guard let orientation = view.window?.windowScene?.effectiveGeometry.interfaceOrientation else { return }
+                        guard let connection = captureSession?.connections.last else { return }
+                        
+                        let rotationAngle: CGFloat
+                        switch orientation {
+                        case .portrait:
+                            rotationAngle = 0
+                        case .landscapeLeft:
+                            rotationAngle = 90
+                        case .landscapeRight:
+                            rotationAngle = 270
+                        case .portraitUpsideDown:
+                            rotationAngle = 180
+                        default:
+                            rotationAngle = 0
+                        }
+                        
+                        if connection.isVideoRotationAngleSupported(rotationAngle) {
+                            connection.videoRotationAngle = rotationAngle
+                        }
                     }
                 }
 
@@ -335,8 +344,9 @@ import SwiftUI
                     reset()
 
                     if captureSession.isRunning == false {
+                        let session = captureSession
                         DispatchQueue.global(qos: .userInteractive).async {
-                            self.captureSession?.startRunning()
+                            session.startRunning()
                         }
                     }
                 }
@@ -349,8 +359,8 @@ import SwiftUI
                         self.didFail(reason: .permissionDenied)
                     case .notDetermined:
                         self.requestCameraAccess {
-                            self.setupCaptureDevice()
-                            DispatchQueue.main.async {
+                            Task { @MainActor in
+                                self.setupCaptureDevice()
                                 self.setupSession()
                             }
                         }
@@ -363,10 +373,12 @@ import SwiftUI
                     }
                 }
 
-                private func requestCameraAccess(completion: (() -> Void)?) {
+                private func requestCameraAccess(completion: (@Sendable () -> Void)?) {
                     AVCaptureDevice.requestAccess(for: .video) { [weak self] status in
                         guard status else {
-                            self?.didFail(reason: .permissionDenied)
+                            Task { @MainActor in
+                                self?.didFail(reason: .permissionDenied)
+                            }
                             return
                         }
                         completion?()
@@ -456,9 +468,9 @@ import SwiftUI
                 override public func viewDidDisappear(_ animated: Bool) {
                     super.viewDidDisappear(animated)
 
-                    if captureSession?.isRunning == true {
+                    if let session = captureSession, session.isRunning {
                         DispatchQueue.global(qos: .userInteractive).async {
-                            self.captureSession?.stopRunning()
+                            session.stopRunning()
                         }
                     }
 

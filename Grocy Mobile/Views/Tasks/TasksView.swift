@@ -218,7 +218,8 @@ struct TasksView: View {
     }
 
     var body: some View {
-        List {
+        NavigationStack {
+            List {
             Section {
                 TasksFilterActionsView(
                     filteredStatus: $filteredStatus,
@@ -436,6 +437,7 @@ struct TasksView: View {
                     }
             }
             .presentationDetents([.medium])
+        }
         }
     }
 

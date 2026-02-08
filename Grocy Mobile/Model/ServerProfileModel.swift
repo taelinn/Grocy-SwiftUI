@@ -34,8 +34,10 @@ final class ServerProfile {
     var userName: String = ""
     var displayName: String = ""
     @Attribute(.externalStorage) var profilePicture: Data?
+    var barcodeBuddyURL: String?
+    var barcodeBuddyAPIKey: String?
 
-    init(name: String = "", grocyServerURL: String = "", grocyAPIKey: String = "", useHassIngress: Bool = false, hassToken: String = "", customHeaders: [LoginCustomHeader] = [], userName: String = "", displayName: String = "", profilePicture: Data? = nil) {
+    init(name: String = "", grocyServerURL: String = "", grocyAPIKey: String = "", useHassIngress: Bool = false, hassToken: String = "", customHeaders: [LoginCustomHeader] = [], userName: String = "", displayName: String = "", profilePicture: Data? = nil, barcodeBuddyURL: String? = nil, barcodeBuddyAPIKey: String? = nil) {
         self.id = UUID()
         self.name = name
         self.grocyServerURL = grocyServerURL
@@ -46,5 +48,14 @@ final class ServerProfile {
         self.userName = userName
         self.displayName = displayName
         self.profilePicture = profilePicture
+        self.barcodeBuddyURL = barcodeBuddyURL
+        self.barcodeBuddyAPIKey = barcodeBuddyAPIKey
+    }
+    
+    var hasBBConfigured: Bool {
+        guard let url = barcodeBuddyURL, let key = barcodeBuddyAPIKey else {
+            return false
+        }
+        return !url.isEmpty && !key.isEmpty
     }
 }

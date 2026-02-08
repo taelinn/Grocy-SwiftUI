@@ -25,14 +25,6 @@ struct SettingsAppView: View {
         @AppStorage("iPadTabNavigation") var iPadTabNavigation: Bool = false
         @AppStorage("useLegacyScanner") private var useLegacyScanner: Bool = false
         @Environment(\.horizontalSizeClass) private var horizontalSizeClass
-
-        @AppStorage("enableQuickScan") var enableQuickScan: Bool = true
-        @AppStorage("enableStockOverview") var enableStockOverview: Bool = true
-        @AppStorage("enableShoppingList") var enableShoppingList: Bool = true
-        @AppStorage("enableRecipes") var enableRecipes: Bool = true
-        @AppStorage("enableChores") var enableChores: Bool = true
-        @AppStorage("enableTasks") var enableTasks: Bool = true
-        @AppStorage("enableMasterData") var enableMasterData: Bool = true
     #endif
 
     let refreshIntervals: [Int] = [3, 5, 10, 30, 60, 300]
@@ -114,12 +106,6 @@ struct SettingsAppView: View {
                         }
                     )
                 }
-
-                if horizontalSizeClass == .compact {
-                    MyToggle(isOn: $iPhoneTabNavigation, description: "iPhone: Tab navigation", icon: "platter.filled.bottom.iphone")
-                } else {
-                    MyToggle(isOn: $iPadTabNavigation, description: "iPad: Tab navigation", icon: "sidebar.left")
-                }
             #endif
             MyToggle(isOn: $devMode, description: "DEV MODE", icon: MySymbols.devMode)
             #if os(iOS)
@@ -154,21 +140,7 @@ struct SettingsAppView: View {
                     )
                 }
             }
-            #if os(iOS)
-                if horizontalSizeClass == .compact {
-                    Section("Enabled Tabs") {
-                        MyToggle(isOn: $enableQuickScan, description: "Quick Scan", icon: MySymbols.barcodeScan)
-                        MyToggle(isOn: $enableStockOverview, description: "Stock overview", icon: MySymbols.stockOverview)
-                        MyToggle(isOn: $enableShoppingList, description: "Shopping list", icon: MySymbols.shoppingList)
-                        if devMode {
-                            MyToggle(isOn: $enableRecipes, description: "Recipes", icon: MySymbols.recipe)
-                        }
-                        MyToggle(isOn: $enableChores, description: "Chores overview", icon: MySymbols.chores)
-                        MyToggle(isOn: $enableTasks, description: "Tasks", icon: MySymbols.tasks)
-                        MyToggle(isOn: $enableMasterData, description: "Master data", icon: MySymbols.masterData)
-                    }
-                }
-            #endif
+
             if AICategoryMatcher.isAppleIntelligenceAvailable {
                 Section("Apple Intelligence") {
                     MyToggle(isOn: $useAppleIntelligence, description: "Apple Intelligence", icon: "apple.intelligence")
@@ -177,6 +149,8 @@ struct SettingsAppView: View {
         }
         .formStyle(.grouped)
         .navigationTitle("App settings")
+        .navigationBarBackButtonHidden(false)
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
 

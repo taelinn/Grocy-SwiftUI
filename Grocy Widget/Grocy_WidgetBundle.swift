@@ -12,5 +12,6 @@ import WidgetKit
 struct Grocy_WidgetBundle: WidgetBundle {
     var body: some Widget {
         Grocy_Widget()
+        BarcodeBuddyWidget()
     }
 }
