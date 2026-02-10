@@ -10,6 +10,7 @@ import SwiftUI
 
 struct StockEntryRowView: View {
     @AppStorage("localizationKey") var localizationKey: String = "en"
+    @AppStorage("hidePriceFields") private var hidePriceFields: Bool = false
     @Environment(\.colorScheme) var colorScheme
 
     var stockEntry: StockEntry
@@ -68,8 +69,10 @@ struct StockEntryRowView: View {
                         Text("\(Text("Store")): \(store.name)")
                     }
 
-                    if let price = stockEntry.price, price > 0 {
-                        Text("\(Text("Price")): \(price.formattedAmount) \(currency ?? "")")
+                    if !hidePriceFields {
+                        if let price = stockEntry.price, price > 0 {
+                            Text("\(Text("Price")): \(price.formattedAmount) \(currency ?? "")")
+                        }
                     }
 
                     HStack(alignment: .bottom) {

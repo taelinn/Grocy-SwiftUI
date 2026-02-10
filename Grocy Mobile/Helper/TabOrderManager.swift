@@ -38,7 +38,7 @@ class TabOrderManager {
     static let defaultTabs: [TabDefinition] = [
         TabDefinition(id: "quickScan", name: "Quick Scan", icon: MySymbols.barcodeScan, sortOrder: 0),
         TabDefinition(id: "quickAdd", name: "Quick Add", icon: "bolt.fill", sortOrder: 1),
-        TabDefinition(id: "barcodeBuddy", name: "Barcodes", icon: "barcode.viewfinder", sortOrder: 2),
+        TabDefinition(id: "barcodeBuddy", name: "New Scans", icon: "list.bullet.clipboard", sortOrder: 2),
         TabDefinition(id: "stockOverview", name: "Stock overview", icon: MySymbols.stockOverview, sortOrder: 3),
         TabDefinition(id: "shoppingList", name: "Shopping list", icon: MySymbols.shoppingList, sortOrder: 4),
         TabDefinition(id: "recipes", name: "Recipes", icon: MySymbols.recipe, sortOrder: 5),

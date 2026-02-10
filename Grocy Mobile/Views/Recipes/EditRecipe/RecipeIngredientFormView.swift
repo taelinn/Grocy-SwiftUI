@@ -15,6 +15,7 @@ struct RecipeIngredientFormView: View {
     @Query var recipes: Recipes
 
     @Environment(\.dismiss) var dismiss
+    @AppStorage("hidePriceFields") private var hidePriceFields: Bool = false
 
     @State private var isProcessing: Bool = false
     @State private var isSuccessful: Bool? = nil
@@ -129,7 +130,9 @@ struct RecipeIngredientFormView: View {
 
             MyTextEditor(textToEdit: $ingredient.note, description: "Note", leadingIcon: MySymbols.description)
 
-            MyDoubleStepper(amount: $ingredient.priceFactor, description: "Price factor", descriptionInfo: "The resulting price of this ingredient will be multiplied by this factor", systemImage: MySymbols.price)
+            if !hidePriceFields {
+                MyDoubleStepper(amount: $ingredient.priceFactor, description: "Price factor", descriptionInfo: "The resulting price of this ingredient will be multiplied by this factor", systemImage: MySymbols.price)
+            }
         }
         .formStyle(.grouped)
         .task {

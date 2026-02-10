@@ -19,6 +19,7 @@ struct InventoryProductView: View {
     @Query(sort: \StockElement.productID, order: .forward) var stock: Stock
 
     @Environment(\.dismiss) var dismiss
+    @AppStorage("hidePriceFields") private var hidePriceFields: Bool = false
 
     @State private var firstAppear: Bool = true
     @State private var actionPending: Bool = true
@@ -173,17 +174,19 @@ struct InventoryProductView: View {
                     MyToggle(isOn: $productNeverOverdue, description: "Never overdue", icon: MySymbols.doesntSpoil)
                 }
 
-                Section("Price") {
-                    MyDoubleStepperOptional(
-                        amount: $productInventory.price,
-                        description: "Price",
-                        descriptionInfo: "Per stock quantity unit",
-                        minAmount: 0,
-                        amountStep: 1.0,
-                        amountName: "",
-                        systemImage: MySymbols.price,
-                        currencySymbol: getCurrencySymbol()
-                    )
+                if !hidePriceFields {
+                    Section("Price") {
+                        MyDoubleStepperOptional(
+                            amount: $productInventory.price,
+                            description: "Price",
+                            descriptionInfo: "Per stock quantity unit",
+                            minAmount: 0,
+                            amountStep: 1.0,
+                            amountName: "",
+                            systemImage: MySymbols.price,
+                            currencySymbol: getCurrencySymbol()
+                        )
+                    }
                 }
 
                 Section("Location") {

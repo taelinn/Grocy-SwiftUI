@@ -11,15 +11,19 @@ import SwiftData
 
 @Model
 final class QuickAddFavorite {
-    @Attribute(.unique) var productID: Int
+    var productID: Int
     var sortOrder: Int
     var grocyServerURL: String
     var dateAdded: Date
+    
+    // Compound unique identifier: productID + serverURL
+    @Attribute(.unique) var id: String
     
     init(productID: Int, sortOrder: Int = 0, grocyServerURL: String) {
         self.productID = productID
         self.sortOrder = sortOrder
         self.grocyServerURL = grocyServerURL
         self.dateAdded = Date()
+        self.id = "\(grocyServerURL)_\(productID)"
     }
 }

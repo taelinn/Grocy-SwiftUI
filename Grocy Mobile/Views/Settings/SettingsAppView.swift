@@ -19,6 +19,7 @@ struct SettingsAppView: View {
     @AppStorage("localizationKey") var localizationKey: String = "en"
     @AppStorage("timeoutInterval") var timeoutInterval: Double = 60.0
     @AppStorage("useAppleIntelligence") var useAppleIntelligence: Bool = true
+    @AppStorage("hidePriceFields") private var hidePriceFields: Bool = false
 
     #if os(iOS)
         @AppStorage("iPhoneTabNavigation") var iPhoneTabNavigation: Bool = true
@@ -108,6 +109,7 @@ struct SettingsAppView: View {
                 }
             #endif
             MyToggle(isOn: $devMode, description: "DEV MODE", icon: MySymbols.devMode)
+            MyToggle(isOn: $hidePriceFields, description: "Hide price fields", descriptionInfo: "Hide all price inputs and displays throughout the app", icon: MySymbols.price)
             #if os(iOS)
                 Section("\(Text("Quick Scan")) \(Text("Settings"))") {
                     MyToggle(isOn: $quickScanActionAfterAdd, description: "Do selected action after assigning a barcode", icon: MySymbols.barcodeScan)

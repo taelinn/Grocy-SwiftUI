@@ -18,6 +18,7 @@ struct StockEntryFormView: View {
 
     @Environment(\.dismiss) var dismiss
     @AppStorage("localizationKey") var localizationKey: String = "en"
+    @AppStorage("hidePriceFields") private var hidePriceFields: Bool = false
 
     var existingStockEntry: StockEntry
     @State var stockEntry: StockEntry
@@ -27,6 +28,7 @@ struct StockEntryFormView: View {
     @State private var errorMessage: String? = nil
 
     @State private var productDoesntSpoil: Bool = false
+    @State private var printLabelAfterSave: Bool = false
 
     private var product: MDProduct? {
         mdProducts.first(where: { $0.id == stockEntry.productID })
@@ -63,6 +65,18 @@ struct StockEntryFormView: View {
             try stockEntry.modelContext?.save()
             _ = try await grocyVM.putStockProductEntry(id: stockEntry.id, content: stockEntry)
             GrocyLogger.info("Stock entry edit successful.")
+            
+            // Print label if checkbox is checked
+            if printLabelAfterSave {
+                do {
+                    try await grocyVM.printStockEntryLabel(entryID: stockEntry.id)
+                    GrocyLogger.info("Stock entry label printed.")
+                } catch {
+                    GrocyLogger.error("Failed to print label: \(error)")
+                    // Don't fail the whole save if label printing fails
+                }
+            }
+            
             await updateData()
             isSuccessful = true
         } catch {
@@ -120,7 +134,9 @@ struct StockEntryFormView: View {
 
             MyDoubleStepper(amount: $stockEntry.amount, description: "Amount", minAmount: 0.0001, amountStep: 1.0, amountName: quantityUnit?.getName(amount: stockEntry.amount), systemImage: MySymbols.amount)
 
-            MyDoubleStepperOptional(amount: $stockEntry.price, description: "Price", minAmount: 0, amountStep: 1.0, amountName: "", systemImage: MySymbols.price, currencySymbol: getCurrencySymbol())
+            if !hidePriceFields {
+                MyDoubleStepperOptional(amount: $stockEntry.price, description: "Price", minAmount: 0, amountStep: 1.0, amountName: "", systemImage: MySymbols.price, currencySymbol: getCurrencySymbol())
+            }
 
             Picker(
                 selection: $stockEntry.storeID,
@@ -151,6 +167,8 @@ struct StockEntryFormView: View {
             )
 
             MyTextEditor(textToEdit: $stockEntry.note, description: "Note", leadingIcon: MySymbols.description)
+            
+            MyToggle(isOn: $printLabelAfterSave, description: "Print label after saving", descriptionInfo: nil, icon: "printer")
         }
         .toolbar(content: {
             ToolbarItem(

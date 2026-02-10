@@ -22,6 +22,7 @@ struct StockProductInfoView: View {
     }
 
     @AppStorage("localizationKey") var localizationKey: String = "en"
+    @AppStorage("hidePriceFields") private var hidePriceFields: Bool = false
 
     var stockElement: StockElement
     var isPopup: Bool = false
@@ -38,15 +39,17 @@ struct StockProductInfoView: View {
                             .foregroundStyle(.primary)
                     }
                 )
-                LabeledContent(
-                    content: {
-                        Text(grocyVM.getFormattedCurrency(amount: productDetails.stockValue ?? 0.0))
-                    },
-                    label: {
-                        Label("Stock value", systemImage: MySymbols.price)
-                            .foregroundStyle(.primary)
-                    }
-                )
+                if !hidePriceFields {
+                    LabeledContent(
+                        content: {
+                            Text(grocyVM.getFormattedCurrency(amount: productDetails.stockValue ?? 0.0))
+                        },
+                        label: {
+                            Label("Stock value", systemImage: MySymbols.price)
+                                .foregroundStyle(.primary)
+                        }
+                    )
+                }
                 LabeledContent(
                     content: {
                         Text(productDetails.location?.name ?? "")
@@ -84,24 +87,28 @@ struct StockProductInfoView: View {
                             .foregroundStyle(.primary)
                     }
                 )
-                LabeledContent(
-                    content: {
-                        Text(productDetails.lastPrice != nil ? "\(grocyVM.getFormattedCurrency(amount: productDetails.lastPrice ?? 0.0)) per \(productDetails.quantityUnitStock?.name ?? "")" : "Unknown")
-                    },
-                    label: {
-                        Label("Last price", systemImage: MySymbols.price)
-                            .foregroundStyle(.primary)
-                    }
-                )
-                LabeledContent(
-                    content: {
-                        Text(productDetails.avgPrice != nil ? "\(grocyVM.getFormattedCurrency(amount: productDetails.avgPrice ?? 0.0)) per \(productDetails.quantityUnitStock?.name ?? "")" : "Unknown")
-                    },
-                    label: {
-                        Label("Average price", systemImage: MySymbols.price)
-                            .foregroundStyle(.primary)
-                    }
-                )
+                if !hidePriceFields {
+                    LabeledContent(
+                        content: {
+                            Text(productDetails.lastPrice != nil ? "\(grocyVM.getFormattedCurrency(amount: productDetails.lastPrice ?? 0.0)) per \(productDetails.quantityUnitStock?.name ?? "")" : "Unknown")
+                        },
+                        label: {
+                            Label("Last price", systemImage: MySymbols.price)
+                                .foregroundStyle(.primary)
+                        }
+                    )
+                }
+                if !hidePriceFields {
+                    LabeledContent(
+                        content: {
+                            Text(productDetails.avgPrice != nil ? "\(grocyVM.getFormattedCurrency(amount: productDetails.avgPrice ?? 0.0)) per \(productDetails.quantityUnitStock?.name ?? "")" : "Unknown")
+                        },
+                        label: {
+                            Label("Average price", systemImage: MySymbols.price)
+                                .foregroundStyle(.primary)
+                        }
+                    )
+                }
                 LabeledContent(
                     content: {
                         Text(productDetails.averageShelfLifeDays ?? 0 > 0 ? formatDays(daysToFormat: productDetails.averageShelfLifeDays) ?? "Unknown" : "Unknown")

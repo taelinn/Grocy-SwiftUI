@@ -27,6 +27,7 @@ struct PurchaseProductView: View {
 
     @Environment(\.dismiss) var dismiss
     @AppStorage("localizationKey") var localizationKey: String = "en"
+    @AppStorage("hidePriceFields") private var hidePriceFields: Bool = false
 
     @State private var firstAppear: Bool = true
     @State private var actionPending: Bool = true
@@ -222,7 +223,7 @@ struct PurchaseProductView: View {
                     MyToggle(isOn: $productDoesntSpoil, description: "Never overdue", descriptionInfo: nil, icon: MySymbols.doesntSpoil)
                 }
 
-                if !selfProduction {
+                if !selfProduction && !hidePriceFields {
                     Section("Price") {
                         VStack(alignment: .leading) {
                             MyDoubleStepperOptional(amount: $price, description: "Price", minAmount: 0, amountStep: 1.0, amountName: "", systemImage: MySymbols.price, currencySymbol: getCurrencySymbol())

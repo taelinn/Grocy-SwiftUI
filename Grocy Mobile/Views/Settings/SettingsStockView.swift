@@ -11,6 +11,7 @@ struct SettingsStockView: View {
     @Environment(GrocyViewModel.self) private var grocyVM
 
     @AppStorage("devMode") private var devMode: Bool = false
+    @AppStorage("hidePriceFields") private var hidePriceFields: Bool = false
 
     @State private var useQuickConsume: Bool = false
     @State private var isFirst: Bool = true
@@ -101,23 +102,25 @@ struct SettingsStockView: View {
                     description: "Decimal places allowed for amounts",
                     icon: MySymbols.decimalPlaces
                 )
-                ServerSettingsIntStepper(
-                    settingKey: GrocyUserSettings.CodingKeys.stockDecimalPlacesPricesInput.rawValue,
-                    description: "Decimal places allowed for prices (input)",
-                    icon: MySymbols.decimalPlaces
-                )
-                ServerSettingsIntStepper(
-                    settingKey: GrocyUserSettings.CodingKeys.stockDecimalPlacesPricesDisplay.rawValue,
-                    description: "Decimal places allowed for prices (display)",
-                    icon: MySymbols.decimalPlaces
-                )
-                if devMode {
-                    ServerSettingsToggle(
-                        settingKey: GrocyUserSettings.CodingKeys.stockAutoDecimalSeparatorPrices.rawValue,
-                        description: "Add decimal separator automatically for price inputs",
-                        descriptionInfo: "When enabled, you always have to enter the value including decimal places, the decimal separator will be automatically added based on the amount of allowed decimal places",
-                        icon: MySymbols.price
+                if !hidePriceFields {
+                    ServerSettingsIntStepper(
+                        settingKey: GrocyUserSettings.CodingKeys.stockDecimalPlacesPricesInput.rawValue,
+                        description: "Decimal places allowed for prices (input)",
+                        icon: MySymbols.decimalPlaces
                     )
+                    ServerSettingsIntStepper(
+                        settingKey: GrocyUserSettings.CodingKeys.stockDecimalPlacesPricesDisplay.rawValue,
+                        description: "Decimal places allowed for prices (display)",
+                        icon: MySymbols.decimalPlaces
+                    )
+                    if devMode {
+                        ServerSettingsToggle(
+                            settingKey: GrocyUserSettings.CodingKeys.stockAutoDecimalSeparatorPrices.rawValue,
+                            description: "Add decimal separator automatically for price inputs",
+                            descriptionInfo: "When enabled, you always have to enter the value including decimal places, the decimal separator will be automatically added based on the amount of allowed decimal places",
+                            icon: MySymbols.price
+                        )
+                    }
                 }
             }
         }

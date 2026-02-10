@@ -31,13 +31,20 @@ struct QuickAddTabView: View {
     
     private var favoriteProducts: [MDProduct] {
         let favoriteProductIDs = Set(favorites.map { $0.productID })
-        return mdProducts.filter { favoriteProductIDs.contains($0.id) }
+        let products = mdProducts.filter { favoriteProductIDs.contains($0.id) }
+        
+        if searchText.isEmpty {
+            return products
+        } else {
+            return products.filter { $0.name.localizedCaseInsensitiveContains(searchText) }
+        }
     }
     
     @State private var isEditing = false
     @State private var showingProductPicker = false
     @State private var selectedFavorite: QuickAddFavorite?
     @State private var isRefreshing = false
+    @State private var searchText = ""
     
     private func product(for favorite: QuickAddFavorite) -> MDProduct? {
         mdProducts.first(where: { $0.id == favorite.productID })
@@ -77,6 +84,7 @@ struct QuickAddTabView: View {
         }
         .navigationTitle("Quick Add")
         .navigationBarTitleDisplayMode(.large)
+        .searchable(text: $searchText, prompt: "Search favorites")
         .toolbar {
             if !favorites.isEmpty {
                 ToolbarItem(placement: .topBarLeading) {
