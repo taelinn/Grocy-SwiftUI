@@ -18,6 +18,7 @@ enum StockInteraction: Hashable, Identifiable {
     case transferProduct
     case inventoryProduct
     case stockJournal
+    case createProduct
     case addToShL(stockElement: StockElement)
     case productPurchase(stockElement: StockElement)
     case productConsume(stockElement: StockElement)
@@ -86,6 +87,7 @@ struct StockView: View {
     @State private var filteredStatus: ProductStatus = .all
 
     @State private var stockInteractionRouter = StockInteractionNavigationRouter()
+    @State private var createdProductID: Int?
 
     // Cached filtered/grouped results to prevent blocking during filter changes
     @State private var cachedFilteredStock: [StockElement] = []
@@ -453,6 +455,12 @@ struct StockView: View {
                     
                     if horizontalSizeClass == .compact {
                         Menu {
+                            Button(action: {
+                                stockInteractionRouter.present(.createProduct)
+                            }) {
+                                Label("Create Product", systemImage: "plus.circle")
+                            }
+                            Divider()
                             NavigationLink(value: NavigationItem.shoppingList) {
                                 Label("Shopping List", systemImage: MySymbols.shoppingList)
                             }
@@ -520,6 +528,11 @@ struct StockView: View {
                     ConsumeProductView(isPopup: true)
                 case .purchaseProduct:
                     PurchaseProductView(isPopup: true)
+                case .createProduct:
+                    MDProductFormView(
+                        userSettings: userSettings,
+                        createdProductID: $createdProductID
+                    )
                 case .productPurchase(let stockElement):
                     PurchaseProductView(stockElement: stockElement, isPopup: true)
                 case .productConsume(let stockElement):

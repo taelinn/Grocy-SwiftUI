@@ -12,4 +12,5 @@ enum AppSpecificUserFields: String {
     case locationPicture = "locationPicture"
     case quickAddFavorite = "quick_add"
     case noteRequired = "note_required"
+    case appendNote = "append_note"
 }

@@ -16,7 +16,7 @@ enum SettingsNavigationItem: Hashable {
     case shoppingListSettings
     case choresSettings
     case barcodeBuddySettings
-    // case appIcon  // Disabled for v1
+    case appIcon
     case appLog
     case aboutApp
 }
@@ -120,11 +120,10 @@ struct SettingsView: View {
             }
 
             Section("App") {
-                // Alternate icons disabled for v1
-                // NavigationLink(value: SettingsNavigationItem.appIcon) {
-                //     Label("App icon", systemImage: "app.badge")
-                //         .foregroundStyle(.primary)
-                // }
+                NavigationLink(value: SettingsNavigationItem.appIcon) {
+                    Label("App icon", systemImage: "app.badge")
+                        .foregroundStyle(.primary)
+                }
                 NavigationLink(value: SettingsNavigationItem.appLog) {
                     Label("App log", systemImage: MySymbols.logFile)
                         .foregroundStyle(.primary)
@@ -169,8 +168,8 @@ struct SettingsView: View {
                 } else {
                     Text("No server profile found")
                 }
-            // case .appIcon:  // Disabled for v1
-            //     AppIconSettingsView()
+            case .appIcon:
+                AppIconSettingsView()
             case .appLog:
                 LogView()
             case .aboutApp:

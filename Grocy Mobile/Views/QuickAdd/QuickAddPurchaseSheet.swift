@@ -24,6 +24,7 @@ struct QuickAddPurchaseSheet: View {
     @State private var quantityUnitID: Int
     @State private var note: String = ""
     @State private var noteRequired: Bool = false
+    @State private var appendNote: Bool = false
     @State private var isProcessing = false
     @State private var showError = false
     @State private var errorMessage: String?
@@ -57,7 +58,7 @@ struct QuickAddPurchaseSheet: View {
     var body: some View {
         Form {
             productSection
-            if noteRequired {
+            if noteRequired || appendNote {
                 noteSection
             }
             amountSection
@@ -99,8 +100,9 @@ struct QuickAddPurchaseSheet: View {
             Text(message)
         }
         .task {
-            // Check if product requires a note
+            // Check if product requires a note or should append note
             noteRequired = await grocyVM.isNoteRequired(for: product)
+            appendNote = await grocyVM.shouldAppendNote(for: product)
         }
     }
     
@@ -169,12 +171,16 @@ struct QuickAddPurchaseSheet: View {
     
     private var noteSection: some View {
         Section {
-            TextField("What is it?", text: $note, axis: .vertical)
+            TextField(noteRequired ? "What is it?" : "Additional details (optional)", text: $note, axis: .vertical)
                 .lineLimit(2...4)
         } header: {
-            Text("Note")
+            Text("Note\(noteRequired ? " (Required)" : "")")
         } footer: {
-            Text("Describe what this is (e.g., 'Chicken Stir Fry'). This will be stored with the stock entry and used for label printing.")
+            if noteRequired {
+                Text("Describe what this is (e.g., 'Chicken Stir Fry'). This will be stored with the stock entry and used for label printing.")
+            } else {
+                Text("Add additional details like weight, marinade, or batch info (e.g., '2kg', 'Honey BBQ'). This will be appended to the product name on the label.")
+            }
         }
     }
     
@@ -198,12 +204,24 @@ struct QuickAddPurchaseSheet: View {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd"
         
-        // Use product's default due date
+        // Check if the selected location is a freezer
+        let selectedLocation = mdLocations.first(where: { $0.id == locationID })
+        let isFreezerLocation = selectedLocation?.isFreezer ?? false
+        
+        // Use product's default due date (freezer or regular)
         let dueDate: String
         if product.defaultDueDays == -1 {
             dueDate = "2999-12-31"
         } else {
-            let dateComponents = DateComponents(day: product.defaultDueDays)
+            // Use freezer due date if location is a freezer and product has freezer days configured
+            let daysToAdd: Int
+            if isFreezerLocation && product.defaultDueDaysAfterFreezing != 0 {
+                daysToAdd = product.defaultDueDaysAfterFreezing
+            } else {
+                daysToAdd = product.defaultDueDays
+            }
+            
+            let dateComponents = DateComponents(day: daysToAdd)
             let calculatedDate = Calendar.current.date(byAdding: dateComponents, to: Date()) ?? Date()
             dueDate = dateFormatter.string(from: calculatedDate)
         }

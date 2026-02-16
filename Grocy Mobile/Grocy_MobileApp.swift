@@ -98,7 +98,7 @@ struct Grocy_MobileApp: App {
     let profileModelContainer: ModelContainer
 
     init() {
-        // Main container schema (all data except ServerProfile and LoginCustomHeader)
+        // Main container schema (all data except ServerProfile, LoginCustomHeader, and QuickAddFavorite)
         let mainSchema = Schema([
             StockElement.self,
             ShoppingListItem.self,
@@ -130,14 +130,14 @@ struct Grocy_MobileApp: App {
             ChoreDetails.self,
             GrocyTask.self,
             RecipeNesting.self,
-            QuickAddFavorite.self,
             BarcodeBuddyCache.self,
         ])
 
-        // Profile container schema (ServerProfile and LoginCustomHeader with iCloud sync)
+        // Profile container schema (ServerProfile, LoginCustomHeader, and QuickAddFavorite with iCloud sync)
         let profileSchema = Schema([
             ServerProfile.self,
             LoginCustomHeader.self,
+            QuickAddFavorite.self,
         ])
 
         let mainConfig = ModelConfiguration(

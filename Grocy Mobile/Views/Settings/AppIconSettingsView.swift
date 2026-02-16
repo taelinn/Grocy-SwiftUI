@@ -21,16 +21,13 @@ struct AppIconSettingsView: View {
                         changeIcon(to: icon)
                     } label: {
                         HStack(spacing: 16) {
-                            // Icon preview (placeholder for now - you'll add actual images)
-                            RoundedRectangle(cornerRadius: 12)
-                                .fill(Color.gray.opacity(0.2))
+                            // Icon preview
+                            Image(icon.previewImageName)
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
                                 .frame(width: 60, height: 60)
-                                .overlay {
-                                    Image(systemName: "app.fill")
-                                        .font(.title)
-                                        .foregroundStyle(.blue)
-                                }
-                            
+                                .clipShape(RoundedRectangle(cornerRadius: 12))
+
                             VStack(alignment: .leading, spacing: 4) {
                                 Text(icon.displayName)
                                     .font(.body)

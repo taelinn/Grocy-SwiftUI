@@ -111,24 +111,44 @@ struct PurchaseProductView: View {
         self.productID = actionPending ? productToPurchaseID : nil
         self.amount = actionPending ? (productToPurchaseAmount ?? barcode?.amount ?? userSettings?.stockDefaultPurchaseAmount ?? 1.0) : (userSettings?.stockDefaultPurchaseAmount ?? 1.0)
         self.quantityUnitID = barcode?.quID ?? (actionPending ? product?.quIDPurchase : nil)
-        if product?.defaultDueDays ?? 0 == -1 {
-            self.productDoesntSpoil = true
-            self.dueDate = Calendar.current.startOfDay(for: Date())
-        } else {
-            self.productDoesntSpoil = false
-            let dateComponents = DateComponents(day: product?.defaultDueDays ?? 0)
-            self.dueDate = Calendar.current.date(byAdding: dateComponents, to: Calendar.current.startOfDay(for: Date())) ?? Calendar.current.startOfDay(for: Date())
-        }
         self.price = actionPending ? barcode?.lastPrice ?? productDetails?.lastPrice : nil
         self.isTotalPrice = false
         self.storeID = actionPending ? (barcode?.storeID ?? product?.storeID ?? -1) : -1
         self.locationID = actionPending ? product?.locationID ?? -1 : -1
+        
+        // Calculate due date based on product and location
+        updateDueDateForCurrentLocation()
+        
         self.note = ""
         if autoPurchase, actionPending, product?.defaultDueDays != nil, productID != nil, isFormValid {
             self.price = productDetails?.lastPrice
             Task {
                 await purchaseProduct()
             }
+        }
+    }
+    
+    private func updateDueDateForCurrentLocation() {
+        if product?.defaultDueDays ?? 0 == -1 {
+            self.productDoesntSpoil = true
+            self.dueDate = Calendar.current.startOfDay(for: Date())
+        } else {
+            self.productDoesntSpoil = false
+            
+            // Check if the selected location is a freezer
+            let selectedLocation = mdLocations.first(where: { $0.id == locationID })
+            let isFreezerLocation = selectedLocation?.isFreezer ?? false
+            
+            // Use freezer due date if location is a freezer and product has freezer days configured
+            let daysToAdd: Int
+            if isFreezerLocation && (product?.defaultDueDaysAfterFreezing ?? 0) != 0 {
+                daysToAdd = product?.defaultDueDaysAfterFreezing ?? 0
+            } else {
+                daysToAdd = product?.defaultDueDays ?? 0
+            }
+            
+            let dateComponents = DateComponents(day: daysToAdd)
+            self.dueDate = Calendar.current.date(byAdding: dateComponents, to: Calendar.current.startOfDay(for: Date())) ?? Calendar.current.startOfDay(for: Date())
         }
     }
 
@@ -297,6 +317,12 @@ struct PurchaseProductView: View {
                 await updateData()
                 resetForm()
                 firstAppear = false
+            }
+        }
+        .onChange(of: locationID) { oldValue, newValue in
+            // Update due date when location changes (e.g., switching to/from freezer)
+            if !productDoesntSpoil {
+                updateDueDateForCurrentLocation()
             }
         }
         .toolbar(content: {

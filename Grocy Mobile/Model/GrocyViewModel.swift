@@ -824,6 +824,31 @@ class GrocyViewModel {
         }
     }
     
+    /// Check if a product should append note (checks product-level, then product group level)
+    func shouldAppendNote(for product: MDProduct) async -> Bool {
+        do {
+            // First check product-level userfield
+            let productUserfields = try await grocyApi.getUserfields(entity: .products, objectId: product.id)
+            let productAppendNote = productUserfields[AppSpecificUserFields.appendNote.rawValue] ?? nil
+            
+            if productAppendNote == "1" {
+                return true
+            }
+            
+            // If not set at product level, check product group level
+            if let groupID = product.productGroupID {
+                let groupUserfields = try await grocyApi.getUserfields(entity: .product_groups, objectId: groupID)
+                let groupAppendNote = groupUserfields[AppSpecificUserFields.appendNote.rawValue] ?? nil
+                return groupAppendNote == "1"
+            }
+            
+            return false
+        } catch {
+            GrocyLogger.warning("Failed to check append_note for product \(product.id): \(error)")
+            return false
+        }
+    }
+    
     /// Sync all product favorites from server to local cache
     /// This reads the quick_add UserField for product groups and individual products
     func syncFavoritesFromServer(modelContext: ModelContext) async throws {

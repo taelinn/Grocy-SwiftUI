@@ -45,7 +45,7 @@ class AppIconManager {
         var previewImageName: String {
             switch self {
             case .primary:
-                return "AppIcon"
+                return "AppIcon-Preview"
             case .blueOnWhite:
                 return "AppIcon-BlueOnWhite-Preview"
             case .orangeOnBlack:

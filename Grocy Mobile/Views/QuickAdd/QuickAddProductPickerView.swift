@@ -10,7 +10,7 @@ import SwiftData
 
 struct QuickAddProductPickerView: View {
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.modelContext) private var modelContext
+    @Environment(\.profileModelContext) private var modelContext
     @Environment(GrocyViewModel.self) private var grocyVM
     
     @Query(filter: #Predicate<MDProduct> { $0.active }, sort: \MDProduct.name) private var mdProducts: [MDProduct]
@@ -24,7 +24,8 @@ struct QuickAddProductPickerView: View {
         let descriptor = FetchDescriptor<QuickAddFavorite>(
             predicate: #Predicate { $0.grocyServerURL == serverURL }
         )
-        return (try? modelContext.fetch(descriptor)) ?? []
+        guard let context = modelContext else { return [] }
+        return (try? context.fetch(descriptor)) ?? []
     }
     
     @State private var searchText = ""

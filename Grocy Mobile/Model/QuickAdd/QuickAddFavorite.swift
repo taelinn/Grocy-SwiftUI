@@ -11,13 +11,13 @@ import SwiftData
 
 @Model
 final class QuickAddFavorite {
-    var productID: Int
-    var sortOrder: Int
-    var grocyServerURL: String
-    var dateAdded: Date
+    var productID: Int = 0
+    var sortOrder: Int = 0
+    var grocyServerURL: String = ""
+    var dateAdded: Date = Date()
     
-    // Compound unique identifier: productID + serverURL
-    @Attribute(.unique) var id: String
+    // Compound identifier: productID + serverURL (uniqueness enforced in application logic)
+    var id: String = ""
     
     init(productID: Int, sortOrder: Int = 0, grocyServerURL: String) {
         self.productID = productID
