@@ -460,6 +460,8 @@ class GrocyViewModel {
     func updateData() async {
         GrocyLogger.debug("Update triggered")
         await self.requestData(objects: Array(self.timeStampsObjects.keys), additionalObjects: Array(self.timeStampsAdditionalObjects.keys))
+        // Data already fresh - skip prefetch in sync
+        Task { await triggerReminderSyncIfEnabled(prefetchData: false) }
     }
 
     func deleteAllCachedData() {
@@ -694,6 +696,8 @@ class GrocyViewModel {
         let jsonContent = try! jsonEncoder.encode(content)
         let stockJournalReturn: StockJournal = try await grocyApi.postStock(id: id, content: jsonContent, stockModePost: stockModePost)
         self.lastStockActions.append(contentsOf: stockJournalReturn)
+        // Stock changed - sync reminders in background so shopping list stays current
+        Task { await triggerReminderSyncIfEnabled() }
     }
     
     func printStockEntryLabel(entryID: Int) async throws {
@@ -943,6 +947,105 @@ class GrocyViewModel {
         
         try modelContext.save()
         GrocyLogger.info("Synced \(syncedCount) products, found \(favoritesFound) favorites")
+    }
+
+    // MARK: - Reminders Sync
+
+    /// Called automatically after stock operations and data refreshes.
+    /// Only runs if reminder sync is enabled and access has been granted.
+    /// - Parameter prefetchData: Pass false if shopping list data was just fetched by the caller.
+    private func triggerReminderSyncIfEnabled(prefetchData: Bool = true) async {
+        guard UserDefaults.standard.bool(forKey: StoreReminderMappings.syncEnabledKey),
+              ReminderStore.shared.hasAccess else { return }
+        let mappings = StoreReminderMappings.load()
+        let defaultList = UserDefaults.standard.string(forKey: StoreReminderMappings.defaultListKey)
+        guard !mappings.isEmpty || defaultList != nil else { return }
+        do {
+            try await syncShoppingListToReminders(mappings: mappings, defaultList: defaultList, prefetchData: prefetchData)
+        } catch {
+            GrocyLogger.warning("Auto reminder sync failed: \(error)")
+        }
+    }
+
+    /// Syncs shopping list items to iOS Reminders, grouped by store.
+    /// Items are matched to stores via the product's default storeID.
+    /// Only items with a store that has a mapped reminder list are synced.
+    /// - Parameters:
+    ///   - shoppingList: All shopping list items to sync
+    ///   - mappings: Dictionary mapping Grocy store ID → iOS Reminders list name
+    /// - Returns: Total number of items synced across all stores
+    @discardableResult
+    func syncShoppingListToReminders(
+        mappings: [Int: String],
+        defaultList: String?,
+        prefetchData: Bool = true
+    ) async throws -> Int {
+        guard !mappings.isEmpty || defaultList != nil else { return 0 }
+
+        // Fetch fresh data unless caller has already done so (e.g. updateData)
+        if prefetchData {
+            await requestData(objects: [.shopping_list, .products])
+        }
+        let shoppingList = self.shoppingList
+
+        // Only sync not-done items - done items in Grocy mean already purchased,
+        // so they should be removed from reminders, not kept as completed.
+        // Items are grouped by store; items without a mapped store go to defaultList.
+        var notDoneByStore: [Int: [(id: Int, productID: Int, name: String)]] = [:]
+        var notDoneDefault: [(id: Int, productID: Int, name: String)] = []
+
+        for item in shoppingList {
+            // Skip items already marked done in Grocy
+            guard !item.done else { continue }
+
+            guard let productID = item.productID else {
+                GrocyLogger.info("ReminderSync: skipping item.id=\(item.id) - no productID")
+                continue
+            }
+            guard let product = mdProducts.first(where: { $0.id == productID }) else {
+                GrocyLogger.warning("ReminderSync: skipping item.id=\(item.id), productID=\(productID) - product not found in mdProducts (\(mdProducts.count) loaded)")
+                continue
+            }
+
+            let entry = (id: item.id, productID: productID, name: product.name)
+
+            if let storeID = product.storeID, mappings[storeID] != nil {
+                GrocyLogger.info("ReminderSync: store list - item.id=\(item.id), product=\(product.name), storeID=\(storeID)")
+                notDoneByStore[storeID, default: []].append(entry)
+            } else if defaultList != nil {
+                GrocyLogger.info("ReminderSync: default list - item.id=\(item.id), product=\(product.name)")
+                notDoneDefault.append(entry)
+            } else {
+                GrocyLogger.info("ReminderSync: skipping item.id=\(item.id), product=\(product.name) - no store mapping and no default list")
+            }
+        }
+
+        // Sync each mapped store's items to its reminder list
+        var totalSynced = 0
+        for (storeID, listName) in mappings {
+            let notDone = notDoneByStore[storeID] ?? []
+            try ReminderStore.shared.syncItems(
+                notDone: notDone,
+                done: [],
+                to: listName,
+                storeID: storeID
+            )
+            totalSynced += notDone.count
+        }
+
+        // Sync items with no store (or unmapped store) to the default list
+        if let defaultList {
+            try ReminderStore.shared.syncItems(
+                notDone: notDoneDefault,
+                done: [],
+                to: defaultList,
+                storeID: -1
+            )
+            totalSynced += notDoneDefault.count
+        }
+
+        GrocyLogger.info("Reminder sync complete: \(totalSynced) item(s) across \(mappings.count) store(s)")
+        return totalSynced
     }
 
     // MARK: - Chores

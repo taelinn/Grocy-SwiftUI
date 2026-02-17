@@ -2,237 +2,197 @@
 //  ReminderStore.swift
 //  Grocy Mobile
 //
-//  Created by Georg Meissner on 22.11.22.
+//  Manages iOS Reminders integration, supporting per-store reminder lists.
 //
-
-// This is the example from Apple (https://developer.apple.com/tutorials/app-dev-training/saving-reminders)
-
-//Copyright © 2022 Apple Inc.
-//
-//Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-//
-//The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-//
-//THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import EventKit
 import Foundation
 import Observation
 import SwiftUI
 
-enum TodayError: LocalizedError {
+enum ReminderSyncError: LocalizedError {
     case accessDenied
     case accessRestricted
     case failedReadingCalendarItem
     case failedReadingReminders
-    case reminderHasNoDueDate
     case unknown
 
     var errorDescription: String? {
         switch self {
         case .accessDenied:
-            return NSLocalizedString("The app doesn't have permission to read reminders.", comment: "access denied error description")
+            return "The app doesn't have permission to read reminders."
         case .accessRestricted:
-            return NSLocalizedString("This device doesn't allow access to reminders.", comment: "access restricted error description")
+            return "This device doesn't allow access to reminders."
         case .failedReadingCalendarItem:
-            return NSLocalizedString("Failed to read a calendar item.", comment: "failed reading calendar item error description")
+            return "Failed to read a calendar item."
         case .failedReadingReminders:
-            return NSLocalizedString("Failed to read reminders.", comment: "failed reading reminders error description")
-        case .reminderHasNoDueDate:
-            return NSLocalizedString("A reminder has no due date.", comment: "reminder has no due date error description")
+            return "Failed to read reminders."
         case .unknown:
-            return NSLocalizedString("An unknown error occurred.", comment: "unknown error description")
+            return "An unknown error occurred."
         }
     }
 }
 
-extension EKReminder {
-    func update(using reminder: Reminder, in store: EKEventStore) {
-        title = reminder.title
-        notes = reminder.notes
-        isCompleted = reminder.isComplete
-        calendar = store.defaultCalendarForNewReminders()
-        if let dueDate = reminder.dueDate {
-            alarms?.forEach { alarm in
-                guard let absoluteDate = alarm.absoluteDate else { return }
-                let comparison = Locale.current.calendar.compare(dueDate, to: absoluteDate, toGranularity: .minute)
-                if comparison != .orderedSame {
-                    removeAlarm(alarm)
-                }
-            }
-            if !hasAlarms {
-                addAlarm(EKAlarm(absoluteDate: dueDate))
-            }
-        }
-    }
-}
-
-struct Reminder: Equatable, Identifiable {
-    var id: String = UUID().uuidString
-    var title: String
-    var dueDate: Date? = nil
-    var notes: String? = nil
-    var isComplete: Bool = false
-}
-
-extension Reminder {
-    init(with ekReminder: EKReminder) throws {
-        id = ekReminder.calendarItemIdentifier
-        title = ekReminder.title
-        dueDate = ekReminder.alarms?.first?.absoluteDate
-        notes = ekReminder.notes
-        isComplete = ekReminder.isCompleted
-    }
-}
-
-extension Array where Element == Reminder {
-    func indexOfReminder(with id: Reminder.ID) -> Self.Index {
-        guard let index = firstIndex(where: { $0.id == id }) else {
-            fatalError()
-        }
-        return index
-    }
-}
+// Grocy shopping item identifier stored in reminder notes for tracking
+private let grocyReminderTag = "grocy-item-id:"
 
 @Observable
 final class ReminderStore {
     static let shared = ReminderStore()
 
-    @ObservationIgnored @AppStorage("calendarIdentifier") private var calendarIdentifier: String = ""
     private let ekStore = EKEventStore()
 
-    private var ekCalendar: EKCalendar? = nil
-    private var isCalendarSelected: Bool = false
-
-    var isAvailable: Bool {
-        EKEventStore.authorizationStatus(for: .reminder) == .fullAccess && isCalendarSelected
+    // Authorization status
+    var hasAccess: Bool {
+        EKEventStore.authorizationStatus(for: .reminder) == .fullAccess
     }
+
+    // MARK: - Access
 
     func requestAccess() async throws {
-        try await ekStore.requestFullAccessToReminders()
         let status = EKEventStore.authorizationStatus(for: .reminder)
-
         switch status {
-        case .authorized:
-            return
-        case .restricted:
-            throw TodayError.accessRestricted
-        case .notDetermined, .denied:
-            let accessGranted = try await ekStore.requestFullAccessToReminders()
-            guard accessGranted else {
-                throw TodayError.accessDenied
-            }
         case .fullAccess:
             return
-        case .writeOnly:
-            throw TodayError.accessDenied
+        case .restricted:
+            throw ReminderSyncError.accessRestricted
+        case .notDetermined, .denied, .writeOnly:
+            let granted = try await ekStore.requestFullAccessToReminders()
+            if !granted {
+                throw ReminderSyncError.accessDenied
+            }
         @unknown default:
-            throw TodayError.unknown
+            throw ReminderSyncError.unknown
         }
     }
 
-    func findCalendar(calendarName: String) -> EKCalendar? {
-        return ekStore.calendars(for: .reminder).first { $0.title == calendarName }
+    // MARK: - Available Lists
+
+    /// Returns all reminder lists (calendars) available on the device
+    func availableLists() -> [EKCalendar] {
+        return ekStore.calendars(for: .reminder).sorted { $0.title < $1.title }
     }
 
-    func initCalendar(calendarName: String) {
-        if let cal = findCalendar(calendarName: calendarName) {
-            ekCalendar = cal
-            isCalendarSelected = true
-        } else {
-            createCalendar(calendarName: calendarName)
-        }
+    /// Find a calendar by its title
+    func calendar(named name: String) -> EKCalendar? {
+        ekStore.calendars(for: .reminder).first { $0.title == name }
     }
 
-    func bestPossibleEKSource() -> EKSource? {
-        let defaultSource = ekStore.defaultCalendarForNewEvents?.source
-        let iCloudSource = ekStore.sources.first(where: { $0.title == "iCloud" })
-        let localSource = ekStore.sources.first(where: { $0.sourceType == .local })
+    // MARK: - Sync Shopping Items to a Specific List
 
-        return defaultSource ?? iCloudSource ?? localSource
-    }
-
-    private func createCalendar(calendarName: String) {
-        let calendar = EKCalendar(for: .reminder, eventStore: ekStore)
-        calendar.title = calendarName
-        calendar.cgColor = Color(.GrocyColors.grocyBlue).cgColor
-        guard let source = bestPossibleEKSource() else {
+    /// Syncs shopping list items for a specific store to the named reminder list.
+    /// - Parameters:
+    ///   - items: Product names to sync (not-done items)
+    ///   - doneItems: Product names of completed items
+    ///   - listName: The iOS Reminders list name to sync to
+    ///   - storeID: Grocy store ID (used as a namespace in reminder notes)
+    func syncItems(
+        notDone: [(id: Int, productID: Int, name: String)],
+        done: [(id: Int, productID: Int, name: String)],
+        to listName: String,
+        storeID: Int
+    ) throws {
+        guard hasAccess else { throw ReminderSyncError.accessDenied }
+        guard let calendar = calendar(named: listName) else {
+            GrocyLogger.warning("ReminderStore: No list named '\(listName)' found, skipping sync")
             return
         }
-        calendar.source = source
-        do {
-            try ekStore.saveCalendar(calendar, commit: true)
-            calendarIdentifier = calendar.calendarIdentifier
-            ekCalendar = calendar
-            isCalendarSelected = true
-        } catch {
-            GrocyLogger.error("Error creating calendar. \(error)")
-        }
-    }
 
-    private func read(with id: Reminder.ID) throws -> EKReminder {
-        guard let ekReminder = ekStore.calendarItem(withIdentifier: id) as? EKReminder else {
-            throw TodayError.failedReadingCalendarItem
-        }
-        return ekReminder
-    }
+        // Fetch all existing reminders in this list
+        let existingReminders = fetchRemindersSync(in: calendar)
 
-    func loadReminders(store: EKEventStore, completion: @escaping ([EKReminder]) -> Void) {
-        let predicate = store.predicateForReminders(in: nil)
-        store.fetchReminders(matching: predicate) { reminders in
-            completion(reminders ?? [])
-        }
-    }
-
-    func readAll() async throws -> [Reminder] {
-        guard isAvailable else {
-            throw TodayError.accessDenied
-        }
-        guard let ekCalendar = ekCalendar else {
-            throw TodayError.failedReadingReminders
-        }
-
-        let predicate = ekStore.predicateForReminders(in: [ekCalendar])
-
-        return await withCheckedContinuation { continuation in
-            ekStore.fetchReminders(matching: predicate) { ekReminders in
-                var reminders: [Reminder] = []
-                for ekReminder in (ekReminders ?? []) {
-                    do {
-                        let reminder = try Reminder(with: ekReminder)
-                        reminders.append(reminder)
-                    } catch {
-                        continue
-                    }
-                }
-                continuation.resume(returning: reminders)
+        // Build a map of grocy item ID → existing reminder
+        var existingByItemID: [Int: EKReminder] = [:]
+        for reminder in existingReminders {
+            if let itemID = extractGrocyItemID(from: reminder.notes) {
+                existingByItemID[itemID] = reminder
             }
         }
+
+        let allItems = notDone + done
+        let allItemIDs = Set(allItems.map { $0.id })
+
+        // Remove reminders for items no longer on the shopping list
+        for (itemID, reminder) in existingByItemID {
+            if !allItemIDs.contains(itemID) {
+                try ekStore.remove(reminder, commit: false)
+                GrocyLogger.info("ReminderStore: Removed reminder for item \(itemID)")
+            }
+        }
+
+        // Add or update not-done items
+        for item in notDone {
+            if let existing = existingByItemID[item.id] {
+                // Update if title changed
+                if existing.title != item.name {
+                    existing.title = item.name
+                    try ekStore.save(existing, commit: false)
+                }
+                // Uncheck if it was marked done
+                if existing.isCompleted {
+                    existing.isCompleted = false
+                    try ekStore.save(existing, commit: false)
+                }
+            } else {
+                // Create new reminder
+                let reminder = EKReminder(eventStore: ekStore)
+                reminder.title = item.name
+                reminder.notes = "[grocy:\(item.productID)]\n\(grocyReminderTag)\(item.id)"
+                reminder.calendar = calendar
+                reminder.isCompleted = false
+                try ekStore.save(reminder, commit: false)
+                GrocyLogger.info("ReminderStore: Added reminder '\(item.name)' to '\(listName)'")
+            }
+        }
+
+        // Mark done items as completed (don't delete, let user clear)
+        for item in done {
+            if let existing = existingByItemID[item.id], !existing.isCompleted {
+                existing.isCompleted = true
+                try ekStore.save(existing, commit: false)
+            }
+        }
+
+        // Commit all changes in one batch
+        try ekStore.commit()
+        GrocyLogger.info("ReminderStore: Synced \(notDone.count) active, \(done.count) done items to '\(listName)'")
     }
 
-    func remove(with id: Reminder.ID) throws {
-        guard isAvailable else {
-            throw TodayError.accessDenied
+    /// Remove all Grocy-managed reminders from a list (used when unmapping a store)
+    func clearGrocyReminders(from listName: String) throws {
+        guard hasAccess else { return }
+        guard let calendar = calendar(named: listName) else { return }
+
+        let reminders = fetchRemindersSync(in: calendar)
+        for reminder in reminders {
+            if reminder.notes?.contains(grocyReminderTag) == true {
+                try ekStore.remove(reminder, commit: false)
+            }
         }
-        let ekReminder = try read(with: id)
-        try ekStore.remove(ekReminder, commit: true)
+        try ekStore.commit()
+        GrocyLogger.info("ReminderStore: Cleared all Grocy reminders from '\(listName)'")
     }
 
-    @discardableResult
-    func save(_ reminder: Reminder) throws -> Reminder.ID {
-        guard isAvailable else {
-            throw TodayError.accessDenied
+    // MARK: - Private Helpers
+
+    private func fetchRemindersSync(in calendar: EKCalendar) -> [EKReminder] {
+        var result: [EKReminder] = []
+        let semaphore = DispatchSemaphore(value: 0)
+        let predicate = ekStore.predicateForReminders(in: [calendar])
+        ekStore.fetchReminders(matching: predicate) { reminders in
+            result = reminders ?? []
+            semaphore.signal()
         }
-        let ekReminder: EKReminder
-        do {
-            ekReminder = try read(with: reminder.id)
-        } catch {
-            ekReminder = EKReminder(eventStore: ekStore)
-        }
-        ekReminder.update(using: reminder, in: ekStore)
-        ekReminder.calendar = ekCalendar
-        ekReminder.isCompleted = reminder.isComplete
-        try ekStore.save(ekReminder, commit: true)
-        return ekReminder.calendarItemIdentifier
+        semaphore.wait()
+        return result
+    }
+
+    private func extractGrocyItemID(from notes: String?) -> Int? {
+        guard let notes = notes,
+              let range = notes.range(of: grocyReminderTag) else { return nil }
+        let remainder = String(notes[range.upperBound...])
+        // Only parse the leading integer, ignoring any trailing annotation like " (Product Name)"
+        let idString = remainder.prefix(while: { $0.isNumber })
+        return Int(idString)
     }
 }

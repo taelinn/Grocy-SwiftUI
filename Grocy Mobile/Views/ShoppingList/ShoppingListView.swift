@@ -32,7 +32,6 @@ enum AlertType: Hashable, Identifiable {
     case deleteShoppingList(alertSHL: ShoppingListDescription)
     case clearShoppingList(alertSHL: ShoppingListDescription)
     case clearAllDone(alertSHL: ShoppingListDescription)
-    case exportToReminders(alertSHL: ShoppingListDescription)
 
     var id: Self { self }
 
@@ -46,8 +45,6 @@ enum AlertType: Hashable, Identifiable {
             return "Are you sure you want to empty shopping list \"\(alertSHL.name)\"?"
         case .clearAllDone:
             return "Do you really want to clear all done items?"
-        case .exportToReminders:
-            return "Export shopping list to Reminders"
         }
     }
 }
@@ -102,6 +99,8 @@ struct ShoppingListView: View {
     @State private var shlItemToDelete: ShoppingListItem? = nil
     @State private var activeAlert: AlertType?
 
+    @AppStorage(StoreReminderMappings.syncEnabledKey) private var reminderSyncEnabled: Bool = false
+
     private let dataToUpdate: [ObjectEntities] = [
         .products,
         .product_groups,
@@ -112,6 +111,21 @@ struct ShoppingListView: View {
     ]
     func updateData() async {
         await grocyVM.requestData(objects: dataToUpdate)
+    }
+
+    private func triggerReminderSyncIfEnabled() async {
+        guard reminderSyncEnabled, ReminderStore.shared.hasAccess else { return }
+        let mappings = StoreReminderMappings.load()
+        let defaultList = UserDefaults.standard.string(forKey: StoreReminderMappings.defaultListKey)
+        guard !mappings.isEmpty || defaultList != nil else { return }
+        do {
+            try await grocyVM.syncShoppingListToReminders(
+                mappings: mappings,
+                defaultList: defaultList
+            )
+        } catch {
+            GrocyLogger.warning("Auto reminder sync failed: \(error)")
+        }
     }
 
     func checkBelowStock(item: ShoppingListItem) -> Bool {
@@ -297,23 +311,20 @@ struct ShoppingListView: View {
         }
     }
 
-    private func exportShoppingListToReminders(alertSHL: ShoppingListDescription) async {
+    private func syncToRemindersNow() async {
+        let mappings = StoreReminderMappings.load()
+        let defaultList = UserDefaults.standard.string(forKey: StoreReminderMappings.defaultListKey)
+        guard !mappings.isEmpty || defaultList != nil else { return }
         do {
-            if !ReminderStore.shared.isAvailable {
+            if !ReminderStore.shared.hasAccess {
                 try await ReminderStore.shared.requestAccess()
-                ReminderStore.shared.initCalendar(calendarName: "\(alertSHL.name) (Grocy Mobile)")
             }
-            let allReminders = try await ReminderStore.shared.readAll()
-            for reminder in allReminders {
-                try ReminderStore.shared.remove(with: reminder.id)
-            }
-            let filteredItems = shoppingList.filter { $0.shoppingListID == alertSHL.id }
-            for shoppingListItem in filteredItems {
-                let title = "\(shoppingListItem.amount.formattedAmount)x \(mdProducts.first(where: { $0.id == shoppingListItem.productID })?.name ?? shoppingListItem.note)"
-                try ReminderStore.shared.save(Reminder(title: title, isComplete: shoppingListItem.done))
-            }
+            try await grocyVM.syncShoppingListToReminders(
+                mappings: mappings,
+                defaultList: defaultList
+            )
         } catch {
-            GrocyLogger.error("Exporting the shopping list to Reminders failed. \(error)")
+            GrocyLogger.error("Syncing the shopping list to Reminders failed. \(error)")
         }
     }
 
@@ -446,6 +457,9 @@ struct ShoppingListView: View {
         .refreshable {
             await updateData()
         }
+        .onChange(of: shoppingList) { _, _ in
+            Task { await triggerReminderSyncIfEnabled() }
+        }
         .animation(.default, value: groupedShoppingList.count)
         .sheet(isPresented: $showFilterSheet) {
             NavigationStack {
@@ -530,12 +544,6 @@ struct ShoppingListView: View {
                             await slAction(.clearDone, actionSHL: alertSHL)
                         }
                     }
-                case .exportToReminders(let alertSHL):
-                    Button("Confirm", role: .confirm) {
-                        Task {
-                            await exportShoppingListToReminders(alertSHL: alertSHL)
-                        }
-                    }
                 default:
                     Button("") {}
                 }
@@ -544,8 +552,6 @@ struct ShoppingListView: View {
                 switch activeAlert {
                 case .deleteItem(let shoppingListItem):
                     Text(mdProducts.first(where: { $0.id == shoppingListItem.productID })?.name ?? "Name not found")
-                case .exportToReminders:
-                    Text("Do you want to export this shopping list to Reminders? This may overwrite changes in the list.")
                 case _: Text("")
                 }
             }
@@ -662,12 +668,10 @@ struct ShoppingListView: View {
     var shoppingListReminderSyncContent: some View {
         Button(
             action: {
-                if let selectedShoppingList {
-                    activeAlert = .exportToReminders(alertSHL: selectedShoppingList)
-                }
+                Task { await syncToRemindersNow() }
             },
             label: {
-                Label("Export shopping list to Reminders", systemImage: "checklist")
+                Label("Sync to Reminders", systemImage: "checklist")
             }
         )
     }
