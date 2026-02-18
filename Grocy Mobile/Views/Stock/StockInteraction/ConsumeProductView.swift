@@ -208,7 +208,6 @@ struct ConsumeProductView: View {
             let consumeInfo = ProductConsume(amount: factoredAmount, transactionType: .consume, spoiled: spoiled, stockEntryID: stockEntryID, recipeID: recipeID, locationID: locationID, exactAmount: nil, allowSubproductSubstitution: nil)
             isProcessingAction = true
             isSuccessful = nil
-            var shlActionSuccessful: Bool = false
             do {
                 try await grocyVM.postStockObject(id: productID, stockModePost: .consume, content: consumeInfo)
                 GrocyLogger.info("Consume \(amount.formattedAmount) \(productName) successful.")
@@ -218,18 +217,12 @@ struct ConsumeProductView: View {
                         GrocyLogger.info("SHLAction successful.")
                         await grocyVM.requestData(objects: [.shopping_list])
                     } catch {
-                        GrocyLogger.error("SHLAction failed. \(error)")
-                        shlActionSuccessful = false
-                        if let apiError = error as? APIError {
-                            errorMessage = apiError.displayMessage
-                        } else {
-                            errorMessage = error.localizedDescription
-                        }
+                        // Best-effort: log the failure but don't surface it as a consume error.
+                        // This can happen if the shopping list ID in Grocy user settings is invalid.
+                        GrocyLogger.error("SHLAction failed (non-fatal). \(error)")
                     }
-                } else {
-                    shlActionSuccessful = true
                 }
-                isSuccessful = true && shlActionSuccessful
+                isSuccessful = true
                 if quickScan || productToConsumeID != nil {
                     self.dismiss()
                 }
