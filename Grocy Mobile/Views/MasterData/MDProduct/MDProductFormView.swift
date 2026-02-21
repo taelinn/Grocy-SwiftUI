@@ -385,33 +385,21 @@ struct MDProductFormView: View {
                 )
                 
                 // Default due days
-                Stepper(
-                    value: $product.defaultDueDays,
-                    in: 0...9999,
-                    step: 1,
-                    label: {
-                        HStack {
-                            Label("Default due days", systemImage: MySymbols.date)
-                            Spacer()
-                            Text("\(product.defaultDueDays)")
-                                .foregroundStyle(.secondary)
-                        }
-                    }
+                MyIntStepper(
+                    amount: $product.defaultDueDays,
+                    description: "Default due days",
+                    minAmount: -1,
+                    amountName: product.defaultDueDays == 1 ? "Day" : "Days",
+                    systemImage: MySymbols.date
                 )
                 
                 // Default days after freezing
-                Stepper(
-                    value: $product.defaultDueDaysAfterFreezing,
-                    in: -1...9999,
-                    step: 1,
-                    label: {
-                        HStack {
-                            Label("Default days after freezing", systemImage: MySymbols.freezing)
-                            Spacer()
-                            Text(product.defaultDueDaysAfterFreezing == -1 ? "Default" : "\(product.defaultDueDaysAfterFreezing)")
-                                .foregroundStyle(.secondary)
-                        }
-                    }
+                MyIntStepper(
+                    amount: $product.defaultDueDaysAfterFreezing,
+                    description: "Default days after freezing",
+                    minAmount: -1,
+                    amountName: product.defaultDueDaysAfterFreezing == 1 ? "Day" : "Days",
+                    systemImage: MySymbols.freezing
                 )
                 
                 // Quantity Unit Stock - REQUIRED

@@ -158,7 +158,7 @@ struct ProductField: View {
                     }
                     Text("").tag(nil as Int?)
                     ForEach(filteredProducts, id: \.id) { productElement in
-                        Text(productElement.name).tag(productElement.id)
+                        Text(productElement.name).tag(productElement.id as Int?)
                     }
                 }
             )

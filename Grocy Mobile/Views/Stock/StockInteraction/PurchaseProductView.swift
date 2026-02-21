@@ -237,6 +237,7 @@ struct PurchaseProductView: View {
                             }
                         }
                     )
+                    .datePickerStyle(.compact)
                     .foregroundStyle(.primary)
                     .disabled(productDoesntSpoil)
 
