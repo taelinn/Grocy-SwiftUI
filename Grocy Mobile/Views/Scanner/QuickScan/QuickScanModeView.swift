@@ -230,7 +230,28 @@ struct QuickScanModeView: View {
 
     var bodyContent: some View {
         #if os(iOS)
-            barcodeScanner()
+            ZStack {
+                barcodeScanner()
+                
+                // Segmented control overlay at top
+                VStack {
+                    Picker("Mode", selection: $quickScanMode) {
+                        Text("Consume")
+                            .tag(QuickScanMode.consume)
+                        Text("Open")
+                            .tag(QuickScanMode.markAsOpened)
+                        Text("Purchase")
+                            .tag(QuickScanMode.purchase)
+                        Text("Transfer")
+                            .tag(QuickScanMode.transfer)
+                    }
+                    .pickerStyle(.segmented)
+                    .padding()
+                    .background(.regularMaterial)
+                    
+                    Spacer()
+                }
+            }
                 .sheet(item: $qsActiveSheet) { item in
                     NavigationStack {
                         sheetContent(for: item)
@@ -250,28 +271,6 @@ struct QuickScanModeView: View {
                     Text("Please enable camera access in Settings to scan barcodes.")
                 }
                 .toolbar {
-                    ToolbarItem(placement: .topBarLeading) {
-                        Picker(
-                            selection: $quickScanMode,
-                            label: Label("Quick Scan", systemImage: MySymbols.menuPick),
-                            content: {
-                                Label("Consume", systemImage: MySymbols.consume)
-                                    .labelStyle(.titleAndIcon)
-                                    .tag(QuickScanMode.consume)
-                                Label("Open", systemImage: MySymbols.open)
-                                    .labelStyle(.titleAndIcon)
-                                    .tag(QuickScanMode.markAsOpened)
-                                Label("Purchase", systemImage: MySymbols.purchase)
-                                    .labelStyle(.titleAndIcon)
-                                    .tag(QuickScanMode.purchase)
-                                Label("Transfer", systemImage: MySymbols.transfer)
-                                    .labelStyle(.titleAndIcon)
-                                    .tag(QuickScanMode.transfer)
-                            }
-                        )
-                        .pickerStyle(.menu)
-                    }
-
                     ToolbarItemGroup(placement: .topBarTrailing) {
                         Button(
                             action: {

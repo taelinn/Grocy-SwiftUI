@@ -87,6 +87,29 @@ struct TransferProductView: View {
     }
 
     private let priceFormatter = NumberFormatter()
+    
+    // Filter locations to only show ones with stock for this product
+    private var locationsWithStock: MDLocations {
+        if let productID = productID {
+            return mdLocations.filter { location in
+                stockProductEntries.contains(where: {
+                    $0.productID == productID && $0.locationID == location.id
+                })
+            }
+        } else {
+            return []
+        }
+    }
+    
+    // Get the stock amount for a specific location
+    private func getAmountForLocation(lID: Int) -> Double {
+        var totalAmount: Double = 0
+        let filtEntries = stockProductEntries.filter { $0.productID == productID && $0.locationID == lID }
+        for filtEntry in filtEntries {
+            totalAmount += filtEntry.amount
+        }
+        return totalAmount
+    }
 
     var isFormValid: Bool {
         (productID != nil) && (amount > 0) && (quantityUnitID != nil) && (locationIDFrom != nil) && (locationIDTo != nil) && !(useSpecificStockEntry && stockEntryID == nil) && !(useSpecificStockEntry && amount != 1.0)
@@ -169,8 +192,12 @@ struct TransferProductView: View {
                         },
                         content: {
                             Text("").tag(nil as Int?)
-                            ForEach(mdLocations, id: \.id) { locationFrom in
-                                Text(locationFrom.name).tag(locationFrom.id as Int?)
+                            ForEach(locationsWithStock, id: \.id) { locationFrom in
+                                if locationFrom.id == product?.locationID {
+                                    Text("\(locationFrom.name) (\(getAmountForLocation(lID: locationFrom.id).formattedAmount)) (\(Text("Default location")))").tag(locationFrom.id as Int?)
+                                } else {
+                                    Text("\(locationFrom.name) (\(getAmountForLocation(lID: locationFrom.id).formattedAmount))").tag(locationFrom.id as Int?)
+                                }
                             }
                         }
                     )
