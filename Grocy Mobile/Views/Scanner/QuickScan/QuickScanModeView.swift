@@ -11,7 +11,7 @@ import SwiftUI
 import Vision
 
 enum QuickScanMode {
-    case consume, markAsOpened, purchase
+    case consume, markAsOpened, purchase, transfer
 }
 
 enum QSActiveSheet: Identifiable {
@@ -264,6 +264,9 @@ struct QuickScanModeView: View {
                                 Label("Purchase", systemImage: MySymbols.purchase)
                                     .labelStyle(.titleAndIcon)
                                     .tag(QuickScanMode.purchase)
+                                Label("Transfer", systemImage: MySymbols.transfer)
+                                    .labelStyle(.titleAndIcon)
+                                    .tag(QuickScanMode.transfer)
                             }
                         )
                         .pickerStyle(.menu)
@@ -370,6 +373,13 @@ struct QuickScanModeView: View {
                 case .purchase:
                     PurchaseProductView(
                         directProductToPurchaseID: product.id,
+                        barcode: recognizedBarcode,
+                        quickScan: true,
+                        isPopup: true
+                    )
+                case .transfer:
+                    TransferProductView(
+                        directProductToTransferID: product.id,
                         barcode: recognizedBarcode,
                         quickScan: true,
                         isPopup: true

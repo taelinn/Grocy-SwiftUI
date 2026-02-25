@@ -34,6 +34,8 @@ struct TransferProductView: View {
     var productToTransferID: Int? {
         return directProductToTransferID ?? stockElement?.productID
     }
+    var barcode: MDProductBarcode? = nil
+    var quickScan: Bool = false
     var isPopup: Bool = false
 
     @State private var productID: Int?
@@ -112,7 +114,7 @@ struct TransferProductView: View {
                 GrocyLogger.info("Transfer successful.")
                 await grocyVM.requestData(additionalObjects: [.stock])
                 isSuccessful = true
-                if productToTransferID != nil {
+                if quickScan || productToTransferID != nil {
                     finishForm()
                 }
                 actionPending = false
