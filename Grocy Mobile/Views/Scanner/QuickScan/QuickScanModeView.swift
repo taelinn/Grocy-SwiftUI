@@ -15,7 +15,7 @@ enum QuickScanMode {
 }
 
 enum QSActiveSheet: Identifiable {
-    case barcode, grocyCode, selectProduct
+    case barcode, grocyCode, selectProduct, manualProductSearch
 
     var id: Int {
         hashValue
@@ -49,6 +49,7 @@ struct QuickScanModeView: View {
     @State var newRecognizedBarcode: MDProductBarcode? = nil
     @State var recognizedGrocyCode: GrocyCode? = nil
     @State var notRecognizedBarcode: String? = nil
+    @State var manuallySelectedProductID: Int? = nil
 
     @State private var cameraUnauthorized: Bool = false
 
@@ -167,7 +168,9 @@ struct QuickScanModeView: View {
     #endif
 
     var product: MDProduct? {
-        if let grocyCode = recognizedGrocyCode, grocyCode.entityType == .product {
+        if let manualProductID = manuallySelectedProductID {
+            return mdProducts.first(where: { $0.id == manualProductID })
+        } else if let grocyCode = recognizedGrocyCode, grocyCode.entityType == .product {
             return mdProducts.first(where: { $0.id == grocyCode.entityID })
         } else if let productBarcode = recognizedBarcode {
             return mdProducts.first(where: { $0.id == productBarcode.productID })
@@ -271,6 +274,17 @@ struct QuickScanModeView: View {
                     Text("Please enable camera access in Settings to scan barcodes.")
                 }
                 .toolbar {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button(
+                            action: {
+                                qsActiveSheet = .manualProductSearch
+                            },
+                            label: {
+                                Image(systemName: MySymbols.search)
+                            }
+                        )
+                    }
+                    
                     ToolbarItemGroup(placement: .topBarTrailing) {
                         Button(
                             action: {
@@ -319,6 +333,16 @@ struct QuickScanModeView: View {
                         checkScanPause()
                     }
                 }
+                .onChange(of: manuallySelectedProductID) {
+                    if manuallySelectedProductID != nil {
+                        // Wait for search sheet to dismiss, then show action sheet
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                            recognizedBarcode = nil
+                            recognizedGrocyCode = nil
+                            qsActiveSheet = .barcode
+                        }
+                    }
+                }
                 .onChange(
                     of: isTorchOn,
                     {
@@ -348,6 +372,8 @@ struct QuickScanModeView: View {
     @ViewBuilder
     private func sheetContent(for sheetType: QSActiveSheet) -> some View {
         switch sheetType {
+        case .manualProductSearch:
+            QuickScanManualSearchView(selectedProductID: $manuallySelectedProductID)
         case .barcode, .grocyCode:
             if let product = product {
                 switch quickScanMode {
