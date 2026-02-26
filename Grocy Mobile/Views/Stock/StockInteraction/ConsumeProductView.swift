@@ -68,6 +68,7 @@ struct ConsumeProductView: View {
     @State private var useSpecificStockEntry: Bool = false
     @State private var stockEntryID: String?
     @State private var recipeID: Int?
+    @State private var addToShoppingList: Bool = false
 
     @State private var searchProductTerm: String = ""
 
@@ -184,6 +185,30 @@ struct ConsumeProductView: View {
                 try await grocyVM.postStockObject(id: productID, stockModePost: .open, content: openInfo)
                 GrocyLogger.info("Opening successful.")
                 await grocyVM.requestData(additionalObjects: [.stock])
+                
+                // Add to shopping list if user requested it
+                if addToShoppingList, let shlID = userSettings?.shoppingListAutoAddBelowMinStockAmountListID, let product = product {
+                    do {
+                        let nextID = try grocyVM.findNextID(.shopping_list)
+                        let shoppingListItem = ShoppingListItem(
+                            id: nextID,
+                            productID: productID,
+                            note: "",
+                            amount: 1.0,
+                            shoppingListID: shlID,
+                            done: false,
+                            quID: product.quIDPurchase,
+                            rowCreatedTimestamp: Date()
+                        )
+                        _ = try await grocyVM.postMDObject(object: .shopping_list, content: shoppingListItem)
+                        GrocyLogger.info("Added \(productName) to shopping list.")
+                        await grocyVM.requestData(objects: [.shopping_list])
+                    } catch {
+                        // Best-effort: log the failure but don't surface it as an open error.
+                        GrocyLogger.error("Add to shopping list failed (non-fatal). \(error)")
+                    }
+                }
+                
                 isSuccessful = true
                 if quickScan || productToConsumeID != nil {
                     finishForm()
@@ -211,6 +236,30 @@ struct ConsumeProductView: View {
             do {
                 try await grocyVM.postStockObject(id: productID, stockModePost: .consume, content: consumeInfo)
                 GrocyLogger.info("Consume \(amount.formattedAmount) \(productName) successful.")
+                // Add to shopping list if user requested it
+                if addToShoppingList, let shlID = userSettings?.shoppingListAutoAddBelowMinStockAmountListID, let product = product {
+                    do {
+                        let nextID = try grocyVM.findNextID(.shopping_list)
+                        let shoppingListItem = ShoppingListItem(
+                            id: nextID,
+                            productID: productID,
+                            note: "",
+                            amount: 1.0,
+                            shoppingListID: shlID,
+                            done: false,
+                            quID: product.quIDPurchase,
+                            rowCreatedTimestamp: Date()
+                        )
+                        _ = try await grocyVM.postMDObject(object: .shopping_list, content: shoppingListItem)
+                        GrocyLogger.info("Added \(productName) to shopping list.")
+                        await grocyVM.requestData(objects: [.shopping_list])
+                    } catch {
+                        // Best-effort: log the failure but don't surface it as a consume error.
+                        GrocyLogger.error("Add to shopping list failed (non-fatal). \(error)")
+                    }
+                }
+                
+                // Auto-add below min stock if enabled
                 if let autoAddBelowMinStock = userSettings?.shoppingListAutoAddBelowMinStockAmount, autoAddBelowMinStock == true, let shlID = userSettings?.shoppingListAutoAddBelowMinStockAmountListID {
                     do {
                         try await grocyVM.shoppingListAction(content: ShoppingListAction(listID: shlID), actionType: .addMissing)
@@ -297,6 +346,13 @@ struct ConsumeProductView: View {
                     if (consumeType == .consume) || (consumeType == .both) {
                         MyToggle(isOn: $spoiled, description: "Spoiled", icon: MySymbols.spoiled)
                     }
+                    
+                    MyToggle(
+                        isOn: $addToShoppingList,
+                        description: "Add to shopping list",
+                        descriptionInfo: "Add this product to your shopping list after consuming",
+                        icon: MySymbols.shoppingList
+                    )
 
                     Picker(
                         selection: $recipeID,
