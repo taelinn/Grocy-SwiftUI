@@ -29,6 +29,9 @@ struct Sidebar: View {
                     NavigationLink(value: NavigationItem.quickScan) {
                         Label("Quick Scan", systemImage: MySymbols.barcodeScan)
                     }
+                    NavigationLink(value: NavigationItem.barcodeBuddy) {
+                        Label("New Scans", systemImage: "list.bullet.clipboard")
+                    }
                 #endif
                 if !(systemConfig?.featureFlagStock == false) {
                     NavigationLink(value: NavigationItem.stockOverview) {
