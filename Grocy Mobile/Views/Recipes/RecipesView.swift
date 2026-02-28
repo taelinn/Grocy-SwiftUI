@@ -225,12 +225,15 @@ struct RecipesView: View {
             .searchable(text: $searchString, prompt: "Search")
             .animation(.default, value: recipes.count)
             .toolbar {
-                ToolbarItem(
-                    placement: .topBarLeading,
-                    content: {
-                        sortMenu
-                    }
-                )
+                #if os(iOS)
+                ToolbarItem(placement: .topBarLeading) {
+                    sortMenu
+                }
+                #else
+                ToolbarItem(placement: .automatic) {
+                    sortMenu
+                }
+                #endif
                 ToolbarItem(
                     placement: .automatic,
                     content: {

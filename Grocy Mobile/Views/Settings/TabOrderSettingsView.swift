@@ -85,10 +85,12 @@ struct TabOrderSettingsView: View {
             }
         }
         .navigationTitle("Customize Tabs")
+        #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             EditButton()
         }
+        #endif
         .onAppear {
             loadTabs()
         }

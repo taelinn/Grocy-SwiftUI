@@ -102,7 +102,9 @@ struct QuickAddTabView: View {
             }
         }
         .navigationTitle("Quick Add")
+        #if os(iOS)
         .navigationBarTitleDisplayMode(.large)
+        #endif
         .searchable(text: $searchText, prompt: "Search favorites")
         .refreshable {
             await syncFromServer()
@@ -111,6 +113,7 @@ struct QuickAddTabView: View {
             await migrateExistingFavorites()
         }
         .toolbar {
+            #if os(iOS)
             if !favorites.isEmpty {
                 ToolbarItem(placement: .topBarLeading) {
                     Button(isEditing ? "Done" : "Edit") {
@@ -127,6 +130,15 @@ struct QuickAddTabView: View {
                 }
                 .disabled(isEditing)
             }
+            #else
+            ToolbarItem(placement: .automatic) {
+                Button {
+                    showingProductPicker = true
+                } label: {
+                    Image(systemName: "plus")
+                }
+            }
+            #endif
         }
         .sheet(isPresented: $showingProductPicker) {
             NavigationStack {
@@ -260,7 +272,9 @@ struct QuickAddTabView: View {
                 }
             }
         }
+        #if os(iOS)
         .environment(\.editMode, .constant(isEditing ? .active : .inactive))
+        #endif
     }
     
     private func favoriteRow(_ favorite: QuickAddFavorite) -> some View {

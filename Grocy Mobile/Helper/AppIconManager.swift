@@ -6,6 +6,9 @@
 //
 
 import SwiftUI
+#if os(iOS)
+import UIKit
+#endif
 
 @Observable
 class AppIconManager {
@@ -58,20 +61,28 @@ class AppIconManager {
     
     var currentIcon: AppIcon {
         get {
+            #if os(iOS)
             guard let iconName = UIApplication.shared.alternateIconName else {
                 return .primary
             }
             return AppIcon.allCases.first { $0.iconName == iconName } ?? .primary
+            #else
+            return .primary  // macOS doesn't support alternate icons
+            #endif
         }
     }
     
     func setIcon(_ icon: AppIcon) async throws {
+        #if os(iOS)
         guard UIApplication.shared.supportsAlternateIcons else {
             throw AppIconError.notSupported
         }
         
         try await UIApplication.shared.setAlternateIconName(icon.iconName)
         GrocyLogger.info("App icon changed to: \(icon.displayName)")
+        #else
+        throw AppIconError.notSupported  // macOS doesn't support alternate icons
+        #endif
     }
 }
 

@@ -152,7 +152,9 @@ struct SettingsAppView: View {
         .formStyle(.grouped)
         .navigationTitle("App settings")
         .navigationBarBackButtonHidden(false)
+        #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
+        #endif
     }
 }
 

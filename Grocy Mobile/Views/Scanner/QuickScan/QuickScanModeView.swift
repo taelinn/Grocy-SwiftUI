@@ -132,30 +132,34 @@ struct QuickScanModeView: View {
             }
         }
 
-        func searchForBarcode(barcode: CodeResult) -> MDProductBarcode? {
-            if barcode.type == .ean13 {
-                return mdProductBarcodes.first(where: { $0.barcode.hasSuffix(barcode.value) })
-            } else {
-                return mdProductBarcodes.first(where: { $0.barcode == barcode.value })
-            }
-        }
-
-        func handleScan(result: CodeResult) {
-            UIImpactFeedbackGenerator(style: .soft).impactOccurred()
-            if let grocyCode = searchForGrocyCode(barcodeString: result.value) {
-                recognizedBarcode = nil
-                recognizedGrocyCode = grocyCode
-                qsActiveSheet = .grocyCode
-            } else if let foundBarcode = searchForBarcode(barcode: result) {
-                recognizedBarcode = foundBarcode
-                recognizedGrocyCode = nil
-                qsActiveSheet = .barcode
-            } else {
-                notRecognizedBarcode = result.value
-                qsActiveSheet = .selectProduct
-            }
-        }
     #endif
+    
+    // Shared search and scan functions for all platforms
+    func searchForBarcode(barcode: CodeResult) -> MDProductBarcode? {
+        if barcode.type == .ean13 {
+            return mdProductBarcodes.first(where: { $0.barcode.hasSuffix(barcode.value) })
+        } else {
+            return mdProductBarcodes.first(where: { $0.barcode == barcode.value })
+        }
+    }
+
+    func handleScan(result: CodeResult) {
+        #if os(iOS)
+        UIImpactFeedbackGenerator(style: .soft).impactOccurred()
+        #endif
+        if let grocyCode = searchForGrocyCode(barcodeString: result.value) {
+            recognizedBarcode = nil
+            recognizedGrocyCode = grocyCode
+            qsActiveSheet = .grocyCode
+        } else if let foundBarcode = searchForBarcode(barcode: result) {
+            recognizedBarcode = foundBarcode
+            recognizedGrocyCode = nil
+            qsActiveSheet = .barcode
+        } else {
+            notRecognizedBarcode = result.value
+            qsActiveSheet = .selectProduct
+        }
+    }
     
     // Shared function for all platforms - handles external barcode scanner input
     func handleKeyPress(characters: String) {

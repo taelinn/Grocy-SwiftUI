@@ -117,7 +117,9 @@ struct AppTabNavigation: View {
                 SettingsView()
             }
         }
+        #if os(iOS)
         .tabBarMinimizeBehavior(.onScrollDown)
+        #endif
         .onAppear {
             Task {
                 await grocyVM.requestData(additionalObjects: [.system_config])

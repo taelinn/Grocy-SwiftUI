@@ -111,7 +111,11 @@ struct BBStockActionSheet: View {
                         Text("Skip - Just Link the Barcode")
                             .frame(maxWidth: .infinity)
                             .padding()
+                            #if os(iOS)
                             .background(Color(.systemGray5))
+                            #else
+                            .background(Color(nsColor: .systemGray))
+                            #endif
                             .foregroundStyle(.primary)
                             .cornerRadius(12)
                     }
@@ -120,7 +124,9 @@ struct BBStockActionSheet: View {
                 .padding(.bottom, 32)
             }
             .navigationTitle("Barcode Linked")
+            #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
+            #endif
         }
     }
 }
