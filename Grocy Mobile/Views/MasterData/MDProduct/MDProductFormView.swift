@@ -100,7 +100,7 @@ struct MDProductFormView: View {
         return mdQuantityUnits.first(where: { $0.id == product.quIDStock })
     }
 
-    private let dataToUpdate: [ObjectEntities] = [.products, .quantity_units, .locations, .shopping_locations, .product_barcodes]
+    private let dataToUpdate: [ObjectEntities] = [.products, .quantity_units, .locations, .shopping_locations, .product_barcodes, .product_groups]
     private let additionalDataToUpdate: [AdditionalEntities] = [.system_info]
     private func updateData() async {
         await grocyVM.requestData(objects: dataToUpdate, additionalObjects: additionalDataToUpdate)
