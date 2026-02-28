@@ -25,10 +25,10 @@ struct Sidebar: View {
     var body: some View {
         List(selection: $selection) {
             Section {
+                NavigationLink(value: NavigationItem.quickScan) {
+                    Label("Quick Scan", systemImage: MySymbols.barcodeScan)
+                }
                 #if os(iOS)
-                    NavigationLink(value: NavigationItem.quickScan) {
-                        Label("Quick Scan", systemImage: MySymbols.barcodeScan)
-                    }
                     NavigationLink(value: NavigationItem.barcodeBuddy) {
                         Label("New Scans", systemImage: "list.bullet.clipboard")
                     }

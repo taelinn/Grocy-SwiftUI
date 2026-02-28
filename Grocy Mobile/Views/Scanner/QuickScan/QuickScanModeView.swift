@@ -155,17 +155,18 @@ struct QuickScanModeView: View {
                 qsActiveSheet = .selectProduct
             }
         }
-
-        func handleKeyPress(characters: String) {
-            if characters == "\n" || characters == "\r" {
-                // Barcode scanners typically send Enter/Return after the code
-                handleScan(result: CodeResult(value: scannedCode, type: .qr))
-                scannedCode = ""
-            } else {
-                scannedCode += characters
-            }
-        }
     #endif
+    
+    // Shared function for all platforms - handles external barcode scanner input
+    func handleKeyPress(characters: String) {
+        if characters == "\n" || characters == "\r" {
+            // Barcode scanners typically send Enter/Return after the code
+            handleScan(result: CodeResult(value: scannedCode, type: .qr))
+            scannedCode = ""
+        } else {
+            scannedCode += characters
+        }
+    }
 
     var product: MDProduct? {
         if let manualProductID = manuallySelectedProductID {
@@ -364,7 +365,76 @@ struct QuickScanModeView: View {
                     isFocused = false
                 }
         #else
-            Text("Not available on this platform.")
+            // macOS version - keyboard input only (for external barcode scanners)
+            VStack(spacing: 20) {
+                Text("Quick Scan")
+                    .font(.largeTitle)
+                    .padding(.top, 40)
+                
+                Picker("Mode", selection: $quickScanMode) {
+                    Text("Consume").tag(QuickScanMode.consume)
+                    Text("Open").tag(QuickScanMode.markAsOpened)
+                    Text("Purchase").tag(QuickScanMode.purchase)
+                    Text("Transfer").tag(QuickScanMode.transfer)
+                }
+                .pickerStyle(.segmented)
+                .padding(.horizontal, 40)
+                
+                Spacer()
+                
+                VStack(spacing: 10) {
+                    Image(systemName: "barcode.viewfinder")
+                        .font(.system(size: 100))
+                        .foregroundStyle(.secondary)
+                    
+                    Text("Scan with external barcode scanner")
+                        .font(.title2)
+                    
+                    Text("Or use the search button to manually select a product")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
+                
+                Spacer()
+            }
+            .sheet(item: $qsActiveSheet) { item in
+                NavigationStack {
+                    sheetContent(for: item)
+                }
+            }
+            .task {
+                await updateData()
+            }
+            .toolbar {
+                ToolbarItem(placement: .primaryAction) {
+                    Button(action: {
+                        qsActiveSheet = .manualProductSearch
+                    }) {
+                        Label("Search", systemImage: MySymbols.search)
+                    }
+                }
+            }
+            .onChange(of: manuallySelectedProductID) {
+                if manuallySelectedProductID != nil {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                        recognizedBarcode = nil
+                        recognizedGrocyCode = nil
+                        qsActiveSheet = .barcode
+                    }
+                }
+            }
+            .focusable()
+            .focused($isFocused)
+            .onKeyPress { press in
+                handleKeyPress(characters: press.characters)
+                return .handled
+            }
+            .onAppear {
+                isFocused = true
+            }
+            .onDisappear {
+                isFocused = false
+            }
         #endif
     }
 
