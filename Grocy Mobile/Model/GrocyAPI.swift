@@ -434,7 +434,9 @@ public class GrocyApi: GrocyAPI {
             request.httpBody = content
         }
 
-        print(url.absoluteString)
+        #if DEBUG
+        GrocyLogger.debug("Grocy API Request: \(request.httpMethod ?? "GET") \(url.absoluteString)")
+        #endif
 
         request.timeoutInterval = self.timeoutInterval
         return request

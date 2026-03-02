@@ -58,4 +58,75 @@ final class ServerProfile {
         }
         return !url.isEmpty && !key.isEmpty
     }
+
+    // MARK: - URL Validation
+
+    /// Validates that the Grocy server URL uses HTTPS or is a local development server
+    var isGrocyURLSecure: Bool {
+        guard let url = URL(string: grocyServerURL.trimmingCharacters(in: .whitespaces)) else {
+            return false
+        }
+
+        // Allow HTTPS
+        if url.scheme == "https" {
+            return true
+        }
+
+        // Allow local development servers (localhost, 127.0.0.1, .local domains)
+        if url.scheme == "http" {
+            if let host = url.host?.lowercased() {
+                return host == "localhost" ||
+                       host == "127.0.0.1" ||
+                       host.hasPrefix("192.168.") ||
+                       host.hasPrefix("10.") ||
+                       host.hasPrefix("172.16.") ||
+                       host.hasSuffix(".local")
+            }
+        }
+
+        return false
+    }
+
+    /// Validates that the BarcodeBuddy URL uses HTTPS or is a local development server
+    var isBBURLSecure: Bool {
+        guard let urlString = barcodeBuddyURL,
+              !urlString.isEmpty,
+              let url = URL(string: urlString.trimmingCharacters(in: .whitespaces)) else {
+            return true // Empty URL is OK (BB is optional)
+        }
+
+        // Allow HTTPS
+        if url.scheme == "https" {
+            return true
+        }
+
+        // Allow local development servers
+        if url.scheme == "http" {
+            if let host = url.host?.lowercased() {
+                return host == "localhost" ||
+                       host == "127.0.0.1" ||
+                       host.hasPrefix("192.168.") ||
+                       host.hasPrefix("10.") ||
+                       host.hasPrefix("172.16.") ||
+                       host.hasSuffix(".local")
+            }
+        }
+
+        return false
+    }
+
+    /// Returns a user-friendly security warning message, or nil if URLs are secure
+    var securityWarningMessage: String? {
+        var warnings: [String] = []
+
+        if !isGrocyURLSecure {
+            warnings.append("Grocy server URL should use HTTPS for security")
+        }
+
+        if !isBBURLSecure {
+            warnings.append("BarcodeBuddy URL should use HTTPS for security")
+        }
+
+        return warnings.isEmpty ? nil : warnings.joined(separator: "\n")
+    }
 }

@@ -52,22 +52,28 @@ class BarcodeBuddyAPI: NSObject, URLSessionTaskDelegate {
         task: URLSessionTask,
         didFinishCollecting metrics: URLSessionTaskMetrics
     ) {
-        // Log actual request details after the request completes
+        #if DEBUG
+        // Log request/response details in debug builds only (sensitive data redacted)
         for transaction in metrics.transactionMetrics {
             let request = transaction.request
             Task { @MainActor in
-                GrocyLogger.info("Actual request sent - URL: \(request.url?.absoluteString ?? "nil")")
-                GrocyLogger.info("Actual request sent - Method: \(request.httpMethod ?? "nil")")
-                GrocyLogger.info("Actual request sent - All Headers: \(request.allHTTPHeaderFields ?? [:])")
+                GrocyLogger.debug("Request - URL: \(request.url?.absoluteString ?? "nil")")
+                GrocyLogger.debug("Request - Method: \(request.httpMethod ?? "nil")")
+                // Redact sensitive headers
+                var safeHeaders = request.allHTTPHeaderFields ?? [:]
+                safeHeaders["BBUDDY-API-KEY"] = "[REDACTED]"
+                safeHeaders["Authorization"] = "[REDACTED]"
+                safeHeaders["Cookie"] = "[REDACTED]"
+                GrocyLogger.debug("Request - Headers: \(safeHeaders)")
             }
-            
+
             if let response = transaction.response as? HTTPURLResponse {
                 Task { @MainActor in
-                    GrocyLogger.info("Response received - Status: \(response.statusCode)")
-                    GrocyLogger.info("Response received - All Headers: \(response.allHeaderFields)")
+                    GrocyLogger.debug("Response - Status: \(response.statusCode)")
                 }
             }
         }
+        #endif
     }
     
     // MARK: - Generic Request Method
@@ -86,10 +92,11 @@ class BarcodeBuddyAPI: NSObject, URLSessionTaskDelegate {
         request.setValue("application/json", forHTTPHeaderField: "Accept")
         request.setValue("GrocyMobile/3.2.0", forHTTPHeaderField: "User-Agent")
         
-        // Debug logging
-        GrocyLogger.info("BarcodeBuddy API Request: \(method) \(url.absoluteString)")
-        GrocyLogger.info("BarcodeBuddy API Key (length \(apiKey.count)): \(apiKey)")
-        GrocyLogger.info("BarcodeBuddy Headers: \(request.allHTTPHeaderFields ?? [:])")
+        // Debug logging (sensitive data redacted)
+        #if DEBUG
+        GrocyLogger.debug("BarcodeBuddy API Request: \(method) \(url.absoluteString)")
+        GrocyLogger.debug("BarcodeBuddy API Key: [REDACTED - length \(apiKey.count)]")
+        #endif
         
         // Handle POST body as form-encoded data
         if let body = body, method == "POST" {

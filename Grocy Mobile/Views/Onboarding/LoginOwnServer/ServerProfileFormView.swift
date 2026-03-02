@@ -226,7 +226,29 @@ struct ServerProfileFormView: View {
                     .textInputAutocapitalization(.never)
                 #endif
             }
-            
+
+            // Security Warning Section
+            if let warningMessage = serverProfile.securityWarningMessage {
+                Section {
+                    Label {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Security Warning")
+                                .font(.headline)
+                                .foregroundStyle(.orange)
+                            Text(warningMessage)
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                            Text("HTTP connections are not encrypted and can expose your API key to attackers on the network. Use HTTPS for production servers.")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    } icon: {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .foregroundStyle(.orange)
+                    }
+                }
+            }
+
             Section("Home Assistant Ingress") {
                 MyToggle(isOn: $serverProfile.useHassIngress, description: "Use Home Assistant Ingress", icon: "house")
                 if serverProfile.useHassIngress {
