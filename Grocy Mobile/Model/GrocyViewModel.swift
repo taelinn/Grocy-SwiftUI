@@ -675,7 +675,7 @@ class GrocyViewModel {
                 try swiftDataSync.syncPersistentCollection(stockEntries)
 
             case .priceHistory:
-                print("not implemented")
+                break
             }
         } catch {
             GrocyLogger.error("Data request failed for \(stockModeGet). Message: \("\(error)")")
@@ -913,7 +913,7 @@ class GrocyViewModel {
                         }
                     )
                     
-                    if let existingFavorite = try modelContext.fetch(fetchDescriptor).first {
+                    if try modelContext.fetch(fetchDescriptor).first != nil {
                         // Already exists, no update needed
                     } else {
                         // Create new local favorite

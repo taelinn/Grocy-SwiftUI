@@ -29,7 +29,7 @@ struct ShoppingListEntryFormView: View {
     var isPopup: Bool = false
 
     var isFormValid: Bool {
-        shoppingListEntry.amount > 0 && (shoppingListEntry.productID != -1 || !shoppingListEntry.note.isEmpty) && selectedShoppingListID != -1
+        shoppingListEntry.amount >= 0 && (shoppingListEntry.productID != -1 || !shoppingListEntry.note.isEmpty) && selectedShoppingListID != -1
     }
 
     var product: MDProduct? {

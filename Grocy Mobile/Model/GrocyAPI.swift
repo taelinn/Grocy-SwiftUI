@@ -170,7 +170,7 @@ public class GrocyApi: GrocyAPI {
         if let bestFitHeight = bestFitHeight { queries.append("best_fit_height=\(bestFitHeight)") }
         if let bestFitWidth = bestFitWidth { queries.append("best_fit_width=\(bestFitWidth)") }
 
-        let urlRequest = request(
+        let urlRequest = try request(
             for: endPoint,
             method: .GET,
             fileName: fileName,
@@ -187,8 +187,9 @@ public class GrocyApi: GrocyAPI {
                 throw APIError.serverError(errorMessage: "No content found. Wrong image?")
             } else {
                 do {
-                    print(httpResponse.statusCode)
-                    print(resultData)
+                    #if DEBUG
+                    GrocyLogger.debug("HTTP error \(httpResponse.statusCode)")
+                    #endif
                     let responseErrorDecoded = try JSONDecoder().decode(ErrorMessage.self, from: resultData)
                     throw APIError.errorString(description: responseErrorDecoded.errorMessage)
                 } catch {
@@ -208,7 +209,7 @@ public class GrocyApi: GrocyAPI {
         groupName: String? = nil,
         hassIngressToken: String? = nil
     ) async throws {
-        let urlRequest = request(for: endPoint, method: .PUT, id: id, fileName: fileName, groupName: groupName, isOctet: true, hassIngressToken: hassIngressToken)
+        let urlRequest = try request(for: endPoint, method: .PUT, id: id, fileName: fileName, groupName: groupName, isOctet: true, hassIngressToken: hassIngressToken)
         let (resultData, resultCode) = try await URLSession.shared.upload(for: urlRequest, from: fileData)
         if let httpResponse = resultCode as? HTTPURLResponse {
             if httpResponse.statusCode != 204 {
@@ -232,7 +233,7 @@ public class GrocyApi: GrocyAPI {
         groupName: String? = nil,
         hassIngressToken: String? = nil
     ) async throws {
-        let urlRequest = request(for: endPoint, method: .PUT, id: id, fileName: fileName, groupName: groupName, isOctet: true, hassIngressToken: hassIngressToken)
+        let urlRequest = try request(for: endPoint, method: .PUT, id: id, fileName: fileName, groupName: groupName, isOctet: true, hassIngressToken: hassIngressToken)
         let (resultData, resultCode) = try await URLSession.shared.upload(for: urlRequest, fromFile: fileURL)
         if let httpResponse = resultCode as? HTTPURLResponse {
             if httpResponse.statusCode != 204 {
@@ -296,7 +297,7 @@ public class GrocyApi: GrocyAPI {
         queries: [String]? = nil,
         hassIngressToken: String? = nil
     ) async throws {
-        let urlRequest = request(
+        let urlRequest = try request(
             for: endPoint,
             method: method,
             object: object,
@@ -347,7 +348,7 @@ public class GrocyApi: GrocyAPI {
         queries: [String]? = nil,
         hassIngressToken: String? = nil
     ) async throws -> T {
-        let urlRequest = request(
+        let urlRequest = try request(
             for: endPoint,
             method: method,
             object: object,
@@ -388,7 +389,7 @@ public class GrocyApi: GrocyAPI {
         content: Data? = nil,
         queries: [String]? = nil,
         hassIngressToken: String? = nil
-    ) -> URLRequest {
+    ) throws -> URLRequest {
         if self.baseURL.hasSuffix("/") { self.baseURL = String(self.baseURL.dropLast()) }
         var path = "\(self.baseURL)\(self.baseURL.hasSuffix("/api") ? "" : "/api")\(endpoint.rawValue)"
         if path.contains("{entity}") { path = path.replacingOccurrences(of: "{entity}", with: object!.rawValue) }
@@ -416,7 +417,7 @@ public class GrocyApi: GrocyAPI {
         }
 
         guard let url = URL(string: path)
-        else { preconditionFailure("Bad URL") }
+        else { throw APIError.serverError(errorMessage: "Invalid URL: the server address may contain unsupported characters.") }
         var request = URLRequest(url: url)
         request.httpMethod = method.rawValue
         var headers = [
@@ -656,7 +657,7 @@ extension GrocyApi {
     }
 
     func getPictureURL(groupName: String, fileName: String) -> String? {
-        let filepath = request(for: .filesGroupFilename, method: .GET, fileName: fileName, groupName: groupName, queries: ["force_serve_as=picture"]).url?.absoluteString
+        let filepath = try? request(for: .filesGroupFilename, method: .GET, fileName: fileName, groupName: groupName, queries: ["force_serve_as=picture"]).url?.absoluteString
         if groupName == "userfiles" || groupName == "userpictures" {
             return filepath?.replacingOccurrences(of: "/api", with: "")
         } else {

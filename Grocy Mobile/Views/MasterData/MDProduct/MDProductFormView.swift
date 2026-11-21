@@ -73,7 +73,7 @@ struct MDProductFormView: View {
         if let existingProduct {
             self.product = existingProduct
         } else {
-            var newProduct = MDProduct(
+            let newProduct = MDProduct(
                 productGroupID: userSettings?.productPresetsProductGroupID != -1 ? userSettings?.productPresetsProductGroupID : nil,
                 locationID: userSettings?.productPresetsLocationID ?? -1,
                 quIDPurchase: userSettings?.productPresetsQuID ?? -1,

@@ -44,7 +44,9 @@ struct BBProvider: AppIntentTimelineProvider {
             }
             return (0, 0)
         } catch {
+            #if DEBUG
             print("Failed to load BarcodeBuddy counts: \(error)")
+            #endif
             return (0, 0)
         }
     }
@@ -62,8 +64,8 @@ struct BBEntry: TimelineEntry {
 }
 
 struct BBConfigurationAppIntent: WidgetConfigurationIntent {
-    static var title: LocalizedStringResource = "BarcodeBuddy Widget Configuration"
-    static var description: IntentDescription = "Shows unresolved barcodes from BarcodeBuddy"
+    static let title: LocalizedStringResource = "BarcodeBuddy Widget Configuration"
+    static let description: IntentDescription = "Shows unresolved barcodes from BarcodeBuddy"
 }
 
 struct BarcodeBuddyWidgetEntryView: View {

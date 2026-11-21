@@ -324,7 +324,9 @@ struct QuickScanModeView: View {
                     }
                 }
                 .onChange(of: newRecognizedBarcode?.id) {
-                    print("New recognized barcode: \(String(describing: newRecognizedBarcode?.id))")
+                    #if DEBUG
+                    GrocyLogger.debug("New recognized barcode: \(String(describing: newRecognizedBarcode?.id))")
+                    #endif
                     DispatchQueue.main.async {
                         if quickScanActionAfterAdd {
                             recognizedBarcode = newRecognizedBarcode

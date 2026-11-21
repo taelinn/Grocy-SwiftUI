@@ -39,7 +39,9 @@ struct Provider: AppIntentTimelineProvider {
             let results = try context.fetch(fetchDescriptor)
             return results.first
         } catch {
+            #if DEBUG
             print("Failed to load VolatileStock: \(error)")
+            #endif
             return nil
         }
     }

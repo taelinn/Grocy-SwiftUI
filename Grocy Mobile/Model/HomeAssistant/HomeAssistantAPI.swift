@@ -25,11 +25,15 @@ func getHomeAssistantPathFromIngress(ingressPath: String) -> String? {
 
 final class WebSocket: NSObject, URLSessionWebSocketDelegate {
     func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didOpenWithProtocol protocol: String?) {
-        print("Web Socket did connect")
+        #if DEBUG
+        print("WebSocket did connect")
+        #endif
     }
     
     func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didCloseWith closeCode: URLSessionWebSocketTask.CloseCode, reason: Data?) {
-        print("Web Socket did disconnect with code \(closeCode)")
+        #if DEBUG
+        print("WebSocket did disconnect with code \(closeCode)")
+        #endif
     }
 }
 

@@ -85,8 +85,7 @@ struct ServerProfileFormView: View {
                     serverProfile.grocyAPIKey = apiKey
                 }
             case .failure(let error):
-                print("Scanning failed")
-                print(error)
+                GrocyLogger.error("Barcode scanning failed: \(error)")
             }
         }
 
@@ -101,8 +100,7 @@ struct ServerProfileFormView: View {
             case .success(let scannedHassToken):
                 serverProfile.hassToken = scannedHassToken.string
             case .failure(let error):
-                print("Scanning failed")
-                print(error)
+                GrocyLogger.error("Token scanning failed: \(error)")
             }
         }
     #endif

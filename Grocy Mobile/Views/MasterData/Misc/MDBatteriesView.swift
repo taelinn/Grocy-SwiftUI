@@ -11,9 +11,11 @@ struct MDBatteriesView: View {
     @Environment(GrocyViewModel.self) private var grocyVM
     
     var body: some View {
-        VStack{
-            Text("Batteries not implemented")
-        }
+        ContentUnavailableView(
+            "Batteries",
+            systemImage: MySymbols.batteries,
+            description: Text("Battery tracking is not yet available.")
+        )
     }
 }
 

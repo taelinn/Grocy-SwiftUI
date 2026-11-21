@@ -90,7 +90,8 @@ class BarcodeBuddyAPI: NSObject, URLSessionTaskDelegate {
         request.httpMethod = method
         request.setValue(apiKey, forHTTPHeaderField: "BBUDDY-API-KEY")
         request.setValue("application/json", forHTTPHeaderField: "Accept")
-        request.setValue("GrocyMobile/3.2.0", forHTTPHeaderField: "User-Agent")
+        let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "unknown"
+        request.setValue("Pantry/\(appVersion)", forHTTPHeaderField: "User-Agent")
         
         // Debug logging (sensitive data redacted)
         #if DEBUG

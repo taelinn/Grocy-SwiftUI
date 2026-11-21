@@ -111,7 +111,7 @@ func getSavedCodeTypes() -> [VNBarcodeSymbology] {
             }
         }
     } catch {
-        print("Error fetching supported symbologies: \(error)")
+        GrocyLogger.error("Error fetching supported symbologies: \(error)")
     }
 
     return Array(enabledCodes)

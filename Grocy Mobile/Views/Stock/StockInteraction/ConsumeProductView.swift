@@ -110,13 +110,18 @@ struct ConsumeProductView: View {
         return amount * (quantityUnitConversions.first(where: { $0.fromQuID == quantityUnitID && $0.toQuID == product?.quIDStock })?.factor ?? 1)
     }
 
+    private var locationsWithStock: MDLocations {
+        guard let productID = productID else { return [] }
+        return mdLocations.filter { location in
+            stockProductEntries.contains(where: {
+                $0.productID == productID && $0.locationID == location.id
+            })
+        }
+    }
+
     private var filteredLocations: MDLocations {
-        if useSpecificStockEntry, let productID = productID {
-            return mdLocations.filter { location in
-                stockProductEntries.contains(where: {
-                    $0.productID == productID && $0.locationID == location.id
-                })
-            }
+        if useSpecificStockEntry {
+            return locationsWithStock
         } else {
             return mdLocations
         }
@@ -138,6 +143,26 @@ struct ConsumeProductView: View {
 
     private var isFormValid: Bool {
         return (productID != nil) && (amount > 0) && (quantityUnitID != nil) && (locationID != -1) && !(useSpecificStockEntry && stockEntryID == nil) && !(useSpecificStockEntry && amount != 1.0) && !(amount > maxAmount ?? 0)
+    }
+
+    private var formValidationMessage: String? {
+        guard productID != nil else { return nil }
+        if stockProductEntries.isEmpty {
+            return "This product is not in stock."
+        }
+        if locationsWithStock.isEmpty {
+            return "No stock found at any location."
+        }
+        if locationID == -1 {
+            return "Select a location to continue."
+        }
+        if let maxAmount = maxAmount, maxAmount <= 0 {
+            return "No stock available at the selected location."
+        }
+        if let maxAmount = maxAmount, amount > maxAmount {
+            return "Amount exceeds available stock (\(maxAmount.formattedAmount) available)."
+        }
+        return nil
     }
 
     private var stockEntriesForLocation: StockEntries {
@@ -168,7 +193,7 @@ struct ConsumeProductView: View {
         productID = actionPending ? productToConsumeID : nil
         amount = (actionPending ? barcode?.amount : nil) ?? userSettings?.stockDefaultConsumeAmount ?? 1.0
         quantityUnitID = actionPending ? product?.quIDStock : nil
-        locationID = actionPending ? product?.locationID ?? -1 : -1
+        locationID = actionPending ? product?.defaultConsumeLocationID ?? product?.locationID ?? -1 : -1
         spoiled = false
         useSpecificStockEntry = actionPending ? directStockEntryID != nil : false
         stockEntryID = actionPending ? directStockEntryID ?? nil : nil
@@ -309,10 +334,20 @@ struct ConsumeProductView: View {
                             await grocyVM.requestStockInfo(stockModeGet: .entries, productID: productID, queries: ["include_sub_products=true"])
                         }
                         if let product = product {
-                            locationID = product.locationID
+                            locationID = product.defaultConsumeLocationID ?? product.locationID
                             quantityUnitID = product.quIDStock
                             amount = userSettings?.stockDefaultConsumeAmountUseQuickConsumeAmount ?? false ? (product.quickConsumeAmount ?? 1.0) : Double(userSettings?.stockDefaultConsumeAmount ?? 1)
                         }
+                        // Auto-select location if stock is only in one place
+                        if locationsWithStock.count == 1, let onlyLocation = locationsWithStock.first {
+                            locationID = onlyLocation.id
+                        }
+                    }
+                }
+                .onChange(of: allStockProductEntries.count) {
+                    // Re-evaluate once stock entries finish loading
+                    if productID != nil, locationsWithStock.count == 1, let onlyLocation = locationsWithStock.first {
+                        locationID = onlyLocation.id
                     }
                 }
 
@@ -331,8 +366,8 @@ struct ConsumeProductView: View {
                         Text("")
                             .tag(-1 as Int)
                         ForEach(filteredLocations, id: \.id) { location in
-                            if location.id == product?.locationID {
-                                Text("\(location.name) (\(getAmountForLocation(lID: location.id).formattedAmount)) (\(Text("Default location")))")
+                            if location.id == (product?.defaultConsumeLocationID ?? product?.locationID) {
+                                Text("\(location.name) (\(getAmountForLocation(lID: location.id).formattedAmount)) (\(Text("Default consume location")))")
                                     .tag(location.id as Int)
                             } else {
                                 Text("\(location.name) (\(getAmountForLocation(lID: location.id).formattedAmount))")
@@ -341,6 +376,13 @@ struct ConsumeProductView: View {
                         }
                     }
                 )
+
+                if let message = formValidationMessage {
+                    Section {
+                        Label(message, systemImage: "info.circle")
+                            .foregroundStyle(.secondary)
+                    }
+                }
 
                 Section("Details") {
                     if (consumeType == .consume) || (consumeType == .both) {

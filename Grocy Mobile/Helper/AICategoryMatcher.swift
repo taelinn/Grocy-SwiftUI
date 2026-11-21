@@ -355,7 +355,9 @@ extension AICategoryMatcher {
         let result = try await performMatch(word: word, categoryNames: categoryNames)
         let duration = Date().timeIntervalSince(start)
 
-        print(unsafe "✅ Matched '\(word)' → '\(result.category)' in \(String(format: "%.2f", duration))s")
+        #if DEBUG
+        print("Matched category in \(String(format: "%.2f", duration))s")
+        #endif
 
         return MatchResultInfo(categoryName: result.category, confidence: result.confidence)
     }

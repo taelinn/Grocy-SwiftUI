@@ -124,7 +124,7 @@ struct CodeResult: Hashable {
                             callback(CodeResult(value: payload, type: code.observation.symbology))
                         }
                     default:
-                        print("Not implemented")
+                        break
                     }
                 }
             }

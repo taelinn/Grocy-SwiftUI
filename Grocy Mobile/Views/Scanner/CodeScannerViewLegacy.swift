@@ -187,7 +187,7 @@ import SwiftUI
                         found(result)
                     }
                 } else {
-                    print("Something went wrong")
+                    GrocyLogger.error("Image picker failed to produce valid output")
                 }
 
                 dismiss(animated: true, completion: nil)
@@ -559,10 +559,10 @@ import SwiftUI
                                 device.unlockForConfiguration()
                             }
                         } catch {
-                            print("Torch could not be used")
+                            GrocyLogger.warning("Torch could not be used")
                         }
                     } else {
-                        print("Torch is not available")
+                        GrocyLogger.warning("Torch is not available")
                     }
                 }
 

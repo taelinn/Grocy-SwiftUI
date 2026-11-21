@@ -32,11 +32,10 @@ func toggleTorch(state: Bool) {
 
         do {
             try device.lockForConfiguration()
-            print(state)
             device.torchMode = state ? .on : .off
             device.unlockForConfiguration()
         } catch {
-            print("Torch unavailable")
+            GrocyLogger.warning("Torch unavailable")
         }
     #endif
 }

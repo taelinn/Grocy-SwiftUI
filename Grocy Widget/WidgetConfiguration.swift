@@ -21,7 +21,9 @@ func createSharedModelContainer() -> ModelContainer? {
     do {
         return try ModelContainer(for: schema, configurations: config)
     } catch {
+        #if DEBUG
         print("Failed to create shared model container: \(error)")
+        #endif
         return nil
     }
 }

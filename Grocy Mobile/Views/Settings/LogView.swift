@@ -42,7 +42,7 @@ struct LogView: View {
             exportLog = ExportLog(content: logData)
             isExporting = true
         } else {
-            print("Error exporting log")
+            GrocyLogger.error("Error exporting log")
         }
     }
 
@@ -92,10 +92,8 @@ struct LogView: View {
             contentType: .plainText,
             defaultFilename: "Grocy-SwiftUI_LOG.log"
         ) { result in
-            if case .success = result {
-                print("Export successful.")
-            } else {
-                print("Export failed.")
+            if case .failure = result {
+                GrocyLogger.error("Log export failed")
             }
         }
     }
